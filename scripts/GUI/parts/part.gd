@@ -152,6 +152,9 @@ func _process(delta):
 				textureBase.global_position = invHolderNode.global_position;
 	elif is_instance_valid(hostShopStall):
 		textureBase.show();
+		var bot = GameState.get_player();
+		if is_instance_valid(bot):
+			thisRobot  = bot;
 		#if inPlayerInventory:
 			#if ownedByPlayer:
 				#textureBase.global_position = invHolderNode.global_position + Vector2(invPosition * 48);

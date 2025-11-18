@@ -79,7 +79,7 @@
 [ext_resource type="Texture2D" uid="uid://c17tsbqn3orah" path="res://graphics/images/HUD/partAssign_disabled.png" id="62_ltg8k"]
 [ext_resource type="Shader" uid="uid://b3jc31ntkxnwh" path="res://graphics/shaders/wavyButton.gdshader" id="68_kpcco"]
 [ext_resource type="Texture2D" uid="uid://ckkqo4l53j7nc" path="res://graphics/images/HUD/HudEdge.png" id="69_dbqh0"]
-[ext_resource type="Script" uid="uid://c2wmqa0s4f06n" path="res://scripts/GUI/lbl_hp_refresh.gd" id="73_xxsjn"]
+[ext_resource type="Script" uid="uid://c2wmqa0s4f06n" path="res://graphics/images/HUD/healthbar/lbl_hp_refresh.gd" id="73_xxsjn"]
 [ext_resource type="Texture2D" uid="uid://cr16um277it7e" path="res://graphics/images/HUD/blinkies/timer_blinky_off.png" id="76_vgsgu"]
 [ext_resource type="Texture2D" uid="uid://p4kd71ihg6eg" path="res://graphics/images/HUD/inventoryTab/open_unselected.png" id="78_gfej7"]
 [ext_resource type="AudioStream" uid="uid://b7fnytfbwjn5a" path="res://sounds/Movement_Start.ogg" id="78_gyjhe"]

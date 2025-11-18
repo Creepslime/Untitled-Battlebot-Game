@@ -1,4 +1,4 @@
-[gd_scene load_steps=108 format=4 uid="uid://cno0jw8hq6h1i"]
+[gd_scene load_steps=113 format=4 uid="uid://cno0jw8hq6h1i"]
 
 [ext_resource type="Script" uid="uid://b8hseesj7vrc" path="res://scripts/game_board.gd" id="1_mlcvp"]
 [ext_resource type="Material" uid="uid://c6b1ums81prw8" path="res://graphics/materials/models/arena/arena_floor.tres" id="2_4jixe"]
@@ -92,8 +92,13 @@
 [ext_resource type="Texture2D" uid="uid://bxb00bn77tr3m" path="res://graphics/images/HUD/healthbar/health_mask.png" id="47_fmmmj"]
 [ext_resource type="Texture2D" uid="uid://c2dixr5vexjjn" path="res://graphics/images/HUD/healthbar/health_full.png" id="48_ed2oa"]
 [ext_resource type="Texture2D" uid="uid://bicgpcm8exttg" path="res://graphics/images/HUD/healthbar/health_empty.png" id="49_4hhnj"]
+[ext_resource type="Texture2D" uid="uid://15gyvwauhtg4" path="res://graphics/images/HUD/healthbar/EnergyPop.png" id="56_acrhl"]
 [ext_resource type="Script" uid="uid://b20gfq5n7jr2e" path="res://scripts/GUI/shop_panel.gd" id="58_4hhnj"]
 [ext_resource type="Script" uid="uid://dt2fcq66d7j4r" path="res://scripts/GUI/setting_button.gd" id="60_f85oj"]
+[ext_resource type="Script" uid="uid://c4yyqxsrfwwc8" path="res://scripts/GUI/lbl_weight.gd" id="75_yktpx"]
+[ext_resource type="Texture2D" uid="uid://7w8x30ybnvlf" path="res://graphics/images/HUD/statIcons/weightIconPaint.png" id="76_gj2xt"]
+[ext_resource type="Script" uid="uid://c2wmqa0s4f06n" path="res://graphics/images/HUD/healthbar/lbl_hp_refresh.gd" id="77_3o7dt"]
+[ext_resource type="Texture2D" uid="uid://c8fkc28ynvsce" path="res://graphics/images/HUD/healthbar/HealthPop.png" id="78_acrhl"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_4eh01"]
 sky_top_color = Color(0.0910561, 0.0229013, 0, 1)
@@ -1252,6 +1257,62 @@ offset_right = 31.0
 offset_bottom = 108.0
 texture = ExtResource("33_ed2oa")
 
+[node name="Lbl_EnergyChange" type="Label" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/RightSide"]
+z_index = 1
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = 370.0
+offset_top = -179.0
+offset_right = 426.0
+offset_bottom = -162.0
+theme_override_fonts/font = ExtResource("13_6c18d")
+theme_override_font_sizes/font_size = 15
+text = "00:00"
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("77_3o7dt")
+statName = "Energy"
+decimalPlaces = 3
+curMode = 1
+
+[node name="AbilityIconBG" type="NinePatchRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/RightSide/Lbl_EnergyChange"]
+z_index = -1
+layout_mode = 0
+offset_left = -3.0
+offset_top = -3.0
+offset_right = 60.0
+offset_bottom = 20.0
+texture = ExtResource("19_vehjn")
+patch_margin_left = 1
+patch_margin_top = 3
+patch_margin_right = 1
+patch_margin_bottom = 1
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1
+
+[node name="Label" type="Label" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/RightSide/Lbl_EnergyChange/AbilityIconBG"]
+layout_mode = 0
+offset_left = -4.0
+offset_top = -18.0
+offset_right = 100.0
+offset_bottom = 2.41666
+theme = ExtResource("20_k23rv")
+theme_type_variation = &"HeaderLarge"
+theme_override_constants/shadow_outline_size = 0
+text = "ENERGY CHANGE"
+
+[node name="Icon" type="TextureRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/RightSide/Lbl_EnergyChange"]
+layout_mode = 0
+offset_left = 63.0
+offset_top = -4.0
+offset_right = 85.0
+offset_bottom = 22.0
+texture = ExtResource("56_acrhl")
+
 [node name="LeftSide" type="TextureRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud"]
 z_index = 3
 texture_filter = 1
@@ -1487,7 +1548,7 @@ width = 329.0
 height = 117.0
 paddingStart = 0.0
 paddingEnd = 36.0
-currentAmt = 39.95
+currentAmt = 72.2
 maskTexture = ExtResource("47_fmmmj")
 fullTexture = ExtResource("48_ed2oa")
 emptyTexture = ExtResource("49_4hhnj")
@@ -1524,6 +1585,113 @@ offset_top = 0.0
 offset_right = 0.0
 offset_bottom = 0.0
 metadata/_edit_use_anchors_ = true
+
+[node name="Lbl_Weight" type="Label" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/LeftSide"]
+z_index = 1
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -267.0
+offset_top = -190.0
+offset_right = -212.0
+offset_bottom = -173.0
+theme_override_fonts/font = ExtResource("13_6c18d")
+theme_override_font_sizes/font_size = 15
+text = "000:00"
+horizontal_alignment = 2
+vertical_alignment = 1
+script = ExtResource("75_yktpx")
+
+[node name="AbilityIconBG" type="NinePatchRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/LeftSide/Lbl_Weight"]
+z_index = -1
+layout_mode = 0
+offset_left = -3.0
+offset_top = -3.0
+offset_right = 60.0
+offset_bottom = 20.0
+texture = ExtResource("19_vehjn")
+patch_margin_left = 1
+patch_margin_top = 3
+patch_margin_right = 1
+patch_margin_bottom = 1
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1
+
+[node name="Label" type="Label" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/LeftSide/Lbl_Weight/AbilityIconBG"]
+layout_mode = 0
+offset_left = -23.0
+offset_top = -18.0
+offset_right = 73.0
+offset_bottom = 2.41666
+theme = ExtResource("20_k23rv")
+theme_type_variation = &"HeaderLarge"
+theme_override_constants/shadow_outline_size = 0
+text = "TOTAL WEIGHT"
+
+[node name="Icon" type="TextureRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/LeftSide/Lbl_Weight"]
+layout_mode = 0
+offset_left = -26.0
+offset_top = -4.0
+offset_right = -4.0
+offset_bottom = 21.0
+texture = ExtResource("76_gj2xt")
+flip_h = true
+
+[node name="Lbl_HealthChange" type="Label" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/LeftSide"]
+z_index = 1
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -427.0
+offset_top = -179.0
+offset_right = -371.0
+offset_bottom = -162.0
+theme_override_fonts/font = ExtResource("13_6c18d")
+theme_override_font_sizes/font_size = 15
+text = "00:00"
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("77_3o7dt")
+
+[node name="AbilityIconBG" type="NinePatchRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/LeftSide/Lbl_HealthChange"]
+z_index = -1
+layout_mode = 0
+offset_left = -3.0
+offset_top = -3.0
+offset_right = 60.0
+offset_bottom = 20.0
+texture = ExtResource("19_vehjn")
+patch_margin_left = 1
+patch_margin_top = 3
+patch_margin_right = 1
+patch_margin_bottom = 1
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1
+
+[node name="Label" type="Label" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/LeftSide/Lbl_HealthChange/AbilityIconBG"]
+layout_mode = 0
+offset_left = -20.0
+offset_top = -18.0
+offset_right = 76.0
+offset_bottom = 2.41666
+theme = ExtResource("20_k23rv")
+theme_type_variation = &"HeaderLarge"
+theme_override_constants/shadow_outline_size = 0
+text = "HP CHANGE"
+
+[node name="Icon" type="TextureRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/LeftSide/Lbl_HealthChange"]
+layout_mode = 0
+offset_left = -27.0
+offset_top = -5.0
+offset_right = -5.0
+offset_bottom = 21.0
+texture = ExtResource("78_acrhl")
 
 [node name="MainMenu" type="Control" parent="HUDCanvas/HUD Viewport/SubViewport/HUD"]
 visible = false
