@@ -127,7 +127,7 @@ func get_pieces():
 				
 				var fullName = prefix + file_name
 				print(fullName)
-				if FileAccess.file_exists(fullName):
+				if (fullName.ends_with(".tscn")) and FileAccess.file_exists(fullName):
 					var loadedFile = load(fullName);
 					add_to_tree(tree_pieces, file_name, loadedFile, fullName);
 			file_name = dir.get_next()
@@ -405,4 +405,8 @@ func _on_robot_name_text_changed():
 		bot.robotName = txt_botName.text;
 		bot.robotNameInternal = txt_botNameInternal.text;
 		bot.name = "Robot_" + txt_botNameInternal.text;
+	pass # Replace with function body.
+
+func _on_copy_name_pressed():
+	save_txt_newPath.text = botSceneFilePath.trim_prefix(filepathPrefix).trim_suffix(".tscn");
 	pass # Replace with function body.

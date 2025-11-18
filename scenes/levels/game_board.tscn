@@ -1,4 +1,4 @@
-[gd_scene load_steps=84 format=4 uid="uid://cno0jw8hq6h1i"]
+[gd_scene load_steps=108 format=4 uid="uid://cno0jw8hq6h1i"]
 
 [ext_resource type="Script" uid="uid://b8hseesj7vrc" path="res://scripts/game_board.gd" id="1_mlcvp"]
 [ext_resource type="Material" uid="uid://c6b1ums81prw8" path="res://graphics/materials/models/arena/arena_floor.tres" id="2_4jixe"]
@@ -11,31 +11,42 @@
 [ext_resource type="ArrayMesh" uid="uid://b4ai185oa1w42" path="res://graphics/models/extracted/arena_wall.res" id="5_4jixe"]
 [ext_resource type="Script" uid="uid://blg2b81fynoh3" path="res://scripts/objects/camera_game.gd" id="7_4upc1"]
 [ext_resource type="PackedScene" uid="uid://cg27jtv73p32u" path="res://scenes/prefabs/objects/damage_cube.tscn" id="8_hfgcm"]
+[ext_resource type="Script" uid="uid://b785xtd1vjjb1" path="res://scripts/GUI/shop_manager.gd" id="8_ndayd"]
 [ext_resource type="Script" uid="uid://ct0mq8smfqpjl" path="res://scripts/libraries/sound_manager.gd" id="9_hh74c"]
 [ext_resource type="Theme" uid="uid://bq0jig2pdkgtn" path="res://graphics/images/HUD/UI_theme.tres" id="9_mlcvp"]
 [ext_resource type="Script" uid="uid://bjwlquka60rm4" path="res://scripts/GUI/options.gd" id="9_x282c"]
 [ext_resource type="Texture2D" uid="uid://cichk1dg53t34" path="res://graphics/images/logo_small.png" id="10_4eh01"]
+[ext_resource type="Texture2D" uid="uid://oxhe4uwmstjd" path="res://graphics/images/HUD/enemyPing.png" id="10_ngcqk"]
 [ext_resource type="Texture2D" uid="uid://b27r3rshm0ite" path="res://graphics/images/HUD/textBoxBG_partPassive.png" id="11_6fdki"]
+[ext_resource type="Texture2D" uid="uid://bjyrhvsqt2ucy" path="res://graphics/images/HUD/screenGFX/recordingBracketLeft.png" id="12_ngcqk"]
 [ext_resource type="FontFile" uid="uid://s3k2ji7jxshs" path="res://graphics/images/HUD/8-segment.png" id="13_6c18d"]
+[ext_resource type="Script" uid="uid://esp5v4ajcrqd" path="res://scripts/GUI/shop_new.gd" id="13_nnnr2"]
 [ext_resource type="Script" uid="uid://mlxpf3keq86q" path="res://scripts/GUI/game_hud.gd" id="13_s0uw0"]
 [ext_resource type="Script" uid="uid://b6qoved8v8p2v" path="res://scripts/GUI/round_timer.gd" id="14_ei0j6"]
 [ext_resource type="Texture2D" uid="uid://cvnlt28sqm5g7" path="res://graphics/images/HUD/hudNew.png" id="14_m488k"]
+[ext_resource type="Script" uid="uid://f2utlpnj4kg4" path="res://scripts/GUI/shop_stall.gd" id="14_tegeg"]
 [ext_resource type="AudioStream" uid="uid://clkb8qmb50nhq" path="res://sounds/music/Battlebot(Base).ogg" id="15_7s7sx"]
 [ext_resource type="Script" uid="uid://lq2evtwp8bvg" path="res://scripts/GUI/enemy_progress_bar.gd" id="15_7w2xj"]
 [ext_resource type="Texture2D" uid="uid://bw5pl1p6bmq61" path="res://graphics/images/HUD/blinkies/timer_blinky_on.png" id="15_s0uw0"]
+[ext_resource type="Texture2D" uid="uid://blmdrpsajj6f7" path="res://graphics/images/HUD/blinkies/freezerblinky_off.png" id="15_yktpx"]
 [ext_resource type="Shader" uid="uid://b3jc31ntkxnwh" path="res://graphics/shaders/wavyButton.gdshader" id="16_1s3sj"]
+[ext_resource type="Texture2D" uid="uid://b1olqkpvwejg" path="res://graphics/images/HUD/shop/stall_door_frozen.png" id="16_gj2xt"]
 [ext_resource type="AudioStream" uid="uid://dod8lqc5mj6gd" path="res://sounds/music/Battlebot(Bass).ogg" id="16_l8dsy"]
+[ext_resource type="Texture2D" uid="uid://ppmc64phinum" path="res://graphics/images/HUD/shop/stall_door_left.png" id="17_3o7dt"]
 [ext_resource type="AudioStream" uid="uid://xudb8rpoft5g" path="res://sounds/music/Battlebot(Melody).ogg" id="17_gj52v"]
 [ext_resource type="Texture2D" uid="uid://bgide8muu6eek" path="res://graphics/images/HUD/nextRound/screen_on.png" id="17_pwbo8"]
 [ext_resource type="AudioStream" uid="uid://cx04f0djaxqys" path="res://sounds/music/Battlebot(Piano).ogg" id="18_7s7sx"]
+[ext_resource type="Texture2D" uid="uid://dx4xvvlp28d07" path="res://graphics/images/HUD/shop/stall_door_right.png" id="18_acrhl"]
 [ext_resource type="AudioStream" uid="uid://d4i6k0bsc36q3" path="res://sounds/music/Battlebot(Perc1).ogg" id="18_mlcvp"]
 [ext_resource type="Texture2D" uid="uid://o4glpuf2dmah" path="res://graphics/images/HUD/nextRound/screen_hover.png" id="18_q68mx"]
 [ext_resource type="Texture2D" uid="uid://croanmqw1pmqf" path="res://graphics/images/HUD/blinkies/timer_skull.png" id="18_u76c3"]
 [ext_resource type="Script" uid="uid://6rlmlcy2eex2" path="res://scripts/GUI/hud.gd" id="18_wbopo"]
 [ext_resource type="Texture2D" uid="uid://okkoo55665rm" path="res://graphics/images/HUD/nextRound/screen_off.png" id="19_3a6ea"]
 [ext_resource type="AudioStream" uid="uid://uqulgohxvrq4" path="res://sounds/music/Battlebot(Perc2).ogg" id="19_4eh01"]
+[ext_resource type="Texture2D" uid="uid://dt6jjoibn5xfx" path="res://graphics/images/HUD/shop/freeze_unselected.png" id="19_l7hpm"]
 [ext_resource type="AudioStream" uid="uid://bgos1qoehfh6w" path="res://sounds/music/Battlebot(Guitar).ogg" id="19_l8dsy"]
 [ext_resource type="Texture2D" uid="uid://o01v65x3ienk" path="res://graphics/images/HUD/screenGFX/insetScreen.png" id="19_vehjn"]
+[ext_resource type="Texture2D" uid="uid://c275qd77g6x86" path="res://graphics/images/HUD/shop/freeze_selected.png" id="20_ew5bm"]
 [ext_resource type="AudioStream" uid="uid://criotxml8rknj" path="res://sounds/music/Battlebot(Swell).ogg" id="20_gj52v"]
 [ext_resource type="Theme" uid="uid://tcelcj32ux4o" path="res://graphics/images/HUD/digital_button.tres" id="20_k23rv"]
 [ext_resource type="Script" uid="uid://dxmqurrcqgdl7" path="res://scripts/GUI/bgm.gd" id="20_l8dsy"]
@@ -43,16 +54,25 @@
 [ext_resource type="TileSet" uid="uid://dicxuohkdpmlx" path="res://graphics/images/HUD/engine/engineTileMap.tres" id="20_u76c3"]
 [ext_resource type="Script" uid="uid://cdymr1vwdiwxo" path="res://scripts/GUI/info_box.gd" id="21_n0uq6"]
 [ext_resource type="Shader" uid="uid://egarbougi4ef" path="res://graphics/shaders/healthbar.gdshader" id="21_sb58i"]
+[ext_resource type="Texture2D" uid="uid://ch72j8sw4gtp" path="res://graphics/images/HUD/shop/freeze_disabled.png" id="21_u8j3h"]
+[ext_resource type="Texture2D" uid="uid://s8bx72jtl1h4" path="res://graphics/images/HUD/shop/buy_unselected.png" id="22_sjcy6"]
 [ext_resource type="Texture2D" uid="uid://drjmrl4v24oq6" path="res://graphics/images/HUD/infobox/typeIcons/info_melee.png" id="22_t18ps"]
+[ext_resource type="Texture2D" uid="uid://dyfx0k6ohqmpe" path="res://graphics/images/HUD/shop/buy_selected.png" id="23_ncuuh"]
 [ext_resource type="Texture2D" uid="uid://bdgkd60c8qtud" path="res://graphics/images/HUD/statIcons/energyIconStriped.png" id="23_sb58i"]
 [ext_resource type="Texture2D" uid="uid://cnfat2kqvmdcd" path="res://graphics/images/HUD/statIcons/damageIconStriped.png" id="24_dcin4"]
+[ext_resource type="Script" uid="uid://56vk7o0gmt7p" path="res://scripts/GUI/shop_button.gd" id="24_gqxs8"]
 [ext_resource type="PackedScene" uid="uid://rwrbd0hg75ad" path="res://scenes/prefabs/utilities/health_bar.tscn" id="25_4upc1"]
 [ext_resource type="Texture2D" uid="uid://uflissj08i1o" path="res://graphics/images/HUD/statIcons/cooldownIconStriped.png" id="25_hi0i4"]
 [ext_resource type="FontFile" uid="uid://qklyfj282mg3" path="res://graphics/font/Scrap8x14.ttf" id="25_k23rv"]
+[ext_resource type="Texture2D" uid="uid://ccklnmdcymtig" path="res://graphics/images/HUD/shop/heal_unselected.png" id="25_mcp8b"]
 [ext_resource type="Texture2D" uid="uid://djth0eo8kvkcm" path="res://graphics/images/HUD/sell_unselected.png" id="26_4upc1"]
+[ext_resource type="Texture2D" uid="uid://g2oapmprsygp" path="res://graphics/images/HUD/shop/heal_selected.png" id="26_kbpb2"]
 [ext_resource type="Texture2D" uid="uid://btfetdy0ahup8" path="res://graphics/images/HUD/sell_selected.png" id="27_iqmcf"]
+[ext_resource type="Texture2D" uid="uid://b7r4txn23e8xc" path="res://graphics/images/HUD/shop/shop_door.png" id="27_qt8fj"]
 [ext_resource type="Texture2D" uid="uid://b71g2q13wr7do" path="res://graphics/images/HUD/sell_disabled.png" id="28_2kc6q"]
+[ext_resource type="Texture2D" uid="uid://6qqfwg274ig8" path="res://graphics/images/HUD/shop/reroll_unselected.png" id="28_erdgi"]
 [ext_resource type="Texture2D" uid="uid://dsl0x2nq48gga" path="res://graphics/images/HUD/move_unselected.png" id="29_o0v2b"]
+[ext_resource type="Texture2D" uid="uid://cmagragsm54en" path="res://graphics/images/HUD/shop/reroll_selected.png" id="29_pp8gw"]
 [ext_resource type="Texture2D" uid="uid://cxeur7wg8nvq7" path="res://graphics/images/HUD/move_selected.png" id="30_lb2e7"]
 [ext_resource type="PackedScene" uid="uid://bvv3y50mckawn" path="res://scenes/prefabs/objects/gui/ability_slot_manager.tscn" id="31_o0v2b"]
 [ext_resource type="Texture2D" uid="uid://dnu6ivnxlduxo" path="res://graphics/images/HUD/move_hover.png" id="31_vehjn"]
@@ -64,14 +84,16 @@
 [ext_resource type="Texture2D" uid="uid://c3tc66mps41fj" path="res://graphics/images/HUD/healthbar/energy_full.png" id="35_ngcqk"]
 [ext_resource type="Texture2D" uid="uid://2mr86d446ipq" path="res://graphics/images/HUD/healthbar/energy_empty.png" id="36_f85oj"]
 [ext_resource type="Texture2D" uid="uid://caiexbehaegsy" path="res://graphics/images/HUD/healthbar/HP.png" id="37_25s40"]
-[ext_resource type="PackedScene" uid="uid://de0rs2455fdg4" path="res://scenes/prefabs/objects/parts_holder_engine.tscn" id="43_4upc1"]
-[ext_resource type="PackedScene" uid="uid://dpal3hy2d8lig" path="res://scenes/prefabs/objects/piece_inspector.tscn" id="45_2kc6q"]
+[ext_resource type="PackedScene" uid="uid://de0rs2455fdg4" path="res://scenes/prefabs/objects/gui/parts_holder_engine.tscn" id="43_4upc1"]
+[ext_resource type="PackedScene" uid="uid://dpal3hy2d8lig" path="res://scenes/prefabs/objects/gui/piece_inspector.tscn" id="45_2kc6q"]
 [ext_resource type="Texture2D" uid="uid://dsvo7y55d6y8p" path="res://graphics/images/HUD/pauseBG.png" id="45_hi0i4"]
 [ext_resource type="Texture2D" uid="uid://c6qyv1xd1lhfl" path="res://graphics/images/HUD/healthbar/health_overlay.png" id="45_txgh4"]
 [ext_resource type="Texture2D" uid="uid://cp8nheutmloep" path="res://graphics/images/HUD/chain.png" id="46_4upc1"]
 [ext_resource type="Texture2D" uid="uid://bxb00bn77tr3m" path="res://graphics/images/HUD/healthbar/health_mask.png" id="47_fmmmj"]
 [ext_resource type="Texture2D" uid="uid://c2dixr5vexjjn" path="res://graphics/images/HUD/healthbar/health_full.png" id="48_ed2oa"]
 [ext_resource type="Texture2D" uid="uid://bicgpcm8exttg" path="res://graphics/images/HUD/healthbar/health_empty.png" id="49_4hhnj"]
+[ext_resource type="Script" uid="uid://b20gfq5n7jr2e" path="res://scripts/GUI/shop_panel.gd" id="58_4hhnj"]
+[ext_resource type="Script" uid="uid://dt2fcq66d7j4r" path="res://scripts/GUI/setting_button.gd" id="60_f85oj"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_4eh01"]
 sky_top_color = Color(0.0910561, 0.0229013, 0, 1)
@@ -88,6 +110,15 @@ background_mode = 2
 sky = SubResource("Sky_hi0i4")
 tonemap_mode = 2
 glow_enabled = true
+
+[sub_resource type="Gradient" id="Gradient_ngcqk"]
+offsets = PackedFloat32Array(0, 0.724221)
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_f85oj"]
+gradient = SubResource("Gradient_ngcqk")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_p8hek"]
 atlas = ExtResource("14_m488k")
@@ -135,7 +166,7 @@ stream_7/volume = -60.0
 vertices = PackedVector3Array(-6.08704, 4.17075, -3.0761, -5.83704, 3.92075, -3.0761, -5.58704, 3.92075, -5.3261, -6.08704, 4.17075, -10.3261, 5.91296, 3.92075, -5.3261, 6.16296, 3.92075, -3.0761, 6.41296, 4.17075, -3.0761, 6.41296, 4.17075, -10.3261, 5.16296, 0.920749, 9.1739, 5.66296, 0.920749, 4.1739, 5.16296, 0.920749, 3.9239, -4.83704, 0.920749, 3.9239, -5.33704, 0.920749, 4.1739, -5.08704, 0.920749, 9.1739, 5.16296, 0.920749, -4.3261, -4.83704, 0.920749, -4.3261, -6.33704, 4.17075, -0.576096, -5.83704, 3.92075, 3.1739, -30.837, 4.17075, 23.9239, -33.337, 4.17075, 24.1739, -33.337, 3.92075, 24.4239, -27.087, 3.92075, 24.4239, -27.087, 3.92075, 18.6739, -30.837, 4.17075, 17.1739, -18.837, 4.17075, 3.4239, -26.837, 4.17075, 11.4239, -27.587, 4.17075, 14.1739, -23.587, 3.92075, 13.6739, -16.587, 3.92075, 6.6739, -16.087, 4.17075, 2.6739, -24.337, 3.92075, 16.1739, -14.087, 3.92075, 5.9239, -11.587, 3.92075, 3.1739, -13.087, 4.17075, -0.576096, 6.66296, 4.17075, -0.576096, 6.16296, 3.92075, 3.1739, 11.663, 3.92075, 3.1739, 14.163, 3.92075, 5.9239, 16.663, 3.92075, 6.6739, 16.163, 4.17075, 2.6739, 13.163, 4.17075, -0.576096, 27.413, 3.92075, 18.9239, 27.413, 3.92075, 20.9239, 30.913, 4.17075, 20.9239, 30.913, 4.17075, 17.1739, 26.913, 4.17075, 11.4239, 18.913, 4.17075, 3.4239, 23.913, 3.92075, 13.9239, 27.663, 4.17075, 14.1739, 24.413, 3.92075, 16.1739, -19.087, 0.920749, 10.9239, -17.837, 0.920749, 12.4239, -17.087, 0.920749, 11.6739, -16.087, 0.920749, 7.6739, -13.837, 0.920749, 11.6739, -13.587, 0.920749, 6.9239, -5.58704, 0.920749, 9.4239, -11.087, 0.920749, 4.1739, -13.087, 0.920749, 12.4239, -5.58704, 0.920749, 11.4239, 17.163, 0.920749, 11.6739, 17.913, 0.920749, 12.4239, 19.413, 0.920749, 11.1739, 16.163, 0.920749, 7.6739, 13.663, 0.920749, 6.9239, 14.163, 0.920749, 11.6739, 5.66296, 0.920749, 9.4239, 11.163, 0.920749, 4.1739, 12.913, 0.920749, 12.9239, 5.66296, 0.920749, 11.4239, -4.58704, 2.92075, 10.1739, -4.58704, 2.92075, 10.9239, 4.66296, 2.92075, 10.9239, 4.66296, 2.92075, 10.1739, -18.587, 0.920749, 13.1739, -22.587, 0.920749, 14.1739, -23.337, 0.920749, 16.6739, -18.587, 0.920749, 16.4239, -26.087, 0.920749, 24.9239, -21.087, 0.920749, 25.1739, -20.837, 0.920749, 24.6739, -26.087, 0.920749, 19.1739, -17.837, 0.920749, 17.1739, -18.837, 0.920749, 24.6739, 18.663, 0.920749, 13.1739, 22.913, 0.920749, 14.4239, 18.663, 0.920749, 16.4239, 23.413, 0.920749, 16.6739, 20.913, 0.920749, 24.6739, 21.163, 0.920749, 25.1739, 26.413, 0.920749, 24.9239, 26.413, 0.920749, 19.4239, 17.913, 0.920749, 17.1739, 19.163, 0.920749, 24.6739, -4.83704, 0.920749, 14.4239, -2.83704, 0.920749, 14.4239, -2.83704, 0.920749, 11.9239, -5.33704, 0.920749, 11.9239, -12.337, 0.920749, 13.1739, -12.337, 0.920749, 15.1739, -4.83704, 0.670749, 15.1739, -6.08704, 0.920749, 15.1739, 5.16296, 0.920749, 14.4239, 5.16296, 0.670749, 15.1739, 12.663, 0.920749, 15.1739, 5.41296, 0.920749, 11.9239, -13.337, 3.92075, 15.9239, -14.337, 3.92075, 12.6739, -17.587, 3.92075, 13.6739, -17.587, 3.92075, 15.9239, -16.587, 3.92075, 16.9239, -14.337, 3.92075, 16.9239, -16.587, 3.92075, 12.6739, -13.337, 3.92075, 13.6739, 13.663, 3.92075, 15.9239, 14.663, 3.92075, 16.9239, 16.663, 3.92075, 16.9239, 17.663, 3.92075, 13.6739, 16.663, 3.92075, 12.6739, 14.663, 3.92075, 12.6739, 17.663, 3.92075, 15.9239, 13.663, 3.92075, 13.6739, -13.587, 0.920749, 15.6739, -14.587, 0.920749, 12.9239, -17.337, 0.920749, 13.9239, -17.337, 0.920749, 15.6739, -16.337, 0.920749, 16.6739, -14.587, 0.920749, 16.6739, -16.337, 0.920749, 12.9239, -13.587, 0.920749, 13.9239, 13.913, 0.920749, 15.6739, 14.913, 0.920749, 16.6739, 16.413, 0.920749, 16.6739, 17.413, 0.920749, 13.9239, 16.413, 0.920749, 12.9239, 14.913, 0.920749, 12.9239, 17.413, 0.920749, 15.6739, 13.913, 0.920749, 13.9239, -12.337, 0.920749, 16.4239, -6.08704, 0.920749, 15.3822, -13.837, 0.920749, 17.9239, -15.087, 0.920749, 17.9239, -15.087, 0.670749, 25.4239, -14.8787, 0.920749, 24.1739, -15.087, 0.920749, 24.1739, -6.12275, 0.920749, 15.5668, -14.837, -0.0792511, 30.4239, -3.08704, -0.0792511, 30.4239, -3.08704, -0.0792511, 28.9239, -1.33704, -0.0792511, 27.1739, 0.16296, -0.0792511, 27.1739, 0.16296, -0.0792511, 15.4239, -3.67037, -0.0792511, 19.1739, -11.087, 0.920749, 19.1538, -11.0767, -0.0792511, 25.1895, 12.663, 0.920749, 16.4239, 14.913, 0.670749, 25.4239, 14.413, 0.920749, 17.9239, 14.2701, 0.920749, 22.8525, 14.7463, 0.920749, 22.9239, 1.66296, -0.0792511, 27.1739, 3.16296, -0.0792511, 28.6739, 3.16296, -0.0792511, 30.1739, 14.913, -0.0792511, 30.1739, 10.9963, -0.0792511, 26.5072, 2.66296, -0.0792511, 15.2989, 11.4082, 0.920749, 20.6906, 6.89827, -0.0792511, 22.1846, -17.087, 0.920749, 17.9239, -18.337, 0.920749, 24.9239, -15.837, 0.920749, 25.4239, -18.337, 0.920749, 33.1739, -15.837, 0.920749, 33.1739, 15.913, 0.920749, 25.1739, 15.913, 0.920749, 26.9239, 18.663, 0.920749, 26.6739, 18.663, 0.920749, 24.9239, 17.163, 0.920749, 17.9239, 27.413, 3.92075, 24.4239, 31.163, 4.17075, 24.1739, 40.663, 4.17075, 36.6739, 40.663, 4.17075, 24.1739, 35.913, 3.92075, 24.6739, 35.913, 3.92075, 36.1739, 27.413, 3.92075, 36.4239, 31.163, 4.17075, 36.6739, 27.413, 3.92075, 39.9239, 30.913, 4.17075, 39.9239, -33.337, 4.17075, 36.6739, -33.337, 3.92075, 36.4239, -35.587, 3.92075, 36.1739, -40.587, 4.17075, 36.6739, -35.587, 3.92075, 24.6739, -40.587, 4.17075, 24.1739, -26.337, 0.920749, 35.4239, -26.087, 0.920749, 35.9239, -21.087, 0.920749, 35.4239, -26.337, 0.920749, 25.4239, -34.587, 0.920749, 25.4239, -34.587, 0.920749, 35.4239, 21.163, 0.920749, 35.4239, 26.413, 0.920749, 35.9239, 26.663, 0.920749, 35.4239, 26.663, 0.920749, 25.4239, 34.913, 0.920749, 35.4239, 34.913, 0.920749, 25.4239, -20.087, 2.92075, 25.6739, -20.087, 2.92075, 34.9239, -19.337, 2.92075, 34.9239, -19.337, 2.92075, 25.6739, 19.663, 2.92075, 25.6739, 19.663, 2.92075, 34.9239, 20.163, 2.92075, 34.9239, 20.163, 2.92075, 25.6739, 15.913, 0.920749, 35.4239, 15.163, 0.670749, 35.4239, 15.163, 0.920749, 42.9239, 17.663, 0.920749, 43.1739, 19.163, 0.920749, 35.9239, 18.663, 0.920749, 35.6739, -2.08704, 3.92075, 29.4239, -2.08704, 3.92075, 31.4239, -1.08704, 3.92075, 32.4239, 2.16296, 3.92075, 29.1739, 1.16296, 3.92075, 28.1739, -0.83704, 3.92075, 28.1739, 1.16296, 3.92075, 32.4239, 2.16296, 3.92075, 31.4239, -1.83704, -0.0792511, 29.6739, -1.83704, -0.0792511, 31.1739, -0.83704, -0.0792511, 32.1739, 1.91296, -0.0792511, 29.4239, 0.91296, -0.0792511, 28.4239, -0.58704, -0.0792511, 28.4239, 0.91296, -0.0792511, 32.1739, 1.91296, -0.0792511, 31.1739, 5.16296, 0.670749, 45.4239, 12.663, 0.920749, 45.4239, 12.663, 0.920749, 44.1739, 13.913, 0.920749, 42.9239, 1.66296, -0.0792511, 33.4239, 0.16296, -0.0792511, 33.4239, 0.16296, -0.0792511, 45.1739, 3.99629, -0.0792511, 41.4239, 2.66296, -0.0792511, 45.2989, 3.16296, -0.0792511, 31.9239, 15.038, -0.0792511, 32.7989, 5.39336, -0.0792511, 40.1615, 11.4231, -0.0792511, 34.1698, 11.4334, 0.920749, 40.1554, -12.337, 0.920749, 44.4239, -12.337, 0.920749, 45.4239, -4.83704, 0.670749, 45.4239, -14.837, 0.420749, 34.9239, -14.337, 0.920749, 42.9239, -14.1228, 0.920749, 37.6382, -14.7537, 0.920749, 36.2572, -3.08704, -0.0792511, 31.9239, -12.2259, -0.0792511, 34.2572, -14.837, -0.0792511, 33.7989, -1.58704, -0.0792511, 33.4239, -2.33704, -0.0792511, 45.2989, -11.0667, 0.920749, 40.1956, -8.07187, -0.0792511, 37.1527, -15.837, 0.920749, 35.1739, -18.337, 0.920749, 35.6739, -17.087, 0.920749, 42.9239, -19.087, 0.920749, 35.9239, -18.587, 0.920749, 44.6739, -19.087, 0.920749, 49.6739, -17.837, 0.920749, 48.1739, -18.587, 0.920749, 47.4239, -22.587, 0.920749, 46.4239, -23.337, 0.920749, 43.9239, -20.837, 0.920749, 35.9239, -26.087, 0.920749, 41.4239, 18.663, 0.920749, 47.4239, 17.913, 0.920749, 48.1739, 19.413, 0.920749, 49.4239, 22.913, 0.920749, 46.1739, 23.413, 0.920749, 44.1739, 18.663, 0.920749, 44.1739, 20.913, 0.920749, 35.9239, 26.413, 0.920749, 41.4239, -30.837, 4.17075, 36.9239, -27.087, 3.92075, 36.4239, -27.587, 4.17075, 46.4239, -23.587, 3.92075, 46.9239, -24.337, 3.92075, 44.4239, -27.087, 3.92075, 41.9239, -30.837, 4.17075, 43.4239, -9.33704, 4.17075, 61.1739, -9.33704, 3.92075, 57.6739, -11.337, 3.92075, 57.6739, -13.087, 4.17075, 61.1739, -16.337, 3.92075, 54.1739, -26.837, 4.17075, 49.1739, -18.837, 4.17075, 57.1739, -16.087, 4.17075, 57.9239, -14.087, 3.92075, 54.6739, 11.663, 3.92075, 57.6739, 9.66296, 3.92075, 57.6739, 9.66296, 4.17075, 61.1739, 13.413, 4.17075, 61.1739, 24.413, 3.92075, 44.6739, 23.913, 3.92075, 46.6739, 27.663, 4.17075, 46.6739, 30.913, 4.17075, 43.6739, 27.413, 3.92075, 41.9239, 18.913, 4.17075, 57.1739, 26.913, 4.17075, 49.1739, 16.413, 3.92075, 54.1739, 16.413, 4.17075, 57.9239, 14.413, 3.92075, 54.6739, -17.587, 3.92075, 44.9239, -17.587, 3.92075, 46.9239, -16.587, 3.92075, 47.9239, -14.337, 3.92075, 47.9239, -13.337, 3.92075, 46.9239, -13.337, 3.92075, 44.9239, -14.337, 3.92075, 43.9239, -16.587, 3.92075, 43.9239, 13.663, 3.92075, 47.1739, 14.413, 3.92075, 47.9239, 16.663, 3.92075, 47.9239, 17.663, 3.92075, 46.9239, 17.663, 3.92075, 44.6739, 16.913, 3.92075, 43.9239, 14.413, 3.92075, 43.9239, 13.663, 3.92075, 44.6739, -17.337, 0.920749, 45.1739, -17.337, 0.920749, 46.6739, -16.337, 0.920749, 47.6739, -14.587, 0.920749, 47.6739, -13.587, 0.920749, 46.6739, -13.587, 0.920749, 45.1739, -14.587, 0.920749, 44.1739, -16.337, 0.920749, 44.1739, 13.913, 0.920749, 46.9239, 14.663, 0.920749, 47.6739, 16.413, 0.920749, 47.6739, 17.413, 0.920749, 46.6739, 17.413, 0.920749, 44.9239, 16.663, 0.920749, 44.1739, 14.663, 0.920749, 44.1739, 13.913, 0.920749, 44.9239, -3.33704, 0.920749, 48.9239, -3.08704, 0.920749, 46.1739, -4.83704, 0.920749, 46.1739, -5.33704, 0.920749, 48.9239, -12.337, 0.920749, 47.4239, -13.087, 0.920749, 48.1739, -5.58704, 0.920749, 49.4239, 5.16296, 0.920749, 46.1739, 5.41296, 0.920749, 48.9239, 5.66296, 0.920749, 49.4239, 12.913, 0.920749, 47.9239, 17.163, 0.920749, 48.9239, 15.913, 0.920749, 53.1739, 13.913, 0.920749, 48.9239, 13.913, 0.920749, 53.6739, 5.66296, 0.920749, 51.1739, 5.16296, 0.920749, 51.4239, 5.66296, 0.920749, 56.6739, 11.163, 0.920749, 56.6739, -17.087, 0.920749, 48.9239, -15.837, 0.920749, 53.1739, -13.587, 0.920749, 53.6739, -13.837, 0.920749, 48.9239, -5.33704, 0.920749, 56.6739, -5.08704, 0.920749, 51.4239, -5.58704, 0.920749, 51.1739, -10.837, 0.920749, 56.6739, -4.58704, 2.92075, 49.9239, -4.58704, 2.92075, 50.4239, 4.66296, 2.92075, 50.4239, 4.66296, 2.92075, 49.9239, 5.16296, 0.920749, 56.9239, -4.83704, 0.920749, 56.9239, -4.83704, 0.920749, 65.1739, 5.16296, 0.920749, 65.1739, 6.16296, 3.92075, 57.6739, 6.41296, 4.17075, 61.4239, -6.08704, 4.17075, 70.9239, 6.41296, 4.17075, 70.9239, 5.91296, 3.92075, 66.1739, -5.58704, 3.92075, 66.1739, -5.83704, 3.92075, 57.6739, -6.08704, 4.17075, 61.4239)
 polygons = [PackedInt32Array(1, 0, 2), PackedInt32Array(2, 0, 3), PackedInt32Array(5, 4, 6), PackedInt32Array(6, 4, 7), PackedInt32Array(2, 3, 4), PackedInt32Array(4, 3, 7), PackedInt32Array(12, 11, 13), PackedInt32Array(13, 11, 10), PackedInt32Array(13, 10, 9), PackedInt32Array(13, 9, 8), PackedInt32Array(11, 15, 10), PackedInt32Array(10, 15, 14), PackedInt32Array(0, 1, 16), PackedInt32Array(16, 1, 17), PackedInt32Array(19, 18, 20), PackedInt32Array(20, 18, 21), PackedInt32Array(21, 18, 22), PackedInt32Array(22, 18, 23), PackedInt32Array(29, 28, 24), PackedInt32Array(24, 28, 27), PackedInt32Array(24, 27, 25), PackedInt32Array(25, 27, 26), PackedInt32Array(27, 30, 26), PackedInt32Array(26, 30, 22), PackedInt32Array(26, 22, 23), PackedInt32Array(28, 29, 31), PackedInt32Array(31, 29, 32), PackedInt32Array(32, 29, 33), PackedInt32Array(17, 32, 16), PackedInt32Array(16, 32, 33), PackedInt32Array(6, 34, 5), PackedInt32Array(5, 34, 35), PackedInt32Array(38, 37, 39), PackedInt32Array(39, 37, 36), PackedInt32Array(39, 36, 40), PackedInt32Array(42, 41, 43), PackedInt32Array(43, 41, 44), PackedInt32Array(48, 47, 45), PackedInt32Array(45, 47, 38), PackedInt32Array(45, 38, 46), PackedInt32Array(46, 38, 39), PackedInt32Array(47, 48, 49), PackedInt32Array(49, 48, 41), PackedInt32Array(41, 48, 44), PackedInt32Array(35, 34, 36), PackedInt32Array(36, 34, 40), PackedInt32Array(52, 51, 50), PackedInt32Array(50, 53, 52), PackedInt32Array(52, 53, 54), PackedInt32Array(54, 53, 55), PackedInt32Array(13, 56, 12), PackedInt32Array(12, 56, 57), PackedInt32Array(54, 55, 58), PackedInt32Array(58, 55, 57), PackedInt32Array(58, 57, 56), PackedInt32Array(58, 56, 59), PackedInt32Array(62, 61, 60), PackedInt32Array(60, 65, 62), PackedInt32Array(62, 65, 63), PackedInt32Array(63, 65, 64), PackedInt32Array(8, 9, 66), PackedInt32Array(66, 9, 67), PackedInt32Array(65, 68, 64), PackedInt32Array(64, 68, 67), PackedInt32Array(67, 68, 66), PackedInt32Array(66, 68, 69), PackedInt32Array(73, 72, 70), PackedInt32Array(70, 72, 71), PackedInt32Array(50, 51, 74), PackedInt32Array(74, 77, 50), PackedInt32Array(50, 77, 75), PackedInt32Array(75, 77, 76), PackedInt32Array(79, 78, 80), PackedInt32Array(80, 78, 81), PackedInt32Array(77, 82, 76), PackedInt32Array(76, 82, 81), PackedInt32Array(81, 82, 80), PackedInt32Array(80, 82, 83), PackedInt32Array(84, 61, 62), PackedInt32Array(84, 62, 86), PackedInt32Array(86, 62, 85), PackedInt32Array(86, 85, 87), PackedInt32Array(89, 88, 90), PackedInt32Array(90, 88, 91), PackedInt32Array(86, 87, 92), PackedInt32Array(92, 87, 91), PackedInt32Array(92, 91, 88), PackedInt32Array(92, 88, 93), PackedInt32Array(95, 94, 96), PackedInt32Array(96, 94, 97), PackedInt32Array(98, 58, 59), PackedInt32Array(100, 101, 94), PackedInt32Array(94, 101, 97), PackedInt32Array(97, 101, 59), PackedInt32Array(59, 101, 98), PackedInt32Array(98, 101, 99), PackedInt32Array(105, 69, 102), PackedInt32Array(102, 69, 103), PackedInt32Array(103, 69, 104), PackedInt32Array(104, 69, 68), PackedInt32Array(95, 96, 102), PackedInt32Array(102, 96, 105), PackedInt32Array(111, 110, 106), PackedInt32Array(106, 110, 109), PackedInt32Array(106, 109, 108), PackedInt32Array(106, 108, 107), PackedInt32Array(108, 112, 107), PackedInt32Array(107, 113, 106), PackedInt32Array(116, 115, 114), PackedInt32Array(119, 118, 117), PackedInt32Array(121, 119, 114), PackedInt32Array(114, 119, 117), PackedInt32Array(114, 117, 120), PackedInt32Array(114, 120, 116), PackedInt32Array(127, 126, 122), PackedInt32Array(122, 126, 125), PackedInt32Array(122, 125, 124), PackedInt32Array(122, 124, 123), PackedInt32Array(124, 128, 123), PackedInt32Array(123, 129, 122), PackedInt32Array(132, 131, 130), PackedInt32Array(135, 134, 133), PackedInt32Array(137, 135, 130), PackedInt32Array(130, 135, 133), PackedInt32Array(130, 133, 136), PackedInt32Array(130, 136, 132), PackedInt32Array(100, 139, 101), PackedInt32Array(101, 139, 99), PackedInt32Array(99, 139, 138), PackedInt32Array(142, 144, 143), PackedInt32Array(143, 144, 141), PackedInt32Array(143, 141, 140), PackedInt32Array(100, 145, 139), PackedInt32Array(139, 145, 138), PackedInt32Array(138, 145, 140), PackedInt32Array(148, 147, 146), PackedInt32Array(100, 151, 152), PackedInt32Array(152, 151, 149), PackedInt32Array(149, 151, 150), PackedInt32Array(145, 153, 140), PackedInt32Array(140, 153, 143), PackedInt32Array(143, 154, 142), PackedInt32Array(142, 154, 146), PackedInt32Array(146, 154, 148), PackedInt32Array(148, 154, 149), PackedInt32Array(149, 154, 152), PackedInt32Array(152, 145, 100), PackedInt32Array(145, 152, 153), PackedInt32Array(153, 154, 143), PackedInt32Array(154, 153, 152), PackedInt32Array(103, 104, 155), PackedInt32Array(156, 158, 159), PackedInt32Array(159, 158, 157), PackedInt32Array(157, 158, 155), PackedInt32Array(160, 150, 151), PackedInt32Array(156, 163, 164), PackedInt32Array(164, 163, 161), PackedInt32Array(161, 163, 162), PackedInt32Array(158, 166, 155), PackedInt32Array(155, 166, 103), PackedInt32Array(103, 167, 165), PackedInt32Array(165, 167, 151), PackedInt32Array(151, 167, 160), PackedInt32Array(160, 167, 161), PackedInt32Array(161, 167, 164), PackedInt32Array(164, 158, 156), PackedInt32Array(158, 164, 166), PackedInt32Array(166, 167, 103), PackedInt32Array(167, 166, 164), PackedInt32Array(83, 82, 168), PackedInt32Array(142, 170, 144), PackedInt32Array(144, 170, 169), PackedInt32Array(144, 169, 83), PackedInt32Array(144, 83, 168), PackedInt32Array(144, 168, 141), PackedInt32Array(172, 171, 170), PackedInt32Array(170, 171, 169), PackedInt32Array(176, 175, 173), PackedInt32Array(173, 175, 174), PackedInt32Array(156, 159, 173), PackedInt32Array(173, 159, 157), PackedInt32Array(173, 157, 177), PackedInt32Array(176, 173, 93), PackedInt32Array(93, 173, 177), PackedInt32Array(93, 177, 92), PackedInt32Array(43, 179, 42), PackedInt32Array(42, 179, 178), PackedInt32Array(183, 182, 180), PackedInt32Array(180, 182, 181), PackedInt32Array(178, 179, 182), PackedInt32Array(182, 179, 181), PackedInt32Array(184, 183, 185), PackedInt32Array(185, 183, 180), PackedInt32Array(187, 186, 185), PackedInt32Array(185, 186, 184), PackedInt32Array(189, 188, 190), PackedInt32Array(190, 188, 191), PackedInt32Array(20, 192, 19), PackedInt32Array(19, 192, 193), PackedInt32Array(190, 191, 192), PackedInt32Array(192, 191, 193), PackedInt32Array(78, 79, 197), PackedInt32Array(197, 79, 194), PackedInt32Array(194, 79, 195), PackedInt32Array(195, 79, 196), PackedInt32Array(194, 199, 197), PackedInt32Array(197, 199, 198), PackedInt32Array(90, 203, 89), PackedInt32Array(89, 203, 202), PackedInt32Array(89, 202, 201), PackedInt32Array(89, 201, 200), PackedInt32Array(203, 205, 202), PackedInt32Array(202, 205, 204), PackedInt32Array(209, 208, 206), PackedInt32Array(206, 208, 207), PackedInt32Array(213, 212, 210), PackedInt32Array(210, 212, 211), PackedInt32Array(219, 218, 214), PackedInt32Array(214, 218, 215), PackedInt32Array(215, 218, 217), PackedInt32Array(215, 217, 216), PackedInt32Array(174, 175, 214), PackedInt32Array(214, 175, 219), PackedInt32Array(222, 221, 220), PackedInt32Array(225, 224, 223), PackedInt32Array(226, 222, 227), PackedInt32Array(227, 222, 223), PackedInt32Array(223, 222, 220), PackedInt32Array(223, 220, 225), PackedInt32Array(230, 229, 228), PackedInt32Array(233, 232, 231), PackedInt32Array(234, 230, 235), PackedInt32Array(235, 230, 231), PackedInt32Array(231, 230, 228), PackedInt32Array(231, 228, 233), PackedInt32Array(238, 237, 236), PackedInt32Array(215, 216, 239), PackedInt32Array(239, 238, 236), PackedInt32Array(236, 244, 243), PackedInt32Array(243, 244, 242), PackedInt32Array(243, 242, 240), PackedInt32Array(240, 242, 241), PackedInt32Array(245, 162, 163), PackedInt32Array(236, 249, 239), PackedInt32Array(239, 249, 215), PackedInt32Array(215, 248, 246), PackedInt32Array(246, 248, 163), PackedInt32Array(163, 248, 245), PackedInt32Array(245, 247, 240), PackedInt32Array(240, 247, 243), PackedInt32Array(243, 247, 236), PackedInt32Array(236, 247, 249), PackedInt32Array(249, 248, 215), PackedInt32Array(248, 247, 245), PackedInt32Array(247, 248, 249), PackedInt32Array(252, 251, 250), PackedInt32Array(253, 255, 256), PackedInt32Array(256, 255, 254), PackedInt32Array(254, 255, 250), PackedInt32Array(253, 259, 258), PackedInt32Array(258, 259, 146), PackedInt32Array(258, 146, 257), PackedInt32Array(257, 146, 147), PackedInt32Array(260, 241, 242), PackedInt32Array(255, 262, 250), PackedInt32Array(250, 262, 252), PackedInt32Array(252, 263, 261), PackedInt32Array(261, 260, 242), PackedInt32Array(260, 263, 257), PackedInt32Array(257, 263, 258), PackedInt32Array(258, 255, 253), PackedInt32Array(255, 263, 262), PackedInt32Array(262, 263, 252), PackedInt32Array(263, 260, 261), PackedInt32Array(263, 255, 258), PackedInt32Array(172, 264, 171), PackedInt32Array(171, 264, 265), PackedInt32Array(253, 256, 264), PackedInt32Array(264, 256, 254), PackedInt32Array(264, 254, 266), PackedInt32Array(265, 264, 267), PackedInt32Array(267, 264, 266), PackedInt32Array(267, 266, 268), PackedInt32Array(271, 270, 269), PackedInt32Array(271, 269, 268), PackedInt32Array(268, 269, 272), PackedInt32Array(268, 272, 273), PackedInt32Array(196, 274, 195), PackedInt32Array(195, 274, 275), PackedInt32Array(273, 275, 268), PackedInt32Array(268, 275, 274), PackedInt32Array(268, 274, 267), PackedInt32Array(278, 277, 276), PackedInt32Array(276, 281, 278), PackedInt32Array(278, 281, 279), PackedInt32Array(279, 281, 280), PackedInt32Array(200, 201, 282), PackedInt32Array(282, 201, 283), PackedInt32Array(281, 217, 280), PackedInt32Array(280, 217, 283), PackedInt32Array(283, 217, 282), PackedInt32Array(282, 217, 218), PackedInt32Array(188, 189, 284), PackedInt32Array(284, 189, 285), PackedInt32Array(287, 286, 288), PackedInt32Array(288, 286, 289), PackedInt32Array(289, 286, 290), PackedInt32Array(292, 291, 293), PackedInt32Array(293, 291, 294), PackedInt32Array(298, 297, 295), PackedInt32Array(295, 297, 287), PackedInt32Array(287, 297, 296), PackedInt32Array(287, 296, 286), PackedInt32Array(295, 299, 298), PackedInt32Array(298, 299, 293), PackedInt32Array(298, 293, 294), PackedInt32Array(285, 289, 284), PackedInt32Array(284, 289, 290), PackedInt32Array(301, 300, 302), PackedInt32Array(302, 300, 303), PackedInt32Array(305, 304, 306), PackedInt32Array(306, 304, 308), PackedInt32Array(306, 308, 307), PackedInt32Array(186, 187, 308), PackedInt32Array(308, 187, 307), PackedInt32Array(312, 311, 309), PackedInt32Array(309, 311, 305), PackedInt32Array(309, 305, 310), PackedInt32Array(310, 305, 306), PackedInt32Array(311, 312, 313), PackedInt32Array(313, 312, 300), PackedInt32Array(300, 312, 303), PackedInt32Array(316, 315, 314), PackedInt32Array(319, 318, 317), PackedInt32Array(320, 319, 321), PackedInt32Array(321, 319, 314), PackedInt32Array(314, 319, 317), PackedInt32Array(314, 317, 316), PackedInt32Array(324, 323, 322), PackedInt32Array(327, 326, 325), PackedInt32Array(328, 327, 329), PackedInt32Array(329, 327, 322), PackedInt32Array(322, 327, 325), PackedInt32Array(322, 325, 324), PackedInt32Array(332, 331, 330), PackedInt32Array(335, 334, 333), PackedInt32Array(336, 335, 337), PackedInt32Array(337, 335, 330), PackedInt32Array(330, 335, 333), PackedInt32Array(330, 333, 332), PackedInt32Array(338, 340, 339), PackedInt32Array(343, 342, 341), PackedInt32Array(344, 343, 345), PackedInt32Array(345, 343, 338), PackedInt32Array(338, 343, 341), PackedInt32Array(338, 341, 340), PackedInt32Array(347, 346, 348), PackedInt32Array(348, 346, 349), PackedInt32Array(352, 351, 350), PackedInt32Array(349, 352, 348), PackedInt32Array(348, 352, 252), PackedInt32Array(252, 352, 350), PackedInt32Array(252, 350, 251), PackedInt32Array(354, 353, 355), PackedInt32Array(355, 353, 236), PackedInt32Array(355, 236, 356), PackedInt32Array(356, 236, 237), PackedInt32Array(353, 354, 347), PackedInt32Array(347, 354, 346), PackedInt32Array(357, 277, 278), PackedInt32Array(357, 278, 359), PackedInt32Array(359, 278, 358), PackedInt32Array(359, 358, 360), PackedInt32Array(362, 361, 363), PackedInt32Array(363, 361, 364), PackedInt32Array(359, 360, 356), PackedInt32Array(356, 360, 364), PackedInt32Array(356, 364, 361), PackedInt32Array(356, 361, 355), PackedInt32Array(269, 270, 365), PackedInt32Array(365, 368, 269), PackedInt32Array(269, 368, 366), PackedInt32Array(366, 368, 367), PackedInt32Array(370, 369, 371), PackedInt32Array(371, 369, 372), PackedInt32Array(368, 351, 367), PackedInt32Array(367, 351, 372), PackedInt32Array(372, 351, 371), PackedInt32Array(371, 351, 352), PackedInt32Array(376, 375, 373), PackedInt32Array(373, 375, 374), PackedInt32Array(369, 370, 378), PackedInt32Array(378, 370, 377), PackedInt32Array(377, 370, 363), PackedInt32Array(363, 370, 362), PackedInt32Array(377, 380, 378), PackedInt32Array(378, 380, 379), PackedInt32Array(302, 382, 301), PackedInt32Array(301, 382, 381), PackedInt32Array(386, 385, 383), PackedInt32Array(383, 385, 384), PackedInt32Array(381, 382, 385), PackedInt32Array(385, 382, 384), PackedInt32Array(387, 386, 388), PackedInt32Array(388, 386, 383), PackedInt32Array(291, 292, 388), PackedInt32Array(388, 292, 387)]
 
-[node name="GameBoard" type="Node3D" node_paths=PackedStringArray("HUD_mainMenu", "HUD_credits", "HUD_options", "HUD_gameOver", "HUD_player", "MUSIC", "LIGHT", "CANVAS_HUD", "CANVAS_GAMECAMERA", "gameCamera", "followerCamera", "backupCamPointer", "inspectorHUD", "stashHUD", "abilityHUD", "deathTimer")]
+[node name="GameBoard" type="Node3D" node_paths=PackedStringArray("HUD_mainMenu", "HUD_credits", "HUD_options", "HUD_gameOver", "HUD_player", "MUSIC", "LIGHT", "CANVAS_HUD", "CANVAS_GAMECAMERA", "CANVAS_SHOP", "HUD_shopPanel", "HUD_shopManager", "gameCamera", "followerCamera", "backupCamPointer", "inspectorHUD", "stashHUD", "abilityHUD", "deathTimer")]
 top_level = true
 script = ExtResource("1_mlcvp")
 playerSpawnPosition = Vector3(0, 0.605191, 0)
@@ -148,6 +179,9 @@ MUSIC = NodePath("BGM2")
 LIGHT = NodePath("DirectionalLight3D")
 CANVAS_HUD = NodePath("CameraCanvas")
 CANVAS_GAMECAMERA = NodePath("HUDCanvas")
+CANVAS_SHOP = NodePath("ShopCanvas_SHOP")
+HUD_shopPanel = NodePath("HUDCanvas/HUD Viewport/SubViewport/HUD_shopTabs")
+HUD_shopManager = NodePath("ShopCanvas_SHOP/SHOP")
 gameCamera = NodePath("CameraPointer/GameCamera")
 followerCamera = NodePath("CameraCanvas/CameraViewport/SubViewport/FollowerCam")
 backupCamPointer = NodePath("BackupCamPointer")
@@ -210,8 +244,221 @@ fov = 90.0
 script = ExtResource("2_iqmcf")
 camToFollow = NodePath("../../../../CameraPointer/GameCamera")
 
+[node name="ShopCanvas_SHOP" type="CanvasLayer" parent="."]
+layer = 2
+
+[node name="SHOP" type="NinePatchRect" parent="ShopCanvas_SHOP" node_paths=PackedStringArray("spr_REC", "camScreenContents", "camScreenFlash", "camScreenBlack", "stationConstruction", "HUD_stations", "btn_heal", "lbl_healAmount", "lbl_healPrice")]
+z_index = -1
+anchors_preset = -1
+anchor_left = 0.158333
+anchor_top = 0.0444444
+anchor_right = 0.841667
+anchor_bottom = 0.955556
+texture = ExtResource("11_6fdki")
+region_rect = Rect2(1, 1, 46, 47)
+patch_margin_left = 12
+patch_margin_top = 12
+patch_margin_right = 12
+patch_margin_bottom = 12
+script = ExtResource("8_ndayd")
+spr_REC = NodePath("CamScreen/CamScreenContents/REC")
+camScreenContents = NodePath("CamScreen/CamScreenContents")
+camScreenFlash = NodePath("CamScreen/Flash")
+camScreenBlack = NodePath("CamScreen/Black")
+stationConstruction = NodePath("../../HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction")
+HUD_stations = NodePath("../../HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations")
+btn_heal = NodePath("HealButton")
+lbl_healAmount = NodePath("HealButton/TextHolder/HEAL")
+lbl_healPrice = NodePath("HealButton/TextHolder/Price")
+metadata/_edit_use_anchors_ = true
+metadata/_tab_index = 0
+
+[node name="CamScreen" type="NinePatchRect" parent="ShopCanvas_SHOP/SHOP"]
+texture_filter = 1
+layout_mode = 0
+offset_left = 23.0006
+offset_top = 140.0
+offset_right = 265.001
+offset_bottom = 384.0
+texture = ExtResource("19_vehjn")
+patch_margin_left = 1
+patch_margin_top = 3
+patch_margin_right = 1
+patch_margin_bottom = 3
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1
+
+[node name="Black" type="ColorRect" parent="ShopCanvas_SHOP/SHOP/CamScreen"]
+layout_mode = 0
+offset_left = 1.0
+offset_top = 3.0
+offset_right = 241.0
+offset_bottom = 243.0
+color = Color(0.141176, 0.054902, 0.054902, 1)
+
+[node name="CamScreenContents" type="Control" parent="ShopCanvas_SHOP/SHOP/CamScreen"]
+anchors_preset = 0
+offset_left = 1.0
+offset_top = 3.0
+offset_right = 241.0
+offset_bottom = 243.0
+pivot_offset = Vector2(124, 114)
+
+[node name="CameraViewport" type="SubViewportContainer" parent="ShopCanvas_SHOP/SHOP/CamScreen/CamScreenContents"]
+modulate = Color(1, 1, 1, 0.65098)
+z_index = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_default_cursor_shape = 3
+stretch = true
+mouse_target = true
+
+[node name="SubViewport" type="SubViewport" parent="ShopCanvas_SHOP/SHOP/CamScreen/CamScreenContents/CameraViewport"]
+handle_input_locally = false
+size = Vector2i(240, 240)
+render_target_update_mode = 4
+
+[node name="FollowerCam" type="Camera3D" parent="ShopCanvas_SHOP/SHOP/CamScreen/CamScreenContents/CameraViewport/SubViewport" node_paths=PackedStringArray("camToFollow")]
+fov = 90.0
+script = ExtResource("2_iqmcf")
+camToFollow = NodePath("../../../../../../../CameraPointer/GameCamera")
+extraOffset = Vector2(0, 1.26)
+
+[node name="REC" type="Sprite2D" parent="ShopCanvas_SHOP/SHOP/CamScreen/CamScreenContents"]
+z_index = 1
+position = Vector2(16, 16)
+texture = ExtResource("10_ngcqk")
+
+[node name="Label" type="Label" parent="ShopCanvas_SHOP/SHOP/CamScreen/CamScreenContents/REC"]
+offset_left = 11.0
+offset_top = -7.0
+offset_right = 65.0
+offset_bottom = 16.0
+theme = ExtResource("20_k23rv")
+theme_type_variation = &"HeaderLarge"
+theme_override_colors/font_color = Color(0.807843, 0.12549, 0.129412, 1)
+theme_override_constants/outline_size = 0
+theme_override_constants/shadow_outline_size = 0
+theme_override_font_sizes/font_size = 16
+text = "REC"
+
+[node name="RecBorderLeft" type="NinePatchRect" parent="ShopCanvas_SHOP/SHOP/CamScreen/CamScreenContents"]
+layout_mode = 2
+offset_left = 2.0
+offset_top = 2.0
+offset_right = 40.0
+offset_bottom = 238.0
+texture = ExtResource("12_ngcqk")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="RecBorderRight" type="NinePatchRect" parent="ShopCanvas_SHOP/SHOP/CamScreen/CamScreenContents"]
+layout_mode = 0
+offset_left = 238.0
+offset_top = 2.0
+offset_right = 276.0
+offset_bottom = 238.0
+scale = Vector2(-1, 1)
+texture = ExtResource("12_ngcqk")
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+
+[node name="Flash" type="TextureRect" parent="ShopCanvas_SHOP/SHOP/CamScreen"]
+layout_mode = 0
+offset_left = 1.0
+offset_top = 3.0
+offset_right = 241.0
+offset_bottom = 243.0
+texture = SubResource("GradientTexture2D_f85oj")
+
+[node name="HealButton" type="TextureButton" parent="ShopCanvas_SHOP/SHOP"]
+layout_mode = 0
+offset_left = 91.0006
+offset_top = 933.0
+offset_right = 229.001
+offset_bottom = 969.0
+theme = ExtResource("9_mlcvp")
+texture_normal = ExtResource("25_mcp8b")
+texture_pressed = ExtResource("26_kbpb2")
+script = ExtResource("24_gqxs8")
+
+[node name="TextHolder" type="Control" parent="ShopCanvas_SHOP/SHOP/HealButton"]
+anchors_preset = 0
+offset_right = 138.0
+offset_bottom = 32.0
+mouse_filter = 2
+
+[node name="Price" type="Label" parent="ShopCanvas_SHOP/SHOP/HealButton/TextHolder"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = 29.0
+offset_top = -20.0
+offset_right = 66.0
+offset_bottom = 8.0
+theme_override_colors/font_color = Color(0.94902, 0.92549, 0.419608, 1)
+theme_override_colors/font_outline_color = Color(0.141176, 0.054902, 0.054902, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 20
+text = "000"
+horizontal_alignment = 2
+
+[node name="BUY" type="Label" parent="ShopCanvas_SHOP/SHOP/HealButton/TextHolder"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = 38.0
+offset_top = -30.0
+offset_right = 58.0
+offset_bottom = -16.0
+theme_override_colors/font_color = Color(0.333333, 0.258824, 0.145098, 1)
+theme_override_colors/font_outline_color = Color(0.172549, 0.141176, 0.0901961, 1)
+theme_override_constants/line_spacing = 0
+theme_override_constants/outline_size = -3
+theme_override_font_sizes/font_size = 10
+text = "BUY"
+horizontal_alignment = 2
+
+[node name="HEAL" type="Label" parent="ShopCanvas_SHOP/SHOP/HealButton/TextHolder"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -59.0
+offset_top = -30.0
+offset_right = 16.0
+offset_bottom = -1.45833
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0.172549, 0.141176, 0.0901961, 1)
+theme_override_colors/font_outline_color = Color(0.588235, 0.0901961, 0.364706, 1)
+theme_override_constants/line_spacing = 2
+theme_override_constants/shadow_offset_x = 0
+theme_override_constants/shadow_offset_y = 1
+theme_override_constants/outline_size = 3
+theme_override_constants/shadow_outline_size = 4
+theme_override_font_sizes/font_size = 13
+text = "HEAL
+1 HP"
+horizontal_alignment = 1
+
 [node name="HUDCanvas" type="CanvasLayer" parent="."]
-layer = 3
+layer = 4
 
 [node name="HUD Viewport" type="SubViewportContainer" parent="HUDCanvas"]
 texture_filter = 1
@@ -221,12 +468,77 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 stretch = true
+metadata/_edit_lock_ = true
 
 [node name="SubViewport" type="SubViewport" parent="HUDCanvas/HUD Viewport"]
 transparent_bg = true
 handle_input_locally = false
 size = Vector2i(1920, 1080)
 render_target_update_mode = 4
+
+[node name="HUD_shopTabs" type="NinePatchRect" parent="HUDCanvas/HUD Viewport/SubViewport"]
+anchors_preset = -1
+anchor_right = 1.9875
+anchor_bottom = 1.08981
+offset_right = -1896.0
+offset_bottom = -1056.0
+texture = ExtResource("11_6fdki")
+region_rect = Rect2(1, 1, 46, 47)
+patch_margin_left = 12
+patch_margin_top = 12
+patch_margin_right = 12
+patch_margin_bottom = 12
+script = ExtResource("58_4hhnj")
+metadata/_edit_use_anchors_ = true
+metadata/_tab_index = 0
+
+[node name="Shops" type="TabContainer" parent="HUDCanvas/HUD Viewport/SubViewport/HUD_shopTabs"]
+layout_mode = 1
+anchors_preset = -1
+offset_left = 304.0
+offset_top = 54.0
+offset_right = 1616.0
+offset_bottom = 117.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+current_tab = 0
+metadata/_edit_use_anchors_ = true
+
+[node name="SHOP" type="NinePatchRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD_shopTabs/Shops"]
+z_index = -1
+layout_mode = 2
+region_rect = Rect2(1, 1, 46, 47)
+patch_margin_left = 12
+patch_margin_top = 12
+patch_margin_right = 12
+patch_margin_bottom = 12
+metadata/_edit_use_anchors_ = true
+metadata/_tab_index = 0
+
+[node name="BUILD" type="NinePatchRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD_shopTabs/Shops"]
+visible = false
+z_index = -1
+layout_mode = 2
+region_rect = Rect2(1, 1, 46, 47)
+patch_margin_left = 12
+patch_margin_top = 12
+patch_margin_right = 12
+patch_margin_bottom = 12
+metadata/_edit_use_anchors_ = true
+metadata/_tab_index = 1
+
+[node name="TEST" type="NinePatchRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD_shopTabs/Shops"]
+visible = false
+z_index = -1
+layout_mode = 2
+region_rect = Rect2(1, 1, 46, 47)
+patch_margin_left = 12
+patch_margin_top = 12
+patch_margin_right = 12
+patch_margin_bottom = 12
+metadata/_edit_use_anchors_ = true
+metadata/_tab_index = 2
 
 [node name="HUD" type="Control" parent="HUDCanvas/HUD Viewport/SubViewport" node_paths=PackedStringArray("MainMenuLogo", "gameHud")]
 unique_name_in_owner = true
@@ -242,12 +554,12 @@ grow_vertical = 2
 pivot_offset = Vector2(576, 314)
 size_flags_horizontal = 3
 size_flags_vertical = 3
-mouse_filter = 1
 theme = ExtResource("9_mlcvp")
 script = ExtResource("18_wbopo")
 MainMenuLogo = NodePath("MainMenu/LogoSmall")
 gameHud = NodePath("GameHud")
 metadata/_edit_use_anchors_ = true
+metadata/_edit_lock_ = true
 
 [node name="In-Dev Overlay" type="Label" parent="HUDCanvas/HUD Viewport/SubViewport/HUD"]
 visible = false
@@ -256,6 +568,440 @@ offset_right = 323.0
 offset_bottom = 105.0
 text = "in-dev overlay
 not finished"
+
+[node name="ShopStations" type="Control" parent="HUDCanvas/HUD Viewport/SubViewport/HUD"]
+anchors_preset = 0
+offset_left = -384.0
+offset_top = -216.0
+offset_right = -344.0
+offset_bottom = -176.0
+
+[node name="Shop_Construction" type="Control" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations" node_paths=PackedStringArray("manager", "shopDoor", "StallA", "StallB", "StallC")]
+clip_contents = true
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = 1000.0
+offset_top = 731.0
+offset_right = 1480.0
+offset_bottom = 968.0
+grow_horizontal = 2
+grow_vertical = 0
+script = ExtResource("13_nnnr2")
+manager = NodePath("../../../../../../ShopCanvas_SHOP/SHOP")
+shopDoor = NodePath("ShopDoor")
+StallA = NodePath("StallA")
+StallB = NodePath("StallB")
+StallC = NodePath("StallC")
+
+[node name="StallA" type="Control" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction"]
+anchors_preset = 0
+offset_left = 12.0
+offset_top = 45.0
+offset_right = 156.0
+offset_bottom = 189.0
+script = ExtResource("14_tegeg")
+
+[node name="FreezerBlinky" type="TextureRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallA"]
+layout_mode = 0
+offset_left = 76.0
+offset_top = 159.0
+offset_right = 90.0
+offset_bottom = 177.0
+texture = ExtResource("15_yktpx")
+
+[node name="DoorHolder" type="Control" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallA"]
+z_index = 7
+clip_contents = true
+anchors_preset = 0
+offset_right = 144.0
+offset_bottom = 144.0
+
+[node name="DoorFreezer" type="TextureRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallA/DoorHolder"]
+layout_mode = 0
+offset_right = 144.0
+offset_bottom = 144.0
+texture = ExtResource("16_gj2xt")
+
+[node name="DoorLeft" type="TextureRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallA/DoorHolder"]
+layout_mode = 0
+offset_right = 144.0
+offset_bottom = 144.0
+texture = ExtResource("17_3o7dt")
+
+[node name="DoorRight" type="TextureRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallA/DoorHolder"]
+layout_mode = 0
+offset_right = 144.0
+offset_bottom = 144.0
+texture = ExtResource("18_acrhl")
+
+[node name="FreezeButton" type="TextureButton" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallA"]
+layout_mode = 0
+offset_left = 97.0
+offset_top = 149.0
+offset_right = 141.0
+offset_bottom = 185.0
+toggle_mode = true
+texture_normal = ExtResource("19_l7hpm")
+texture_pressed = ExtResource("20_ew5bm")
+texture_disabled = ExtResource("21_u8j3h")
+
+[node name="BuyButton" type="TextureButton" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallA"]
+layout_mode = 0
+offset_left = 3.0
+offset_top = 149.0
+offset_right = 69.0
+offset_bottom = 185.0
+toggle_mode = true
+texture_normal = ExtResource("22_sjcy6")
+texture_pressed = ExtResource("23_ncuuh")
+script = ExtResource("24_gqxs8")
+
+[node name="TextHolder" type="Control" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallA/BuyButton"]
+anchors_preset = 0
+offset_right = 66.0
+offset_bottom = 32.0
+mouse_filter = 2
+
+[node name="Price" type="Label" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallA/BuyButton/TextHolder"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -7.0
+offset_top = -25.0
+offset_right = 30.0
+offset_bottom = 3.0
+theme_override_colors/font_color = Color(0.94902, 0.92549, 0.419608, 1)
+theme_override_colors/font_outline_color = Color(0.141176, 0.054902, 0.054902, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 20
+text = "000"
+horizontal_alignment = 2
+
+[node name="BUY" type="Label" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallA/BuyButton/TextHolder"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = 2.0
+offset_top = -32.0
+offset_right = 22.0
+offset_bottom = -18.0
+theme_override_colors/font_color = Color(0.333333, 0.258824, 0.145098, 1)
+theme_override_colors/font_outline_color = Color(0.172549, 0.141176, 0.0901961, 1)
+theme_override_constants/line_spacing = 0
+theme_override_constants/outline_size = -3
+theme_override_font_sizes/font_size = 10
+text = "BUY"
+horizontal_alignment = 2
+
+[node name="StallB" type="Control" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction"]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 168.0
+offset_top = 45.0
+offset_right = 312.0
+offset_bottom = 189.0
+script = ExtResource("14_tegeg")
+
+[node name="FreezerBlinky" type="TextureRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallB"]
+layout_mode = 0
+offset_left = 76.0
+offset_top = 159.0
+offset_right = 90.0
+offset_bottom = 177.0
+texture = ExtResource("15_yktpx")
+
+[node name="DoorHolder" type="Control" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallB"]
+z_index = 7
+clip_contents = true
+anchors_preset = 0
+offset_right = 144.0
+offset_bottom = 144.0
+
+[node name="DoorFreezer" type="TextureRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallB/DoorHolder"]
+layout_mode = 0
+offset_right = 144.0
+offset_bottom = 144.0
+texture = ExtResource("16_gj2xt")
+
+[node name="DoorLeft" type="TextureRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallB/DoorHolder"]
+layout_mode = 0
+offset_right = 144.0
+offset_bottom = 144.0
+texture = ExtResource("17_3o7dt")
+
+[node name="DoorRight" type="TextureRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallB/DoorHolder"]
+layout_mode = 0
+offset_right = 144.0
+offset_bottom = 144.0
+texture = ExtResource("18_acrhl")
+
+[node name="FreezeButton" type="TextureButton" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallB"]
+layout_mode = 0
+offset_left = 97.0
+offset_top = 149.0
+offset_right = 141.0
+offset_bottom = 185.0
+toggle_mode = true
+texture_normal = ExtResource("19_l7hpm")
+texture_pressed = ExtResource("20_ew5bm")
+texture_disabled = ExtResource("21_u8j3h")
+
+[node name="BuyButton" type="TextureButton" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallB"]
+layout_mode = 0
+offset_left = 3.0
+offset_top = 149.0
+offset_right = 69.0
+offset_bottom = 185.0
+toggle_mode = true
+texture_normal = ExtResource("22_sjcy6")
+texture_pressed = ExtResource("23_ncuuh")
+script = ExtResource("24_gqxs8")
+
+[node name="TextHolder" type="Control" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallB/BuyButton"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 66.0
+offset_bottom = 32.0
+mouse_filter = 2
+
+[node name="Price" type="Label" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallB/BuyButton/TextHolder"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -7.0
+offset_top = -25.0
+offset_right = 30.0
+offset_bottom = 3.0
+theme_override_colors/font_color = Color(0.94902, 0.92549, 0.419608, 1)
+theme_override_colors/font_outline_color = Color(0.141176, 0.054902, 0.054902, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 20
+text = "000"
+horizontal_alignment = 2
+
+[node name="BUY" type="Label" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallB/BuyButton/TextHolder"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = 2.0
+offset_top = -32.0
+offset_right = 22.0
+offset_bottom = -18.0
+theme_override_colors/font_color = Color(0.333333, 0.258824, 0.145098, 1)
+theme_override_colors/font_outline_color = Color(0.172549, 0.141176, 0.0901961, 1)
+theme_override_constants/line_spacing = 0
+theme_override_constants/outline_size = -3
+theme_override_font_sizes/font_size = 10
+text = "BUY"
+horizontal_alignment = 2
+
+[node name="StallC" type="Control" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction"]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 324.0
+offset_top = 45.0
+offset_right = 468.0
+offset_bottom = 189.0
+script = ExtResource("14_tegeg")
+
+[node name="FreezerBlinky" type="TextureRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallC"]
+layout_mode = 0
+offset_left = 76.0
+offset_top = 159.0
+offset_right = 90.0
+offset_bottom = 177.0
+texture = ExtResource("15_yktpx")
+
+[node name="DoorHolder" type="Control" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallC"]
+z_index = 7
+clip_contents = true
+anchors_preset = 0
+offset_right = 144.0
+offset_bottom = 144.0
+
+[node name="DoorFreezer" type="TextureRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallC/DoorHolder"]
+layout_mode = 0
+offset_right = 144.0
+offset_bottom = 144.0
+texture = ExtResource("16_gj2xt")
+
+[node name="DoorLeft" type="TextureRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallC/DoorHolder"]
+layout_mode = 0
+offset_right = 144.0
+offset_bottom = 144.0
+texture = ExtResource("17_3o7dt")
+
+[node name="DoorRight" type="TextureRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallC/DoorHolder"]
+layout_mode = 0
+offset_right = 144.0
+offset_bottom = 144.0
+texture = ExtResource("18_acrhl")
+
+[node name="FreezeButton" type="TextureButton" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallC"]
+layout_mode = 0
+offset_left = 97.0
+offset_top = 149.0
+offset_right = 141.0
+offset_bottom = 185.0
+toggle_mode = true
+texture_normal = ExtResource("19_l7hpm")
+texture_pressed = ExtResource("20_ew5bm")
+texture_disabled = ExtResource("21_u8j3h")
+
+[node name="BuyButton" type="TextureButton" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallC"]
+layout_mode = 0
+offset_left = 3.0
+offset_top = 149.0
+offset_right = 69.0
+offset_bottom = 185.0
+toggle_mode = true
+texture_normal = ExtResource("22_sjcy6")
+texture_pressed = ExtResource("23_ncuuh")
+script = ExtResource("24_gqxs8")
+
+[node name="TextHolder" type="Control" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallC/BuyButton"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 66.0
+offset_bottom = 32.0
+mouse_filter = 2
+
+[node name="Price" type="Label" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallC/BuyButton/TextHolder"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -7.0
+offset_top = -25.0
+offset_right = 30.0
+offset_bottom = 3.0
+theme_override_colors/font_color = Color(0.94902, 0.92549, 0.419608, 1)
+theme_override_colors/font_outline_color = Color(0.141176, 0.054902, 0.054902, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 20
+text = "000"
+horizontal_alignment = 2
+
+[node name="BUY" type="Label" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallC/BuyButton/TextHolder"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = 2.0
+offset_top = -32.0
+offset_right = 22.0
+offset_bottom = -18.0
+theme_override_colors/font_color = Color(0.333333, 0.258824, 0.145098, 1)
+theme_override_colors/font_outline_color = Color(0.172549, 0.141176, 0.0901961, 1)
+theme_override_constants/line_spacing = 0
+theme_override_constants/outline_size = -3
+theme_override_font_sizes/font_size = 10
+text = "BUY"
+horizontal_alignment = 2
+
+[node name="ShopDoor" type="TextureRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction"]
+z_index = 7
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("27_qt8fj")
+
+[node name="RerollButton" type="TextureButton" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction"]
+layout_mode = 0
+offset_left = 327.0
+offset_top = 1.9668
+offset_right = 465.0
+offset_bottom = 37.9668
+texture_normal = ExtResource("28_erdgi")
+texture_pressed = ExtResource("29_pp8gw")
+script = ExtResource("24_gqxs8")
+
+[node name="TextHolder" type="Control" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/RerollButton"]
+anchors_preset = 0
+offset_right = 138.0
+offset_bottom = 32.0
+mouse_filter = 2
+
+[node name="Price" type="Label" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/RerollButton/TextHolder"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = 29.0
+offset_top = -25.0
+offset_right = 66.0
+offset_bottom = 3.0
+theme_override_colors/font_color = Color(0.94902, 0.92549, 0.419608, 1)
+theme_override_colors/font_outline_color = Color(0.141176, 0.054902, 0.054902, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 20
+text = "000"
+horizontal_alignment = 2
+
+[node name="BUY" type="Label" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/RerollButton/TextHolder"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = 38.0
+offset_top = -32.0
+offset_right = 58.0
+offset_bottom = -18.0
+theme_override_colors/font_color = Color(0.333333, 0.258824, 0.145098, 1)
+theme_override_colors/font_outline_color = Color(0.172549, 0.141176, 0.0901961, 1)
+theme_override_constants/line_spacing = 0
+theme_override_constants/outline_size = -3
+theme_override_font_sizes/font_size = 10
+text = "BUY"
+horizontal_alignment = 2
+
+[node name="HEAL" type="Label" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/RerollButton/TextHolder"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -58.0
+offset_top = -32.0
+offset_right = 17.0
+offset_bottom = 4.0
+theme_override_colors/font_color = Color(0.94902, 0.92549, 0.419608, 1)
+theme_override_colors/font_shadow_color = Color(0.172549, 0.141176, 0.0901961, 1)
+theme_override_colors/font_outline_color = Color(0.741176, 0.729412, 0.501961, 1)
+theme_override_constants/line_spacing = -8
+theme_override_constants/shadow_offset_x = 0
+theme_override_constants/shadow_offset_y = 1
+theme_override_constants/outline_size = 3
+theme_override_constants/shadow_outline_size = 4
+theme_override_font_sizes/font_size = 13
+text = "REROLL
+SHOP"
+horizontal_alignment = 1
 
 [node name="GameHud" type="Control" parent="HUDCanvas/HUD Viewport/SubViewport/HUD" node_paths=PackedStringArray("panelLeft", "panelRight")]
 texture_filter = 1
@@ -272,35 +1018,7 @@ mouse_filter = 2
 script = ExtResource("13_s0uw0")
 panelLeft = NodePath("LeftSide")
 panelRight = NodePath("RightSide")
-
-[node name="Shops" type="Control" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_right = -0.00012207
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-metadata/_edit_group_ = true
-metadata/_edit_use_anchors_ = true
-
-[node name="PanelBG" type="NinePatchRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/Shops"]
-visible = false
-z_index = -1
-layout_mode = 1
-anchors_preset = -1
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("11_6fdki")
-region_rect = Rect2(1, 1, 46, 47)
-patch_margin_left = 12
-patch_margin_top = 12
-patch_margin_right = 12
-patch_margin_bottom = 12
-metadata/_edit_use_anchors_ = true
+metadata/_edit_lock_ = true
 
 [node name="RightSide" type="TextureRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud"]
 z_index = 3
@@ -316,6 +1034,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 texture = SubResource("AtlasTexture_p8hek")
+metadata/_edit_lock_ = true
 
 [node name="Lbl_Timer" type="Label" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/RightSide" node_paths=PackedStringArray("TimerBlinky")]
 z_index = 1
@@ -429,6 +1148,7 @@ texture_hover = ExtResource("17_pwbo8")
 texture_disabled = ExtResource("19_3a6ea")
 
 [node name="ProgressBar" type="TextureRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/RightSide/ProgressBarBG/EnemyProgressBar"]
+visible = false
 layout_mode = 0
 offset_right = 252.0
 offset_bottom = 30.0
@@ -515,7 +1235,7 @@ width = 329.0
 height = 117.0
 paddingStart = 36.0
 paddingEnd = 0.0
-currentMax = 100.0
+currentAmt = 3.0
 EDITOR_fillAmt = 3.0
 maskTexture = ExtResource("34_ndayd")
 fullTexture = ExtResource("35_ngcqk")
@@ -545,6 +1265,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 texture = SubResource("AtlasTexture_kjpyk")
+metadata/_edit_lock_ = true
 
 [node name="InfoBox" type="Control" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/LeftSide" node_paths=PackedStringArray("iconBase", "lbl_partName")]
 unique_name_in_owner = true
@@ -766,8 +1487,7 @@ width = 329.0
 height = 117.0
 paddingStart = 0.0
 paddingEnd = 36.0
-currentMax = 100.0
-EDITOR_fillAmt = -1.0
+currentAmt = 39.95
 maskTexture = ExtResource("47_fmmmj")
 fullTexture = ExtResource("48_ed2oa")
 emptyTexture = ExtResource("49_4hhnj")
@@ -1326,6 +2046,8 @@ button_pressed = true
 text = "Open Inventory Disables 
 using Active parts"
 alignment = 2
+script = ExtResource("60_f85oj")
+settingName = &"inventoryDisableShooting"
 metadata/_edit_use_anchors_ = true
 
 [node name="DevCheats" type="CheckButton" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/Options"]
@@ -1361,6 +2083,8 @@ anchor_bottom = 1.71698
 tooltip_text = "Starts the player's run with 99999999 scrap instead of 0."
 text = "Bajillion Moneys"
 alignment = 2
+script = ExtResource("60_f85oj")
+settingName = &"startingScrap"
 metadata/_edit_use_anchors_ = true
 
 [node name="godmode" type="CheckButton" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/Options/DevCheats/Cheats"]
@@ -1374,6 +2098,8 @@ tooltip_text = "Makes the player unable to take damage or die."
 text = "Godmode
 "
 alignment = 2
+script = ExtResource("60_f85oj")
+settingName = &"godMode"
 metadata/_edit_use_anchors_ = true
 
 [node name="killall" type="CheckButton" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/Options/DevCheats/Cheats"]
@@ -1387,6 +2113,37 @@ tooltip_text = "Enables pressing 'K' to kill every enemy in the current wave."
 text = "'K' to kill all
 "
 alignment = 2
+script = ExtResource("60_f85oj")
+settingName = &"killAllKey"
+metadata/_edit_use_anchors_ = true
+
+[node name="profilerVisible" type="CheckButton" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/Options/DevCheats/Cheats"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.139912
+anchor_top = 3.16333
+anchor_right = 1.00044
+anchor_bottom = 3.88031
+tooltip_text = "Adds in debug stuff in the top-left, like frames per second and the current game state."
+text = "Profiler stats visible
+"
+alignment = 2
+script = ExtResource("60_f85oj")
+settingName = &"ProfilerLabelsVisible"
+metadata/_edit_use_anchors_ = true
+
+[node name="transitionsHide" type="CheckButton" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/Options/DevCheats/Cheats"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.139912
+anchor_top = 3.89918
+anchor_right = 1.00044
+anchor_bottom = 4.61616
+tooltip_text = "Makes the screen transitions mostly transparent so you can see behind the curtain."
+text = "Hidden transitions"
+alignment = 2
+script = ExtResource("60_f85oj")
+settingName = &"HiddenScreenTransitions"
 metadata/_edit_use_anchors_ = true
 
 [node name="sawbladeDrone" type="CheckButton" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/Options"]
@@ -1402,6 +2159,8 @@ tooltip_text = "While enabled, sawblades passively make a buzzing sound."
 button_pressed = true
 text = "Sawblades drone"
 alignment = 2
+script = ExtResource("60_f85oj")
+settingName = &"sawbladeDrone"
 metadata/_edit_use_anchors_ = true
 
 [node name="Btn_ScoresReset" type="Button" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/Options"]
@@ -1456,6 +2215,8 @@ tooltip_text = "Enables shadows to render. Disabling may increase performance."
 button_pressed = true
 text = "Render Shadows"
 alignment = 2
+script = ExtResource("60_f85oj")
+settingName = &"renderShadows"
 metadata/_edit_use_anchors_ = true
 
 [node name="Pause" type="Control" parent="HUDCanvas/HUD Viewport/SubViewport/HUD"]
@@ -1585,6 +2346,25 @@ visible = false
 material_override = ExtResource("4_jhciq")
 mesh = ExtResource("5_4jixe")
 
+[connection signal="button_down" from="ShopCanvas_SHOP/SHOP/HealButton" to="ShopCanvas_SHOP/SHOP/HealButton" method="_on_button_down"]
+[connection signal="button_up" from="ShopCanvas_SHOP/SHOP/HealButton" to="ShopCanvas_SHOP/SHOP/HealButton" method="_on_button_up"]
+[connection signal="pressed" from="ShopCanvas_SHOP/SHOP/HealButton" to="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction" method="_on_heal_button_pressed"]
+[connection signal="tab_changed" from="HUDCanvas/HUD Viewport/SubViewport/HUD_shopTabs/Shops" to="HUDCanvas/HUD Viewport/SubViewport/HUD_shopTabs" method="_on_shops_tab_changed"]
+[connection signal="toggled" from="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallA/FreezeButton" to="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallA" method="_on_freeze_button_toggled"]
+[connection signal="button_down" from="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallA/BuyButton" to="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallA/BuyButton" method="_on_button_down"]
+[connection signal="button_up" from="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallA/BuyButton" to="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallA/BuyButton" method="_on_button_up"]
+[connection signal="toggled" from="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallA/BuyButton" to="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallA" method="_on_buy_button_toggled"]
+[connection signal="toggled" from="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallB/FreezeButton" to="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallB" method="_on_freeze_button_toggled"]
+[connection signal="button_down" from="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallB/BuyButton" to="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallB/BuyButton" method="_on_button_down"]
+[connection signal="button_up" from="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallB/BuyButton" to="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallB/BuyButton" method="_on_button_up"]
+[connection signal="toggled" from="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallB/BuyButton" to="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallB" method="_on_buy_button_toggled"]
+[connection signal="toggled" from="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallC/FreezeButton" to="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallC" method="_on_freeze_button_toggled"]
+[connection signal="button_down" from="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallC/BuyButton" to="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallC/BuyButton" method="_on_button_down"]
+[connection signal="button_up" from="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallC/BuyButton" to="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallC/BuyButton" method="_on_button_up"]
+[connection signal="toggled" from="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallC/BuyButton" to="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallC" method="_on_buy_button_toggled"]
+[connection signal="button_down" from="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/RerollButton" to="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/RerollButton" method="_on_button_down"]
+[connection signal="button_up" from="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/RerollButton" to="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/RerollButton" method="_on_button_up"]
+[connection signal="pressed" from="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/RerollButton" to="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction" method="_on_reroll_button_pressed"]
 [connection signal="pressed" from="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/LeftSide/InfoBox/SellButton" to="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/LeftSide/InfoBox" method="_on_sell_button_pressed"]
 [connection signal="pressed" from="HUDCanvas/HUD Viewport/SubViewport/HUD/MainMenu/Btn_Play" to="." method="_on_btn_play_pressed"]
 [connection signal="pressed" from="HUDCanvas/HUD Viewport/SubViewport/HUD/MainMenu/Btn_Credits" to="." method="_on_btn_credits_pressed"]
@@ -1600,12 +2380,7 @@ mesh = ExtResource("5_4jixe")
 [connection signal="value_changed" from="HUDCanvas/HUD Viewport/SubViewport/HUD/Options/WorldVolume" to="HUDCanvas/HUD Viewport/SubViewport/HUD/Options" method="_on_world_volume_value_changed"]
 [connection signal="value_changed" from="HUDCanvas/HUD Viewport/SubViewport/HUD/Options/UIVolume" to="HUDCanvas/HUD Viewport/SubViewport/HUD/Options" method="_on_ui_volume_value_changed"]
 [connection signal="value_changed" from="HUDCanvas/HUD Viewport/SubViewport/HUD/Options/MasterVolume" to="HUDCanvas/HUD Viewport/SubViewport/HUD/Options" method="_on_master_volume_value_changed"]
-[connection signal="toggled" from="HUDCanvas/HUD Viewport/SubViewport/HUD/Options/InvShooting" to="HUDCanvas/HUD Viewport/SubViewport/HUD/Options" method="_on_inv_shooting_toggled"]
 [connection signal="toggled" from="HUDCanvas/HUD Viewport/SubViewport/HUD/Options/DevCheats" to="HUDCanvas/HUD Viewport/SubViewport/HUD/Options" method="_on_dev_cheats_toggled"]
-[connection signal="toggled" from="HUDCanvas/HUD Viewport/SubViewport/HUD/Options/DevCheats/Cheats/moneys" to="HUDCanvas/HUD Viewport/SubViewport/HUD/Options" method="_on_moneys_toggled"]
-[connection signal="toggled" from="HUDCanvas/HUD Viewport/SubViewport/HUD/Options/DevCheats/Cheats/godmode" to="HUDCanvas/HUD Viewport/SubViewport/HUD/Options" method="_on_godmode_toggled"]
-[connection signal="toggled" from="HUDCanvas/HUD Viewport/SubViewport/HUD/Options/DevCheats/Cheats/killall" to="HUDCanvas/HUD Viewport/SubViewport/HUD/Options" method="_on_killall_toggled"]
-[connection signal="toggled" from="HUDCanvas/HUD Viewport/SubViewport/HUD/Options/sawbladeDrone" to="HUDCanvas/HUD Viewport/SubViewport/HUD/Options" method="_on_sawblade_drone_toggled"]
 [connection signal="pressed" from="HUDCanvas/HUD Viewport/SubViewport/HUD/Options/Btn_ScoresReset" to="HUDCanvas/HUD Viewport/SubViewport/HUD/Options" method="_on_btn_scores_reset_pressed"]
 [connection signal="toggled" from="HUDCanvas/HUD Viewport/SubViewport/HUD/Options/renderShadows" to="HUDCanvas/HUD Viewport/SubViewport/HUD/Options" method="_on_render_shadows_toggled"]
 [connection signal="pressed" from="HUDCanvas/HUD Viewport/SubViewport/HUD/Pause/BG/Btn_EndRun" to="." method="_on_btn_end_run_pressed"]

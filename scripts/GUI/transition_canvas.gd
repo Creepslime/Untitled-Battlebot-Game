@@ -40,10 +40,6 @@ var textSequenceStep = 0 ##STEP THRU TEXT
 
 func _process(delta):
 	dbg_hidden = GameState.get_setting("HiddenScreenTransitions");
-	if dbg_hidden:
-		modulator.color.a = 0.15;
-	else:
-		modulator.color.a = 1;
 	
 	dbg_prof = GameState.get_setting("ProfilerLabelsVisible");
 	if dbg_prof:
@@ -53,28 +49,42 @@ func _process(delta):
 	else:
 		debug_canvas.hide();
 	
-	
-	if logoTime:
-		lbl_companyName.visible = true;
-		time -= delta;
-		if time < 0:
+	if ! GameState.get_in_one_of_given_states([GameBoard.gameState.MAKER]):
+		show();
+		if dbg_hidden:
+			modulator.color.a = 0.15;
+		else:
+			modulator.color.a = 1;
+		
+		debug_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT;
+		debug_label.vertical_alignment = VERTICAL_ALIGNMENT_TOP;
+		
+		if logoTime:
+			lbl_companyName.visible = true;
+			time -= delta;
+			if time < 0:
+				if ! transition.is_on_center():
+					logoTime = false;
+				else:
+					textSequenceStep += 1;
+					if textSequenceFlip:
+						textSequenceFlip = false;
+					else:
+						textSequenceFlip = true;
+					draw_logo_text();
+		else:
+			lbl_companyName.modulate.a = max(lbl_companyName.modulate.a- delta * 20, 0.0);
+			if lbl_companyName.modulate.a == 0:
+				lbl_companyName.hide();
+		
+		if checkingForLeaveSplash:
 			if ! transition.is_on_center():
 				logoTime = false;
-			else:
-				textSequenceStep += 1;
-				if textSequenceFlip:
-					textSequenceFlip = false;
-				else:
-					textSequenceFlip = true;
-				draw_logo_text();
 	else:
-		lbl_companyName.modulate.a = max(lbl_companyName.modulate.a- delta * 20, 0.0);
-		if lbl_companyName.modulate.a == 0:
-			lbl_companyName.hide();
-	
-	if checkingForLeaveSplash:
-		if ! transition.is_on_center():
-			logoTime = false;
+		hide();
+		
+		debug_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT;
+		debug_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER;
 
 const LOGO_STRING = "METAL CHIMERA\n\nPRESENTING"
 

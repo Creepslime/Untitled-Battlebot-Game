@@ -1637,6 +1637,7 @@ text = "HEAL
 horizontal_alignment = 1
 
 [node name="ShopDoor" type="TextureRect" parent="Inventory/InventoryControls/BackingTexture/Shop"]
+visible = false
 z_index = 7
 layout_mode = 0
 offset_right = 40.0

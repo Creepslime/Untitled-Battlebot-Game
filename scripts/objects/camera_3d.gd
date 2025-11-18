@@ -8,41 +8,44 @@ var socketHovering : Socket;
 var pieceHovering : Piece;
 
 func click_on_piece():
-	var collisionMask = 8;
-	
-	var raycastHit = RaycastSystem.get_raycast_hit_object(collisionMask, Vector2(0,0), self);
-	#print(raycastHit)
-	if is_instance_valid(raycastHit): 
-		print("RAY HITQ", raycastHit)
-		if raycastHit is HurtboxHolder:
-			print("RAY HITQ2", raycastHit)
-			raycastHit.select_piece();
+	if GameState.get_in_state_of_building():
+		var collisionMask = 8;
+		
+		var raycastHit = RaycastSystem.get_raycast_hit_object(collisionMask, Vector2(0,0), self);
+		
+		#print(raycastHit)
+		if is_instance_valid(raycastHit): 
+			print("RAY HITQ", raycastHit)
+			if raycastHit is HurtboxHolder:
+				print("RAY HITQ2", raycastHit)
+				raycastHit.select_piece();
 
 func hover_socket():
-	##Remove "hovered socket" if nothing is selected or in the pipette.
-	var ply = GameState.get_player();
-	if is_instance_valid(ply):
-		if not (ply.is_piece_selected() or ply.is_pipette_loaded()):
-			socketHovering = null;
-			pieceHovering = null;
-	
-	var collisionMask = 32 + 128;
-	
-	var raycastHit = RaycastSystem.get_raycast_hit_object(collisionMask, Vector2(0,0), self);
-	#print(raycastHit)
-	if is_instance_valid(raycastHit): 
-		#print(raycastHit, pieceHovering)
-		if raycastHit is Socket and raycastHit.is_valid():
-			pieceHovering = raycastHit.hover_from_camera(self);
-			if pieceHovering != null:
-				socketHovering = raycastHit;
-		if raycastHit == pieceHovering and is_instance_valid(socketHovering): 
-			socketHovering.hover_from_camera(self);
-			
-	else:
-		if is_instance_valid(socketHovering):
-			socketHovering.hover(false);
-			socketHovering = null;
+	if GameState.get_in_state_of_building():
+		##Remove "hovered socket" if nothing is selected or in the pipette.
+		var ply = GameState.get_player();
+		if is_instance_valid(ply):
+			if not (ply.is_piece_selected() or ply.is_pipette_loaded()):
+				socketHovering = null;
+				pieceHovering = null;
+		
+		var collisionMask = 32 + 128;
+		
+		var raycastHit = RaycastSystem.get_raycast_hit_object(collisionMask, Vector2(0,0), self);
+		#print(raycastHit)
+		if is_instance_valid(raycastHit): 
+			#print(raycastHit, pieceHovering)
+			if raycastHit is Socket and raycastHit.is_valid():
+				pieceHovering = raycastHit.hover_from_camera(self);
+				if pieceHovering != null:
+					socketHovering = raycastHit;
+			if raycastHit == pieceHovering and is_instance_valid(socketHovering): 
+				socketHovering.hover_from_camera(self);
+				
+		else:
+			if is_instance_valid(socketHovering):
+				socketHovering.hover(false);
+				socketHovering = null;
 
 
 func get_rotation_to_fake_aiming(firingOrigin:=Vector3(0.0,0.0,0.0), return_0_if_invalid := false):

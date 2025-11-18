@@ -8,6 +8,8 @@ var manager : StatAdjusterDataPanel;
 
 func _ready():
 	name = placeholder_text;
+	if not is_connected("text_changed", _on_value_changed):
+		connect("text_changed", _on_value_changed);
 
 func _on_value_changed(value):
 	manager.adjust_stat_text(self);

@@ -5,7 +5,7 @@ var loopCounter := 0;
 ##Returns an array of every single child and grandchild of a Node.
 func get_all_children(node, ownerToCheck : Node = null, init := true) -> Array:
 	if init:
-		GameState.profiler_ping_A();
+		GameState.profiler_ping_create("get_all_children");
 	if init: 
 		nodesChecked = []; 
 		loopCounter = 0;
@@ -32,7 +32,7 @@ func get_all_children(node, ownerToCheck : Node = null, init := true) -> Array:
 			append_unique(nodes, N);
 	return nodes;
 
-##Returns an array of every single child of a certain type.
+##Returns an array of every single child of a certain type.[br]
 ##If you just want to iterate over children of a certain type, this is probably less efficent than just running over get_all_children() and then checking if the node is the Class you want to check for.
 func get_all_children_of_type(node, type : Object = Node, ownerToCheck : Node = null) -> Array:
 	var nodes : Array = [];
@@ -43,22 +43,22 @@ func get_all_children_of_type(node, type : Object = Node, ownerToCheck : Node = 
 			nodes.append(child);
 	return nodes;
 
-##Appends an item to a given @Array only if the array does not already contain that item.
+##Appends an item to a given [Array] only if the array does not already contain that item.[br]
 ##Returns the array as well, if you need it.
 func append_unique(hostArray : Array, input : Variant):
 	if !hostArray.has(input):
 		hostArray.append(input);
 	return hostArray;
 
-##Appends all items in the inputArray into hostArray, except for items hostArray already contains.
+##Appends all items in the [param inputArray] into [param hostArray], except for items [param hostArray] already contains.[br]
 ##Returns the array as well, if you need it.
 func append_array_unique(hostArray : Array, inputArray):
 	for item in inputArray:
 		append_unique(hostArray, item);
 	return hostArray;
 
-##Appends an item to a given Array only if the array does not already contain that item.
-##If the input is an Array, it runs this function again on each item within it.
+##Appends an item to a given [Array] only if the array does not already contain that item.[br]
+##If the input is an [Array], it runs this function again on each item within it.[br]
 ##This essentially unfurls every array and creates one massive one.
 func append_recursive_unique(hostArray : Array, input : Variant):
 	if input is Array:

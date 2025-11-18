@@ -13,10 +13,11 @@ var preview : Piece;
 var previewPlaceable := false;
 @onready var selectorRay = $SelectorRay;
 @export var collisionSphere : CollisionShape3D;
-@export var collisionScale := 0.45;
+@export var collisionScale := 0.45; ## how big the collision to mouse-pick this socket is.
 @export var selectorRayExceptions : Array[CollisionObject3D]= [];
 
 @export var dontUsePieceForRobotHost := false;
+var initialRotation : Vector3;
 
 ##Needs functions to ping its host.
 ##If occupant is null, it is assumed to be empty and able to be plugged in.
@@ -32,6 +33,7 @@ func _ready():
 			pass;
 		collisionSphere.shape = collisionSphere.shape.duplicate();
 		collisionSphere.shape.radius = collisionScale;
+		initialRotation = rotation;
 
 ####################### SETUP LOAD
 
@@ -53,6 +55,8 @@ func load_startup_data(data, robot : Robot):
 		if result != null:
 			print(result);
 			result.load_startup_data(occupantDataForwarded, robot);
+	if get_occupant() == null:
+		reset_rotation();
 
 
 ########################
@@ -167,7 +171,7 @@ func set_socket_rotation(newRotDeg := currentRotationDeg):
 
 func reset_rotation():
 	currentRotationDeg = 0.0;
-	rotation.y = 0.0;
+	rotation = initialRotation;
 
 var hovering = false;
 var selected = false;

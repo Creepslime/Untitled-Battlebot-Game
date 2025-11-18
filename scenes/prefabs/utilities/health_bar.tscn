@@ -32,8 +32,7 @@ emptyBar = NodePath("SubViewport/BarHolder/EmptyHealth")
 height = 163.0
 paddingStart = -6.0
 paddingEnd = -3.0
-currentMax = 3.0
-EDITOR_fillAmt = -1
+currentMax = 100.0
 label = NodePath("SubViewport/BarHolder/Lbl_Health")
 
 [node name="SubViewport" type="SubViewport" parent="."]

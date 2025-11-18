@@ -16,6 +16,7 @@ const PFX_LIST = {
 	"BigBoom": preload("res://scenes/prefabs/particle-fx/big_boom.tscn"),
 	
 	"SpawnerFX": preload("res://scenes/prefabs/particle-fx/bot_spawnings.tscn"),
+	"Rubble": preload("res://scenes/prefabs/particle-fx/rubble.tscn"),
 }
 
 func _ready():
@@ -30,6 +31,7 @@ func get_effect_scene(pfxName: String):
 	else:
 		return null;
 
+## Plays the given particle effect by name in the location specified. Returns the effect if we need to keep track of it for whatever reason.
 func play(pfxName: String, parent: Node3D, location: Vector3, _scale = 1.0, nodeToFollow = GameState.get_game_board()):
 	var scale = 1.0;
 	if scale is float:
@@ -48,3 +50,5 @@ func play(pfxName: String, parent: Node3D, location: Vector3, _scale = 1.0, node
 		sceneInst.set("global_position", location);
 		sceneInst.set("scale", sceneInst.scale * _scale);
 		sceneInst.set("nodeToFollow", nodeToFollow);
+		
+		return sceneInst;

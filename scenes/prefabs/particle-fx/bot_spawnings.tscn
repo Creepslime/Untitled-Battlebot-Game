@@ -1,40 +1,8 @@
-[gd_scene load_steps=24 format=3 uid="uid://cc66b6jfgufek"]
+[gd_scene load_steps=17 format=3 uid="uid://cc66b6jfgufek"]
 
 [ext_resource type="Script" uid="uid://lmofd5yxqeuy" path="res://scripts/bot_spawnings.gd" id="1_hpcb0"]
-[ext_resource type="Shader" uid="uid://caniow1g5t0k3" path="res://rubble.tres" id="1_kv702"]
 [ext_resource type="Shader" uid="uid://twh0p4hu8cvc" path="res://graphics/shaders/energybeam.tres" id="2_0rnhr"]
 [ext_resource type="Texture2D" uid="uid://cjemx5gc4kbeh" path="res://graphics/images/particle PNGs/FireNormalMaps.png" id="2_4es52"]
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0rnhr"]
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_4es52"]
-render_priority = 0
-shader = ExtResource("1_kv702")
-
-[sub_resource type="Gradient" id="Gradient_0rnhr"]
-
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_4es52"]
-gradient = SubResource("Gradient_0rnhr")
-
-[sub_resource type="Gradient" id="Gradient_kv702"]
-interpolation_mode = 2
-offsets = PackedFloat32Array(0, 0.918033)
-
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_0rnhr"]
-gradient = SubResource("Gradient_kv702")
-
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_hpcb0"]
-gravity = Vector3(0, 11.3, 0)
-linear_accel_min = 11.49
-linear_accel_max = 48.28
-scale_min = 0.0
-scale_max = 1.5
-scale_over_velocity_max = 178.16
-color_ramp = SubResource("GradientTexture1D_0rnhr")
-color_initial_ramp = SubResource("GradientTexture1D_4es52")
-turbulence_enabled = true
-
-[sub_resource type="SphereMesh" id="SphereMesh_kv702"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_hpcb0"]
 render_priority = 0
@@ -68,6 +36,13 @@ point_count = 2
 [sub_resource type="CurveTexture" id="CurveTexture_1kh7e"]
 curve = SubResource("Curve_hpcb0")
 
+[sub_resource type="Curve" id="Curve_4oxmx"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.0282776, 1), 0.538289, 0.538289, 0, 0, Vector2(0.403599, 0.527343), -1.17751, -1.17751, 0, 0, Vector2(1, 0), -0.473088, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_rhbje"]
+curve = SubResource("Curve_4oxmx")
+
 [sub_resource type="Curve" id="Curve_1kh7e"]
 _limits = [0.0, 3.0, 0.0, 1.0]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
@@ -90,20 +65,14 @@ inherit_velocity_ratio = 0.651
 velocity_pivot = Vector3(2.425, 1.76, 8.56)
 spread = 180.0
 flatness = 0.602
-initial_velocity_max = 30.0
-angular_velocity_min = -25.0
-angular_velocity_max = 9.99998
-orbit_velocity_min = -0.395
-orbit_velocity_max = -0.395
 gravity = Vector3(15, 19.225, -7.765)
-linear_accel_min = -9.18
-linear_accel_max = 33.35
 radial_accel_min = -100.0
 radial_accel_max = -22.99
 tangential_accel_min = -2.23517e-06
 tangential_accel_max = 34.48
 scale_min = 0.0
 scale_max = 1.25
+scale_curve = SubResource("CurveTexture_rhbje")
 scale_over_velocity_max = 548.39
 scale_over_velocity_curve = SubResource("CurveTexture_4oxmx")
 color = Color(0.615965, 0.425945, 0.725841, 1)
@@ -112,6 +81,7 @@ hue_variation_max = 1.0
 hue_variation_curve = SubResource("CurveTexture_1kh7e")
 anim_speed_max = 6.07
 turbulence_enabled = true
+turbulence_noise_strength = 0.27
 turbulence_noise_scale = 3.0
 
 [sub_resource type="Curve" id="Curve_4es52"]
@@ -128,23 +98,15 @@ curve = SubResource("Curve_4es52")
 script = ExtResource("1_hpcb0")
 tracers = [NodePath("EnergyBeam")]
 
-[node name="Rubble" type="GPUParticles3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.50897, 0)
-material_override = SubResource("StandardMaterial3D_0rnhr")
-material_overlay = SubResource("ShaderMaterial_4es52")
-emitting = false
-amount = 4
-one_shot = true
-process_material = SubResource("ParticleProcessMaterial_hpcb0")
-draw_pass_1 = SubResource("SphereMesh_kv702")
-
 [node name="EnergyBeam" type="GPUParticles3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.46417, 0)
 material_override = SubResource("StandardMaterial3D_kv702")
 transparency = 0.45
+emitting = false
 amount_ratio = 0.7027
 speed_scale = 0.3
 randomness = 0.67
+collision_base_size = 0.0
 trail_enabled = true
 process_material = SubResource("ParticleProcessMaterial_kv702")
 draw_pass_1 = SubResource("TubeTrailMesh_0rnhr")

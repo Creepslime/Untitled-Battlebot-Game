@@ -57,6 +57,7 @@ var pieceBeingInspected : Piece;
 @export_subgroup("Piece data")
 @export var txt_pieceName : TextEdit;
 @export var txt_pieceDescription : TextEdit;
+@export var pieceDataPanel : StatAdjusterDataPanel;
 @export_subgroup("Tree")
 @export var tree : Tree;
 
@@ -93,6 +94,7 @@ func set_inspected_piece(data):
 		pieceHolder.add_occupant(pieceBeingInspected);
 		pieceBeingInspected.force_visibility = true;
 		generate_coordinates_from_piece(pieceBeingInspected);
+		pieceDataPanel.assign_new_thing(pieceBeingInspected);
 	return pieceBeingInspected;
 
 func reset_inspected_piece():
@@ -167,7 +169,7 @@ func get_pieces():
 				
 				var fullName = prefix + file_name
 				print(fullName)
-				if FileAccess.file_exists(fullName):
+				if (fullName.ends_with(".tscn")) and FileAccess.file_exists(fullName):
 					var loadedFile = load(fullName);
 					add_to_tree(file_name, loadedFile, fullName);
 			file_name = dir.get_next()
@@ -363,6 +365,10 @@ func open_save_popup(open : bool):
 
 func _on_cancel_save_pressed():
 	open_save_popup(false);
+	pass # Replace with function body.
+
+func _on_copy_name_pressed():
+	save_txt_newPath.text = pieceSceneFilePath.trim_prefix(filepathPrefix).trim_suffix(".tscn");
 	pass # Replace with function body.
 
 func set_engine_pattern(tilesArray : Array[Vector2i]):

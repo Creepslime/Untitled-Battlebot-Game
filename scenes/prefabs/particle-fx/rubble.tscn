@@ -1,0 +1,48 @@
+[gd_scene load_steps=11 format=3 uid="uid://17d10ma75b13"]
+
+[ext_resource type="Script" uid="uid://bixet4dmtwy3k" path="res://scripts/objects/particle/particle_fx_killer.gd" id="1_rb2ym"]
+[ext_resource type="Shader" uid="uid://caniow1g5t0k3" path="res://rubble.tres" id="2_hh35r"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6eskw"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_kcv66"]
+render_priority = 0
+shader = ExtResource("2_hh35r")
+
+[sub_resource type="Gradient" id="Gradient_234vm"]
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_4es52"]
+gradient = SubResource("Gradient_234vm")
+
+[sub_resource type="Gradient" id="Gradient_ufsta"]
+interpolation_mode = 2
+offsets = PackedFloat32Array(0, 0.918033)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_0rnhr"]
+gradient = SubResource("Gradient_ufsta")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_eieo4"]
+gravity = Vector3(0, 11.3, 0)
+linear_accel_min = 11.49
+linear_accel_max = 48.28
+scale_min = 0.0
+scale_max = 1.5
+scale_over_velocity_max = 178.16
+color_ramp = SubResource("GradientTexture1D_0rnhr")
+color_initial_ramp = SubResource("GradientTexture1D_4es52")
+turbulence_enabled = true
+
+[sub_resource type="SphereMesh" id="SphereMesh_snqoe"]
+
+[node name="Rubble" type="Node3D"]
+script = ExtResource("1_rb2ym")
+
+[node name="Rubble" type="GPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.50897, 0)
+material_override = SubResource("StandardMaterial3D_6eskw")
+material_overlay = SubResource("ShaderMaterial_kcv66")
+emitting = false
+amount = 4
+one_shot = true
+process_material = SubResource("ParticleProcessMaterial_eieo4")
+draw_pass_1 = SubResource("SphereMesh_snqoe")

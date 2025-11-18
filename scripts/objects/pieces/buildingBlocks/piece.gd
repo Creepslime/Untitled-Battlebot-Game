@@ -232,7 +232,10 @@ func declare_names():
 @export var isBody := false;
 ## Whether this piece is removable.
 @export var removable := true;
-
+func is_removable() -> bool:
+	return removable and is_equipped() and GameState.get_in_state_of_building();
+func is_sellable() -> bool:
+	return is_removable() and ! isBody;
 @export var weightBase := 1.0;
 
 @export var scrapCostBase : int;
@@ -538,7 +541,7 @@ func can_use_active(action : AbilityManager):
 
 ## Checks if you can use a given passive ability.
 func can_use_passive(passiveAbility : AbilityManager):
-	GameState.profiler_ping_B();
+	GameState.profiler_ping_create("Can Use Passive");
 	## Check that the thing is valid. If not, get the first ability in the relevant list.
 	if ! is_instance_valid(passiveAbility):
 		if passiveAbilities.size() > 0:
@@ -1110,7 +1113,11 @@ func is_preview():
 func select(foo : bool = not get_selected()):
 	if foo == selected: return foo;
 	if foo: deselect_other_pieces(self);
-	else: deselect_other_pieces();
+	else: 
+		if selected:
+			deselect_other_pieces(); ##This hopefully prevents recursion.
+		else:
+			deselect_other_pieces(self);
 	if is_preview() and ! assignedToSocket:
 		return;
 	selected = foo;
@@ -1130,7 +1137,8 @@ func select_via_robot():
 		get_host_robot().select_piece(self);
 
 func deselect():
-	deselect_all_sockets();
+	if selected:
+		deselect_all_sockets();
 	select(false);
 
 func deselect_other_pieces(filterPiece := self):
@@ -1160,7 +1168,9 @@ func get_index_of_socket(inSocket : Socket) -> int:
 	return get_all_female_sockets().find(inSocket);
 func get_socket_at_index(socketIndex : int) -> Socket:
 	var all = get_all_female_sockets();
-	return all[socketIndex];
+	if socketIndex >= 0 and socketIndex < all.size():
+		return all[socketIndex];
+	return null;
 
 func autograb_sockets():
 	var sockets = Utils.get_all_children_of_type(self, Socket, self);

@@ -25,8 +25,8 @@ AI="*res://scripts/libraries/ai.gd"
 RaycastSystem="*res://scripts/libraries/raycast_system.gd"
 TextFunc="*res://scripts/libraries/text_func.gd"
 Utils="*res://scripts/libraries/utils.gd"
-SpawnerUtils="*res://scripts/libraries/spawner_utils.gd"
 AbilityDistributor="*res://scripts/libraries/ability_distributor.gd"
+ScrapManager="*res://scripts/libraries/scrap_manager.gd"
 
 [debug]
 

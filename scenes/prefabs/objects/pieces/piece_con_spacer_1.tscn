@@ -28,7 +28,7 @@ metadata/_custom_type_script = "uid://cybmjhuctmfaw"
 [sub_resource type="Resource" id="Resource_agd5d"]
 script = ExtResource("2_vq6ya")
 string = "structure"
-color = 0
+color = 3
 newline = false
 endingSpace = false
 startingSpace = true
@@ -43,92 +43,92 @@ endingSpace = false
 startingSpace = true
 metadata/_custom_type_script = "uid://cybmjhuctmfaw"
 
-[sub_resource type="Resource" id="Resource_517wr"]
-resource_name = "ContactCooldown8"
+[sub_resource type="Resource" id="Resource_qebw2"]
+resource_name = "ContactCooldown16"
 script = ExtResource("3_qebw2")
 statFriendlyName = "Contact Cooldown"
-statName = "ContactCooldown8"
+statName = "ContactCooldown16"
 statIcon = ExtResource("5_6skh6")
 baseStat = 0.0
 roundingMode = 0
 
-[sub_resource type="Resource" id="Resource_u6ljr"]
-resource_name = "Damage8"
+[sub_resource type="Resource" id="Resource_c2vtd"]
+resource_name = "Damage16"
 script = ExtResource("3_qebw2")
 statFriendlyName = "Damage"
-statName = "Damage8"
+statName = "Damage16"
 statIcon = ExtResource("8_c2vtd")
 baseStat = 0.0
 roundingMode = 0
 
-[sub_resource type="Resource" id="Resource_jlv37"]
-resource_name = "Kickback8"
+[sub_resource type="Resource" id="Resource_xqfn3"]
+resource_name = "Kickback16"
 script = ExtResource("3_qebw2")
 statFriendlyName = "Kickback"
-statName = "Kickback8"
+statName = "Kickback16"
 statIcon = ExtResource("7_87jr4")
 baseStat = 0.0
 roundingMode = 0
 
-[sub_resource type="Resource" id="Resource_bt3qx"]
-resource_name = "Knockback8"
+[sub_resource type="Resource" id="Resource_kqxmf"]
+resource_name = "Knockback16"
 script = ExtResource("3_qebw2")
 statFriendlyName = "Knockback"
-statName = "Knockback8"
+statName = "Knockback16"
 statIcon = ExtResource("7_87jr4")
 baseStat = 0.0
 roundingMode = 0
 
-[sub_resource type="Resource" id="Resource_38h4d"]
-resource_name = "PassiveCooldown8"
+[sub_resource type="Resource" id="Resource_vq6ya"]
+resource_name = "PassiveCooldown16"
 script = ExtResource("3_qebw2")
 statFriendlyName = "Passive Cooldown"
-statName = "PassiveCooldown8"
+statName = "PassiveCooldown16"
 statIcon = ExtResource("5_6skh6")
 baseStat = 1.0
 roundingMode = 0
 
-[sub_resource type="Resource" id="Resource_p2rl2"]
-resource_name = "PassiveEnergyDraw8"
+[sub_resource type="Resource" id="Resource_wwnek"]
+resource_name = "PassiveEnergyDraw16"
 script = ExtResource("3_qebw2")
 statFriendlyName = "Passive Energy Draw"
-statName = "PassiveEnergyDraw8"
+statName = "PassiveEnergyDraw16"
 statIcon = ExtResource("4_w41dh")
 baseStat = 1.0
 roundingMode = 0
 
-[sub_resource type="Resource" id="Resource_wjim5"]
-resource_name = "ScrapCost8"
+[sub_resource type="Resource" id="Resource_w41dh"]
+resource_name = "ScrapCost16"
 script = ExtResource("3_qebw2")
 statFriendlyName = "Scrap Cost"
-statName = "ScrapCost8"
+statName = "ScrapCost16"
 statIcon = ExtResource("6_vrk8q")
 baseStat = 0.0
 roundingMode = 6
 
-[sub_resource type="Resource" id="Resource_nrnm1"]
-resource_name = "ScrapSalvageModifier8"
+[sub_resource type="Resource" id="Resource_vrk8q"]
+resource_name = "ScrapSalvageModifier16"
 script = ExtResource("3_qebw2")
 statFriendlyName = "Scrap Salvage Modifier"
-statName = "ScrapSalvageModifier8"
+statName = "ScrapSalvageModifier16"
 statIcon = ExtResource("6_vrk8q")
 baseStat = 0.666667
 roundingMode = 0
 
-[sub_resource type="Resource" id="Resource_e5v4o"]
-resource_name = "ScrapSellModifier8"
+[sub_resource type="Resource" id="Resource_6skh6"]
+resource_name = "ScrapSellModifier16"
 script = ExtResource("3_qebw2")
 statFriendlyName = "Scrap Sell Modifier"
-statName = "ScrapSellModifier8"
+statName = "ScrapSellModifier16"
 statIcon = ExtResource("6_vrk8q")
 baseStat = 0.666667
 roundingMode = 0
 
-[sub_resource type="Resource" id="Resource_0wt2c"]
-resource_name = "Weight8"
+[sub_resource type="Resource" id="Resource_87jr4"]
+resource_name = "Weight16"
 script = ExtResource("3_qebw2")
 statFriendlyName = "Weight"
-statName = "Weight8"
+statName = "Weight16"
 statIcon = ExtResource("7_87jr4")
 baseStat = 2.5
 roundingMode = 0
@@ -174,12 +174,14 @@ albedo_texture = ExtResource("10_xqfn3")
 height = 0.5
 radius = 0.25
 
-[node name="Piece_Spacer_1" type="Node3D" node_paths=PackedStringArray("meshesHolder", "hitboxCollisionHolder", "hurtboxCollisionHolder", "placementCollisionHolder", "femaleSocketHolder") groups=["Piece"]]
+[node name="Piece_Small Cube" type="Node3D" node_paths=PackedStringArray("meshesHolder", "hitboxCollisionHolder", "hurtboxCollisionHolder", "placementCollisionHolder", "femaleSocketHolder") groups=["Piece"]]
+visible = false
 script = ExtResource("1_wwnek")
-pieceName = &"Spacer 1"
+pieceName = &"Small Cube"
 descriptionConstructor = Array[ExtResource("2_vq6ya")]([SubResource("Resource_ujwhk"), SubResource("Resource_agd5d"), SubResource("Resource_7qnf5")])
-pieceDescription = "[color=e0dedeff]Serves no purpose other than to provide [color=ffffffff]structure [color=e0dedeff]to your robot."
+pieceDescription = "[color=ffffffff]Serves no purpose other than to provide [color=ffffffff]structure [color=ffffffff]to your robot."
 weightBase = 2.5
+scrapCostBase = 6
 hurtboxAlwaysEnabled = true
 force_visibility = true
 meshesHolder = NodePath("Meshes")
@@ -192,16 +194,16 @@ Vector2i(2, 2): null,
 Vector2i(2, 3): null
 }
 statCollection = Dictionary[String, ExtResource("3_qebw2")]({
-"ContactCooldown8": SubResource("Resource_517wr"),
-"Damage8": SubResource("Resource_u6ljr"),
-"Kickback8": SubResource("Resource_jlv37"),
-"Knockback8": SubResource("Resource_bt3qx"),
-"PassiveCooldown8": SubResource("Resource_38h4d"),
-"PassiveEnergyDraw8": SubResource("Resource_p2rl2"),
-"ScrapCost8": SubResource("Resource_wjim5"),
-"ScrapSalvageModifier8": SubResource("Resource_nrnm1"),
-"ScrapSellModifier8": SubResource("Resource_e5v4o"),
-"Weight8": SubResource("Resource_0wt2c")
+"ContactCooldown16": SubResource("Resource_qebw2"),
+"Damage16": SubResource("Resource_c2vtd"),
+"Kickback16": SubResource("Resource_xqfn3"),
+"Knockback16": SubResource("Resource_kqxmf"),
+"PassiveCooldown16": SubResource("Resource_vq6ya"),
+"PassiveEnergyDraw16": SubResource("Resource_wwnek"),
+"ScrapCost16": SubResource("Resource_w41dh"),
+"ScrapSalvageModifier16": SubResource("Resource_vrk8q"),
+"ScrapSellModifier16": SubResource("Resource_6skh6"),
+"Weight16": SubResource("Resource_87jr4")
 })
 filepathForThisEntity = "res://scenes/prefabs/objects/pieces/piece_bumper_T.tscn"
 

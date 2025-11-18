@@ -1,8 +1,318 @@
-[gd_scene load_steps=3 format=3 uid="uid://im3ebt1adp1h"]
+[gd_scene load_steps=41 format=3]
 
-[ext_resource type="PackedScene" uid="uid://bfklqklhxtb2w" path="res://scenes/prefabs/objects/pieces/piece_swivel.tscn" id="1_lwqng"]
-[ext_resource type="Script" uid="uid://cuqib5fp5hdjp" path="res://scripts/objects/pieces/piece_swivel_manual.gd" id="2_jbgvx"]
+[ext_resource type="Script" path="res://scripts/objects/pieces/piece_swivel_manual.gd" id="2_jbgvx"]
+[ext_resource type="Script" path="res://scripts/objects/weapons/ability_manager.gd" id="2_kyd6e"]
+[ext_resource type="Script" path="res://scripts/libraries/richTextConstructor.gd" id="3_d7opd"]
+[ext_resource type="Script" path="res://scripts/objects/weapons/stat_tracker.gd" id="4_evj1b"]
+[ext_resource type="Texture2D" path="res://graphics/images/HUD/statIcons/energyIconStriped.png" id="5_5l6dw"]
+[ext_resource type="Texture2D" path="res://graphics/images/HUD/statIcons/cooldownIconStriped.png" id="6_j7dkm"]
+[ext_resource type="Texture2D" path="res://graphics/images/HUD/statIcons/magazineIconStriped.png" id="7_leul2"]
+[ext_resource type="Texture2D" path="res://graphics/images/HUD/statIcons/weightIconStriped.png" id="8_5rcmk"]
+[ext_resource type="Texture2D" path="res://graphics/images/HUD/statIcons/damageIconStriped.png" id="9_1scw1"]
+[ext_resource type="Script" path="res://scripts/objects/pieces/buildingBlocks/hitbox_shapes.gd" id="10_vudbv"]
+[ext_resource type="Script" path="res://scripts/objects/pieces/buildingBlocks/hurtbox_shapes.gd" id="11_l684p"]
+[ext_resource type="Script" path="res://scripts/objects/pieces/buildingBlocks/placement_shapes.gd" id="12_ow8wb"]
+[ext_resource type="PackedScene" path="res://scenes/prefabs/objects/pieces/buildingBlocks/piece_collision_box.tscn" id="13_c1rva"]
+[ext_resource type="Script" path="res://scripts/objects/pieces/buildingBlocks/collisionBox.gd" id="14_4vbwg"]
+[ext_resource type="Texture2D" path="res://graphics/images/models/sockets/socketM.png" id="15_uutc4"]
+[ext_resource type="Texture2D" path="res://graphics/images/models/sockets/prong.png" id="16_0qgoj"]
+[ext_resource type="ArrayMesh" path="res://graphics/models/obj/botparts/SwivelBottom.obj" id="17_gxwol"]
+[ext_resource type="ArrayMesh" path="res://graphics/models/obj/botparts/SwivelTop.obj" id="18_a8au6"]
+[ext_resource type="PackedScene" path="res://scenes/prefabs/objects/pieces/buildingBlocks/socket.tscn" id="19_h722e"]
+[ext_resource type="Script" path="res://scripts/GUI/socket.gd" id="20_m6uju"]
 
-[node name="Piece_Swivel" instance=ExtResource("1_lwqng")]
+[sub_resource type="Resource" id="Resource_kyd6e"]
+script = ExtResource("2_kyd6e")
+abilityName = "Rotate Clockwise"
+abilityDescriptionConstructor = Array[ExtResource("3_d7opd")]([])
+abilityDescription = "Rotates this swivel clockwise."
+energyCost = 0.0
+cooldownTimeBase = 0.0
+cooldownStatName = ""
+runType = 0
+functionNameWhenUsed = &""
+statsUsed = Array[String]([])
+initialized = true
+disabled = false
+functionWhenUsed = Callable()
+
+[sub_resource type="Resource" id="Resource_d7opd"]
+script = ExtResource("2_kyd6e")
+abilityName = "Rotate Counter-Clockwise"
+abilityDescriptionConstructor = Array[ExtResource("3_d7opd")]([])
+abilityDescription = "Rotates this swivel clockwise."
+energyCost = 0.0
+cooldownTimeBase = 0.0
+cooldownStatName = ""
+runType = 0
+functionNameWhenUsed = &""
+statsUsed = Array[String]([])
+initialized = true
+disabled = false
+functionWhenUsed = Callable()
+
+[sub_resource type="Resource" id="Resource_evj1b"]
+resource_name = "PassiveEnergyDraw31"
+script = ExtResource("4_evj1b")
+statFriendlyName = "Passive Energy Draw"
+statName = "PassiveEnergyDraw31"
+statIcon = ExtResource("5_5l6dw")
+baseStat = 1.0
+roundingMode = 0
+
+[sub_resource type="Resource" id="Resource_5l6dw"]
+resource_name = "PassiveCooldown31"
+script = ExtResource("4_evj1b")
+statFriendlyName = "Passive Cooldown"
+statName = "PassiveCooldown31"
+statIcon = ExtResource("6_j7dkm")
+baseStat = 1.0
+roundingMode = 0
+
+[sub_resource type="Resource" id="Resource_j7dkm"]
+resource_name = "ContactCooldown31"
+script = ExtResource("4_evj1b")
+statFriendlyName = "Contact Cooldown"
+statName = "ContactCooldown31"
+statIcon = ExtResource("6_j7dkm")
+baseStat = 0.0
+roundingMode = 0
+
+[sub_resource type="Resource" id="Resource_leul2"]
+resource_name = "ActiveEnergyDraw31"
+script = ExtResource("4_evj1b")
+statFriendlyName = "Active Energy Draw"
+statName = "ActiveEnergyDraw31"
+statIcon = ExtResource("5_5l6dw")
+baseStat = 1.0
+roundingMode = 0
+
+[sub_resource type="Resource" id="Resource_5rcmk"]
+resource_name = "ActiveCooldown31"
+script = ExtResource("4_evj1b")
+statFriendlyName = "Active Cooldown"
+statName = "ActiveCooldown31"
+statIcon = ExtResource("6_j7dkm")
+baseStat = 1.0
+roundingMode = 0
+
+[sub_resource type="Resource" id="Resource_1scw1"]
+resource_name = "ScrapCost31"
+script = ExtResource("4_evj1b")
+statFriendlyName = "Scrap Cost"
+statName = "ScrapCost31"
+statIcon = ExtResource("7_leul2")
+baseStat = 0.0
+roundingMode = 6
+
+[sub_resource type="Resource" id="Resource_vudbv"]
+resource_name = "ScrapSellModifier31"
+script = ExtResource("4_evj1b")
+statFriendlyName = "Scrap Sell Modifier"
+statName = "ScrapSellModifier31"
+statIcon = ExtResource("7_leul2")
+baseStat = 0.666667
+roundingMode = 0
+
+[sub_resource type="Resource" id="Resource_l684p"]
+resource_name = "ScrapSalvageModifier31"
+script = ExtResource("4_evj1b")
+statFriendlyName = "Scrap Salvage Modifier"
+statName = "ScrapSalvageModifier31"
+statIcon = ExtResource("7_leul2")
+baseStat = 0.666667
+roundingMode = 0
+
+[sub_resource type="Resource" id="Resource_ow8wb"]
+resource_name = "Weight31"
+script = ExtResource("4_evj1b")
+statFriendlyName = "Weight"
+statName = "Weight31"
+statIcon = ExtResource("8_5rcmk")
+baseStat = 1.0
+roundingMode = 0
+
+[sub_resource type="Resource" id="Resource_c1rva"]
+resource_name = "Damage31"
+script = ExtResource("4_evj1b")
+statFriendlyName = "Damage"
+statName = "Damage31"
+statIcon = ExtResource("9_1scw1")
+baseStat = 0.0
+roundingMode = 0
+
+[sub_resource type="Resource" id="Resource_4vbwg"]
+resource_name = "Knockback31"
+script = ExtResource("4_evj1b")
+statFriendlyName = "Knockback"
+statName = "Knockback31"
+statIcon = ExtResource("8_5rcmk")
+baseStat = 0.0
+roundingMode = 0
+
+[sub_resource type="Resource" id="Resource_uutc4"]
+resource_name = "Kickback31"
+script = ExtResource("4_evj1b")
+statFriendlyName = "Kickback"
+statName = "Kickback31"
+statIcon = ExtResource("8_5rcmk")
+baseStat = 0.0
+roundingMode = 0
+
+[sub_resource type="Resource" id="Resource_0qgoj"]
+resource_name = "RotationSpeed31"
+script = ExtResource("4_evj1b")
+statFriendlyName = "Rotation Speed"
+statName = "RotationSpeed31"
+statIcon = ExtResource("6_j7dkm")
+baseStat = 0.9
+roundingMode = 0
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_l000f"]
+size = Vector3(0.5, 0.5, 0.5)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_g4w8c"]
+size = Vector2(0.25, 0.25)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sqnxc"]
+transparency = 1
+cull_mode = 2
+albedo_texture = ExtResource("15_uutc4")
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_kphb4"]
+size = Vector2(0.1, 0.15)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_t8ht0"]
+transparency = 1
+cull_mode = 2
+albedo_texture = ExtResource("16_0qgoj")
+
+[node name="Piece_Manual Swivel" type="Node3D" node_paths=PackedStringArray("swivelNode", "movingSockets", "meshesHolder", "hitboxCollisionHolder", "hurtboxCollisionHolder", "placementCollisionHolder", "femaleSocketHolder", "hostSocket") groups=["Piece"]]
+visible = false
 script = ExtResource("2_jbgvx")
+swivelNode = NodePath("SwivelTop")
+movingSockets = [NodePath("SwivelTop/Socket")]
+pieceName = &"Manual Swivel"
+weightBase = 1.25
+scrapCostBase = 13
+activeAbilities = Array[ExtResource("2_kyd6e")]([SubResource("Resource_kyd6e"), SubResource("Resource_d7opd")])
+force_visibility = true
+meshesHolder = NodePath("Meshes")
+hitboxCollisionHolder = NodePath("HitboxShapes [Leave empty]")
+hurtboxCollisionHolder = NodePath("HurtboxShapes [Leave empty]")
+placementCollisionHolder = NodePath("PlacementShapes [Leave empty]")
+femaleSocketHolder = NodePath("FemaleSockets")
+hostSocket = NodePath("..")
+engineSlots = {
+Vector2i(2, 1): null,
+Vector2i(2, 2): null,
+Vector2i(2, 3): null
+}
+statCollection = Dictionary[String, ExtResource("4_evj1b")]({
+"ActiveCooldown31": SubResource("Resource_5rcmk"),
+"ActiveEnergyDraw31": SubResource("Resource_leul2"),
+"ContactCooldown31": SubResource("Resource_j7dkm"),
+"Damage31": SubResource("Resource_c1rva"),
+"Kickback31": SubResource("Resource_uutc4"),
+"Knockback31": SubResource("Resource_4vbwg"),
+"PassiveCooldown31": SubResource("Resource_5l6dw"),
+"PassiveEnergyDraw31": SubResource("Resource_evj1b"),
+"RotationSpeed31": SubResource("Resource_0qgoj"),
+"ScrapCost31": SubResource("Resource_1scw1"),
+"ScrapSalvageModifier31": SubResource("Resource_l684p"),
+"ScrapSellModifier31": SubResource("Resource_vudbv"),
+"Weight31": SubResource("Resource_ow8wb")
+})
 filepathForThisEntity = "res://scenes/prefabs/objects/pieces/piece_swivel_manual.tscn"
+
+[node name="FemaleSockets" type="Node3D" parent="."]
+editor_description = "Put all female sockets in this box. Make sure they align with the grid!"
+
+[node name="HitboxShapes [Leave empty]" type="Area3D" parent="."]
+editor_description = "Leave this node empty. "
+collision_layer = 16
+collision_mask = 513
+script = ExtResource("10_vudbv")
+
+[node name="HurtboxShapes [Leave empty]" type="Area3D" parent="." groups=["Piece"]]
+editor_description = "Leave this node empty. "
+collision_layer = 8
+collision_mask = 0
+script = ExtResource("11_l684p")
+
+[node name="PlacementShapes [Leave empty]" type="Node3D" parent="."]
+editor_description = "Leave this node empty. "
+script = ExtResource("12_ow8wb")
+
+[node name="PieceCollisionBox" type="CollisionShape3D" parent="." instance=ExtResource("13_c1rva")]
+editor_description = "A handy dandy box for all your collision needs.
+Edit 'thisColliderType' to have it be copied in as a Hitbox, Hurtbox, Placement check, or a mixture of them."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
+shape = SubResource("BoxShape3D_l000f")
+disabled = true
+debug_color = Color(0, 0.6, 0.701961, 0.419608)
+script = ExtResource("14_4vbwg")
+
+[node name="Meshes" type="Node3D" parent="."]
+editor_description = "Put any and all mesh instances in here."
+
+[node name="MaleSocket" type="Node3D" parent="Meshes"]
+editor_description = "This is purely here as a visual representation of where this thing plugs in. 
+!! Do not move or modify (Unless you have good reason, of course) !!"
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.00963242, 0)
+metadata/_edit_lock_ = true
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Meshes/MaleSocket"]
+transform = Transform3D(1, 0, 0, 0, -1, -1.50996e-07, 0, 1.50996e-07, -1, 0, 0, 0)
+mesh = SubResource("PlaneMesh_g4w8c")
+skeleton = NodePath("../../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_sqnxc")
+metadata/_edit_lock_ = true
+
+[node name="Prong1" type="Node3D" parent="Meshes/MaleSocket"]
+transform = Transform3D(1, 0, 0, 0, -1, -1.50996e-07, 0, 1.50996e-07, -1, 0, 0, 0)
+metadata/_edit_lock_ = true
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="Meshes/MaleSocket/Prong1"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0.075, 0.075)
+mesh = SubResource("PlaneMesh_kphb4")
+skeleton = NodePath("../../../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_t8ht0")
+
+[node name="Prong2" type="Node3D" parent="Meshes/MaleSocket"]
+transform = Transform3D(-0.5, -7.57103e-08, -0.866025, 0, -1, 8.74228e-08, -0.866025, 4.37114e-08, 0.5, 0, 0, 0)
+metadata/_edit_lock_ = true
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="Meshes/MaleSocket/Prong2"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0.075, 0.075)
+mesh = SubResource("PlaneMesh_kphb4")
+skeleton = NodePath("../../../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_t8ht0")
+
+[node name="Prong3" type="Node3D" parent="Meshes/MaleSocket"]
+transform = Transform3D(-0.5, 7.57103e-08, 0.866025, 0, -1, 8.74228e-08, 0.866025, 4.37114e-08, 0.5, 0, 0, 0)
+metadata/_edit_lock_ = true
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="Meshes/MaleSocket/Prong3"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0.075, 0.075)
+mesh = SubResource("PlaneMesh_kphb4")
+skeleton = NodePath("../../../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_t8ht0")
+
+[node name="SwivelBottom" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
+mesh = ExtResource("17_gxwol")
+
+[node name="SwivelTop" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
+mesh = ExtResource("18_a8au6")
+
+[node name="Socket" type="Area3D" parent="SwivelTop" node_paths=PackedStringArray("hostPiece", "collisionSphere") instance=ExtResource("19_h722e")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
+collision_layer = 32
+collision_mask = 0
+script = ExtResource("20_m6uju")
+hostPiece = NodePath("../..")
+collisionSphere = NodePath("CollisionShape3D")
+
+[connection signal="body_shape_entered" from="HitboxShapes [Leave empty]" to="." method="_on_hitbox_body_shape_entered"]

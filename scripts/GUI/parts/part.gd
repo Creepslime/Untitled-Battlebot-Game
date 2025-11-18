@@ -11,6 +11,7 @@ var inPlayerInventory := false;
 var ownedByPlayer := false;
 var invHolderNode : Control;
 var thisBot : Combatant;
+var thisRobot : Robot;
 
 @export_group("References")
 @export var textureBase : Control;
@@ -23,7 +24,10 @@ var selected := false;
 @export var scrapCostBase : int;
 var scrapSellModifier := 1.0;
 var scrapSellModifierBase := (2.0/3.0);
-@export var inventoryNode : Inventory;
+@export var inventoryNode : Inventory; ##@deprecated
+@export var hostPiece : Piece;
+@export var hostShopStall : ShopStall;
+
 @export var dimensions : Array[Vector2i];
 @export var myPartType := partTypes.UNASSIGNED;
 @export var myPartRarity := partRarities.COMMON;
@@ -146,13 +150,24 @@ func _process(delta):
 				textureBase.global_position = invHolderNode.global_position + Vector2(invPosition * 48);
 			else:
 				textureBase.global_position = invHolderNode.global_position;
+	elif is_instance_valid(hostShopStall):
+		textureBase.show();
+		#if inPlayerInventory:
+			#if ownedByPlayer:
+				#textureBase.global_position = invHolderNode.global_position + Vector2(invPosition * 48);
+			#else:
+		textureBase.global_position = invHolderNode.global_position;
 	else:
 		textureBase.hide();
 		%Buttons.disable();
 
 func _on_buttons_on_select(foo:bool):
-	selected = foo;
-	inventoryNode.select_part(self, foo);
+	if ! selected == foo and is_instance_valid(thisRobot):
+		selected = foo;
+		if foo:
+			thisRobot.select_part(self);
+		else:
+			thisRobot.deselect_all_parts();
 	pass # Replace with function body.
 
 func select(foo:bool):

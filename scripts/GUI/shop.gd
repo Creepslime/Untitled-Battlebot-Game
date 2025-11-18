@@ -187,6 +187,7 @@ func update_health_button():
 		TextFunc.set_text_color($HealButton/TextHolder/Price, "scrap");
 	else:
 		TextFunc.set_text_color($HealButton/TextHolder/Price, "unaffordable");
+
 func get_heal_amount():
 	return (healAmountBase * healAmountModifier) * player._get_combat_handler().get_max_health();
 func get_heal_price():

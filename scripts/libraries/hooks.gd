@@ -26,8 +26,10 @@ var list = {
 	"OnGainScrap": {}, #
 	"OnLand": {}, #
 	"OnChangeGameState": {}, #
+	"OnRerollShop": {}, #
 	
 	"OnScreenTransition": {}, #
+	"OnLoadSettings": {},
 };
 
 var body;
@@ -49,8 +51,8 @@ func OnFireProjectile(firer: PartActiveProjectile, projectile: Node3D):
 func OnMeleeWeaponHit(weapon: PartActiveMelee, victim: Node3D):
 	for hookFunc in getValidHooks("OnMeleeWeaponHit"):
 		hookFunc.call(weapon);
-	
-## Called when a melee weapon is swung or otherwise used.
+
+## @deprecated: Called when a melee weapon is swung or otherwise used.
 func OnMeleeWeaponSwing(weapon: PartActiveMelee):
 	for hookFunc in getValidHooks("OnMeleeWeaponSwing"):
 		hookFunc.call(weapon);
@@ -59,18 +61,18 @@ func OnMeleeWeaponSwing(weapon: PartActiveMelee):
 func OnHitWall(collider: CollisionObject3D):
 	for hookFunc in getValidHooks("OnHitWall"):
 		hookFunc.call(collider);
-	
+
 ## Called when something collides with an enemy.
 func OnEnemyCollision(collider1: CollisionObject3D, collider2: CollisionObject3D):
 	for hookFunc in getValidHooks("OnEnemyCollision"):
 		hookFunc.call(collider1, collider2);
-	
+
 ## Called when something collides with a player.
 func OnPlayerCollision(collider: Node):
 	for hookFunc in getValidHooks("OnPlayerCollision"):
 		hookFunc.call(collider);
 
-## Called when two things collide.
+## @deprecated: Called when two things collide.
 func OnCollision(collider1: CollisionObject3D, collider2: CollisionObject3D):
 	for hookFunc in getValidHooks("OnCollision"):
 		hookFunc.call(collider1, collider2);
@@ -90,10 +92,14 @@ func OnGainScrap(source: String, amount:int):
 	for hookFunc in getValidHooks("OnGainScrap"):
 		hookFunc.call(source, amount);
 
-## Called when a combatant hits the floor.
+## Called when a Robot hits the floor.
 func OnLand(thisBot: Robot, airtime: float):
 	for hookFunc in getValidHooks("OnLand"):
 		hookFunc.call(thisBot, airtime);
+
+func OnRerollShop():
+	for hookFunc in getValidHooks("OnRerollShop"):
+		hookFunc.call();
 
 func OnChangeGameState(oldState: GameBoard.gameState, newState: GameBoard.gameState):
 	for hookFunc in getValidHooks("OnChangeGameState"):
@@ -102,6 +108,11 @@ func OnChangeGameState(oldState: GameBoard.gameState, newState: GameBoard.gameSt
 func OnScreenTransition(state : ScreenTransition.mode):
 	for hookFunc in getValidHooks("OnScreenTransition"):
 		hookFunc.call(state);
+
+##Fired when settings are loaded.
+func OnLoadSettings():
+	for hookFunc in getValidHooks("OnLoadSettings"):
+		hookFunc.call();
 
 ## Use to add a hook.[br]
 ## To use, we go to any file and call[br]

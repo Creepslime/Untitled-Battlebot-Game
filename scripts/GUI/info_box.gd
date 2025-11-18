@@ -25,9 +25,10 @@ var icon_piece := preload("res://graphics/images/HUD/infobox/typeIcons/info_piec
 var icon_piece_unequipped := preload("res://graphics/images/HUD/infobox/typeIcons/info_piece_unequipped.png");
 var icon_part := preload("res://graphics/images/HUD/infobox/typeIcons/info_part.png");
 var icon_part_unequipped := preload("res://graphics/images/HUD/infobox/typeIcons/info_part_unequipped.png");
-
+var init_ready := false;
 func _ready():
 	clear_info();
+	init_ready = true;
 
 func populate_info(thing):
 	clear_info(thing);
@@ -53,12 +54,11 @@ func calculate_required_height():
 func populate_info_part(part:Part):
 	partRef = part;
 	lbl_partName.text = part.partName;
+	btn_moveButton.show();
 	if part.ownedByPlayer:
-		$MoveButton.disabled = false;
-		$SellButton/Label.text = "SELL: "+ TextFunc.format_stat(part._get_sell_price(), 0);
-		$SellButton/Label.show();
-		$SellButton.disabled = false;
-	$Description.text = part.partDescription;
+		lbl_sellButton.text = get_sell_string();
+		lbl_sellButton.show();
+	rlbl_desc.text = part.partDescription;
 	
 	if part._get_part_type() == Part.partTypes.UTILITY:
 		$EnergyIcon/Label.text = TextFunc.format_stat(part.get_energy_cost(true));
@@ -96,8 +96,12 @@ func populate_info_piece(piece:Piece):
 	pieceRef = piece;
 	lbl_partName.text = piece.pieceName;
 	rlbl_desc.text = piece.pieceDescription;
+	
+	btn_moveButton.hide();
+	
 	if piece.is_equipped():
 		iconBase.texture = icon_piece;
+		btn_removeButton
 	else:
 		iconBase.texture = icon_piece_unequipped;
 	
@@ -119,13 +123,16 @@ func clear_info(thingToCheck = null):
 		#$SellButton.disabled = true;
 		#$MoveButton.button_pressed = false;
 		#$MoveButton.disabled = true;
+		btn_moveButton.disabled = true;
+		btn_removeButton.disabled = true;
+		btn_sellButton.disabled = true;
 		#rlbl_desc.text = "[color=e0dede]No [color=ffffff]Description [color=e0dede]Found.";
 		rlbl_desc.text = "[color=e0dede]Closing...";
 		var col = TextFunc.get_color("lightred")
 		print_rich("[color="+str(col.to_html())+"]test")
-		areYouSure = false;
 		
 		clear_abilities();
+	sell_areYouSure = false;
 
 var ref : Node;
 func get_ref():
@@ -137,29 +144,64 @@ func get_ref():
 		return pieceRef;
 	ref = null;
 	return null;
+func ref_is_piece() -> bool:
+	if is_instance_valid(get_ref()):
+		return ref is Piece;
+	return false;
+func ref_is_part() -> bool:
+	if is_instance_valid(get_ref()):
+		return ref is Part;
+	return false;
 
-@export var btn_sellButton : Control;
-@export var lbl_sellButton : Control;
-@export var btn_moveButton : Control;
-var areYouSure := false;
+@export var btn_sellButton : Button;
+@export var lbl_sellButton : Label;
+@export var btn_moveButton : Button;
+@export var btn_removeButton : Button;
+var sell_areYouSure := false; ## 
 func _on_sell_button_pressed():
 	if get_ref() is Part:
-		if areYouSure:
+		if sell_areYouSure:
 			sellPart.emit(partRef);
 			clear_info();
 		else:
-			areYouSure = true;
+			sell_areYouSure = true;
 			var txt = "SURE? "
 			lbl_sellButton.text = txt + TextFunc.format_stat(partRef._get_sell_price(), 0);
 	elif get_ref() is Piece:
-		if areYouSure:
+		if sell_areYouSure:
 			sellPiece.emit(pieceRef);
 			clear_info();
 		else:
-			areYouSure = true;
+			sell_areYouSure = true;
 			var txt = "SURE? "
 			lbl_sellButton.text = txt + TextFunc.format_stat(pieceRef.get_sell_price(), 0);
 	pass # Replace with function body.
+
+var sellError = false; ## Whether [member lbl_sellButton] should be red or scrap yellow.
+## Gets the string for the sell button and sets [member sellError].
+func get_sell_string() -> String:
+	var prefix = "SELL:\n"
+	if ref_is_part():
+		sellError = btn_sellButton.disabled;
+		return prefix + TextFunc.format_stat(partRef._get_sell_price(), 0)
+	elif ref_is_piece():
+		if pieceRef.is_sellable():
+			sellError = btn_sellButton.disabled;
+			return prefix + TextFunc.format_stat(pieceRef.get_sell_price(), 0)
+		else:
+			sellError = true;
+			return "NOT FOR\nSALE"
+	sellError = true;
+	return "SELL:\nERROR"
+
+##Updates the sell button string.
+func update_sell_string():
+	var col = TextFunc.get_color("scrap");
+	lbl_sellButton.text = get_sell_string();
+	if sellError:
+		TextFunc.set_text_color(lbl_sellButton, "unaffordable")
+	else:
+		TextFunc.set_text_color(lbl_sellButton, "scrap")
 
 ##### ABILITIES BOX
 @export var abilityInfoboxScene := preload("res://scenes/prefabs/objects/gui/active_ability_infobox.tscn");
@@ -212,10 +254,36 @@ func update_ability_height():
 	
 	btn_sellButton.position.y = buttonPosY;
 	btn_moveButton.position.y = buttonPosY;
+	btn_removeButton.position.y = buttonPosY;
 	calculatedHeight = btn_sellButton.size.y + btn_sellButton.position.y + spaceAfterButton;
 	pass;
 
 func _physics_process(delta):
+	if ! init_ready: return;
+	var removeDisabled = true;
+	var moveDisabled = true;
+	var sellDisabled = true;
+	if GameState.get_in_state_of_building():
+		if ref_is_piece():
+			if pieceRef.is_removable():
+				removeDisabled = false;
+				if pieceRef.is_sellable():
+					sellDisabled = false;
+		elif ref_is_part():
+			moveDisabled = false;
+			removeDisabled = false;
+			sellDisabled = false;
+	
+	if is_instance_valid(btn_removeButton):
+		btn_removeButton.disabled = removeDisabled;
+	if is_instance_valid(btn_moveButton):
+		btn_moveButton.disabled = moveDisabled;
+	if is_instance_valid(btn_sellButton):
+		btn_sellButton.disabled = ! GameState.get_in_state_of_building();
+		if is_instance_valid(lbl_sellButton):
+			update_sell_string();
+	
+	
 	if queueAbilityPostUpdateCounter == 1:
 		data_ready = true;
 		pass;
@@ -229,7 +297,6 @@ func _physics_process(delta):
 	if queueAbilityPostUpdateCounter == 4:
 		#queueAbilityPostUpdate1 = false;
 		pass;
-	
 	if queueAbilityPostUpdateCounter >= 0:
 		queueAbilityPostUpdateCounter -= 1;
 	pass;
@@ -238,3 +305,20 @@ func clear_abilities():
 	##Clear out the abilities.
 	for ability in abilityHolder.get_children():
 		ability.queue_free();
+
+## Removes the piece or part we're inspecting.
+func _on_remove_button_pressed():
+	if ref_is_piece():
+		pieceRef.remove_and_add_to_robot_stash();
+	elif ref_is_part():
+		pass;
+	pass # Replace with function body.
+
+## TODO: Recreate Part moving logic.
+func _on_move_button_toggled(toggled_on):
+	if ref_is_part():
+		if toggled_on:
+			pass;
+		else:
+			pass;
+	pass # Replace with function body.

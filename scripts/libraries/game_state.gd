@@ -65,12 +65,23 @@ func get_game_board() -> GameBoard:
 	return board;
 
 func get_game_board_state():
-	var board = get_game_board();
+	var maker = get_node_or_null("/root/Maker Modes");
+	if maker != null:
+		return GameBoard.gameState.MAKER;
 	
+	var board = get_game_board();
 	if board == null:
-		return null;
+		return GameBoard.gameState.INVALID;
 	
 	return board.curState;
+
+func get_game_board_state_string() -> String:
+	return GameBoard.gameState.keys()[GameState.get_game_board_state()];
+
+func force_lighting_update():
+	var board = get_game_board();
+	if board != null:
+		return board.update_lighting();
 
 func get_round_number():
 	var board = get_game_board();
@@ -90,10 +101,16 @@ func get_wave_enemies_left():
 	
 	return board.get_enemies_left_for_wave();
 
-func get_in_state_of_play() ->bool:
+
+
+func get_in_one_of_given_states(states:Array[GameBoard.gameState])->bool:
+	var currentState = GameState.get_game_board_state();
+	return currentState in states;
+
+func get_in_state_of_play(includeLoading := true) ->bool:
 	var board = get_game_board();
 	if is_instance_valid(board):
-		return board.in_state_of_play();
+		return board.in_state_of_play(includeLoading);
 	else:
 		return false;
 func get_in_state_of_building() ->bool:
@@ -112,10 +129,19 @@ func get_in_state_of_shopping(includeLoading := false) ->bool:
 		return board.in_state_of_shopping(includeLoading);
 	else:
 		return false;
-func get_in_state_of_combat(includeLoading := false) ->bool:
+func get_in_game_over_state() -> bool:
+	return get_in_one_of_given_states([GameBoard.gameState.GAME_OVER]);
+func get_in_loading_state() -> bool:
 	var board = get_game_board();
 	if is_instance_valid(board):
-		return board.in_state_of_combat(includeLoading);
+		return board.in_state_of_loading();
+	else:
+		return false;
+
+func get_in_state_of_combat(includeLoading := false, includeTesting := false) ->bool:
+	var board = get_game_board();
+	if is_instance_valid(board):
+		return board.in_state_of_combat(includeLoading, includeTesting);
 	else:
 		return false;
 
@@ -124,6 +150,18 @@ func set_game_board_state(state : GameBoard.gameState):
 	
 	if board != null:
 		board.change_state(state);
+
+## Sets a state to be called when the screen transition shows up, then makes it show up.
+func queue_center_transition_state(state := GameBoard.gameState.QUEUE_EMPTY, layer := 3, instantLeave := false):
+	var board = get_game_board();
+	if is_instance_valid(board):
+		return board.queue_center_transition_state(state, layer, instantLeave);
+
+## Sets a state to be called when the screen transition leaves, then makes it leave.
+func queue_right_transition_state(state := GameBoard.gameState.QUEUE_EMPTY):
+	var board = get_game_board();
+	if is_instance_valid(board):
+		return board.queue_right_transition_state(state);
 
 func game_over():
 	var board = get_game_board();
@@ -406,6 +444,7 @@ func load_settings():
 			pass
 	file.close()
 	
+	Hooks.OnLoadSettings();
 	prints("[b]Loading settings: ", settings)
 	return settings
 
@@ -570,7 +609,7 @@ func make_screen_transition_leave():
 		screenTransition.connect("hitRight", hit_right);
 	screenTransition.primeASignal;
 	screenTransition.leave();
-func make_screen_transition_arrive(layer := 2):
+func make_screen_transition_arrive(layer := 3):
 	transitionCanvas.layer = layer;
 	if !screenTransition.is_connected("hitCenter", hit_center):
 		screenTransition.connect("hitCenter", hit_center);
@@ -582,48 +621,48 @@ func ping_screen_transition():
 	if screenTransition.is_on_right():
 		hit_right();
 
+var totalPlayTime := 0.0;
 var timeCounter = 0.;
+var profilerFrames = 0;
 var profilerFPS := 0;
-var profilerFrames := 0;
-var profilerCallsA := 0;
-var profilerBankA := 0;
-var profilerCallsB := 0;
-var profilerBankB := 0;
-var profilerCallsC := 0;
-var profilerBankC := 0;
-enum profilerBanks {
-	A,
-	B,
-	C
-}
-func profiler_ping(bank:profilerBanks=profilerBanks.A):
-	match bank:
-		profilerBanks.A:
-			profilerCallsA += 1
-		profilerBanks.B:
-			profilerCallsB += 1;
-		profilerBanks.C:
-			profilerCallsC += 1;
-func profiler_ping_A():
-	profiler_ping(profilerBanks.A);
-func profiler_ping_B():
-	profiler_ping(profilerBanks.B);
-func profiler_ping_C():
-	profiler_ping(profilerBanks.C);
+var profilerPingCalls = {}
+var profilerPingBanks = {}
+func profiler_ping_create(reason := "unknown"):
+	if ! profilerPingCalls.has(reason):
+		profilerPingCalls[reason] = 0;
+	if ! profilerPingBanks.has(reason):
+		profilerPingBanks[reason] = 0;
+	profilerPingCalls[reason] += 1;
+
+func get_profiler_string() -> String:
+	var s = "\n\nPROFILER PINGS:"
+	for reason in profilerPingBanks:
+		s += "\n"
+		s += reason
+		s += ": "
+		s += str(profilerPingBanks[reason])
+		s += " | ~"
+		if profilerFPS > 0:
+			s += str(profilerPingBanks[reason] / profilerFPS)
+			s += "/frame"
+		else:
+			s += "0/frame"
+	return s;
+
 func get_profiler_label():
-	return str("TIME: ",timeCounter,"\nFPS: ",profilerFPS,"\nBANK A: ",profilerBankA,"\nBANK B: ",profilerBankB,"\nBANK C: ",profilerBankC);
+	return str("TOTAL PLAY TIME: ", TextFunc.format_time(totalPlayTime, 0, -1), "\nPROFILER UPDATE TIME: ",TextFunc.format_stat(timeCounter),"\nFPS: ",profilerFPS,"\nSTATE: ",get_game_board_state_string(),get_profiler_string());
 	
 
 func profiler(delta):
 	timeCounter += delta;
+	totalPlayTime += delta;
 	profilerFrames += 1;
 	if timeCounter > 1:
 		timeCounter -= 1;
 		profilerFPS = profilerFrames;
 		profilerFrames = 0;
-		profilerBankA = profilerCallsA;
-		profilerBankB = profilerCallsB;
-		profilerBankC = profilerCallsC;
-		profilerCallsA = 0;
-		profilerCallsB = 0;
-		profilerCallsC = 0;
+		
+		for reason in profilerPingBanks:
+			profilerPingBanks[reason] = profilerPingCalls[reason];
+		for reason in profilerPingCalls:
+			profilerPingCalls[reason] = 0;

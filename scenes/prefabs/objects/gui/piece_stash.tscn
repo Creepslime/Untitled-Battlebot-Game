@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://cwe7m6fguo8yh"]
 
 [ext_resource type="Script" uid="uid://clvo87ved4q1g" path="res://scripts/GUI/piece_stash.gd" id="1_186n4"]
-[ext_resource type="PackedScene" uid="uid://bbtx1gkk751ox" path="res://scenes/prefabs/objects/stash_button.tscn" id="2_pkixk"]
+[ext_resource type="PackedScene" uid="uid://bbtx1gkk751ox" path="res://scenes/prefabs/objects/gui/stash_button.tscn" id="2_pkixk"]
 [ext_resource type="Theme" uid="uid://tcelcj32ux4o" path="res://graphics/images/HUD/digital_button.tres" id="4_js1gq"]
 
 [node name="PieceStash" type="TextureRect" node_paths=PackedStringArray("buttonsHolder", "scrollContainer")]

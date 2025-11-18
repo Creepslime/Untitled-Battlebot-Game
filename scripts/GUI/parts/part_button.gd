@@ -19,14 +19,13 @@ func _process(delta):
 				button_pressed = true;
 				if part.ownedByPlayer:
 					mouseOverTimer += delta;
-					if mouseOverTimer >= 0.5 && is_instance_valid(part.inventoryNode):
-						part.inventoryNode.move_mode_enable(true);
+					if mouseOverTimer >= 0.5 && is_instance_valid(part.thisRobot):
+						part.thisRobot.part_move_mode_enable(true);
 			else:
 				mouseOverTimer = 0.0;
 		else:
 			if Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT):
 				button_pressed = false;
-				part.inventoryNode.deselect_part();
 			mouseOverTimer = 0.0;
 	pass
 

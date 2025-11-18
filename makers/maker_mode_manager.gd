@@ -9,6 +9,7 @@ enum mode {
 	PART,
 	LEVEL,
 }
+var curMode : mode;
 
 func _ready():
 	change_mode(0);
@@ -34,7 +35,11 @@ func _ready():
 	mode.LEVEL : "Now Making: Levels",
 }
 
+func get_mode_key_name() -> String:
+	return str("EDITOR: ", mode.keys()[curMode])
+
 func change_mode(newMode : mode):
+	curMode = newMode;
 	for modeNode in modeNodes.values():
 		if is_instance_valid(modeNode):
 			if modeNode.visible:

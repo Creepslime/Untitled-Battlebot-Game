@@ -1,7 +1,7 @@
-[gd_scene load_steps=18 format=4 uid="uid://dpal3hy2d8lig"]
+[gd_scene load_steps=21 format=4 uid="uid://dpal3hy2d8lig"]
 
 [ext_resource type="Texture2D" uid="uid://dggphix4dl3qu" path="res://graphics/images/HUD/screenGFX/screenBG.png" id="1_kj7fi"]
-[ext_resource type="PackedScene" uid="uid://cwe7m6fguo8yh" path="res://scenes/prefabs/objects/piece_stash.tscn" id="2_5kns5"]
+[ext_resource type="PackedScene" uid="uid://cwe7m6fguo8yh" path="res://scenes/prefabs/objects/gui/piece_stash.tscn" id="2_5kns5"]
 [ext_resource type="Script" uid="uid://bgtkchcutayjv" path="res://scripts/GUI/piece_inspector.gd" id="2_e2kem"]
 [ext_resource type="TileSet" uid="uid://dicxuohkdpmlx" path="res://graphics/images/HUD/engine/engineTileMap.tres" id="3_5nxix"]
 [ext_resource type="PackedScene" uid="uid://c3xdylsv62lyp" path="res://scenes/prefabs/objects/gui/separator.tscn" id="3_gqx4l"]
@@ -13,7 +13,10 @@
 [ext_resource type="Texture2D" uid="uid://btfetdy0ahup8" path="res://graphics/images/HUD/sell_selected.png" id="14_rr8so"]
 [ext_resource type="Texture2D" uid="uid://b71g2q13wr7do" path="res://graphics/images/HUD/sell_disabled.png" id="15_ioju6"]
 [ext_resource type="Texture2D" uid="uid://dsl0x2nq48gga" path="res://graphics/images/HUD/move_unselected.png" id="16_8ba3m"]
+[ext_resource type="Texture2D" uid="uid://dcjepbskkl71j" path="res://graphics/images/HUD/statIcons/moveIconStriped.png" id="16_58ce7"]
+[ext_resource type="Texture2D" uid="uid://cfe2sf65uo872" path="res://graphics/images/HUD/statIcons/stashIconStriped.png" id="16_nprcp"]
 [ext_resource type="PackedScene" uid="uid://dy07swne0b8h0" path="res://scenes/prefabs/objects/gui/active_ability_infobox.tscn" id="16_ppwmp"]
+[ext_resource type="Texture2D" uid="uid://ciyi8cygcntwa" path="res://graphics/images/HUD/statIcons/scrapIconStriped.png" id="17_nprcp"]
 [ext_resource type="Texture2D" uid="uid://cxeur7wg8nvq7" path="res://graphics/images/HUD/move_selected.png" id="17_p4om5"]
 [ext_resource type="Texture2D" uid="uid://dnu6ivnxlduxo" path="res://graphics/images/HUD/move_hover.png" id="18_uwuke"]
 [ext_resource type="Texture2D" uid="uid://dyotls8fcbklx" path="res://graphics/images/HUD/move_disabled.png" id="19_10qlh"]
@@ -39,7 +42,7 @@ tile_map_data = PackedByteArray("AAD/////AAAEAAIAAAD//wAAAAAEAAEAAAD//wEAAAAEAAE
 tile_set = ExtResource("3_5nxix")
 metadata/_edit_group_ = true
 
-[node name="InfoBox" type="Control" parent="." node_paths=PackedStringArray("iconBase", "lbl_partName", "rlbl_desc", "btn_sellButton", "lbl_sellButton", "btn_moveButton", "abilityScrollContainer", "abilityHolder")]
+[node name="InfoBox" type="Control" parent="." node_paths=PackedStringArray("iconBase", "lbl_partName", "rlbl_desc", "btn_sellButton", "lbl_sellButton", "btn_moveButton", "btn_removeButton", "abilityScrollContainer", "abilityHolder")]
 unique_name_in_owner = true
 clip_contents = true
 layout_mode = 1
@@ -62,6 +65,7 @@ rlbl_desc = NodePath("Description")
 btn_sellButton = NodePath("SellButton")
 lbl_sellButton = NodePath("SellButton/Label")
 btn_moveButton = NodePath("MoveButton")
+btn_removeButton = NodePath("RemoveButton")
 abilityScrollContainer = NodePath("AbilityScrollContainer")
 abilityHolder = NodePath("AbilityScrollContainer/AbilityHolder")
 
@@ -98,7 +102,8 @@ bbcode_enabled = true
 text = "[color=e0dede]No [color=ffffff]description [color=e0dede]given."
 fit_content = true
 
-[node name="SellButton" type="TextureButton" parent="InfoBox"]
+[node name="SellButtonOld" type="TextureButton" parent="InfoBox"]
+visible = false
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -108,25 +113,14 @@ offset_top = 229.0
 offset_right = 120.0
 offset_bottom = 263.0
 grow_horizontal = 2
+disabled = true
 texture_normal = ExtResource("13_hswem")
 texture_pressed = ExtResource("14_rr8so")
 texture_hover = ExtResource("14_rr8so")
 texture_disabled = ExtResource("15_ioju6")
 
-[node name="Label" type="Label" parent="InfoBox/SellButton"]
-layout_mode = 0
-offset_left = 28.0
-offset_top = 8.0
-offset_right = 67.0
-offset_bottom = 28.0
-theme_override_colors/font_color = Color(0.94902, 0.92549, 0.419608, 1)
-theme_override_colors/font_outline_color = Color(0.141176, 0.054902, 0.054902, 1)
-theme_override_constants/outline_size = 4
-theme_override_font_sizes/font_size = 5
-text = "SELL: "
-horizontal_alignment = 1
-
-[node name="MoveButton" type="TextureButton" parent="InfoBox"]
+[node name="MoveButtonOld" type="TextureButton" parent="InfoBox"]
+visible = false
 layout_mode = 0
 offset_left = 119.0
 offset_top = 229.0
@@ -165,6 +159,48 @@ size_flags_horizontal = 3
 
 [node name="ActiveAbilityInfobox" parent="InfoBox/AbilityScrollContainer/AbilityHolder" instance=ExtResource("16_ppwmp")]
 layout_mode = 2
+
+[node name="RemoveButton" type="Button" parent="InfoBox"]
+layout_mode = 0
+offset_left = 1.0
+offset_top = 229.0
+offset_right = 87.0
+offset_bottom = 263.0
+text = "Stash"
+icon = ExtResource("16_nprcp")
+
+[node name="MoveButton" type="Button" parent="InfoBox"]
+layout_mode = 0
+offset_left = 88.9999
+offset_top = 229.0
+offset_right = 167.0
+offset_bottom = 263.0
+toggle_mode = true
+text = "Move
+"
+icon = ExtResource("16_58ce7")
+
+[node name="SellButton" type="Button" parent="InfoBox"]
+layout_mode = 0
+offset_left = 169.0
+offset_top = 229.0
+offset_right = 255.0
+offset_bottom = 263.0
+icon = ExtResource("17_nprcp")
+
+[node name="Label" type="Label" parent="InfoBox/SellButton"]
+layout_mode = 0
+offset_left = 27.9999
+offset_top = 8.0
+offset_right = 66.9999
+offset_bottom = 28.0
+theme_override_colors/font_color = Color(0.94902, 0.92549, 0.419608, 1)
+theme_override_colors/font_shadow_color = Color(0.141176, 0.054902, 0.054902, 1)
+theme_override_colors/font_outline_color = Color(0.141176, 0.054902, 0.054902, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 5
+text = "SELL: "
+horizontal_alignment = 1
 
 [node name="StashViewer" type="Control" parent="."]
 layout_mode = 1
@@ -252,6 +288,9 @@ theme = ExtResource("5_rirx1")
 text = "SORT BY"
 horizontal_alignment = 1
 
+[connection signal="pressed" from="InfoBox/SellButtonOld" to="InfoBox" method="_on_sell_button_pressed"]
+[connection signal="pressed" from="InfoBox/RemoveButton" to="InfoBox" method="_on_remove_button_pressed"]
+[connection signal="toggled" from="InfoBox/MoveButton" to="InfoBox" method="_on_move_button_toggled"]
 [connection signal="pressed" from="InfoBox/SellButton" to="InfoBox" method="_on_sell_button_pressed"]
 [connection signal="partButtonClicked" from="StashViewer/PieceStash" to="StashViewer/PieceStash" method="_on_part_button_clicked"]
 [connection signal="pieceButtonClicked" from="StashViewer/PieceStash" to="StashViewer/PieceStash" method="_on_piece_button_clicked"]

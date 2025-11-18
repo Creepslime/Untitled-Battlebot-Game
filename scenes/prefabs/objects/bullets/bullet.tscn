@@ -14,6 +14,8 @@ collision = NodePath("Hitbox/CollisionShape3D")
 hitbox = NodePath("Hitbox")
 
 [node name="Hitbox" type="Area3D" parent="."]
+collision_layer = 512
+collision_mask = 1537
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Hitbox" groups=["Projectile"]]
 unique_name_in_owner = true

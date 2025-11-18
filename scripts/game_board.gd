@@ -22,6 +22,8 @@ var player : Robot_Player;
 var enemiesKilled := 0;
 var scrapGained := 0;
 
+var scrapCount := 0;
+
 @export_subgroup("HUD nodes")
 #@export var HUD_playerStats : Control;
 @export var HUD_mainMenu : Control;
@@ -33,6 +35,10 @@ var scrapGained := 0;
 @export var LIGHT : DirectionalLight3D;
 @export var CANVAS_HUD : CanvasLayer;
 @export var CANVAS_GAMECAMERA : CanvasLayer;
+
+@export var CANVAS_SHOP : CanvasLayer;
+@export var HUD_shopPanel : ShopPanel;
+@export var HUD_shopManager : ShopManager;
 
 ##Camera stuff
 ## Main game camera.
@@ -46,7 +52,7 @@ func get_camera_pointer() -> Node3D:
 	if player != null and is_instance_valid(player):
 		if in_state_of_building():
 			var selected = player.get_selected_piece();
-			if is_instance_valid(selected):
+			if is_instance_valid(selected) and selected.is_inside_tree():
 				return selected;
 		return player.body;
 	else:
@@ -79,6 +85,7 @@ func _on_scenetree_ready():
 	arena_move_master("Workshop", "Base", "Base", cacheOpt.OVERWRITE_OLD_AND_SET_INPUT_CURRENT);
 	
 	change_state(gameState.SPLASH);
+	
 
 func _process(delta):
 	process_state(delta, curState);
@@ -87,25 +94,28 @@ func _process(delta):
 
 ##Controls the state of the game.
 enum gameState {
-	START, ## Initial value.
+	START, ## Initial value set on startup.
+	INVALID, ## Invalid value. Returned by [GameState.get_game_board_state()] when the game board is invalid.
+	MAKER, ## Invalid value. Returned by [GameState.get_game_board_state()] when the dev editor is open.
+	QUEUE_EMPTY, ## Invalid value. Denotes an empty queue as used by [member queuedRightTransitionState] and [member queuedCenterTransitionState].
 	SPLASH, ## The splash screen when the software first opens.
 	MAIN_MENU, ## Main menu.
 	INIT_NEW_GAME, ## The start of a new game.
 	INIT_ROUND, ## Round setup happens. Timers are reset, the enemy pool for the round is decided and then frontloaded, then after the game stops lagging we move on to LOAD_ROUND.
-	LOAD_ROUND, ## Screen transition from INIT_ROUND. Goes to PLAY.
-	PLAY, ## Main game loop. 
-	GAME_OVER, ## YOU HAVE DIED
+	LOAD_ROUND, ## Screen transition from INIT_ROUND. Goes to PLAY when the transition leaves.
+	PLAY, ## Main combat game loop. Pew pew slice slice and all that.
+	GAME_OVER, ## YOU HAVE DIED... or you hit "end run" on the pause menu.
 	CREDITS, ## Credits screen.
-	OPTIONS, ## Options screen.
-	GOTO_SHOP, ## Screen transition to INIT_SHOP.
+	OPTIONS, ## Options screen as accessed by the main menu. 
+	GOTO_SHOP, ## Screen transition to INIT_SHOP. Caching!
 	INIT_SHOP, ## Start up shop data. Load up the screen transition.
-	LOAD_SHOP, ## Screen transition from INIT_SHOP. Goes to 
-	SHOP, ## The UI for the shop 
-	SHOP_TEST, 
-	LEAVE_SHOP,
-	SHOP_BUILD,
+	LOAD_SHOP, ## Screen transition from INIT_SHOP. Goes to SHOP when the transition leaves.
+	SHOP, ## Shopping state. The UI for the shop is open. Time to spend money!
+	SHOP_TEST, ## Shopping state. The UI for the shop is closed. The player is able to modify the placements of Pieces and Partss on their bot with special camera control.
+	SHOP_BUILD, ## Shopping state. The UI for the shop is closed. The player is aable to drive around and fire their weapons. Certain pieces should behave differently if they interact with Scrap.
+	LEAVE_SHOP, ## We're exiting whatever shopping state we were in with a screen transition. Goes to INIT_ROUND when the transition arrives.
 }
-var curState := gameState.START
+var curState := gameState.START;
 
 ##@deprecated
 const play_states = [
@@ -132,10 +142,15 @@ const combat_load_states = [
 	GameBoard.gameState.INIT_ROUND,
 	GameBoard.gameState.LOAD_ROUND,
 ]
-##returns true if we're in a state that might be considered a part of the game loop.
-func in_state_of_combat(includeLoading := false)->bool:
+const combat_test_states = [
+	GameBoard.gameState.SHOP_TEST,
+]
+##returns true if we're in a state where the player is being controlled.
+func in_state_of_combat(includeLoading := false, includeTesting := false)->bool:
 	if includeLoading:
+		if includeTesting: return in_one_of_given_states(combat_states) or in_one_of_given_states(combat_load_states) or in_one_of_given_states(combat_test_states);
 		return in_one_of_given_states(combat_states) or in_one_of_given_states(combat_load_states);
+	if includeTesting: return in_one_of_given_states(combat_states) or in_one_of_given_states(combat_test_states);
 	return in_one_of_given_states(combat_states);
 
 const shop_states = [
@@ -144,7 +159,7 @@ const shop_states = [
 	GameBoard.gameState.SHOP_BUILD,
 ]
 const building_states = [
-	GameBoard.gameState.SHOP,
+	#GameBoard.gameState.SHOP,
 	GameBoard.gameState.SHOP_BUILD,
 ]
 const shop_load_states = [
@@ -171,9 +186,17 @@ const camera_tilt_states = [
 const game_over_states = [
 	GameBoard.gameState.PLAY,
 	GameBoard.gameState.SHOP,
+	GameBoard.gameState.SHOP_TEST,
+	GameBoard.gameState.SHOP_BUILD,
 ]
 func in_game_over_state()->bool:
 	return in_one_of_given_states(game_over_states) and player.aliveLastFrame;
+const loading_states = [
+	GameBoard.gameState.INIT_ROUND,
+	GameBoard.gameState.INIT_SHOP
+]
+func in_state_of_loading() -> bool:
+	return in_one_of_given_states(loading_states);
 
 func in_one_of_given_states(states:Array)->bool:
 	var currentState = GameState.get_game_board_state();
@@ -214,11 +237,15 @@ func exit_state(oldState:gameState):
 		gameState.SHOP:
 			pass
 		gameState.LEAVE_SHOP:
+			HUD_shopPanel.hide();
+			CANVAS_SHOP.hide();
 			move_out_of_workshop();
 			pass
 		gameState.INIT_ROUND:
 			pass
 		gameState.START:
+			HUD_shopPanel.hide();
+			CANVAS_SHOP.hide();
 			HUD_mainMenu.hide();
 			HUD_credits.hide();
 			HUD_gameOver.hide();
@@ -233,6 +260,9 @@ func enter_state(newState:gameState, oldState:gameState):
 		gameState.SPLASH:
 			GameState.init_screen_transition_vanity();
 		gameState.MAIN_MENU:
+			HUD_shopPanel.hide();
+			CANVAS_SHOP.hide();
+			HUD_shopManager.close_up_shop();
 			MUSIC.change_state(MusicHandler.musState.MENU);
 			
 			destroy_all_enemies(true);
@@ -241,6 +271,8 @@ func enter_state(newState:gameState, oldState:gameState):
 			roundNum = 0;
 			pass
 		gameState.GAME_OVER:
+			HUD_shopManager.close_up_shop();
+			
 			MUSIC.change_state(MusicHandler.musState.GAME_OVER);
 			
 			HUD_gameOver.show();
@@ -257,6 +289,8 @@ func enter_state(newState:gameState, oldState:gameState):
 			pass
 		gameState.INIT_NEW_GAME:
 			MUSIC.change_state(MusicHandler.musState.PREGAME);
+			
+			HUD_shopManager.reset_shop();
 			
 			GameState.start_death_timer(120.0,true)
 			roundNum = 0;
@@ -292,8 +326,10 @@ func enter_state(newState:gameState, oldState:gameState):
 			MUSIC.change_state(MusicHandler.musState.PREGAME);
 			
 			player.end_round();
-			GameState.call_deferred("make_screen_transition_arrive", 2);
+			GameState.call_deferred("make_screen_transition_arrive", 3);
 		gameState.INIT_SHOP:
+			HUD_shopPanel.show();
+			CANVAS_SHOP.show();
 			##TODO: Reimplementation of shop logic.
 			
 			move_player_to_workshop();
@@ -302,13 +338,30 @@ func enter_state(newState:gameState, oldState:gameState):
 			GameState.call_deferred("make_screen_transition_leave");
 			pass;
 		gameState.SHOP:
+			CANVAS_SHOP.show();
+			HUD_shopManager.open_up_shop();
 			player.enter_shop();
 			##TODO: SHOP UI LOGIC
 			##TODO: BUILD MODE / TEST MODE SWITCHING LOGIC
 			pass
+		gameState.SHOP_BUILD:
+			CANVAS_SHOP.hide();
+			player.enter_shop_build();
+			respawn_player();
+			##TODO: SHOP UI LOGIC
+			##TODO: BUILD MODE / TEST MODE SWITCHING LOGIC
+			pass
+		gameState.SHOP_TEST:
+			CANVAS_SHOP.hide();
+			player.enter_shop_test();
+			##TODO: SHOP UI LOGIC
+			##TODO: BUILD MODE / TEST MODE SWITCHING LOGIC
+			pass
 		gameState.LEAVE_SHOP:
+			queuedShopLeave = false;
 			player.exit_shop();
-			GameState.call_deferred("make_screen_transition_arrive", 2);
+			GameState.call_deferred("make_screen_transition_arrive", 3);
+
 
 func new_round_arena_sequence():
 	if roundNum == 1:
@@ -318,9 +371,20 @@ func new_round_arena_sequence():
 		arena_move_master("CURRENT", "NEW", "NEW", cacheOpt.CACHE_OLD_AND_SET_INPUT_CURRENT);
 	##TODO: Move enemies down here and have the frames to wait be max between that and obstacles.
 
+var queuedShopLeave := false;
+func queue_shop_exit():
+	HUD_shopManager.close_up_shop();
+	queuedShopLeave = true;
+
 var splashTimer := 5.5;
 var initArenaFrameWait := 0;
+var lightingUpdateTimer := 0;
 func process_state(delta : float, state : gameState):
+	lightingUpdateTimer -= 1;
+	if lightingUpdateTimer < 0:
+		update_lighting();
+		lightingUpdateTimer = 15;
+	
 	match curState:
 		gameState.SPLASH:
 			splashTimer -= delta;
@@ -381,6 +445,9 @@ func process_state(delta : float, state : gameState):
 func ping_screen_transition_result():
 	GameState.ping_screen_transition();
 
+var queuedRightTransitionState := gameState.QUEUE_EMPTY;
+var queuedCenterTransitionState := gameState.QUEUE_EMPTY;
+var queuedCenterTransitionForceLeave := false;
 func screen_transition(scr_state : ScreenTransition.mode):
 	match scr_state:
 		ScreenTransition.mode.RIGHT:
@@ -390,6 +457,10 @@ func screen_transition(scr_state : ScreenTransition.mode):
 						change_state(gameState.PLAY);
 				gameState.LOAD_SHOP:
 					change_state(gameState.SHOP);
+			
+			if queuedRightTransitionState != gameState.QUEUE_EMPTY:
+				change_state(queuedRightTransitionState);
+				queuedRightTransitionState = gameState.QUEUE_EMPTY;
 		ScreenTransition.mode.CENTER:
 			match curState:
 				gameState.INIT_NEW_GAME:
@@ -398,7 +469,22 @@ func screen_transition(scr_state : ScreenTransition.mode):
 					change_state(gameState.INIT_SHOP);
 				gameState.LEAVE_SHOP:
 					change_state(gameState.INIT_ROUND);
+			
+			if queuedCenterTransitionState != gameState.QUEUE_EMPTY:
+				change_state(queuedCenterTransitionState);
+				queuedCenterTransitionState = gameState.QUEUE_EMPTY;
+				if queuedCenterTransitionForceLeave:
+					GameState.call_deferred("make_screen_transition_leave");
 			pass;
+## Sets a state to be called when the screen transition shows up, then makes it show up.
+func queue_center_transition_state(state := gameState.QUEUE_EMPTY, layer := 3, instantLeave := false):
+	queuedCenterTransitionState = state;
+	GameState.call_deferred("make_screen_transition_arrive", layer);
+	queuedCenterTransitionForceLeave = instantLeave;
+## Sets a state to be called when the screen transition leaves, then makes it leave.
+func queue_right_transition_state(state := gameState.QUEUE_EMPTY):
+	queuedRightTransitionState = state;
+	GameState.call_deferred("make_screen_transition_leave");
 
 func wait_for_arena_to_build_and_respawn_to_happen() -> bool:
 	var respawnResult = false;

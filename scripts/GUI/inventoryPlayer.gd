@@ -319,11 +319,11 @@ func clear_shop_stall(stall:ShopStall, ignoreFrozen := false):
 		if is_instance_valid(stall.partRef):
 			if ignoreFrozen:
 				stall.freeze(false);
-				remove_part(stall.partRef, true);
+				remove_part(stall.partRef, true); ## Destroys whatever part was in here.
 			else:
 				if (stall.curState != ShopStall.doorState.FROZEN):
 					#print(stall.name + " is NOT frozen")
-					remove_part(stall.partRef, true);
+					remove_part(stall.partRef, true); ## Destroys whatever part was in here.
 
 func clear_shop(ignoreFrozen := false, reroll := false):
 	var StallA = $InventoryControls/BackingTexture/Shop/StallA;

@@ -9,6 +9,7 @@ var freezerBlinky : TextureRect;
 
 var partRef : Part;
 var inventory : InventoryPlayer;
+var player : Robot_Player
 
 var curState := ShopStall.doorState.NONE;
 var shopIsOpen := true;
@@ -59,7 +60,7 @@ func _ready():
 	rightDoor = $DoorHolder/DoorRight;
 	freezerDoor = $DoorHolder/DoorFreezer;
 	freezerBlinky = $FreezerBlinky;
-	inventory = GameState.get_inventory();
+	#inventory = GameState.get_inventory();
 	changeState(ShopStall.doorState.CLOSED);
 
 func _physics_process(delta):
@@ -132,16 +133,15 @@ func updatePrice():
 
 func is_affordable() -> bool:
 	var price = partRef._get_buy_price();
-	var inventoryScrap = inventory.get_scrap_total()
-	return price <= inventoryScrap;
+	return ScrapManager.is_affordable(price);
 
 func _on_buy_button_toggled(toggled_on):
 	if (curState == ShopStall.doorState.OPEN):
-		inventory.deselect_part();
+		player.deselect_part();
 		if is_instance_valid(partRef):
 			partRef.select(toggled_on);
 			if is_affordable():
-				inventory.buy_mode_enable(toggled_on);
+				player.buy_mode_enable(toggled_on);
 			else:
 				$BuyButton.button_pressed = false;
 		else:
@@ -152,14 +152,15 @@ func _on_buy_button_toggled(toggled_on):
 
 func deselect(deselectPart:=false):
 	$BuyButton.button_pressed = false;
-	inventory.buy_mode_enable(false);
+	if is_instance_valid(player):
+		player.buy_mode_enable(false);
 	if deselectPart && is_instance_valid(partRef):
 		partRef.select(false);
 
 func open_stall():
 	if !(curState == ShopStall.doorState.FROZEN):
 		changeState(ShopStall.doorState.OPEN);
-		if GameState.get_in_state_of_play() && inventory.inventoryUp:
+		if GameState.get_in_state_of_play():
 			var pitchMod = randf_range(2.5,3.5)
 			SND.play_sound_nondirectional("Shop.Door.Open", 0.85, pitchMod)
 	$BuyButton.disabled = false;
@@ -169,7 +170,7 @@ func close_stall():
 	deselect()
 	if !(curState == ShopStall.doorState.FROZEN):
 		changeState(ShopStall.doorState.CLOSED);
-		if GameState.get_in_state_of_play() && inventory.inventoryUp:
+		if GameState.get_in_state_of_play():
 			var pitchMod = randf_range(2.5,3.5)
 			SND.play_sound_nondirectional("Shop.Door.Open", 0.85, pitchMod)
 	$BuyButton.disabled = true;

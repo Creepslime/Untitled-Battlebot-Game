@@ -1,0 +1,145 @@
+[gd_scene load_steps=7 format=3 uid="uid://d4f5gt2273u7x"]
+
+[ext_resource type="Script" uid="uid://dx1w5ja65qha1" path="res://scripts/objects/robots/player/robot_player.gd" id="2_gvkxh"]
+[ext_resource type="Script" uid="uid://cd3dvyejdjvlg" path="res://scripts/objects/robots/buildingBlocks/body.gd" id="6_py1sw"]
+[ext_resource type="PackedScene" uid="uid://dosh155duu70e" path="res://scenes/prefabs/objects/pieces/buildingBlocks/socket.tscn" id="7_fj0lc"]
+[ext_resource type="PackedScene" uid="uid://b4adm8wxo7ym0" path="res://scenes/prefabs/objects/robots/buildingBlocks/treads.tscn" id="10_x05dx"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_f0k1s"]
+friction = 200.0
+bounce = 0.3
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_wy0j3"]
+
+[node name="Robot_Player" type="Node3D" node_paths=PackedStringArray("meshes", "bodySocket", "treads", "body")]
+visible = false
+script = ExtResource("2_gvkxh")
+meshes = NodePath("Body/Meshes")
+bodySocket = NodePath("Body/Meshes/Socket")
+robotNameInternal = "Player"
+robotName = "Untitled Scrapbot #15"
+treads = NodePath("Treads")
+startupGenerator = {
+&"occupant": {
+"res://scenes/prefabs/objects/pieces/piece_bodyCube.tscn": {
+"abilityAssignments": {},
+"disabledAbilities": [],
+"sockets": {
+0: {
+"occupant": {
+"res://scenes/prefabs/objects/pieces/piece_bumper.tscn": {
+"abilityAssignments": {},
+"disabledAbilities": [],
+"sockets": {}
+}
+},
+"rotation": Vector3(1.5708, 0, 0)
+},
+1: {
+"occupant": {
+"res://scenes/prefabs/objects/pieces/piece_bumper.tscn": {
+"abilityAssignments": {},
+"disabledAbilities": [],
+"sockets": {}
+}
+},
+"rotation": Vector3(1.5708, 3.14159, 0)
+},
+2: {
+"occupant": "null",
+"rotation": Vector3(1.5697, -2.25163, -0.681167)
+},
+3: {
+"occupant": "null",
+"rotation": Vector3(1.5697, -2.25158, 2.46048)
+},
+4: {
+"occupant": {
+"res://scenes/prefabs/objects/pieces/piece_sawblade.tscn": {
+"abilityAssignments": {
+"Whirl": Array[int]([2])
+},
+"disabledAbilities": [],
+"sockets": {
+0: {
+"occupant": {
+"res://scenes/prefabs/objects/pieces/piece_cannon.tscn": {
+"abilityAssignments": {
+"Fire": Array[int]([0])
+},
+"disabledAbilities": [],
+"sockets": {
+0: {
+"occupant": {
+"res://scenes/prefabs/objects/pieces/piece_rocket.tscn": {
+"abilityAssignments": {
+"Blastoff": Array[int]([1])
+},
+"disabledAbilities": [],
+"sockets": {
+0: {
+"occupant": "null",
+"rotation": Vector3(-1.5708, 3.14159, 0)
+},
+1: {
+"occupant": "null",
+"rotation": Vector3(0, 0, -1.5708)
+},
+2: {
+"occupant": "null",
+"rotation": Vector3(0, 0, 1.5708)
+},
+3: {
+"occupant": "null",
+"rotation": Vector3(0, 0, 0)
+}
+}
+}
+},
+"rotation": Vector3(0, 0, 0)
+}
+}
+}
+},
+"rotation": Vector3(0, 0, 0)
+}
+}
+}
+},
+"rotation": Vector3(0, 0, 0)
+}
+}
+}
+},
+&"rotation": Vector3(0, 0, 0)
+}
+filepathForThisEntity = "res://scenes/prefabs/objects/robots/robot_player.tscn"
+body = NodePath("Body")
+
+[node name="Body" type="RigidBody3D" parent="." groups=["Combatant", "Driveable", "Metal"]]
+axis_lock_angular_x = true
+axis_lock_angular_y = true
+axis_lock_angular_z = true
+mass = 100.0
+physics_material_override = SubResource("PhysicsMaterial_f0k1s")
+gravity_scale = 0.0
+can_sleep = false
+freeze = true
+script = ExtResource("6_py1sw")
+
+[node name="Meshes" type="Node3D" parent="Body"]
+transform = Transform3D(0.321359, 0, 0, 0, 0.321359, 0, 0, 0, 0.321359, 0, 0, 0)
+
+[node name="Socket" parent="Body/Meshes" node_paths=PackedStringArray("hostRobot", "selectorRayExceptions") instance=ExtResource("7_fj0lc")]
+transform = Transform3D(3.11178, 0, 0, 0, 3.11178, 0, 0, 0, 3.11178, 0, 0, 0)
+hostRobot = NodePath("../../..")
+collisionScale = 0.55
+selectorRayExceptions = [NodePath("../..")]
+dontUsePieceForRobotHost = true
+
+[node name="BaseCollision" type="CollisionShape3D" parent="Body"]
+shape = SubResource("SphereShape3D_wy0j3")
+
+[node name="Treads" parent="." instance=ExtResource("10_x05dx")]
+
+[connection signal="health_or_energy_changed" from="." to="." method="_on_health_or_energy_changed"]

@@ -1,6 +1,7 @@
 extends Label3D
 
 class_name Flyaway
+## A bit of text spawned in 3D space that floats up into the air and fades away after spawning.
 
 var timeBeforeFade := 1.8;
 var timeBeforeDeath := 2.0;

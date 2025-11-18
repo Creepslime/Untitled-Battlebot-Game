@@ -13,6 +13,8 @@ var snd : SND;
 @export var moneyCheat : CheckButton;
 @export var invincibleCheat : CheckButton;
 @export var killAllCheat : CheckButton;
+@export var profilerCheat : CheckButton;
+@export var transitionsCheat : CheckButton;
 @export var cheatsControl : Control;
 
 @export var btn_scoreReset : Button;
@@ -26,11 +28,13 @@ var loadingSettings := false;
 func load_settings():
 	#return
 	loadingSettings = true;
-	invShooting.button_pressed = GameState.get_setting("inventoryDisableShooting");
-	sawbladeDrone.button_pressed = GameState.get_setting("sawbladeDrone");
-	moneyCheat.button_pressed = GameState.get_setting("startingScrap") == 99999999;
-	invincibleCheat.button_pressed = GameState.get_setting("godMode");
-	killAllCheat.button_pressed = GameState.get_setting("killAllKey");
+	#invShooting.button_pressed = GameState.get_setting("inventoryDisableShooting");
+	#sawbladeDrone.button_pressed = GameState.get_setting("sawbladeDrone");
+	
+	#moneyCheat.button_pressed = GameState.get_setting("startingScrap") == 99999999;
+	#invincibleCheat.button_pressed = GameState.get_setting("godMode");
+	#killAllCheat.button_pressed = GameState.get_setting("killAllKey");
+	
 	renderShadows.button_pressed = GameState.get_setting("renderShadows");
 	
 	loadingSettings = false;
@@ -62,6 +66,11 @@ func _process(delta):
 	else:
 		if devCheats.button_pressed == false:
 			cheatsControl.hide();
+	
+	devCheats.disabled = ! GameState.get_in_one_of_given_states([GameBoard.gameState.OPTIONS]);
+	for cheatButton in devCheats.get_children():
+		if cheatButton is Button:
+			cheatButton.disabled = devCheats.disabled;
 	
 	if resettingScoresCheck:
 		$Btn_ScoresReset.text = "!!RESET HIGH SCORES!!";
@@ -115,10 +124,10 @@ func _on_world_volume_value_changed(value):
 	pass # Replace with function body.
 
 
-func _on_inv_shooting_toggled(toggled_on):
-	if not loadingSettings:
-		GameState.set_setting("inventoryDisableShooting", toggled_on);
-	pass # Replace with function body.
+#func _on_inv_shooting_toggled(toggled_on):
+	#if not loadingSettings:
+		#GameState.set_setting("inventoryDisableShooting", toggled_on);
+	#pass # Replace with function body.
 
 func _on_dev_cheats_toggled(toggled_on):
 	if not loadingSettings:
@@ -130,40 +139,46 @@ func _on_dev_cheats_toggled(toggled_on):
 			cheatsControl.hide();
 		else:
 			cheatsControl.show();
-		moneyCheat.disabled = !toggled_on;
-		invincibleCheat.disabled = !toggled_on;
-		killAllCheat.disabled = !toggled_on;
 	pass # Replace with function body.
 
-func _on_moneys_toggled(toggled_on):
-	if not loadingSettings:
-		if toggled_on:
-			GameState.set_setting("startingScrap", 99999999);
-		else:
-			GameState.set_setting("startingScrap", 0);
-	pass # Replace with function body.
+#func _on_moneys_toggled(toggled_on):
+	#if not loadingSettings:
+		#if toggled_on:
+			#GameState.set_setting("startingScrap", 99999999);
+		#else:
+			#GameState.set_setting("startingScrap", 0);
+	#pass # Replace with function body.
+#func _on_godmode_toggled(toggled_on):
+	#if not loadingSettings:
+		#GameState.set_setting("godMode", toggled_on);
+	#pass # Replace with function body.
+#func _on_killall_toggled(toggled_on):
+	#if not loadingSettings:
+		#GameState.set_setting("killAllKey", toggled_on);
+	#pass # Replace with function body.
+#func _on_profiler_visible_toggled(toggled_on):
+	#if not loadingSettings:
+		#GameState.set_setting("ProfilerLabelsVisible", toggled_on);
+	#pass # Replace with function body.
+#func _on_transitions_hide_toggled(toggled_on):
+	#if not loadingSettings:
+		#GameState.set_setting("HiddenScreenTransitions", toggled_on);
+	#pass # Replace with function body.
 
-func _on_godmode_toggled(toggled_on):
-	if not loadingSettings:
-		GameState.set_setting("godMode", toggled_on);
-	pass # Replace with function body.
 
-func _on_killall_toggled(toggled_on):
-	if not loadingSettings:
-		GameState.set_setting("killAllKey", toggled_on);
-	pass # Replace with function body.
 
 func _on_sawblade_drone_toggled(toggled_on):
 	if not loadingSettings:
 		GameState.set_setting("sawbladeDrone", toggled_on);
 	pass # Replace with function body.
 
+
+
 func open_sesame(toggle):
 	var inPlay = GameState.get_in_state_of_play()
 	##Controls buttons that should or shouldn't be available during Pause.
 	$Btn_Menu.visible = !inPlay;
 	$Btn_Menu.disabled = inPlay;
-	devCheats.disabled = inPlay;
 	
 	if toggle:
 		update_score_text();
@@ -196,8 +211,5 @@ func _on_btn_scores_reset_pressed():
 	pass # Replace with function body.
 
 func _on_render_shadows_toggled(toggled_on):
-	if not loadingSettings:
-		GameState.set_setting("renderShadows", toggled_on);
-		var gameBoard = GameState.get_game_board();
-		gameBoard.update_lighting()
+	GameState.force_lighting_update();
 	pass # Replace with function body.

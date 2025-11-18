@@ -11,9 +11,7 @@ var currentThing : Node;
 
 func _ready():
 	for stat in allStats:
-		if stat is StatAdjusterNumber:
-			stat.manager = self;
-		if stat is StatAdjusterText:
+		if stat is StatAdjusterNumber or stat is StatAdjusterText or stat is StatAdjusterBoolean:
 			stat.manager = self;
 
 
@@ -26,6 +24,9 @@ func assign_new_thing(newThing : Node):
 		if stat is StatAdjusterText:
 			if currentThing.get(stat.name) != null:
 				stat.text = currentThing.get(stat.name);
+		if stat is StatAdjusterBoolean:
+			if currentThing.get(stat.name) != null:
+				stat.button_pressed = currentThing.get(stat.name);
 
 func adjust_stat_number(stat:StatAdjusterNumber):
 	if is_instance_valid(currentThing):
@@ -36,3 +37,8 @@ func adjust_stat_text(stat:StatAdjusterText):
 	if is_instance_valid(currentThing):
 		if currentThing.get(stat.name) != null:
 			currentThing.set(stat.name, stat.text);
+
+func adjust_stat_bool(stat:StatAdjusterBoolean,value):
+	if is_instance_valid(currentThing):
+		if currentThing.get(stat.name) != null:
+			currentThing.set(stat.name, value);

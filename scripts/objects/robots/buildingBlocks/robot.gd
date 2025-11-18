@@ -451,6 +451,8 @@ func prepare_pipette(override : Variant = get_current_pipette()):
 func unreference_pipette():
 	pipettePiecePath = "";
 	pipettePieceScene = null;
+	if is_instance_valid(pipettePieceInstance):
+		pipettePieceInstance.deselect();
 	pipettePieceInstance = null;
 	pipettePartInstance = null;
 	queue_update_hud();
@@ -1123,7 +1125,7 @@ func get_selected_or_pipette():
 
 ## Returns what's selected. Returns [code]null[/code] if it's invalid.[br]Priority is [member selectedPart] > [member selectedPiece] > [code]null[/code].
 func get_selected():
-	if is_instance_valid(selectedPart):
+	if is_instance_valid(get_selected_part()):
 		return selectedPart;
 	var selPiece = get_selected_piece();
 	if is_instance_valid(selPiece):
@@ -1204,6 +1206,9 @@ func select_piece(piece : Piece):
 	return null;
 
 func deselect_all_parts(ignoredPart : Part = null):
+	if ignoredPart != selectedPart:
+		if is_instance_valid(selectedPart):
+			selectedPart.select(false);
 	for part in get_all_parts():
 		if ignoredPart == null or part != ignoredPart:
 			part.select(false);
@@ -1217,6 +1222,18 @@ func select_part(part : Part):
 		selectedPart = part;
 		return part;
 	return null;
+
+func get_selected_part():
+	if is_instance_valid(selectedPart):
+		return selectedPart;
+	return null;
+
+func part_buy_move_enable(foo:bool):
+	pass;
+
+func part_move_mode_enable(foo:bool):
+	pass;
+
 
 ######################## STASH
 

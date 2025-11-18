@@ -127,7 +127,7 @@ func die():
 		gameBoard.game_over();
 		
 		##Play the death sound
-		if GameState.get_in_state_of_play():
+		if GameState.get_in_state_of_play() or GameState.get_in_state_of_game_over():
 			#SND.play_sound_nondirectional(deathSound);
 			SND.play_sound_nondirectional("Combatant.Die");
 		##Play the death particle effects.
@@ -152,6 +152,17 @@ func end_round():
 func enter_shop():
 	drain_all_energy();
 	super();
+	enable_player_control(false);
+	pass;
+##Fired by the gameboard when the shop gets opened.
+func enter_shop_build():
+	drain_all_energy();
+	enable_player_control(false);
+	pass;
+##Fired by the gameboard when the shop gets opened.
+func enter_shop_test():
+	drain_all_energy();
+	enable_player_control(true);
 	pass;
 ##Fired by the gameboard when the shop gets closed.
 func exit_shop():

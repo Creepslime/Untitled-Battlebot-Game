@@ -44,9 +44,10 @@ func place_on_ground():
 	cast.set_collision_mask_value(1, true);
 	cast.set_collision_mask_value(11, false);
 
-func check_is_unoccupied() -> bool:
+func check_is_unoccupied(ignoreContents := false) -> bool:
 	if !is_ready: return false;
-	if newEnemy != null: return false;
+	if ! ignoreContents:
+		if newEnemy != null: return false;
 	if !is_instance_valid(cast): return false;
 	
 	#cast.force_shapecast_update();
@@ -63,6 +64,7 @@ var newEnemy : Node3D;
 var timer := 0.0;
 var timerLength := 1.0;
 var forceTimerLength := 5.0;
+var spawningParticle : PFXBulletTracer;
 
 func spawn_enemy():
 	if is_instance_valid(newEnemy):
@@ -72,6 +74,11 @@ func spawn_enemy():
 			gameBoard.add_child(newEnemy);
 			newEnemy.global_position = global_position + Vector3(0,0.5,0);
 			newEnemy.queue_live();
+		
+		if is_instance_valid(spawningParticle):
+			spawningParticle.stop_trailing();
+			spawningParticle = null;
+		ParticleFX.play("Rubble", GameState.get_game_board(), self.global_position, 1.0, self);
 	newEnemy = null;
 
 func assign_enemy_type(inPath):
@@ -85,7 +92,8 @@ func assign_enemy_type_from_resource(inPath : Resource):
 	enemyTypeToSpawn = inPath;
 
 func start_spawn(time: float = 1):
-	ParticleFX.play("SpawnerFX", GameState.get_game_board(), self.global_position, 1.0, self);
+	if spawningParticle == null:
+		spawningParticle = ParticleFX.play("SpawnerFX", self, Vector3.ZERO, 1.0, self);
 	timerLength = time;
 	if is_instance_valid(enemyTypeToSpawn):
 		newEnemy = enemyTypeToSpawn.instantiate();
@@ -102,14 +110,18 @@ func _physics_process(delta):
 			decal.show();
 			mat.set("albedo_color", Color(1,1,1,0));
 			timer += delta;
+			decal.scale = decal.scale.lerp(Vector3.ONE * ((timer / forceTimerLength) + 0.35), delta * 20);
+			
 			if timerLength > 0:
-				decal.scale = decal.scale.lerp(Vector3.ONE * ((timer / forceTimerLength) + 0.35), delta * 20);
 				#show();z
-				if timer > forceTimerLength:
-					spawn_enemy();
-				else:
-					if check_is_unoccupied():
+				if timer > timerLength:
+					
+					
+					if timer > forceTimerLength:
 						spawn_enemy();
+					else:
+						if check_is_unoccupied(true):
+							spawn_enemy();
 		else:
 			mat.set("albedo_color", Color(1,1,1,0));
 			if decal.scale.y < 0.1:

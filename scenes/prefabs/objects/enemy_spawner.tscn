@@ -1,7 +1,6 @@
-[gd_scene load_steps=5 format=3 uid="uid://08oqp4si63nu"]
+[gd_scene load_steps=4 format=3 uid="uid://08oqp4si63nu"]
 
 [ext_resource type="Texture2D" uid="uid://uflissj08i1o" path="res://graphics/images/HUD/statIcons/cooldownIconStriped.png" id="1_arqg6"]
-[ext_resource type="Script" path="res://scripts/enemy_spawner.gd" id="2_jff6l"]
 
 [sub_resource type="QuadMesh" id="QuadMesh_ge6f6"]
 
@@ -16,4 +15,3 @@ billboard_mode = 1
 [node name="MeshInstance3D" type="MeshInstance3D"]
 mesh = SubResource("QuadMesh_ge6f6")
 surface_material_override/0 = SubResource("StandardMaterial3D_xnfen")
-script = ExtResource("2_jff6l")
