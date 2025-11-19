@@ -16,13 +16,15 @@ var camFeedBlackAlpha := 1.0;
 var camScreenOn := false;
 var initialized := false;
 var transitionCalled := false;
+var shops : Array[ShopStation];
 
 
 func _ready():
 	Hooks.add(self,"OnRerollShop", "ShopManager", _on_reroll_button_pressed);
-	stationConstruction.manager = self;
-	#stationBattle.manager = self;
-	#stationParts.manager = self;
+	for shop in HUD_stations.get_children():
+		if shop is ShopStation:
+			shop.manager = self;
+			shops.append(shop);
 
 func _process(delta):
 	HUD_stations.visible = is_visible_in_tree();
@@ -87,39 +89,39 @@ func _process(delta):
 		var board = GameState.get_game_board()
 		if GameState.get_in_state_of_shopping():
 			if board.queuedShopLeave:
-				if !is_visible_in_tree() or (black_a == 1 and camFeedHProgress <= 0 and camFeedVProgress <= 0) and (stationConstruction.doorActuallyClosed):
+				if !is_visible_in_tree() or (black_a == 1 and camFeedHProgress <= 0 and camFeedVProgress <= 0) and all_shops_closed():
 					GameState.set_game_board_state(GameBoard.gameState.LEAVE_SHOP)
 					transitionCalled = true;
 
-@export var stationConstruction : ShopStation;
-@export var stationBattle : ShopStation;
-@export var stationParts : ShopStation;
 var player : Robot_Player;
 @export var HUD_stations : Control;
 
+func all_shops_closed():
+	for shop in shops:
+		if ! shop.doorActuallyClosed:
+			return false;
+	return true;
+
 func init_shop():
 	player = GameState.get_player();
-	stationConstruction.player = GameState.get_player();
-	#stationBattle.player = GameState.get_player();
-	#stationParts.player = GameState.get_player();
+	for shop in shops:
+		shop.player = GameState.get_player();
 	pass;
 
 func open_up_shop():
 	turn_on_cam_feed();
 	if ! initialized:
 		initialized = true;
-	stationConstruction.open_up_shop()
-	#stationBattle.open_up_shop()
-	#stationParts.open_up_shop()
+	for shop in shops:
+		shop.open_up_shop();
 	pass;
 
 func close_up_shop():
 	turn_off_cam_feed();
 	initialized = false;
 	
-	stationConstruction.new_round(GameState.get_round_number() + 1);
-	#stationBattle.new_round(GameState.get_round_number() + 1);
-	#stationParts.new_round(GameState.get_round_number() + 1);
+	for shop in shops:
+		shop.new_round(GameState.get_round_number() + 1);
 
 func turn_on_cam_feed():
 	camScreenOn = true;
@@ -149,9 +151,9 @@ func set_closing_values():
 
 ## Resets all shop values to their defaults. Used at the start of a new game only.
 func reset_shop():
-	stationConstruction.new_round(-1);
-	#stationBattle.new_round(-1);
-	#stationParts.new_round(-1);
+	for shop in shops:
+		shop.new_round(-1);
+	
 	rerollPriceIncrementPermanent = 0;
 	rerollPriceIncrement = 0;
 	healPriceIncrementPermanent = 0;

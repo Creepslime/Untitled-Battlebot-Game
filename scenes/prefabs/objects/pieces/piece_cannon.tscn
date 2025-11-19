@@ -280,10 +280,10 @@ pieceName = &"Cannon"
 descriptionConstructor = Array[ExtResource("2_52v1y")]([SubResource("Resource_861xr"), SubResource("Resource_f406y"), SubResource("Resource_shgbd")])
 pieceDescription = "[color=ffffffff]Shoots [color=ffffffff]projectiles[color=ffffffff]."
 weightBase = 10.0
+force_visibility = true
 scrapCostBase = 25
 activeAbilities = Array[ExtResource("3_f406y")]([SubResource("Resource_xjxg3")])
 passiveAbilities = Array[ExtResource("3_f406y")]([SubResource("Resource_fsokb")])
-force_visibility = true
 damageBase = 1.0
 knockbackBase = 250.0
 kickbackBase = 250.0

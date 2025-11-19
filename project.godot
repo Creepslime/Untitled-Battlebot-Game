@@ -231,6 +231,8 @@ dbg_ToggleProfiler={
 
 [layer_names]
 
+3d_render/layer_1="Main"
+3d_render/layer_2="Shop Rotisserie"
 3d_physics/layer_1="Robot bodies"
 3d_physics/layer_2="AI Node Setup"
 3d_physics/layer_3="Placement Ray"

@@ -9,6 +9,9 @@ class_name Piece
 
 ########## STANDARD GODOT PROCESSING FUNCTIONS
 func _ready():
+	if temporaryPreview:
+		queue_free();
+	
 	if ! Engine.is_editor_hint():
 		#if pieceName == "BodyCube":
 			#print("BODYCUBE IS READYING!")
@@ -22,6 +25,9 @@ func _ready():
 		gather_colliders_and_meshes();
 
 func _physics_process(delta):
+	if temporaryPreview:
+		queue_free();
+	
 	if ! Engine.is_editor_hint():
 		super(delta);
 		if not is_paused():
@@ -100,9 +106,12 @@ func assign_references():
 		#print("References for piece ", name, " were invalid. ")
 		queue_free();
 
-func destroy():
+func destroy(removeFromSocket := true):
 	select(false);
 	clear_stats();
+	if removeFromSocket:
+		if has_host(true, false, false):
+			get_host_socket().remove_occupant(true);
 	queue_free();
 
 ######### SAVING/LOADING
@@ -236,11 +245,18 @@ func is_removable() -> bool:
 	return removable and is_equipped() and GameState.get_in_state_of_building();
 func is_sellable() -> bool:
 	return is_removable() and ! isBody;
+func is_buyable() -> bool:
+	return ScrapManager.is_affordable(get_buy_price()) and inShop;
 @export var weightBase := 1.0;
-
+@export var force_visibility := false;  
+@export var temporaryPreview := false; ## When true, calls [method destroy] at the first possible opportunity.
+@export_subgroup("Shop Data")
+@export var poolWeight := 1; ##This is multiplied by 5 when Rare, 10 when Uncommon, and 15 when Common.
+@export var myPartRarity := Part.partRarities.COMMON;
 @export var scrapCostBase : int;
 @export var scrapSellModifierBase := (2.0/3.0);
 @export var scrapSalvageModifierBase := (1.0/6.0);
+@export var inShop := false; ## Set by [ShopStall] when adding this piece to itself.
 
 ## How much weight this Piece is carrying, including itself.
 var weightLoad := 0.0;
@@ -290,10 +306,15 @@ func get_sell_price_piece_only(discountMultiplier := 1.0):
 func get_salvage_price_piece_only(discountMultiplier := 1.0):
 	return max(0, ceili(get_stat("ScrapCost") * get_stat("ScrapSalvageModifier") * discountMultiplier));
 
+func get_buy_price(discountMultiplier := 1.0, fixedMarkup := 0):
+	## TODO: Write this up so it adds the combined buy price of this piece as well as all parts contained within its engine.
+	return get_buy_price_piece_only();
+
 ##Gets the Scrap amount for attempting to buy this Piece.
 ##discountMultiplier is multiplied by the price.
 ##fixedMarkup is added to the price.
 func get_buy_price_piece_only(discountMultiplier := 1.0, fixedMarkup := 0):
+	discountMultiplier *= ScrapManager.get_discount_for_type(ScrapManager.priceTypes.PIECE);
 	var currentPrice = maxi(0, ceili(get_stat("ScrapCost") * discountMultiplier))
 	return currentPrice + fixedMarkup;
 
@@ -688,7 +709,6 @@ func use_ability(action : AbilityManager) -> bool:
 
 #################### VISUALS AND TRANSFORM
 
-@export var force_visibility := false; 
 
 var placingAnimationTimer = -1;
 
@@ -699,11 +719,22 @@ func start_placing_animation():
 func process_draw(delta):
 	#return;
 	#print(hurtboxCollisionHolder.get_collision_layer())
+	if inShop:
+		for mesh in get_all_meshes():
+			mesh.set_layer_mask_value(1, false)
+			mesh.set_layer_mask_value(2, true)
+	else:
+		for mesh in get_all_meshes():
+			mesh.set_layer_mask_value(1, true)
+			mesh.set_layer_mask_value(2, false)
+	
 	if not has_host(true, false, false) and not force_visibility:
 		placingAnimationTimer = -1;
 		if visible: hide()
 	else:
 		if not visible: show()
+		
+		
 		##Hide/show the male socket based on plugged-in status.
 		if is_instance_valid(maleSocketMesh):
 			if has_host(true, false, false): ##If you're on a socket:
@@ -836,7 +867,7 @@ func get_kickback_damage_data(targetPosition := global_position, _damageAmount :
 func contact_damage(otherPiece : Piece, otherPieceCollider : PieceCollisionBox, thisPieceCollider : PieceCollisionBox):
 	#print (self, otherPiece)
 	#print("COntactdamage function.")
-	if otherPiece != self:
+	if otherPiece != self and otherPiece.is_inside_tree():
 		#print("Target was not self.")
 		##Handle damaging the opposition.
 		var DD = get_damage_data();
@@ -1132,9 +1163,11 @@ func select(foo : bool = not get_selected()):
 	return selected;
 	pass;
 
-func select_via_robot():
-	if is_instance_valid(get_host_robot()):
-		get_host_robot().select_piece(self);
+func select_via_robot(robotOverride := get_host_robot(), forcedValue = null):
+	var bot = null;
+	if is_instance_valid(robotOverride):
+		bot = robotOverride;
+		bot.select_piece(self, forcedValue);
 
 func deselect():
 	if selected:
@@ -1174,7 +1207,7 @@ func get_socket_at_index(socketIndex : int) -> Socket:
 
 func autograb_sockets():
 	var sockets = Utils.get_all_children_of_type(self, Socket, self);
-	print(sockets);
+	#print(sockets);
 	allSockets = [];
 	for socket : Socket in sockets:
 		Utils.append_unique(allSockets, socket);

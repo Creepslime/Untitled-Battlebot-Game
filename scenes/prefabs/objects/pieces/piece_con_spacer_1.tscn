@@ -181,9 +181,9 @@ pieceName = &"Small Cube"
 descriptionConstructor = Array[ExtResource("2_vq6ya")]([SubResource("Resource_ujwhk"), SubResource("Resource_agd5d"), SubResource("Resource_7qnf5")])
 pieceDescription = "[color=ffffffff]Serves no purpose other than to provide [color=ffffffff]structure [color=ffffffff]to your robot."
 weightBase = 2.5
+force_visibility = true
 scrapCostBase = 6
 hurtboxAlwaysEnabled = true
-force_visibility = true
 meshesHolder = NodePath("Meshes")
 hitboxCollisionHolder = NodePath("HitboxShapes [Leave empty]")
 hurtboxCollisionHolder = NodePath("HurtboxShapes [Leave empty]")

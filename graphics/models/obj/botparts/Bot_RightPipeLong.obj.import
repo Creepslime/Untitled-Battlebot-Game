@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://bf2ql7p0y8mry"
+path="res://.godot/imported/Bot_RightPipeLong.obj-9a582ccb1f5222f8f50128157f920088.mesh"
+
+[deps]
+
+files=["res://.godot/imported/Bot_RightPipeLong.obj-9a582ccb1f5222f8f50128157f920088.mesh"]
+
+source_file="res://graphics/models/obj/botparts/Bot_RightPipeLong.obj"
+dest_files=["res://.godot/imported/Bot_RightPipeLong.obj-9a582ccb1f5222f8f50128157f920088.mesh", "res://.godot/imported/Bot_RightPipeLong.obj-9a582ccb1f5222f8f50128157f920088.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

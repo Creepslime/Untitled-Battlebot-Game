@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://bavgwu0bxj8ky"]
+
+[ext_resource type="Texture2D" uid="uid://5h0txkmysl7t" path="res://graphics/images/HUD/buttonGFX/pistonArmThick.png" id="1_donpe"]
+[ext_resource type="Script" uid="uid://c2tp30c3caf4e" path="res://scripts/GUI/piston_arm.gd" id="2_kuij3"]
+
+[node name="PistonArm2" type="NinePatchRect"]
+offset_left = 38.0
+offset_top = 34.0
+offset_right = 55.0
+offset_bottom = 36.0
+texture = ExtResource("1_donpe")
+patch_margin_left = 5
+patch_margin_top = 1
+patch_margin_right = 5
+patch_margin_bottom = 1
+script = ExtResource("2_kuij3")

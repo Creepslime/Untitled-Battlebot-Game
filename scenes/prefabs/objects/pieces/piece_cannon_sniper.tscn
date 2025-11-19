@@ -295,10 +295,10 @@ descriptionConstructor = Array[ExtResource("2_rfcio")]([SubResource("Resource_86
 pieceDescription = "[color=ffffffff]Shoots [color=ffffffff]projectiles [color=ffffffff]with high speed and accuracy.
 [color=ffffffff]Lower than average fire rate."
 weightBase = 15.0
+force_visibility = true
 scrapCostBase = 35
 activeAbilities = Array[ExtResource("3_abq4e")]([SubResource("Resource_b31gf")])
 passiveAbilities = Array[ExtResource("3_abq4e")]([SubResource("Resource_ns1lj")])
-force_visibility = true
 damageBase = 1.0
 knockbackBase = 250.0
 kickbackBase = 250.0

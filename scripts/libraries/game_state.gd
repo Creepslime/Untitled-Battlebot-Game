@@ -387,6 +387,13 @@ func get_unique_ability_id() -> int:
 	abilityID += 1;
 	return ret;
 
+var shopStallID := 0;
+
+func get_unique_shop_stall_id() -> int:
+	var ret = shopStallID;
+	shopStallID += 1;
+	return ret;
+
 ############ SETTINGS AND SAVE DATA
 
 static var settings := {

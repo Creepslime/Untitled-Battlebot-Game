@@ -1,0 +1,305 @@
+[gd_scene load_steps=22 format=4 uid="uid://c4yuir6uc8va3"]
+
+[ext_resource type="Script" uid="uid://f2utlpnj4kg4" path="res://scripts/GUI/shop_stall.gd" id="1_w7sps"]
+[ext_resource type="Texture2D" uid="uid://blmdrpsajj6f7" path="res://graphics/images/HUD/blinkies/freezerblinky_off.png" id="2_w7sgq"]
+[ext_resource type="Texture2D" uid="uid://b1olqkpvwejg" path="res://graphics/images/HUD/shop/stall_door_frozen.png" id="3_ku5hf"]
+[ext_resource type="TileSet" uid="uid://dicxuohkdpmlx" path="res://graphics/images/HUD/engine/engineTileMap.tres" id="3_t8nqo"]
+[ext_resource type="PackedScene" uid="uid://dosh155duu70e" path="res://scenes/prefabs/objects/pieces/buildingBlocks/socket.tscn" id="4_3enrf"]
+[ext_resource type="Texture2D" uid="uid://ppmc64phinum" path="res://graphics/images/HUD/shop/stall_door_left.png" id="4_vafuu"]
+[ext_resource type="PackedScene" uid="uid://ynu1nnwpk1qi" path="res://scenes/prefabs/objects/pieces/piece_bodyCube.tscn" id="5_32cuk"]
+[ext_resource type="Texture2D" uid="uid://dx4xvvlp28d07" path="res://graphics/images/HUD/shop/stall_door_right.png" id="5_irvpd"]
+[ext_resource type="PackedScene" uid="uid://cir0nj1a2lfic" path="res://scenes/prefabs/objects/gui/button_hole.tscn" id="12_8lyng"]
+[ext_resource type="Theme" uid="uid://bq0jig2pdkgtn" path="res://graphics/images/HUD/UI_theme.tres" id="12_krdxo"]
+[ext_resource type="Texture2D" uid="uid://c6ex2rok0qxqr" path="res://graphics/images/HUD/icon_freeze.png" id="13_7lfx4"]
+[ext_resource type="PackedScene" uid="uid://ci0jm27ysf4ww" path="res://scenes/prefabs/objects/gui/piston_arm_small.tscn" id="14_8lyng"]
+[ext_resource type="Texture2D" uid="uid://dwjsfotj64dr6" path="res://graphics/images/HUD/buttonGFX/buttonHole_metal.png" id="15_y0sp2"]
+[ext_resource type="Script" uid="uid://b2xygs0a3auwq" path="res://scripts/GUI/button_hole.gd" id="16_t8nqo"]
+[ext_resource type="Texture2D" uid="uid://cwmvdja6ssr4s" path="res://graphics/images/HUD/icon_scrapGear.png" id="17_courc"]
+[ext_resource type="Theme" uid="uid://tcelcj32ux4o" path="res://graphics/images/HUD/digital_button.tres" id="18_7lfx4"]
+[ext_resource type="FontFile" uid="uid://s3k2ji7jxshs" path="res://graphics/images/HUD/8-segment.png" id="18_y0sp2"]
+[ext_resource type="Script" uid="uid://dnkl1d08snkyl" path="res://scripts/GUI/lbl_scrap_shop.gd" id="19_y0sp2"]
+[ext_resource type="Texture2D" uid="uid://o01v65x3ienk" path="res://graphics/images/HUD/screenGFX/insetScreen.png" id="20_courc"]
+[ext_resource type="Texture2D" uid="uid://bk4yhy6s8a6y5" path="res://graphics/images/HUD/shopBG_scrap.png" id="20_y0sp2"]
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_3enrf"]
+top_radius = 0.25
+
+[node name="StallA" type="Control" node_paths=PackedStringArray("leftDoor", "rightDoor", "freezerDoor", "freezerBlinky", "btn_buy", "lbl_price", "btn_freeze", "bg_Piece", "node_PiecePreview", "btn_PieceSelect", "lbl_name", "bg_Part", "rotisserie_socket")]
+texture_filter = 1
+layout_mode = 3
+anchors_preset = 0
+offset_left = 12.0
+offset_top = 45.0
+offset_right = 156.0
+offset_bottom = 189.0
+script = ExtResource("1_w7sps")
+leftDoor = NodePath("DoorHolder/DoorLeft")
+rightDoor = NodePath("DoorHolder/DoorRight")
+freezerDoor = NodePath("DoorHolder/DoorFreezer")
+freezerBlinky = NodePath("FreezerBlinky")
+btn_buy = NodePath("ButtonBuy")
+lbl_price = NodePath("Lbl_Scrap")
+btn_freeze = NodePath("ButtonFreeze")
+bg_Piece = NodePath("PieceGFX")
+node_PiecePreview = NodePath("PieceGFX/SubViewportContainer/SubViewport/Stall")
+btn_PieceSelect = NodePath("btn_PieceSelect")
+lbl_name = NodePath("NameBG/Name")
+bg_Part = NodePath("PartGFX")
+rotisserie_socket = NodePath("PieceGFX/SubViewportContainer/SubViewport/Stall/Socket")
+
+[node name="FreezerBlinky" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 115.0
+offset_top = 197.0
+offset_right = 129.0
+offset_bottom = 215.0
+texture = ExtResource("2_w7sgq")
+
+[node name="PartGFX" type="Control" parent="."]
+anchors_preset = 0
+
+[node name="Background" type="TileMapLayer" parent="PartGFX"]
+tile_map_data = PackedByteArray("AAAFAAAAAAACAAEAAAAEAAAAAAABAAEAAAAFAAEAAAACAAIAAAAEAAEAAAABAAIAAAAFAAIAAAACAAEAAAAFAAMAAAACAAIAAAAEAAMAAAABAAIAAAAEAAIAAAABAAEAAAADAAEAAAACAAIAAAADAAAAAAACAAEAAAAAAAIAAAABAAEAAAABAAIAAAACAAEAAAABAAMAAAACAAIAAAAAAAMAAAABAAIAAAAAAAEAAAABAAIAAAABAAEAAAACAAIAAAABAAQAAAACAAEAAAAAAAQAAAABAAEAAAACAAMAAAABAAIAAAACAAQAAAABAAEAAAACAAIAAAABAAEAAAACAAEAAAABAAIAAAACAAAAAAABAAEAAAABAAAAAAACAAEAAAAAAAAAAAABAAEAAAADAAIAAAACAAEAAAADAAMAAAACAAIAAAADAAQAAAACAAEAAAAEAAQAAAABAAEAAAAFAAQAAAACAAEAAAAAAAUAAAABAAIAAAABAAUAAAACAAIAAAACAAUAAAABAAIAAAADAAUAAAACAAIAAAAEAAUAAAABAAIAAAAFAAUAAAACAAIAAAA=")
+tile_set = ExtResource("3_t8nqo")
+
+[node name="PieceGFX" type="Control" parent="."]
+anchors_preset = 0
+offset_right = 144.0
+offset_bottom = 144.0
+
+[node name="Background" type="TileMapLayer" parent="PieceGFX"]
+tile_map_data = PackedByteArray("AAAFAAAAAAAAAAIAAAAEAAAAAAAAAAIAAAAFAAEAAAAAAAIAAAAFAAIAAAAAAAIAAAAFAAMAAAAAAAIAAAADAAAAAAAAAAIAAAAAAAIAAAAAAAIAAAAAAAMAAAAAAAIAAAAAAAEAAAAAAAIAAAAAAAQAAAAAAAIAAAACAAAAAAAAAAIAAAABAAAAAAAAAAIAAAAAAAAAAAAAAAIAAAAFAAQAAAAAAAIAAAAAAAUAAAAAAAIAAAABAAUAAAAAAAIAAAACAAUAAAAAAAIAAAADAAUAAAAAAAIAAAAEAAUAAAAAAAIAAAAFAAUAAAAAAAIAAAABAAQAAAAAAAIAAAACAAMAAAAAAAIAAAACAAIAAAAAAAIAAAABAAIAAAAAAAIAAAACAAQAAAAAAAIAAAACAAEAAAAAAAIAAAABAAEAAAAAAAIAAAABAAMAAAAAAAIAAAADAAQAAAAAAAIAAAADAAMAAAAAAAIAAAADAAIAAAAAAAIAAAAEAAQAAAAAAAIAAAAEAAEAAAAAAAIAAAADAAEAAAAAAAIAAAAEAAMAAAAAAAIAAAAEAAIAAAAAAAIAAAA=")
+tile_set = ExtResource("3_t8nqo")
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="PieceGFX"]
+light_mask = 2
+visibility_layer = 2
+z_index = 1
+custom_minimum_size = Vector2(144, 144)
+layout_mode = 0
+offset_right = 144.0
+offset_bottom = 144.0
+
+[node name="SubViewport" type="SubViewport" parent="PieceGFX/SubViewportContainer"]
+handle_input_locally = false
+size = Vector2i(144, 144)
+render_target_update_mode = 4
+
+[node name="Stall" type="Node3D" parent="PieceGFX/SubViewportContainer/SubViewport"]
+
+[node name="Camera3D" type="Camera3D" parent="PieceGFX/SubViewportContainer/SubViewport/Stall"]
+transform = Transform3D(1, 0, 0, 0, 0.943974, 0.33002, 0, -0.33002, 0.943974, 0, 1.35448, 2.06308)
+cull_mask = 2
+
+[node name="SpotLight3D" type="SpotLight3D" parent="PieceGFX/SubViewportContainer/SubViewport/Stall/Camera3D"]
+transform = Transform3D(1, 0, 0, 0, 0.819292, 0.573376, 0, -0.573376, 0.819292, 0, 2.64203, 1.8628)
+layers = 2
+light_energy = 4.784
+spot_range = 7.061
+spot_attenuation = 0.59
+spot_angle = 20.35
+
+[node name="Socket" parent="PieceGFX/SubViewportContainer/SubViewport/Stall" instance=ExtResource("4_3enrf")]
+shopRotisserie = true
+
+[node name="Piece_BodyCube" parent="PieceGFX/SubViewportContainer/SubViewport/Stall/Socket" instance=ExtResource("5_32cuk")]
+visible = true
+temporaryPreview = true
+inShop = true
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="PieceGFX/SubViewportContainer/SubViewport/Stall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
+layers = 2
+mesh = SubResource("CylinderMesh_3enrf")
+skeleton = NodePath("../../root/@EditorNode@21269/@Panel@14/@VBoxContainer@15/DockHSplitLeftL/DockHSplitLeftR/DockHSplitMain/@VBoxContainer@26/DockVSplitCenter/@VSplitContainer@54/@VBoxContainer@55/@EditorMainScreen@102/MainScreen/@CanvasItemEditor@11479/@VSplitContainer@11131/@HSplitContainer@11133/@HSplitContainer@11135/@Control@11136/@SubViewportContainer@11137/@SubViewport@11138/StallA/PieceGFX/SubViewportContainer/SubViewport")
+
+[node name="Rim2" type="TileMapLayer" parent="PieceGFX"]
+tile_map_data = PackedByteArray("AAAFAAAAAAAHAAEAAAAEAAAAAAAGAAAAAAAFAAEAAAAHAAIAAAAFAAIAAAAHAAIAAAAFAAMAAAAHAAIAAAADAAAAAAAGAAAAAAAAAAIAAAAEAAEAAAAAAAMAAAAEAAEAAAAAAAEAAAAEAAEAAAAAAAQAAAAEAAEAAAACAAAAAAAGAAAAAAABAAAAAAAGAAAAAAAAAAAAAAAEAAIAAAAFAAQAAAAHAAIAAAAAAAUAAAAEAAMAAAABAAUAAAAGAAMAAAACAAUAAAAGAAMAAAADAAUAAAAGAAMAAAAEAAUAAAAGAAMAAAAFAAUAAAAHAAMAAAA=")
+tile_set = ExtResource("3_t8nqo")
+
+[node name="DoorHolder" type="Control" parent="."]
+z_index = 7
+clip_contents = true
+anchors_preset = 0
+offset_right = 144.0
+offset_bottom = 144.0
+
+[node name="DoorFreezer" type="TextureRect" parent="DoorHolder"]
+layout_mode = 0
+offset_right = 144.0
+offset_bottom = 144.0
+texture = ExtResource("3_ku5hf")
+
+[node name="DoorLeft" type="TextureRect" parent="DoorHolder"]
+layout_mode = 0
+offset_right = 144.0
+offset_bottom = 144.0
+texture = ExtResource("4_vafuu")
+
+[node name="DoorRight" type="TextureRect" parent="DoorHolder"]
+layout_mode = 0
+offset_right = 144.0
+offset_bottom = 144.0
+texture = ExtResource("5_irvpd")
+
+[node name="btn_PieceSelect" type="Button" parent="."]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 10.0
+offset_top = 9.0
+offset_right = 134.0
+offset_bottom = 133.0
+
+[node name="ButtonFreeze" type="Button" parent="."]
+layout_mode = 0
+offset_left = 7.0
+offset_top = 189.0
+offset_right = 107.0
+offset_bottom = 225.0
+theme = ExtResource("12_krdxo")
+theme_type_variation = &"FreezeButton"
+toggle_mode = true
+text = "FREEZE"
+icon = ExtResource("13_7lfx4")
+
+[node name="PistonArm" parent="ButtonFreeze" instance=ExtResource("14_8lyng")]
+layout_mode = 0
+offset_left = 10.0
+offset_right = 15.0
+
+[node name="PistonArm2" parent="ButtonFreeze" instance=ExtResource("14_8lyng")]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -15.0
+offset_right = -10.0
+grow_horizontal = 0
+
+[node name="ButtonHole" parent="ButtonFreeze" instance=ExtResource("12_8lyng")]
+layout_mode = 0
+
+[node name="ButtonBuy" type="Button" parent="."]
+layout_mode = 0
+offset_left = 71.0
+offset_top = 149.0
+offset_right = 141.0
+offset_bottom = 185.0
+theme = ExtResource("12_krdxo")
+theme_type_variation = &"SmallerTextButton"
+toggle_mode = true
+text = "BUY"
+icon = ExtResource("17_courc")
+
+[node name="PistonArm" parent="ButtonBuy" instance=ExtResource("14_8lyng")]
+layout_mode = 0
+offset_left = 10.0
+offset_right = 15.0
+
+[node name="PistonArm2" parent="ButtonBuy" instance=ExtResource("14_8lyng")]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -15.0
+offset_right = -10.0
+grow_horizontal = 0
+
+[node name="ButtonHole" type="TextureRect" parent="ButtonBuy"]
+z_index = -1
+layout_mode = 0
+offset_left = -1.0
+offset_top = 4.0
+offset_right = 71.0
+offset_bottom = 36.0
+texture = ExtResource("15_y0sp2")
+script = ExtResource("16_t8nqo")
+
+[node name="Lbl_Scrap" type="Label" parent="."]
+z_index = 1
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -65.0
+offset_top = 15.0
+offset_right = -10.0
+offset_bottom = 32.0
+theme_override_fonts/font = ExtResource("18_y0sp2")
+theme_override_font_sizes/font_size = 15
+text = "1"
+horizontal_alignment = 2
+vertical_alignment = 1
+script = ExtResource("19_y0sp2")
+
+[node name="AbilityIconBG" type="NinePatchRect" parent="Lbl_Scrap"]
+z_index = -1
+layout_mode = 0
+offset_left = -3.0
+offset_top = -3.0
+offset_right = 60.0
+offset_bottom = 20.0
+texture = ExtResource("20_courc")
+patch_margin_left = 1
+patch_margin_top = 3
+patch_margin_right = 1
+patch_margin_bottom = 1
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1
+
+[node name="BG_zeroes" type="Label" parent="Lbl_Scrap"]
+z_index = -1
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -26.5
+offset_top = -17.0
+offset_right = 28.5
+theme_override_colors/font_color = Color(0.47451, 0.47451, 0.47451, 1)
+theme_override_fonts/font = ExtResource("18_y0sp2")
+theme_override_font_sizes/font_size = 15
+text = "00000"
+vertical_alignment = 1
+
+[node name="NameBG" type="NinePatchRect" parent="."]
+layout_mode = 0
+offset_left = 2.0
+offset_top = -29.0
+offset_right = 142.0
+offset_bottom = -5.0
+texture = ExtResource("20_courc")
+patch_margin_left = 1
+patch_margin_top = 3
+patch_margin_right = 1
+patch_margin_bottom = 1
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1
+
+[node name="Name" type="Label" parent="NameBG"]
+layout_mode = 0
+offset_left = 3.0
+offset_top = 5.0
+offset_right = 213.0
+offset_bottom = 21.0
+theme = ExtResource("18_7lfx4")
+theme_type_variation = &"HeaderLarge"
+text = "Piece Name"
+
+[node name="NinePatchRect" type="NinePatchRect" parent="."]
+layout_mode = 0
+offset_left = -1.0
+offset_top = -3.0
+offset_right = 145.0
+offset_bottom = 145.0
+texture = ExtResource("20_y0sp2")
+patch_margin_left = 1
+patch_margin_top = 3
+patch_margin_right = 1
+patch_margin_bottom = 1
+
+[connection signal="pressed" from="btn_PieceSelect" to="." method="_on_btn_piece_select_pressed"]

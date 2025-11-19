@@ -2,10 +2,10 @@ extends Control
 
 class_name ShopStall
 
-var leftDoor : TextureRect;
-var rightDoor : TextureRect;
-var freezerDoor : TextureRect;
-var freezerBlinky : TextureRect;
+@export var leftDoor : TextureRect;
+@export var rightDoor : TextureRect;
+@export var freezerDoor : TextureRect;
+@export var freezerBlinky : TextureRect;
 
 var pieceRef : Piece;
 var partRef : Part;
@@ -17,12 +17,27 @@ var shopIsOpen := true;
 
 var doorsActuallyClosed := false;
 
+var stallID := -1;
+
+@export var btn_buy : Button;
+@export var lbl_price : ScrapLabel;
+@export var btn_freeze : Button;
+
+@export var bg_Piece : Control;
+@export var node_PiecePreview : Node3D;
+@export var btn_PieceSelect : Button;
+@export var lbl_name : Label;
+
+@export var bg_Part : Control;
+
 enum doorState {
 	NONE,
 	OPEN,
 	CLOSED,
 	FROZEN,
 }
+
+@export var defaultPieceNotPart := false
 
 func changeState(newState:ShopStall.doorState):
 	if curState != newState:
@@ -36,7 +51,7 @@ func changeState(newState:ShopStall.doorState):
 			#freezerBlinky.texture = load("res://graphics/images/HUD/blinkies/freezerblinky_off.png");
 			pass;
 		if curState == ShopStall.doorState.FROZEN:
-			$FreezeButton.button_pressed = false;
+			btn_freeze.button_pressed = false;
 			doorsActuallyClosed = false;
 			#freezerBlinky.texture = load("res://graphics/images/HUD/blinkies/freezerblinky_on.png");
 		
@@ -57,12 +72,18 @@ func changeState(newState:ShopStall.doorState):
 			freezerBlinky.texture = load("res://graphics/images/HUD/blinkies/freezerblinky_on.png");
 
 func _ready():
-	leftDoor = $DoorHolder/DoorLeft;
-	rightDoor = $DoorHolder/DoorRight;
-	freezerDoor = $DoorHolder/DoorFreezer;
-	freezerBlinky = $FreezerBlinky;
+	if ! btn_freeze.is_connected("toggled", _on_freeze_button_toggled):
+		btn_freeze.connect("toggled", _on_freeze_button_toggled);
+	if ! btn_buy.is_connected("toggled", _on_buy_button_toggled):
+		btn_buy.connect("toggled", _on_buy_button_toggled);
+	
 	#inventory = GameState.get_inventory();
 	changeState(ShopStall.doorState.CLOSED);
+	
+	node_PiecePreview.global_position.x = get_shop_stall_id() * 20;
+	node_PiecePreview.global_position.y = -20;
+	
+	rotisserie_socket.remove_occupant(true);
 
 func _physics_process(delta):
 	updatePrice();
@@ -90,6 +111,8 @@ func _physics_process(delta):
 		freezerDoor.position.y = move_toward(freezerDoor.position.y, 0.0, delta * 200);
 	else:
 		changeState(ShopStall.doorState.CLOSED);
+	
+	update_behavior_to_reflect_contents();
 
 func _on_freeze_button_toggled(toggled_on):
 	freeze(toggled_on);
@@ -108,75 +131,92 @@ func freeze(toggled_on:=true):
 				SND.play_sound_nondirectional("Part.Select", 0.60, 0.5);
 		deselect(true);
 	elif curState == ShopStall.doorState.CLOSED:
-		$FreezeButton.button_pressed = false;
+		btn_freeze.button_pressed = false;
 
+## Returns true if the stall is in state [enum ShopStall.doorState.FROZEN].
 func is_frozen() -> bool:
 	return (curState == ShopStall.doorState.FROZEN);
 
+## Returns true if there's nothing inside OR the stall is frozen.
 func is_empty() -> bool:
 	return not is_frozen() and ! has_ref();
 
+## Returns true if there's something in here.
 func has_ref() -> bool:
-	return is_instance_valid(partRef) or is_instance_valid(pieceRef);
+	return ref_is_part() or ref_is_piece();
 
+## Returns true if the thing in here is a part.
+func ref_is_part() -> bool:
+	return is_instance_valid(partRef);
+
+## Returns true if the thing in here is a piece.
+func ref_is_piece() -> bool:
+	return is_instance_valid(pieceRef);
+
+## Updates the price label to match the current contents and state.
 func updatePrice():
-	if is_instance_valid(partRef):
-		if curState == doorState.CLOSED:
-			TextFunc.set_text_color($BuyButton/TextHolder/Price, "scrap");
-			$BuyButton/TextHolder/Price.text = "???";
-		else:
-			var price = partRef._get_buy_price();
-			$BuyButton/TextHolder/Price.text = str(price);
-			if is_affordable():
-				if curState == doorState.FROZEN:
-					TextFunc.set_text_color($BuyButton/TextHolder/Price, "ranged");
-				else:
-					TextFunc.set_text_color($BuyButton/TextHolder/Price, "scrap");
-			else:
-				TextFunc.set_text_color($BuyButton/TextHolder/Price, "unaffordable");
-	elif is_instance_valid(pieceRef):
-		pass;
+	var price = get_price();
+	
+	lbl_price.update_label(price);
+	
+	if price < 0:
+		TextFunc.set_text_color(lbl_price, "unaffordable");
+	elif curState == doorState.CLOSED:
+		TextFunc.set_text_color(lbl_price, "scrap");
 	else:
-		TextFunc.set_text_color($BuyButton/TextHolder/Price, "unaffordable");
-		$BuyButton/TextHolder/Price.text = "-/-";
+		if is_affordable():
+			if curState == doorState.FROZEN:
+				TextFunc.set_text_color(lbl_price, "ranged");
+			else:
+				TextFunc.set_text_color(lbl_price, "scrap");
+		else:
+			TextFunc.set_text_color(lbl_price, "unaffordable");
 
-func is_affordable() -> bool:
-	var price = 0;
-	if is_instance_valid(partRef):
+## Gets the price of the ref, or -1 if no ref. -1 makes the scrap counter zero out.
+func get_price():
+	var price = -1;
+	if ref_is_part():
 		price = partRef._get_buy_price();
-	elif is_instance_valid(pieceRef):
-		price = pieceRef.get_buy_price_piece_only();
-	return ScrapManager.is_affordable(price);
+	elif ref_is_piece():
+		price = pieceRef.get_buy_price();
+	return price;
 
+## Returns true if the player can afford this thing, using [method ScrapManager.is_affordable] with [get_price()] as [param ScrapManager.is_affordable.amt].
+func is_affordable() -> bool:
+	return ScrapManager.is_affordable(get_price());
+
+## Called when the buy button is pressed.
 func _on_buy_button_toggled(toggled_on):
-	player = GameState.get_player();
-	if is_instance_valid(player):
+	if update_player():
 		if (curState == ShopStall.doorState.OPEN):
-			player.deselect_part();
-			if is_instance_valid(partRef):
+			player.deselect_everything();
+			if ref_is_part():
 				partRef.select(toggled_on);
 				if is_affordable():
 					player.buy_mode_enable(toggled_on);
 				else:
-					$BuyButton.button_pressed = false;
-			elif is_instance_valid(pieceRef):
-				if is_affordable():
-					pieceRef.remove_and_add_to_robot_stash(player);
-					pieceRef = null;
-				else:
-					$BuyButton.button_pressed = false;
+					btn_buy.button_pressed = false;
+			elif ref_is_piece():
+				if toggled_on:
+					if ScrapManager.try_spend_scrap(get_price(), "Piece Purchase"):
+						pieceRef.inShop = false;
+						pieceRef.remove_and_add_to_robot_stash(player);
+						pieceRef = null;
+						btn_buy.button_pressed = false;
+					else:
+						btn_buy.button_pressed = false;
 			else:
-				$BuyButton.button_pressed = false;
+				btn_buy.button_pressed = false;
 		else:
-			$BuyButton.button_pressed = false;
+			btn_buy.button_pressed = false;
 	else:
-		$BuyButton.button_pressed = false;
+		btn_buy.button_pressed = false;
 	pass # Replace with function body.
 
 func deselect(deselectPart:=false):
-	$BuyButton.button_pressed = false;
-	if is_instance_valid(player):
-		player.buy_mode_enable(false);
+	btn_buy.button_pressed = false;
+	if update_player():
+		player.part_buy_mode_enable(false);
 	if deselectPart && is_instance_valid(partRef):
 		partRef.select(false);
 
@@ -186,8 +226,8 @@ func open_stall():
 		if GameState.get_in_state_of_play():
 			var pitchMod = randf_range(2.5,3.5)
 			SND.play_sound_nondirectional("Shop.Door.Open", 0.85, pitchMod)
-	$BuyButton.disabled = false;
-	$FreezeButton.disabled = false;
+	btn_buy.disabled = false;
+	btn_freeze.disabled = false;
 
 func close_stall():
 	deselect()
@@ -196,8 +236,8 @@ func close_stall():
 		if GameState.get_in_state_of_play():
 			var pitchMod = randf_range(2.5,3.5)
 			SND.play_sound_nondirectional("Shop.Door.Open", 0.85, pitchMod)
-	$BuyButton.disabled = true;
-	$FreezeButton.disabled = true;
+	btn_buy.disabled = true;
+	btn_freeze.disabled = true;
 
 func doors_actually_closed() -> bool:
 	if (curState == ShopStall.doorState.FROZEN):
@@ -209,7 +249,7 @@ func doors_actually_closed() -> bool:
 
 func destroy_contents(ignoreFrozen := false):
 	var destroyme = false;
-	if ignoreFrozen:
+	if ! ignoreFrozen:
 		destroyme = true;
 	else:
 		if ! is_frozen():
@@ -218,8 +258,56 @@ func destroy_contents(ignoreFrozen := false):
 	if destroyme:
 		if is_instance_valid(partRef):
 			partRef.destroy();
+		partRef = null;
 		if is_instance_valid(pieceRef):
 			pieceRef.destroy();
+		pieceRef = null;
 	
 	if ! has_ref():
 		freeze(false);
+
+## Updates the background if there is something in the stall. If there is nothing in the stall, nothing happens, as to keep the illusion of an empty stall.
+func update_behavior_to_reflect_contents():
+	if has_ref():
+		if ref_is_piece():
+			bg_Piece.show();
+			bg_Part.hide();
+			btn_PieceSelect.disabled = false;
+			lbl_name.text = pieceRef.pieceName;
+			TextFunc.set_text_color(lbl_name, "white");
+		elif ref_is_part():
+			bg_Part.show();
+			bg_Piece.hide();
+			btn_PieceSelect.disabled = true;
+			lbl_name.text = partRef.partName;
+			TextFunc.set_text_color(lbl_name, "utility");
+	else:
+		btn_PieceSelect.disabled = true;
+		lbl_name.text = "OUT OF STOCK";
+		TextFunc.set_text_color(lbl_name, "unaffordable");
+
+@export var rotisserie_socket : Socket;
+func add_piece(piece):
+	rotisserie_socket.remove_occupant(true);
+	pieceRef = piece;
+	rotisserie_socket.add_occupant(piece);
+	piece.inShop = true;
+
+func get_shop_stall_id():
+	if stallID == -1:
+		stallID = GameState.get_unique_shop_stall_id()
+	return stallID;
+
+signal thingSelected(stall : ShopStall)
+func _on_btn_piece_select_pressed():
+	print("huh")
+	if ref_is_piece() and update_player():
+		print("what")
+		thingSelected.emit(self);
+		pieceRef.select_via_robot(player, true);
+	pass # Replace with function body.
+
+## Updates [member player] then returns true if it is valid.
+func update_player() -> bool:
+	player = GameState.get_player();
+	return is_instance_valid(player);

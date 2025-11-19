@@ -1,0 +1,2 @@
+extends ScrapLabel
+class_name ScrapLabel_Shop

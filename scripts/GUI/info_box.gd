@@ -188,6 +188,10 @@ func get_sell_string() -> String:
 		if pieceRef.is_sellable():
 			sellError = btn_sellButton.disabled;
 			return prefix + TextFunc.format_stat(pieceRef.get_sell_price(), 0)
+		elif pieceRef.inShop:
+			prefix = "BUY:\n";
+			sellError = !pieceRef.is_buyable();
+			return prefix + TextFunc.format_stat(pieceRef.get_sell_price(), 0)
 		else:
 			sellError = true;
 			return "NOT FOR\nSALE"
@@ -240,7 +244,7 @@ func update_ability_height():
 	var v = 0;
 	for child in abilityHolder.get_children():
 		v += child.size.y;
-		print(v)
+		#print(v)
 	abilityScrollContainer.custom_minimum_size.y = min(abilityBoxMaxSize, v + 10)
 	abilityScrollContainer.size.y = min(abilityBoxMaxSize, v)
 	
@@ -263,12 +267,15 @@ func _physics_process(delta):
 	var removeDisabled = true;
 	var moveDisabled = true;
 	var sellDisabled = true;
+	var buyDisabled = true;
 	if GameState.get_in_state_of_building():
 		if ref_is_piece():
 			if pieceRef.is_removable():
 				removeDisabled = false;
 				if pieceRef.is_sellable():
 					sellDisabled = false;
+			if pieceRef.is_buyable():
+				buyDisabled = false;
 		elif ref_is_part():
 			moveDisabled = false;
 			removeDisabled = false;
@@ -279,7 +286,7 @@ func _physics_process(delta):
 	if is_instance_valid(btn_moveButton):
 		btn_moveButton.disabled = moveDisabled;
 	if is_instance_valid(btn_sellButton):
-		btn_sellButton.disabled = ! GameState.get_in_state_of_building();
+		btn_sellButton.disabled = (!GameState.get_in_state_of_building() and sellDisabled and buyDisabled);
 		if is_instance_valid(lbl_sellButton):
 			update_sell_string();
 	
@@ -297,6 +304,7 @@ func _physics_process(delta):
 	if queueAbilityPostUpdateCounter == 4:
 		#queueAbilityPostUpdate1 = false;
 		pass;
+	
 	if queueAbilityPostUpdateCounter >= 0:
 		queueAbilityPostUpdateCounter -= 1;
 	pass;

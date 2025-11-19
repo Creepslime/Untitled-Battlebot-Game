@@ -32,17 +32,18 @@ var activeDiscounts_HEALING : Dictionary[String, float] = {}
 var activeDiscounts_GENERAL : Dictionary[String, float] = {}
 
 func add_scrap(amt : int, source:String):
-	scrap = max(0, scrap + amt, 999999);
+	scrap = max(0, min(scrap + amt, MAX_SCRAP));
 	Hooks.OnGainScrap(source, amt);
 
 ## Removes 
 func remove_scrap(amt : int, source:String):
-	scrap = max(0, scrap - amt, 999999);
+	scrap = max(0, min(scrap - amt, MAX_SCRAP));
 	Hooks.OnGainScrap(source, -amt);
 
 ## Sets the scrap amount to a specific number.
-func set_scrap(amt := 0):
-	scrap = amt;
+func set_scrap(amt := 0, source := "Manual"):
+	Hooks.OnGainScrap(source, amt - scrap);
+	scrap = max(0, amt, MAX_SCRAP);
 
 func get_scrap():
 	return scrap;

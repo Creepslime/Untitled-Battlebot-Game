@@ -1,4 +1,4 @@
-[gd_scene load_steps=39 format=3 uid="uid://0iyltgl5si2u"]
+[gd_scene load_steps=40 format=3 uid="uid://0iyltgl5si2u"]
 
 [ext_resource type="Script" uid="uid://sgpk4fry4yvo" path="res://scripts/objects/pieces/buildingBlocks/piece.gd" id="1_vd8ek"]
 [ext_resource type="Script" uid="uid://cybmjhuctmfaw" path="res://scripts/libraries/richTextConstructor.gd" id="2_ltw0n"]
@@ -14,7 +14,9 @@
 [ext_resource type="Script" uid="uid://dikbphvd0xff7" path="res://scripts/objects/pieces/buildingBlocks/hitbox_shapes.gd" id="12_rob4d"]
 [ext_resource type="Script" uid="uid://bkwxna02gqgqu" path="res://scripts/objects/pieces/buildingBlocks/hurtbox_shapes.gd" id="13_qmiug"]
 [ext_resource type="Script" uid="uid://rbm6p8ggs13f" path="res://scripts/objects/pieces/buildingBlocks/placement_shapes.gd" id="14_s0vp0"]
+[ext_resource type="ArrayMesh" uid="uid://drvj0yryaay1b" path="res://graphics/models/obj/botparts/Puck.obj" id="15_lx4wq"]
 [ext_resource type="PackedScene" uid="uid://dckvl43g2kjvx" path="res://scenes/prefabs/objects/pieces/buildingBlocks/piece_collision_box.tscn" id="15_xo8ij"]
+[ext_resource type="Material" uid="uid://bjpw8orsijmuk" path="res://graphics/materials/models/weapons/cannon.tres" id="16_1bljo"]
 
 [sub_resource type="Resource" id="Resource_ujwhk"]
 script = ExtResource("2_ltw0n")
@@ -149,11 +151,6 @@ transparency = 1
 cull_mode = 2
 albedo_texture = ExtResource("10_l0waw")
 
-[sub_resource type="CylinderMesh" id="CylinderMesh_o5psd"]
-top_radius = 0.25
-bottom_radius = 0.15
-height = 0.25
-
 [sub_resource type="PlaneMesh" id="PlaneMesh_ubwoj"]
 size = Vector2(0.25, 0.25)
 
@@ -175,15 +172,14 @@ height = 0.25
 radius = 0.25
 
 [node name="Piece_Hockey Puck" type="Node3D" node_paths=PackedStringArray("meshesHolder", "hitboxCollisionHolder", "hurtboxCollisionHolder", "placementCollisionHolder", "femaleSocketHolder") groups=["Piece"]]
-visible = false
 script = ExtResource("1_vd8ek")
 pieceName = &"Hockey Puck"
 descriptionConstructor = Array[ExtResource("2_ltw0n")]([SubResource("Resource_ujwhk"), SubResource("Resource_agd5d"), SubResource("Resource_7qnf5")])
 pieceDescription = "[color=ffffffff]Serves no purpose other than to provide [color=ffffffff]structure [color=ffffffff]to your robot."
 weightBase = 0.5
+force_visibility = true
 scrapCostBase = 4
 hurtboxAlwaysEnabled = true
-force_visibility = true
 meshesHolder = NodePath("Meshes")
 hitboxCollisionHolder = NodePath("HitboxShapes [Leave empty]")
 hurtboxCollisionHolder = NodePath("HurtboxShapes [Leave empty]")
@@ -280,9 +276,10 @@ script = ExtResource("14_s0vp0")
 [node name="Meshes" type="Node3D" parent="."]
 
 [node name="MeshInstance3D2" type="MeshInstance3D" parent="Meshes"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.125, 0)
-mesh = SubResource("CylinderMesh_o5psd")
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0.125, 0)
+mesh = ExtResource("15_lx4wq")
 skeleton = NodePath("../../PieceCollisionBox")
+surface_material_override/0 = ExtResource("16_1bljo")
 
 [node name="MaleSocket" type="Node3D" parent="Meshes"]
 editor_description = "This is purely here as a visual representation of where this thing plugs in. 

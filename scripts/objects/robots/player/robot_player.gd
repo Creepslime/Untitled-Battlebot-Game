@@ -191,5 +191,3 @@ func _on_health_or_energy_changed():
 	super();
 	update_bars();
 	pass # Replace with function body
-
-############# HUD

@@ -3,7 +3,7 @@ class_name ShopStation
 
 var player : Robot_Player; ## The player.
 @export var manager : ShopManager; ## The manager.
-@export var shopDoor : TextureRect; ## The big door.
+@export var shopDoor : NinePatchRect; ## The big door.
 var shopDoorVelocity := 0.0; ## The door's Y velocity for its fancy animation.
 var shopDoorPrevPosY := 0.0; ## THe door's previous Y position.
 var doorOpen := false; ## Set by [method clopen_door].
@@ -14,15 +14,24 @@ var shopOpen := false; ## Set when [method close_up_shop] or [method open_up_sho
 
 var awaiting_reroll := false; ## If this is true, the next time all shop stalls are closed, all the stalls have their contents refreshed.
 
+@export var lbl_reroll : ScrapLabel;
+@export var btn_reroll : Button;
 
 func _ready():
 	reset_shop();
+	
+	shopDoor.size.y = size.y;
+
+var stallDoorActionSteppy := 0;
 
 func _physics_process(delta):
+	for stall in gather_stalls():
+		if ! stall.is_connected("thingSelected", stall_thing_selected):
+			stall.connect("thingSelected", stall_thing_selected);
 	if is_node_ready():
 		##Fancy door shutting
 		var makeThump = false;
-		if doorOpen && !is_equal_approx(shopDoor.position.y, -237):
+		if doorOpen && !is_equal_approx(shopDoor.position.y, -shopDoor.size.y):
 			shopDoorVelocity = move_toward(shopDoorVelocity, -10, delta*100);
 		else:
 			shopDoorVelocity += 9.87 * delta;
@@ -45,8 +54,9 @@ func _physics_process(delta):
 								doorStomps += 1;
 								#inventory.inventory_panel_toggle(false);
 		
-		shopDoor.position.y = clamp(shopDoor.position.y + shopDoorVelocity, -237, 0);
+		shopDoor.position.y = clamp(shopDoor.position.y + shopDoorVelocity, -shopDoor.size.y, 0);
 		
+		lbl_reroll.update_label(manager.get_reroll_price());
 		
 		if awaiting_reroll:
 			if all_stalls_closed():
@@ -64,14 +74,17 @@ func deselect():
 
 ## Clears out all stalls and resets the item pool.
 func reset_shop():
+	clopen_door(false);
 	clear_shop_stalls(true);
 	new_round(-1);
 
-## Opens this hop up. Only run once at the start of the shop.
+## Opens this shop up, and rerolls it once. Only run once at the start of the shop.
 func open_up_shop():
-	clopen_door(true);
-	shopOpen = true;
-	clopen_stalls(true);
+	if !shopOpen:
+		reroll_shop();
+		clopen_door(true);
+		shopOpen = true;
+		clopen_stalls(true);
 
 ## Opens or closes all shop stalls that are able to be closed/opened.
 func clopen_stalls(open:bool):
@@ -84,13 +97,12 @@ func clopen_stalls(open:bool):
 			if stall is ShopStall:
 				stall.close_stall();
 
-## Closes the shop, sets the new wave of items, then rerolls in preparation for the next round.
+## Closes the shop, then sets the new wave of items.
 func new_round(roundNumber:int):
 	set_item_pool_waves(roundNumber);
 	close_up_shop();
-	reroll_shop();
 
-## Closes the door and all unfrozen stalls.
+## Closes the door and all unfrozen stalls. Only run once at the end of the shop.
 func close_up_shop():
 	clopen_door(false);
 	shopOpen = false;
@@ -131,6 +143,7 @@ func _on_reroll_button_pressed():
 		clopen_stalls(false);
 		awaiting_reroll = true;
 		Hooks.OnRerollShop();
+		SND.play_sound_2D("Shop.Chaching", btn_reroll.global_position);
 	pass # Replace with function body.
 
 ## Returns true if all [ShopStall] children are frozen, and false if not.
@@ -177,20 +190,22 @@ func add_part_to_spawn_list(_scene : String, weightOverride := -99, recalculate 
 	if FileAccess.file_exists(_scene):
 		var scene = load(_scene);
 		var part = scene.instantiate();
-		var weight = 1;
-		if is_instance_valid(weightOverride) && weightOverride != -99:
-			weight = weightOverride;
-		else:
-			weight = part.poolWeight;
-		var rarity = part.myPartRarity;
-		if scene in partPool.keys():
-			if partPool[scene]:
-				if partPool[scene]["weight"]:
-					partPool[scene]["weight"] += weight;
-					if partPool[scene]["weight"] && partPool[scene]["weight"]  <= 0:
-						partPool.erase(scene);
-		else:
-			partPool[scene] = {"weight":weight,"rarity":rarity};
+		if part is Part or part is Piece:
+			var weight = 1;
+			if is_instance_valid(weightOverride) && weightOverride != -99:
+				weight = weightOverride;
+			else:
+				weight = part.poolWeight;
+			var rarity = part.myPartRarity;
+			if scene in partPool.keys():
+				if partPool[scene]:
+					if partPool[scene]["weight"]:
+						partPool[scene]["weight"] += weight;
+						if partPool[scene]["weight"] && partPool[scene]["weight"]  <= 0:
+							partPool.erase(scene);
+			else:
+				partPool[scene] = {"weight":weight,"rarity":rarity};
+		
 		part.queue_free();
 		if recalculate:
 			calculate_part_pool()
@@ -223,7 +238,11 @@ func translated_part_pool():
 	var lastPart;
 	for part in pool:
 		var partInst = part.instantiate();
-		var partName = partInst.partName;
+		var partName = ""
+		if partInst is Part:
+			partName = partInst.partName;
+		elif partInst is Piece:
+			partName = partInst.pieceName;
 		if lastPart == part:
 			poolDict[partName] += 1;
 		else:
@@ -239,16 +258,19 @@ func set_item_pool_waves(inWave:int):
 		clear_shop_spawn_list();
 		inWave = 0;
 	if inWave == 0:
+		##Pieces
+		add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_con_spacer_0.tscn");
+		add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_cannon.tscn");
 		##passives
-		add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/part_RoundBell.tscn", 2);
-		add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/part_impact_generator.tscn", 1);
-		add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/part_impact_magnet.tscn", 1);
+		#add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/part_RoundBell.tscn", 2);
+		#add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/part_impact_generator.tscn", 1);
+		#add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/part_impact_magnet.tscn", 1);
 		##passives with adjacenty bonuses
-		add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/part_fan.tscn", 2);
+		#add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/part_fan.tscn", 2);
 		##Batteries
-		add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/batteries/part_jank_battery.tscn", 2);
-		add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/batteries/battery_1x1.tscn", 3);
-		add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/batteries/battery_1x2.tscn", 2);
+		#add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/batteries/part_jank_battery.tscn", 2);
+		#add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/batteries/battery_1x1.tscn", 3);
+		#add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/batteries/battery_1x2.tscn", 2);
 		##melee
 		#add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/part_sawblade.tscn", 1);
 		##ranged
@@ -259,14 +281,16 @@ func set_item_pool_waves(inWave:int):
 			#none yet lol
 		changed = true;
 	if inWave == 3:
+		##Pieces
+		
 		##Passives
-		add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/scrapthirsty.tscn");
-		add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/turtle_coil.tscn");
-		add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/part_coolant.tscn");
-		add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/part_scrap_plating.tscn", 1);
+		#add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/scrapthirsty.tscn");
+		#add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/turtle_coil.tscn");
+		#add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/part_coolant.tscn");
+		#add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/part_scrap_plating.tscn", 1);
 		##Batteries
-		add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/batteries/battery_1x3.tscn", 1);
-		add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/batteries/battery_2x3.tscn", 1);
+		#add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/batteries/battery_1x3.tscn", 1);
+		#add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/batteries/battery_2x3.tscn", 1);
 		##Ranged
 		#add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/part_peashooter.tscn", 1);
 		#add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/part_sniper.tscn", 1);
@@ -291,11 +315,12 @@ func gather_stalls():
 	for stall in get_children():
 		if stall is ShopStall:
 			stalls.append(stall);
+	return stalls;
 
 func reroll_shop():
-	clear_shop();
-	var counter = 0;
 	gather_stalls();
+	clear_shop(true);
+	var counter = 0;
 	while (next_empty_shop_stall() != null) and counter < stalls.size():
 		var thing: = return_random_part();
 		if is_instance_valid(thing):
@@ -318,36 +343,43 @@ func add_thing_to_shop(_partScene:String):
 func add_part_to_shop(inPart : Part):
 	var stall = next_empty_shop_stall();
 	if is_instance_valid(stall):
-		if is_instance_valid(stall.partRef):
+		if stall.has_ref():
 			print("No part is to be placed here!!! (", stall.name,")")
 			return false
 		var part:Part = inPart;
 		print(stall.partRef)
-		part.hostShopStall = stall;
-		part.thisRobot = GameState.get_player();
-		part.inPlayerInventory = true;
-		part.invHolderNode = stall;
-		if part is PartActive:
-			part.set_equipped(false);
-		stall.partRef = part;
+		inPart.hostShopStall = stall;
+		inPart.thisRobot = GameState.get_player();
+		inPart.inPlayerInventory = true;
+		inPart.invHolderNode = stall;
+		if inPart is PartActive:
+			inPart.set_equipped(false);
+		stall.partRef = inPart;
 		
 		print(stall.partRef)
 		#part.
-		print("Adding ", part.name, " to shop stall ", stall.name)
-		part.inventory_vanity_setup();
+		print("Adding ", part.partName, " to shop stall ", stall.name)
+		inPart.inventory_vanity_setup();
 		add_child(part);
 		return true;
 	return false;
 	pass
 
-func add_piece_to_shop(part : Piece):
+func add_piece_to_shop(inPiece : Piece):
 	var stall = next_empty_shop_stall();
 	if is_instance_valid(stall):
+		if stall.has_ref():
+			print("No piece is to be placed here!!! (", stall.name,")")
+			return false
+		stall.add_piece(inPiece);
+		
+		print("Adding ", inPiece.pieceName, " to shop stall ", stall.name)
+		return true;
 		pass;
 	return false;
 
 ## Returns the next [ShopStall] in [member stalls] which is empty.
-func next_empty_shop_stall():
+func next_empty_shop_stall() -> ShopStall:
 	for stall in stalls:
 		if stall.is_empty():
 			return stall;
@@ -357,6 +389,7 @@ func next_empty_shop_stall():
 @export var StallB : ShopStall;
 @export var StallC : ShopStall;
 
+## Clears all stalls, with the option to reroll afterwards.
 func clear_shop(ignoreFrozen := false, reroll := false):
 	gather_stalls();
 	
@@ -364,3 +397,8 @@ func clear_shop(ignoreFrozen := false, reroll := false):
 	
 	if reroll:
 		reroll_shop();
+
+func stall_thing_selected(selectedStall : ShopStall):
+	for stall in gather_stalls():
+		if stall != selectedStall:
+			stall.deselect();

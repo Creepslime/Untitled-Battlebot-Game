@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cyktnhd6ly7ef"
-path="res://.godot/imported/buttonBG.png-997a168046675d4bbf004600b6f75320.ctex"
+uid="uid://cwmvdja6ssr4s"
+path="res://.godot/imported/icon_scrapGear.png-8ddb79e85cecb5813822bcc23512215e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://graphics/images/HUD/buttonBG.png"
-dest_files=["res://.godot/imported/buttonBG.png-997a168046675d4bbf004600b6f75320.ctex"]
+source_file="res://graphics/images/HUD/icon_scrapGear.png"
+dest_files=["res://.godot/imported/icon_scrapGear.png-8ddb79e85cecb5813822bcc23512215e.ctex"]
 
 [params]
 

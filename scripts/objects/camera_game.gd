@@ -41,6 +41,7 @@ var viewport : Viewport;
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	super();
 	cameraOffset = global_position; # the player always starts at 0, 0, 0 so we don't do any subtraction here
 	position = Vector3(0,0,0)
 	#playerBody = GameState.get_player_body();
@@ -100,9 +101,9 @@ func _physics_process(delta):
 	if GameState.get_in_loading_state():
 		instantSpeedFrame = true;
 	else:
-		print(instantSpeedFrames)
+		#print(instantSpeedFrames)
 		if instantSpeedFrames > 0:
-			print("instant cam")
+			#print("instant cam")
 			instantSpeedFrames -= 1;
 			instantSpeedFrame = true;
 	#instantSpeedFrame = true;

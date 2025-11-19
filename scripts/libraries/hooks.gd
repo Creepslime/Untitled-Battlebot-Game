@@ -89,6 +89,7 @@ func OnDeath(thisBot : Robot, killer : Robot):
 
 ## Called when the player gets richer.
 func OnGainScrap(source: String, amount:int):
+	print_rich("[color=yellow]Scrap amount change ", amount, " from source ",source, ". New amount: ",ScrapManager.get_scrap())
 	for hookFunc in getValidHooks("OnGainScrap"):
 		hookFunc.call(source, amount);
 

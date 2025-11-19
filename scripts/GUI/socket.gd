@@ -19,6 +19,10 @@ var previewPlaceable := false;
 @export var dontUsePieceForRobotHost := false;
 var initialRotation : Vector3;
 
+@export var shopRotisserie := false;
+@export var mesh_face : MeshInstance3D;
+@export var mesh_selector : MeshInstance3D;
+
 ##Needs functions to ping its host.
 ##If occupant is null, it is assumed to be empty and able to be plugged in.
 
@@ -74,8 +78,8 @@ func add_occupant_from_scene_path(scenePath : String):
 	return null;
 
 func remove_occupant(delete := false):
-	if delete and is_instance_valid(occupant): occupant.queue_free();
 	if is_instance_valid(occupant): remove_child(occupant);
+	if delete and is_instance_valid(occupant): occupant.destroy(false);
 	occupant = null;
 	pass
 
@@ -178,6 +182,22 @@ var selected = false;
 var selectionCheckLoop = 3;
 
 func _process(delta):
+	var hostPieceGet = get_host_piece();
+	var hostPieceInShop:= false;
+	if is_instance_valid(hostPieceGet):
+		hostPieceInShop = hostPieceGet.inShop;
+	if shopRotisserie or hostPieceInShop:
+		mesh_face.set_layer_mask_value(1, false)
+		mesh_face.set_layer_mask_value(2, true)
+	else:
+		mesh_face.set_layer_mask_value(1, true)
+		mesh_face.set_layer_mask_value(2, false)
+	
+	if shopRotisserie:
+		mesh_face.set_layer_mask_value(1, false)
+		mesh_face.set_layer_mask_value(2, true)
+		rotate_y(deg_to_rad(delta * 40));
+		pass;
 	if Engine.is_editor_hint(): return;
 	selectionCheckLoop -= 1;
 	if selectionCheckLoop <= 0:

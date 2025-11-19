@@ -7,6 +7,10 @@ class_name Camera
 var socketHovering : Socket;
 var pieceHovering : Piece;
 
+
+func _ready():
+	set_cull_mask_value(2, false);
+
 func click_on_piece():
 	if GameState.get_in_state_of_building():
 		var collisionMask = 8;

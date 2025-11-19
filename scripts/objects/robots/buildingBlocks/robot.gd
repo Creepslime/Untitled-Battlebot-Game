@@ -1106,6 +1106,7 @@ func set_ability_pipette(new : AbilityManager):
 ########################## SELECTION
 
 var selectedPiece : Piece;
+var selectedPieceQueue : Piece;
 var selectedPart : Part;
 
 func is_piece_selected() -> bool:
@@ -1177,6 +1178,7 @@ func deselect_everything():
 func deselect_all_pieces(ignoredPiece : Piece = null):
 	unreference_pipette();
 	for piece in get_all_pieces():
+		GameState.profiler_ping_create("Deselecting a Piece via Robot.deselect_all_pieces")
 		if ignoredPiece == null or piece != ignoredPiece:
 			if piece.get_selected():
 				piece.deselect();
@@ -1191,15 +1193,21 @@ func deselect_piece(piece:Piece):
 	piece.deselect();
 
 ## Runs [member Piece.select] and then acts on the result.
-func select_piece(piece : Piece):
+func select_piece(piece : Piece, forcedValue = null):
 	if (is_instance_valid(piece) 
 	#)and (piece in allPieces
 	):
-		var result = piece.select();
+		var result = false;
+		if forcedValue != null:
+			result = piece.select(forcedValue);
+		else:
+			result = piece.select();
+		
 		if result:
-			selectedPiece = piece;
 			print("Selected Piece: ", selectedPiece)
 			deselect_all_pieces(piece);
+			
+			selectedPiece = piece;
 			update_hud();
 			return piece;
 		else:
@@ -1207,6 +1215,7 @@ func select_piece(piece : Piece):
 			selectedPiece = null;
 	return null;
 
+## Deselects all [Part]s in all [Pieces] on this bot, as well as [member selectedPart]. If [param ignoredPart] is set to a [Part], then it will try not to deselect it.
 func deselect_all_parts(ignoredPart : Part = null):
 	if ignoredPart != selectedPart:
 		if is_instance_valid(selectedPart):
@@ -1217,6 +1226,7 @@ func deselect_all_parts(ignoredPart : Part = null):
 	if ignoredPart == null or selectedPart != ignoredPart:
 		selectedPart = null;
 
+## Sets the given [Part] as "selected," even if it is not inside the player's ecosystem.
 func select_part(part : Part):
 	if is_instance_valid(part):
 		deselect_all_parts(part)
@@ -1225,14 +1235,19 @@ func select_part(part : Part):
 		return part;
 	return null;
 
+## Gets [member selectedPart] or null.
 func get_selected_part():
 	if is_instance_valid(selectedPart):
 		return selectedPart;
 	return null;
 
-func part_buy_move_enable(foo:bool):
+############# PARTS
+var buyMode := false; ## If in "buy" mode (enabled/dsiabled with [method part_buy_mode_enable] ), then the player can place a Part selectd fromm the shop into the engine of one of their Pieces, similarly to being in [member moveMode].[br]
+## After placing into an engine or hitting the Stash button, then Scrap will leave your bank account.
+func part_buy_mode_enable(foo:bool):
 	pass;
 
+var moveMode := false; ## If in "move" mode (enabled/dsiabled with [method part_move_mode_enable] ), then the player can move Parts between different bits of their bot, throughout the different Pieces.
 func part_move_mode_enable(foo:bool):
 	pass;
 

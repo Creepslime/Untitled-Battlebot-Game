@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://c1l6j3sm21i1l"
+path="res://.godot/imported/MediumCube.obj-8dfff9ed736d36a03e736fe3e64f82a4.mesh"
+
+[deps]
+
+files=["res://.godot/imported/MediumCube.obj-8dfff9ed736d36a03e736fe3e64f82a4.mesh"]
+
+source_file="res://graphics/models/obj/botparts/MediumCube.obj"
+dest_files=["res://.godot/imported/MediumCube.obj-8dfff9ed736d36a03e736fe3e64f82a4.mesh", "res://.godot/imported/MediumCube.obj-8dfff9ed736d36a03e736fe3e64f82a4.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

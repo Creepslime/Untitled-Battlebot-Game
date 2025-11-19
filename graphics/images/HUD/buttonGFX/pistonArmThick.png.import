@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cwmvdja6ssr4s"
-path="res://.godot/imported/scrapGear.png-e09ad47788d7a6d830abbbc407a751c6.ctex"
+uid="uid://5h0txkmysl7t"
+path="res://.godot/imported/pistonArmThick.png-a5c3bfe694bdaac1d92a2f8d25152116.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://graphics/images/HUD/scrapGear.png"
-dest_files=["res://.godot/imported/scrapGear.png-e09ad47788d7a6d830abbbc407a751c6.ctex"]
+source_file="res://graphics/images/HUD/buttonGFX/pistonArmThick.png"
+dest_files=["res://.godot/imported/pistonArmThick.png-a5c3bfe694bdaac1d92a2f8d25152116.ctex"]
 
 [params]
 

@@ -9,7 +9,7 @@ var passiveAbilities : Dictionary[StringName,AbilityManager] = {};
 func distribute_active_ability_to_piece(piece:Piece, abilityName:StringName):
 	if activeAbilities.has(abilityName):
 		var dupe = activeAbilities[abilityName].create_copy();
-		print(dupe.resource_scene_unique_id)
+		#print(dupe.resource_scene_unique_id)
 		dupe.assign_references(piece);
 		dupe.initialized = true;
 		piece.activeAbilities.append(dupe);

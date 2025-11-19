@@ -1,4 +1,4 @@
-[gd_scene load_steps=115 format=4 uid="uid://cno0jw8hq6h1i"]
+[gd_scene load_steps=102 format=4 uid="uid://cno0jw8hq6h1i"]
 
 [ext_resource type="Script" uid="uid://b8hseesj7vrc" path="res://scripts/game_board.gd" id="1_mlcvp"]
 [ext_resource type="Material" uid="uid://c6b1ums81prw8" path="res://graphics/materials/models/arena/arena_floor.tres" id="2_4jixe"]
@@ -20,33 +20,26 @@
 [ext_resource type="Texture2D" uid="uid://b27r3rshm0ite" path="res://graphics/images/HUD/textBoxBG_partPassive.png" id="11_6fdki"]
 [ext_resource type="Texture2D" uid="uid://bjyrhvsqt2ucy" path="res://graphics/images/HUD/screenGFX/recordingBracketLeft.png" id="12_ngcqk"]
 [ext_resource type="FontFile" uid="uid://s3k2ji7jxshs" path="res://graphics/images/HUD/8-segment.png" id="13_6c18d"]
-[ext_resource type="Script" uid="uid://esp5v4ajcrqd" path="res://scripts/GUI/shop_new.gd" id="13_nnnr2"]
 [ext_resource type="Script" uid="uid://mlxpf3keq86q" path="res://scripts/GUI/game_hud.gd" id="13_s0uw0"]
 [ext_resource type="Script" uid="uid://b6qoved8v8p2v" path="res://scripts/GUI/round_timer.gd" id="14_ei0j6"]
 [ext_resource type="Texture2D" uid="uid://cvnlt28sqm5g7" path="res://graphics/images/HUD/hudNew.png" id="14_m488k"]
-[ext_resource type="Script" uid="uid://f2utlpnj4kg4" path="res://scripts/GUI/shop_stall.gd" id="14_tegeg"]
 [ext_resource type="AudioStream" uid="uid://clkb8qmb50nhq" path="res://sounds/music/Battlebot(Base).ogg" id="15_7s7sx"]
 [ext_resource type="Script" uid="uid://lq2evtwp8bvg" path="res://scripts/GUI/enemy_progress_bar.gd" id="15_7w2xj"]
 [ext_resource type="Texture2D" uid="uid://bw5pl1p6bmq61" path="res://graphics/images/HUD/blinkies/timer_blinky_on.png" id="15_s0uw0"]
-[ext_resource type="Texture2D" uid="uid://blmdrpsajj6f7" path="res://graphics/images/HUD/blinkies/freezerblinky_off.png" id="15_yktpx"]
 [ext_resource type="Shader" uid="uid://b3jc31ntkxnwh" path="res://graphics/shaders/wavyButton.gdshader" id="16_1s3sj"]
-[ext_resource type="Texture2D" uid="uid://b1olqkpvwejg" path="res://graphics/images/HUD/shop/stall_door_frozen.png" id="16_gj2xt"]
 [ext_resource type="AudioStream" uid="uid://dod8lqc5mj6gd" path="res://sounds/music/Battlebot(Bass).ogg" id="16_l8dsy"]
-[ext_resource type="Texture2D" uid="uid://ppmc64phinum" path="res://graphics/images/HUD/shop/stall_door_left.png" id="17_3o7dt"]
 [ext_resource type="AudioStream" uid="uid://xudb8rpoft5g" path="res://sounds/music/Battlebot(Melody).ogg" id="17_gj52v"]
 [ext_resource type="Texture2D" uid="uid://bgide8muu6eek" path="res://graphics/images/HUD/nextRound/screen_on.png" id="17_pwbo8"]
 [ext_resource type="AudioStream" uid="uid://cx04f0djaxqys" path="res://sounds/music/Battlebot(Piano).ogg" id="18_7s7sx"]
-[ext_resource type="Texture2D" uid="uid://dx4xvvlp28d07" path="res://graphics/images/HUD/shop/stall_door_right.png" id="18_acrhl"]
 [ext_resource type="AudioStream" uid="uid://d4i6k0bsc36q3" path="res://sounds/music/Battlebot(Perc1).ogg" id="18_mlcvp"]
 [ext_resource type="Texture2D" uid="uid://o4glpuf2dmah" path="res://graphics/images/HUD/nextRound/screen_hover.png" id="18_q68mx"]
 [ext_resource type="Texture2D" uid="uid://croanmqw1pmqf" path="res://graphics/images/HUD/blinkies/timer_skull.png" id="18_u76c3"]
 [ext_resource type="Script" uid="uid://6rlmlcy2eex2" path="res://scripts/GUI/hud.gd" id="18_wbopo"]
 [ext_resource type="Texture2D" uid="uid://okkoo55665rm" path="res://graphics/images/HUD/nextRound/screen_off.png" id="19_3a6ea"]
 [ext_resource type="AudioStream" uid="uid://uqulgohxvrq4" path="res://sounds/music/Battlebot(Perc2).ogg" id="19_4eh01"]
-[ext_resource type="Texture2D" uid="uid://dt6jjoibn5xfx" path="res://graphics/images/HUD/shop/freeze_unselected.png" id="19_l7hpm"]
 [ext_resource type="AudioStream" uid="uid://bgos1qoehfh6w" path="res://sounds/music/Battlebot(Guitar).ogg" id="19_l8dsy"]
+[ext_resource type="PackedScene" uid="uid://h3mc1vb8c2xs" path="res://scenes/prefabs/objects/gui/shop_station.tscn" id="19_rvmjo"]
 [ext_resource type="Texture2D" uid="uid://o01v65x3ienk" path="res://graphics/images/HUD/screenGFX/insetScreen.png" id="19_vehjn"]
-[ext_resource type="Texture2D" uid="uid://c275qd77g6x86" path="res://graphics/images/HUD/shop/freeze_selected.png" id="20_ew5bm"]
 [ext_resource type="AudioStream" uid="uid://criotxml8rknj" path="res://sounds/music/Battlebot(Swell).ogg" id="20_gj52v"]
 [ext_resource type="Theme" uid="uid://tcelcj32ux4o" path="res://graphics/images/HUD/digital_button.tres" id="20_k23rv"]
 [ext_resource type="Script" uid="uid://dxmqurrcqgdl7" path="res://scripts/GUI/bgm.gd" id="20_l8dsy"]
@@ -54,10 +47,7 @@
 [ext_resource type="TileSet" uid="uid://dicxuohkdpmlx" path="res://graphics/images/HUD/engine/engineTileMap.tres" id="20_u76c3"]
 [ext_resource type="Script" uid="uid://cdymr1vwdiwxo" path="res://scripts/GUI/info_box.gd" id="21_n0uq6"]
 [ext_resource type="Shader" uid="uid://egarbougi4ef" path="res://graphics/shaders/healthbar.gdshader" id="21_sb58i"]
-[ext_resource type="Texture2D" uid="uid://ch72j8sw4gtp" path="res://graphics/images/HUD/shop/freeze_disabled.png" id="21_u8j3h"]
-[ext_resource type="Texture2D" uid="uid://s8bx72jtl1h4" path="res://graphics/images/HUD/shop/buy_unselected.png" id="22_sjcy6"]
 [ext_resource type="Texture2D" uid="uid://drjmrl4v24oq6" path="res://graphics/images/HUD/infobox/typeIcons/info_melee.png" id="22_t18ps"]
-[ext_resource type="Texture2D" uid="uid://dyfx0k6ohqmpe" path="res://graphics/images/HUD/shop/buy_selected.png" id="23_ncuuh"]
 [ext_resource type="Texture2D" uid="uid://bdgkd60c8qtud" path="res://graphics/images/HUD/statIcons/energyIconStriped.png" id="23_sb58i"]
 [ext_resource type="Texture2D" uid="uid://cnfat2kqvmdcd" path="res://graphics/images/HUD/statIcons/damageIconStriped.png" id="24_dcin4"]
 [ext_resource type="Script" uid="uid://56vk7o0gmt7p" path="res://scripts/GUI/shop_button.gd" id="24_gqxs8"]
@@ -68,11 +58,8 @@
 [ext_resource type="Texture2D" uid="uid://djth0eo8kvkcm" path="res://graphics/images/HUD/sell_unselected.png" id="26_4upc1"]
 [ext_resource type="Texture2D" uid="uid://g2oapmprsygp" path="res://graphics/images/HUD/shop/heal_selected.png" id="26_kbpb2"]
 [ext_resource type="Texture2D" uid="uid://btfetdy0ahup8" path="res://graphics/images/HUD/sell_selected.png" id="27_iqmcf"]
-[ext_resource type="Texture2D" uid="uid://b7r4txn23e8xc" path="res://graphics/images/HUD/shop/shop_door.png" id="27_qt8fj"]
 [ext_resource type="Texture2D" uid="uid://b71g2q13wr7do" path="res://graphics/images/HUD/sell_disabled.png" id="28_2kc6q"]
-[ext_resource type="Texture2D" uid="uid://6qqfwg274ig8" path="res://graphics/images/HUD/shop/reroll_unselected.png" id="28_erdgi"]
 [ext_resource type="Texture2D" uid="uid://dsl0x2nq48gga" path="res://graphics/images/HUD/move_unselected.png" id="29_o0v2b"]
-[ext_resource type="Texture2D" uid="uid://cmagragsm54en" path="res://graphics/images/HUD/shop/reroll_selected.png" id="29_pp8gw"]
 [ext_resource type="Texture2D" uid="uid://cxeur7wg8nvq7" path="res://graphics/images/HUD/move_selected.png" id="30_lb2e7"]
 [ext_resource type="PackedScene" uid="uid://bvv3y50mckawn" path="res://scenes/prefabs/objects/gui/ability_slot_manager.tscn" id="31_o0v2b"]
 [ext_resource type="Texture2D" uid="uid://dnu6ivnxlduxo" path="res://graphics/images/HUD/move_hover.png" id="31_vehjn"]
@@ -93,9 +80,9 @@
 [ext_resource type="Texture2D" uid="uid://c2dixr5vexjjn" path="res://graphics/images/HUD/healthbar/health_full.png" id="48_ed2oa"]
 [ext_resource type="Texture2D" uid="uid://bicgpcm8exttg" path="res://graphics/images/HUD/healthbar/health_empty.png" id="49_4hhnj"]
 [ext_resource type="Texture2D" uid="uid://15gyvwauhtg4" path="res://graphics/images/HUD/healthbar/EnergyPop.png" id="56_acrhl"]
-[ext_resource type="Script" uid="uid://bugucep7t5pi8" path="res://scripts/GUI/lbl_scrap.gd" id="57_ew5bm"]
 [ext_resource type="Script" uid="uid://b20gfq5n7jr2e" path="res://scripts/GUI/shop_panel.gd" id="58_4hhnj"]
-[ext_resource type="Texture2D" uid="uid://cwmvdja6ssr4s" path="res://graphics/images/HUD/scrapGear.png" id="58_u8j3h"]
+[ext_resource type="Script" uid="uid://bf52gh6cm66kc" path="res://scripts/GUI/lbl_scrap_player.gd" id="58_sjcy6"]
+[ext_resource type="Texture2D" uid="uid://cwmvdja6ssr4s" path="res://graphics/images/HUD/icon_scrapGear.png" id="58_u8j3h"]
 [ext_resource type="Script" uid="uid://dt2fcq66d7j4r" path="res://scripts/GUI/setting_button.gd" id="60_f85oj"]
 [ext_resource type="Script" uid="uid://c4yyqxsrfwwc8" path="res://scripts/GUI/lbl_weight.gd" id="75_yktpx"]
 [ext_resource type="Texture2D" uid="uid://7w8x30ybnvlf" path="res://graphics/images/HUD/statIcons/weightIconPaint.png" id="76_gj2xt"]
@@ -254,7 +241,7 @@ camToFollow = NodePath("../../../../CameraPointer/GameCamera")
 [node name="ShopCanvas_SHOP" type="CanvasLayer" parent="."]
 layer = 2
 
-[node name="SHOP" type="NinePatchRect" parent="ShopCanvas_SHOP" node_paths=PackedStringArray("spr_REC", "camScreenContents", "camScreenFlash", "camScreenBlack", "stationConstruction", "HUD_stations", "btn_heal", "lbl_healAmount", "lbl_healPrice")]
+[node name="SHOP" type="NinePatchRect" parent="ShopCanvas_SHOP" node_paths=PackedStringArray("spr_REC", "camScreenContents", "camScreenFlash", "camScreenBlack", "HUD_stations", "btn_heal", "lbl_healAmount", "lbl_healPrice")]
 z_index = -1
 anchors_preset = -1
 anchor_left = 0.158333
@@ -272,7 +259,6 @@ spr_REC = NodePath("CamScreen/CamScreenContents/REC")
 camScreenContents = NodePath("CamScreen/CamScreenContents")
 camScreenFlash = NodePath("CamScreen/Flash")
 camScreenBlack = NodePath("CamScreen/Black")
-stationConstruction = NodePath("../../HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction")
 HUD_stations = NodePath("../../HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations")
 btn_heal = NodePath("HealButton")
 lbl_healAmount = NodePath("HealButton/TextHolder/HEAL")
@@ -583,432 +569,13 @@ offset_top = -216.0
 offset_right = -344.0
 offset_bottom = -176.0
 
-[node name="Shop_Construction" type="Control" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations" node_paths=PackedStringArray("manager", "shopDoor", "StallA", "StallB", "StallC")]
-clip_contents = true
+[node name="Shop_Construction" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations" node_paths=PackedStringArray("manager") instance=ExtResource("19_rvmjo")]
 layout_mode = 1
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = 1000.0
-offset_top = 731.0
-offset_right = 1480.0
-offset_bottom = 968.0
-grow_horizontal = 2
-grow_vertical = 0
-script = ExtResource("13_nnnr2")
+offset_left = 1095.0
+offset_top = 95.0
+offset_right = 1575.0
+offset_bottom = 412.0
 manager = NodePath("../../../../../../ShopCanvas_SHOP/SHOP")
-shopDoor = NodePath("ShopDoor")
-StallA = NodePath("StallA")
-StallB = NodePath("StallB")
-StallC = NodePath("StallC")
-
-[node name="StallA" type="Control" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction"]
-anchors_preset = 0
-offset_left = 12.0
-offset_top = 45.0
-offset_right = 156.0
-offset_bottom = 189.0
-script = ExtResource("14_tegeg")
-
-[node name="FreezerBlinky" type="TextureRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallA"]
-layout_mode = 0
-offset_left = 76.0
-offset_top = 159.0
-offset_right = 90.0
-offset_bottom = 177.0
-texture = ExtResource("15_yktpx")
-
-[node name="DoorHolder" type="Control" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallA"]
-z_index = 7
-clip_contents = true
-anchors_preset = 0
-offset_right = 144.0
-offset_bottom = 144.0
-
-[node name="DoorFreezer" type="TextureRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallA/DoorHolder"]
-layout_mode = 0
-offset_right = 144.0
-offset_bottom = 144.0
-texture = ExtResource("16_gj2xt")
-
-[node name="DoorLeft" type="TextureRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallA/DoorHolder"]
-layout_mode = 0
-offset_right = 144.0
-offset_bottom = 144.0
-texture = ExtResource("17_3o7dt")
-
-[node name="DoorRight" type="TextureRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallA/DoorHolder"]
-layout_mode = 0
-offset_right = 144.0
-offset_bottom = 144.0
-texture = ExtResource("18_acrhl")
-
-[node name="FreezeButton" type="TextureButton" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallA"]
-layout_mode = 0
-offset_left = 97.0
-offset_top = 149.0
-offset_right = 141.0
-offset_bottom = 185.0
-toggle_mode = true
-texture_normal = ExtResource("19_l7hpm")
-texture_pressed = ExtResource("20_ew5bm")
-texture_disabled = ExtResource("21_u8j3h")
-
-[node name="BuyButton" type="TextureButton" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallA"]
-layout_mode = 0
-offset_left = 3.0
-offset_top = 149.0
-offset_right = 69.0
-offset_bottom = 185.0
-toggle_mode = true
-texture_normal = ExtResource("22_sjcy6")
-texture_pressed = ExtResource("23_ncuuh")
-script = ExtResource("24_gqxs8")
-
-[node name="TextHolder" type="Control" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallA/BuyButton"]
-anchors_preset = 0
-offset_right = 66.0
-offset_bottom = 32.0
-mouse_filter = 2
-
-[node name="Price" type="Label" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallA/BuyButton/TextHolder"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -7.0
-offset_top = -25.0
-offset_right = 30.0
-offset_bottom = 3.0
-theme_override_colors/font_color = Color(0.94902, 0.92549, 0.419608, 1)
-theme_override_colors/font_outline_color = Color(0.141176, 0.054902, 0.054902, 1)
-theme_override_constants/outline_size = 4
-theme_override_font_sizes/font_size = 20
-text = "000"
-horizontal_alignment = 2
-
-[node name="BUY" type="Label" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallA/BuyButton/TextHolder"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = 2.0
-offset_top = -32.0
-offset_right = 22.0
-offset_bottom = -18.0
-theme_override_colors/font_color = Color(0.333333, 0.258824, 0.145098, 1)
-theme_override_colors/font_outline_color = Color(0.172549, 0.141176, 0.0901961, 1)
-theme_override_constants/line_spacing = 0
-theme_override_constants/outline_size = -3
-theme_override_font_sizes/font_size = 10
-text = "BUY"
-horizontal_alignment = 2
-
-[node name="StallB" type="Control" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction"]
-layout_mode = 3
-anchors_preset = 0
-offset_left = 168.0
-offset_top = 45.0
-offset_right = 312.0
-offset_bottom = 189.0
-script = ExtResource("14_tegeg")
-
-[node name="FreezerBlinky" type="TextureRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallB"]
-layout_mode = 0
-offset_left = 76.0
-offset_top = 159.0
-offset_right = 90.0
-offset_bottom = 177.0
-texture = ExtResource("15_yktpx")
-
-[node name="DoorHolder" type="Control" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallB"]
-z_index = 7
-clip_contents = true
-anchors_preset = 0
-offset_right = 144.0
-offset_bottom = 144.0
-
-[node name="DoorFreezer" type="TextureRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallB/DoorHolder"]
-layout_mode = 0
-offset_right = 144.0
-offset_bottom = 144.0
-texture = ExtResource("16_gj2xt")
-
-[node name="DoorLeft" type="TextureRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallB/DoorHolder"]
-layout_mode = 0
-offset_right = 144.0
-offset_bottom = 144.0
-texture = ExtResource("17_3o7dt")
-
-[node name="DoorRight" type="TextureRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallB/DoorHolder"]
-layout_mode = 0
-offset_right = 144.0
-offset_bottom = 144.0
-texture = ExtResource("18_acrhl")
-
-[node name="FreezeButton" type="TextureButton" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallB"]
-layout_mode = 0
-offset_left = 97.0
-offset_top = 149.0
-offset_right = 141.0
-offset_bottom = 185.0
-toggle_mode = true
-texture_normal = ExtResource("19_l7hpm")
-texture_pressed = ExtResource("20_ew5bm")
-texture_disabled = ExtResource("21_u8j3h")
-
-[node name="BuyButton" type="TextureButton" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallB"]
-layout_mode = 0
-offset_left = 3.0
-offset_top = 149.0
-offset_right = 69.0
-offset_bottom = 185.0
-toggle_mode = true
-texture_normal = ExtResource("22_sjcy6")
-texture_pressed = ExtResource("23_ncuuh")
-script = ExtResource("24_gqxs8")
-
-[node name="TextHolder" type="Control" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallB/BuyButton"]
-layout_mode = 3
-anchors_preset = 0
-offset_right = 66.0
-offset_bottom = 32.0
-mouse_filter = 2
-
-[node name="Price" type="Label" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallB/BuyButton/TextHolder"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -7.0
-offset_top = -25.0
-offset_right = 30.0
-offset_bottom = 3.0
-theme_override_colors/font_color = Color(0.94902, 0.92549, 0.419608, 1)
-theme_override_colors/font_outline_color = Color(0.141176, 0.054902, 0.054902, 1)
-theme_override_constants/outline_size = 4
-theme_override_font_sizes/font_size = 20
-text = "000"
-horizontal_alignment = 2
-
-[node name="BUY" type="Label" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallB/BuyButton/TextHolder"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = 2.0
-offset_top = -32.0
-offset_right = 22.0
-offset_bottom = -18.0
-theme_override_colors/font_color = Color(0.333333, 0.258824, 0.145098, 1)
-theme_override_colors/font_outline_color = Color(0.172549, 0.141176, 0.0901961, 1)
-theme_override_constants/line_spacing = 0
-theme_override_constants/outline_size = -3
-theme_override_font_sizes/font_size = 10
-text = "BUY"
-horizontal_alignment = 2
-
-[node name="StallC" type="Control" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction"]
-layout_mode = 3
-anchors_preset = 0
-offset_left = 324.0
-offset_top = 45.0
-offset_right = 468.0
-offset_bottom = 189.0
-script = ExtResource("14_tegeg")
-
-[node name="FreezerBlinky" type="TextureRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallC"]
-layout_mode = 0
-offset_left = 76.0
-offset_top = 159.0
-offset_right = 90.0
-offset_bottom = 177.0
-texture = ExtResource("15_yktpx")
-
-[node name="DoorHolder" type="Control" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallC"]
-z_index = 7
-clip_contents = true
-anchors_preset = 0
-offset_right = 144.0
-offset_bottom = 144.0
-
-[node name="DoorFreezer" type="TextureRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallC/DoorHolder"]
-layout_mode = 0
-offset_right = 144.0
-offset_bottom = 144.0
-texture = ExtResource("16_gj2xt")
-
-[node name="DoorLeft" type="TextureRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallC/DoorHolder"]
-layout_mode = 0
-offset_right = 144.0
-offset_bottom = 144.0
-texture = ExtResource("17_3o7dt")
-
-[node name="DoorRight" type="TextureRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallC/DoorHolder"]
-layout_mode = 0
-offset_right = 144.0
-offset_bottom = 144.0
-texture = ExtResource("18_acrhl")
-
-[node name="FreezeButton" type="TextureButton" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallC"]
-layout_mode = 0
-offset_left = 97.0
-offset_top = 149.0
-offset_right = 141.0
-offset_bottom = 185.0
-toggle_mode = true
-texture_normal = ExtResource("19_l7hpm")
-texture_pressed = ExtResource("20_ew5bm")
-texture_disabled = ExtResource("21_u8j3h")
-
-[node name="BuyButton" type="TextureButton" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallC"]
-layout_mode = 0
-offset_left = 3.0
-offset_top = 149.0
-offset_right = 69.0
-offset_bottom = 185.0
-toggle_mode = true
-texture_normal = ExtResource("22_sjcy6")
-texture_pressed = ExtResource("23_ncuuh")
-script = ExtResource("24_gqxs8")
-
-[node name="TextHolder" type="Control" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallC/BuyButton"]
-layout_mode = 3
-anchors_preset = 0
-offset_right = 66.0
-offset_bottom = 32.0
-mouse_filter = 2
-
-[node name="Price" type="Label" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallC/BuyButton/TextHolder"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -7.0
-offset_top = -25.0
-offset_right = 30.0
-offset_bottom = 3.0
-theme_override_colors/font_color = Color(0.94902, 0.92549, 0.419608, 1)
-theme_override_colors/font_outline_color = Color(0.141176, 0.054902, 0.054902, 1)
-theme_override_constants/outline_size = 4
-theme_override_font_sizes/font_size = 20
-text = "000"
-horizontal_alignment = 2
-
-[node name="BUY" type="Label" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallC/BuyButton/TextHolder"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = 2.0
-offset_top = -32.0
-offset_right = 22.0
-offset_bottom = -18.0
-theme_override_colors/font_color = Color(0.333333, 0.258824, 0.145098, 1)
-theme_override_colors/font_outline_color = Color(0.172549, 0.141176, 0.0901961, 1)
-theme_override_constants/line_spacing = 0
-theme_override_constants/outline_size = -3
-theme_override_font_sizes/font_size = 10
-text = "BUY"
-horizontal_alignment = 2
-
-[node name="ShopDoor" type="TextureRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction"]
-z_index = 7
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-texture = ExtResource("27_qt8fj")
-
-[node name="RerollButton" type="TextureButton" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction"]
-layout_mode = 0
-offset_left = 327.0
-offset_top = 1.9668
-offset_right = 465.0
-offset_bottom = 37.9668
-texture_normal = ExtResource("28_erdgi")
-texture_pressed = ExtResource("29_pp8gw")
-script = ExtResource("24_gqxs8")
-
-[node name="TextHolder" type="Control" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/RerollButton"]
-anchors_preset = 0
-offset_right = 138.0
-offset_bottom = 32.0
-mouse_filter = 2
-
-[node name="Price" type="Label" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/RerollButton/TextHolder"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = 29.0
-offset_top = -25.0
-offset_right = 66.0
-offset_bottom = 3.0
-theme_override_colors/font_color = Color(0.94902, 0.92549, 0.419608, 1)
-theme_override_colors/font_outline_color = Color(0.141176, 0.054902, 0.054902, 1)
-theme_override_constants/outline_size = 4
-theme_override_font_sizes/font_size = 20
-text = "000"
-horizontal_alignment = 2
-
-[node name="BUY" type="Label" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/RerollButton/TextHolder"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = 38.0
-offset_top = -32.0
-offset_right = 58.0
-offset_bottom = -18.0
-theme_override_colors/font_color = Color(0.333333, 0.258824, 0.145098, 1)
-theme_override_colors/font_outline_color = Color(0.172549, 0.141176, 0.0901961, 1)
-theme_override_constants/line_spacing = 0
-theme_override_constants/outline_size = -3
-theme_override_font_sizes/font_size = 10
-text = "BUY"
-horizontal_alignment = 2
-
-[node name="HEAL" type="Label" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/RerollButton/TextHolder"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -58.0
-offset_top = -32.0
-offset_right = 17.0
-offset_bottom = 4.0
-theme_override_colors/font_color = Color(0.94902, 0.92549, 0.419608, 1)
-theme_override_colors/font_shadow_color = Color(0.172549, 0.141176, 0.0901961, 1)
-theme_override_colors/font_outline_color = Color(0.741176, 0.729412, 0.501961, 1)
-theme_override_constants/line_spacing = -8
-theme_override_constants/shadow_offset_x = 0
-theme_override_constants/shadow_offset_y = 1
-theme_override_constants/outline_size = 3
-theme_override_constants/shadow_outline_size = 4
-theme_override_font_sizes/font_size = 13
-text = "REROLL
-SHOP"
-horizontal_alignment = 1
 
 [node name="GameHud" type="Control" parent="HUDCanvas/HUD Viewport/SubViewport/HUD" node_paths=PackedStringArray("panelLeft", "panelRight")]
 texture_filter = 1
@@ -1332,7 +899,7 @@ theme_override_font_sizes/font_size = 15
 text = "1"
 horizontal_alignment = 2
 vertical_alignment = 1
-script = ExtResource("57_ew5bm")
+script = ExtResource("58_sjcy6")
 zeroesBG = NodePath("BG_zeroes")
 
 [node name="AbilityIconBG" type="NinePatchRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/RightSide/Lbl_Scrap"]
@@ -1622,7 +1189,7 @@ width = 329.0
 height = 117.0
 paddingStart = 0.0
 paddingEnd = 36.0
-currentAmt = 67.9
+currentAmt = 71.75
 maskTexture = ExtResource("47_fmmmj")
 fullTexture = ExtResource("48_ed2oa")
 emptyTexture = ExtResource("49_4hhnj")
@@ -1696,20 +1263,20 @@ axis_stretch_vertical = 1
 
 [node name="Label" type="Label" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/LeftSide/Lbl_Weight/AbilityIconBG"]
 layout_mode = 0
-offset_left = -23.0
+offset_left = 25.0
 offset_top = -18.0
 offset_right = 73.0
-offset_bottom = 2.41666
+offset_bottom = 2.0
 theme = ExtResource("20_k23rv")
 theme_type_variation = &"HeaderLarge"
 theme_override_constants/shadow_outline_size = 0
-text = "TOTAL WEIGHT"
+text = "WEIGHT"
 
 [node name="Icon" type="TextureRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/LeftSide/Lbl_Weight"]
 layout_mode = 0
-offset_left = -26.0
+offset_left = 62.0
 offset_top = -4.0
-offset_right = -4.0
+offset_right = 84.0
 offset_bottom = 21.0
 texture = ExtResource("76_gj2xt")
 flip_h = true
@@ -2023,6 +1590,7 @@ metadata/_edit_use_anchors_ = true
 
 [node name="GameOver" type="Control" parent="HUDCanvas/HUD Viewport/SubViewport/HUD"]
 visible = false
+z_index = 10
 layout_mode = 1
 anchor_left = -0.333333
 anchor_top = -0.333333
@@ -2591,23 +2159,7 @@ mesh = ExtResource("5_4jixe")
 
 [connection signal="button_down" from="ShopCanvas_SHOP/SHOP/HealButton" to="ShopCanvas_SHOP/SHOP/HealButton" method="_on_button_down"]
 [connection signal="button_up" from="ShopCanvas_SHOP/SHOP/HealButton" to="ShopCanvas_SHOP/SHOP/HealButton" method="_on_button_up"]
-[connection signal="pressed" from="ShopCanvas_SHOP/SHOP/HealButton" to="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction" method="_on_heal_button_pressed"]
 [connection signal="tab_changed" from="HUDCanvas/HUD Viewport/SubViewport/HUD_shopTabs/Shops" to="HUDCanvas/HUD Viewport/SubViewport/HUD_shopTabs" method="_on_shops_tab_changed"]
-[connection signal="toggled" from="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallA/FreezeButton" to="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallA" method="_on_freeze_button_toggled"]
-[connection signal="button_down" from="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallA/BuyButton" to="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallA/BuyButton" method="_on_button_down"]
-[connection signal="button_up" from="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallA/BuyButton" to="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallA/BuyButton" method="_on_button_up"]
-[connection signal="toggled" from="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallA/BuyButton" to="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallA" method="_on_buy_button_toggled"]
-[connection signal="toggled" from="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallB/FreezeButton" to="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallB" method="_on_freeze_button_toggled"]
-[connection signal="button_down" from="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallB/BuyButton" to="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallB/BuyButton" method="_on_button_down"]
-[connection signal="button_up" from="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallB/BuyButton" to="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallB/BuyButton" method="_on_button_up"]
-[connection signal="toggled" from="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallB/BuyButton" to="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallB" method="_on_buy_button_toggled"]
-[connection signal="toggled" from="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallC/FreezeButton" to="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallC" method="_on_freeze_button_toggled"]
-[connection signal="button_down" from="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallC/BuyButton" to="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallC/BuyButton" method="_on_button_down"]
-[connection signal="button_up" from="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallC/BuyButton" to="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallC/BuyButton" method="_on_button_up"]
-[connection signal="toggled" from="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallC/BuyButton" to="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/StallC" method="_on_buy_button_toggled"]
-[connection signal="button_down" from="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/RerollButton" to="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/RerollButton" method="_on_button_down"]
-[connection signal="button_up" from="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/RerollButton" to="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/RerollButton" method="_on_button_up"]
-[connection signal="pressed" from="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction/RerollButton" to="HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStations/Shop_Construction" method="_on_reroll_button_pressed"]
 [connection signal="pressed" from="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/LeftSide/InfoBox/SellButton" to="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/LeftSide/InfoBox" method="_on_sell_button_pressed"]
 [connection signal="pressed" from="HUDCanvas/HUD Viewport/SubViewport/HUD/MainMenu/Btn_Play" to="." method="_on_btn_play_pressed"]
 [connection signal="pressed" from="HUDCanvas/HUD Viewport/SubViewport/HUD/MainMenu/Btn_Credits" to="." method="_on_btn_credits_pressed"]
