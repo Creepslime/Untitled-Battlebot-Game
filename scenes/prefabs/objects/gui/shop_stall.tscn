@@ -8,6 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://ppmc64phinum" path="res://graphics/images/HUD/shop/stall_door_left.png" id="4_vafuu"]
 [ext_resource type="PackedScene" uid="uid://ynu1nnwpk1qi" path="res://scenes/prefabs/objects/pieces/piece_bodyCube.tscn" id="5_32cuk"]
 [ext_resource type="Texture2D" uid="uid://dx4xvvlp28d07" path="res://graphics/images/HUD/shop/stall_door_right.png" id="5_irvpd"]
+[ext_resource type="CylinderMesh" uid="uid://dsjspmrahha74" path="res://graphics/models/generated/shop_stall.tres" id="6_t8nqo"]
 [ext_resource type="PackedScene" uid="uid://cir0nj1a2lfic" path="res://scenes/prefabs/objects/gui/button_hole.tscn" id="12_8lyng"]
 [ext_resource type="Theme" uid="uid://bq0jig2pdkgtn" path="res://graphics/images/HUD/UI_theme.tres" id="12_krdxo"]
 [ext_resource type="Texture2D" uid="uid://c6ex2rok0qxqr" path="res://graphics/images/HUD/icon_freeze.png" id="13_7lfx4"]
@@ -20,9 +21,6 @@
 [ext_resource type="Script" uid="uid://dnkl1d08snkyl" path="res://scripts/GUI/lbl_scrap_shop.gd" id="19_y0sp2"]
 [ext_resource type="Texture2D" uid="uid://o01v65x3ienk" path="res://graphics/images/HUD/screenGFX/insetScreen.png" id="20_courc"]
 [ext_resource type="Texture2D" uid="uid://bk4yhy6s8a6y5" path="res://graphics/images/HUD/shopBG_scrap.png" id="20_y0sp2"]
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_3enrf"]
-top_radius = 0.25
 
 [node name="StallA" type="Control" node_paths=PackedStringArray("leftDoor", "rightDoor", "freezerDoor", "freezerBlinky", "btn_buy", "lbl_price", "btn_freeze", "bg_Piece", "node_PiecePreview", "btn_PieceSelect", "lbl_name", "bg_Part", "rotisserie_socket")]
 texture_filter = 1
@@ -90,12 +88,14 @@ render_target_update_mode = 4
 [node name="Camera3D" type="Camera3D" parent="PieceGFX/SubViewportContainer/SubViewport/Stall"]
 transform = Transform3D(1, 0, 0, 0, 0.943974, 0.33002, 0, -0.33002, 0.943974, 0, 1.35448, 2.06308)
 cull_mask = 2
+fov = 96.9368
 
 [node name="SpotLight3D" type="SpotLight3D" parent="PieceGFX/SubViewportContainer/SubViewport/Stall/Camera3D"]
 transform = Transform3D(1, 0, 0, 0, 0.819292, 0.573376, 0, -0.573376, 0.819292, 0, 2.64203, 1.8628)
 layers = 2
 light_energy = 4.784
-spot_range = 7.061
+light_cull_mask = 4293918722
+spot_range = 8.84628
 spot_attenuation = 0.59
 spot_angle = 20.35
 
@@ -110,7 +110,7 @@ inShop = true
 [node name="MeshInstance3D" type="MeshInstance3D" parent="PieceGFX/SubViewportContainer/SubViewport/Stall"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
 layers = 2
-mesh = SubResource("CylinderMesh_3enrf")
+mesh = ExtResource("6_t8nqo")
 skeleton = NodePath("../../root/@EditorNode@21269/@Panel@14/@VBoxContainer@15/DockHSplitLeftL/DockHSplitLeftR/DockHSplitMain/@VBoxContainer@26/DockVSplitCenter/@VSplitContainer@54/@VBoxContainer@55/@EditorMainScreen@102/MainScreen/@CanvasItemEditor@11479/@VSplitContainer@11131/@HSplitContainer@11133/@HSplitContainer@11135/@Control@11136/@SubViewportContainer@11137/@SubViewport@11138/StallA/PieceGFX/SubViewportContainer/SubViewport")
 
 [node name="Rim2" type="TileMapLayer" parent="PieceGFX"]

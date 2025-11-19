@@ -125,14 +125,13 @@ cull_mode = 2
 albedo_texture = ExtResource("7_x1ea0")
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_jdn6p"]
-radius = 0.375
+radius = 0.212165
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_ayq0k"]
 radius = 0.25
 height = 0.75
 
 [node name="Piece_Horn" type="Node3D" node_paths=PackedStringArray("meshesHolder", "hitboxCollisionHolder", "hurtboxCollisionHolder", "placementCollisionHolder", "femaleSocketHolder") groups=["Piece"]]
-visible = false
 script = ExtResource("1_jdn6p")
 pieceName = &"Horn"
 pieceDescription = "Seems like someone tore this off some hunting trophy and stuck a plug inside the base.\\nIt sure is pointy!"

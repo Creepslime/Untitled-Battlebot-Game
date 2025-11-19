@@ -159,10 +159,8 @@ func updatePrice():
 	
 	lbl_price.update_label(price);
 	
-	if price < 0:
+	if curState == doorState.CLOSED:
 		TextFunc.set_text_color(lbl_price, "unaffordable");
-	elif curState == doorState.CLOSED:
-		TextFunc.set_text_color(lbl_price, "scrap");
 	else:
 		if is_affordable():
 			if curState == doorState.FROZEN:

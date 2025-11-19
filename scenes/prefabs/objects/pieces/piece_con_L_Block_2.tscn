@@ -1,4 +1,4 @@
-[gd_scene load_steps=38 format=3 uid="uid://v70bfm2qm4jp"]
+[gd_scene load_steps=36 format=3 uid="uid://v70bfm2qm4jp"]
 
 [ext_resource type="Script" uid="uid://sgpk4fry4yvo" path="res://scripts/objects/pieces/buildingBlocks/piece.gd" id="1_3dyfc"]
 [ext_resource type="Script" uid="uid://cybmjhuctmfaw" path="res://scripts/libraries/richTextConstructor.gd" id="2_2g4e8"]
@@ -13,6 +13,7 @@
 [ext_resource type="PackedScene" uid="uid://dosh155duu70e" path="res://scenes/prefabs/objects/pieces/buildingBlocks/socket.tscn" id="11_po113"]
 [ext_resource type="Script" uid="uid://dikbphvd0xff7" path="res://scripts/objects/pieces/buildingBlocks/hitbox_shapes.gd" id="13_hf5qq"]
 [ext_resource type="Script" uid="uid://bkwxna02gqgqu" path="res://scripts/objects/pieces/buildingBlocks/hurtbox_shapes.gd" id="14_iljvp"]
+[ext_resource type="ArrayMesh" uid="uid://cwehldc1h67k3" path="res://graphics/models/obj/botparts/FunkyAngle.obj" id="15_4ge2y"]
 [ext_resource type="Script" uid="uid://rbm6p8ggs13f" path="res://scripts/objects/pieces/buildingBlocks/placement_shapes.gd" id="15_7ft1g"]
 [ext_resource type="PackedScene" uid="uid://dckvl43g2kjvx" path="res://scenes/prefabs/objects/pieces/buildingBlocks/piece_collision_box.tscn" id="16_f0eqs"]
 
@@ -149,17 +150,6 @@ transparency = 1
 cull_mode = 2
 albedo_texture = ExtResource("10_vwa7a")
 
-[sub_resource type="BoxMesh" id="BoxMesh_e8cpi"]
-size = Vector3(1.5, 0.34, 0.5)
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_6jl12"]
-top_radius = 0.15
-bottom_radius = 0.15
-height = 0.25
-
-[sub_resource type="BoxMesh" id="BoxMesh_e7h0a"]
-size = Vector3(0.5, 1, 0.5)
-
 [sub_resource type="BoxShape3D" id="BoxShape3D_hc5m7"]
 size = Vector3(0.5, 0.5, 1.5)
 
@@ -167,15 +157,14 @@ size = Vector3(0.5, 0.5, 1.5)
 size = Vector3(0.5, 1, 0.5)
 
 [node name="Piece_L Block" type="Node3D" node_paths=PackedStringArray("meshesHolder", "hitboxCollisionHolder", "hurtboxCollisionHolder", "placementCollisionHolder", "femaleSocketHolder") groups=["Piece"]]
-visible = false
 script = ExtResource("1_3dyfc")
 pieceName = &"L Block"
 descriptionConstructor = Array[ExtResource("2_2g4e8")]([SubResource("Resource_ujwhk"), SubResource("Resource_agd5d"), SubResource("Resource_7qnf5")])
 pieceDescription = "[color=ffffffff]Serves no purpose other than to provide [color=ffffffff]structure [color=ffffffff]to your robot."
 weightBase = 3.5
+force_visibility = true
 scrapCostBase = 12
 hurtboxAlwaysEnabled = true
-force_visibility = true
 meshesHolder = NodePath("Meshes")
 hitboxCollisionHolder = NodePath("HitboxShapes [Leave empty]")
 hurtboxCollisionHolder = NodePath("HurtboxShapes [Leave empty]")
@@ -252,7 +241,7 @@ editor_description = "Put all female sockets in this box. Make sure they align w
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.01328e-05, -0.0045355, 0.000500202)
 
 [node name="Socket" parent="FemaleSockets" node_paths=PackedStringArray("hostPiece") instance=ExtResource("11_po113")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+transform = Transform3D(0.999991, -0.00254661, -0.00328248, 0.00328112, -0.000538986, 0.999994, -0.00254836, -0.999997, -0.000530637, -0.00308073, 0.25, -0.24269)
 hostPiece = NodePath("../..")
 
 [node name="Socket3" parent="FemaleSockets" node_paths=PackedStringArray("hostPiece") instance=ExtResource("11_po113")]
@@ -281,20 +270,9 @@ script = ExtResource("15_7ft1g")
 
 [node name="Meshes" type="Node3D" parent="."]
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Meshes"]
-transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0.328666, 0.5)
-mesh = SubResource("BoxMesh_e8cpi")
-skeleton = NodePath("../../PieceCollisionBox")
-
-[node name="MeshInstance3D2" type="MeshInstance3D" parent="Meshes"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.125, 0)
-mesh = SubResource("CylinderMesh_6jl12")
-skeleton = NodePath("../../PieceCollisionBox")
-
-[node name="MeshInstance3D3" type="MeshInstance3D" parent="Meshes"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 1)
-mesh = SubResource("BoxMesh_e7h0a")
-skeleton = NodePath("../../PieceCollisionBox")
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="Meshes"]
+transform = Transform3D(-8.74228e-08, 2, -1.74846e-07, -8.74228e-08, 1.74846e-07, 2, 2, 8.74228e-08, 8.74228e-08, 0, 0.25, 0.5)
+mesh = ExtResource("15_4ge2y")
 
 [node name="PieceCollisionBox" parent="." instance=ExtResource("16_f0eqs")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0.5)

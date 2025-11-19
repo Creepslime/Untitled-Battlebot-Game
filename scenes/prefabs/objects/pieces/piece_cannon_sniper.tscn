@@ -280,7 +280,6 @@ size = Vector3(1, 0.5, 1)
 size = Vector3(0.5, 0.5, 2)
 
 [node name="Piece_Sniper Cannon" type="Node3D" node_paths=PackedStringArray("firingOffsetNode", "meshesHolder", "hitboxCollisionHolder", "hurtboxCollisionHolder", "placementCollisionHolder", "femaleSocketHolder") groups=["Piece"]]
-visible = false
 script = ExtResource("1_t7twg")
 magazineMaxBase = 3
 magazineRefreshRate = 0.75
