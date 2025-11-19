@@ -2,6 +2,7 @@ extends Node
 ## Controls the amount of scrap the player currently has.
 
 var scrap := 0;
+const MAX_SCRAP := 999999;
 
 enum priceTypes {
 	PIECE,
@@ -31,13 +32,13 @@ var activeDiscounts_HEALING : Dictionary[String, float] = {}
 var activeDiscounts_GENERAL : Dictionary[String, float] = {}
 
 func add_scrap(amt : int, source:String):
-	scrap = max(0, scrap + amt);
+	scrap = max(0, scrap + amt, 999999);
 	Hooks.OnGainScrap(source, amt);
 
 ## Removes 
 func remove_scrap(amt : int, source:String):
-	scrap = max(0, scrap - amt);
-	Hooks.OnGainScrap(source, amt);
+	scrap = max(0, scrap - amt, 999999);
+	Hooks.OnGainScrap(source, -amt);
 
 ## Sets the scrap amount to a specific number.
 func set_scrap(amt := 0):

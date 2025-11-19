@@ -65,7 +65,7 @@ func populate_info_part(part:Part):
 		$EnergyIcon.show();
 		$CooldownIcon/Label.text = TextFunc.format_stat(part.get_fire_rate(true));
 		$CooldownIcon.show();
-		iconBase.texture = load("res://graphics/images/HUD/infobox/info_utility.png");
+		iconBase.texture = icon_utility;
 		
 	elif part._get_part_type() == Part.partTypes.MELEE:
 		$EnergyIcon/Label.text = TextFunc.format_stat(part.get_energy_cost(true));
@@ -73,7 +73,7 @@ func populate_info_part(part:Part):
 		$CooldownIcon/Label.text = TextFunc.format_stat(part.get_fire_rate(true));
 		$CooldownIcon.show();
 		
-		iconBase.texture = load("res://graphics/images/HUD/infobox/info_melee.png");
+		iconBase.texture = icon_melee;
 		$DamageIcon/Label.text = TextFunc.format_stat(part.get_damage(true));
 		$DamageIcon.show();
 		
@@ -83,14 +83,14 @@ func populate_info_part(part:Part):
 		$CooldownIcon/Label.text = TextFunc.format_stat(part.get_fire_rate(true));
 		$CooldownIcon.show();
 		
-		iconBase.texture = load("res://graphics/images/HUD/infobox/info_ranged.png");
+		iconBase.texture = icon_ranged;
 		$DamageIcon/Label.text = TextFunc.format_stat(part.get_damage(true));
 		$DamageIcon.show();
 		$MagazineIcon/Label.text = TextFunc.format_stat(part.get_magazine_size(true), 0);
 		$MagazineIcon.show();
 		
 	elif part._get_part_type() == Part.partTypes.PASSIVE:
-		iconBase.texture = load("res://graphics/images/HUD/infobox/info_passive.png");
+		iconBase.texture = icon_part;
 
 func populate_info_piece(piece:Piece):
 	pieceRef = piece;

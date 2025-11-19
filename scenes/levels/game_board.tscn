@@ -1,4 +1,4 @@
-[gd_scene load_steps=113 format=4 uid="uid://cno0jw8hq6h1i"]
+[gd_scene load_steps=115 format=4 uid="uid://cno0jw8hq6h1i"]
 
 [ext_resource type="Script" uid="uid://b8hseesj7vrc" path="res://scripts/game_board.gd" id="1_mlcvp"]
 [ext_resource type="Material" uid="uid://c6b1ums81prw8" path="res://graphics/materials/models/arena/arena_floor.tres" id="2_4jixe"]
@@ -93,7 +93,9 @@
 [ext_resource type="Texture2D" uid="uid://c2dixr5vexjjn" path="res://graphics/images/HUD/healthbar/health_full.png" id="48_ed2oa"]
 [ext_resource type="Texture2D" uid="uid://bicgpcm8exttg" path="res://graphics/images/HUD/healthbar/health_empty.png" id="49_4hhnj"]
 [ext_resource type="Texture2D" uid="uid://15gyvwauhtg4" path="res://graphics/images/HUD/healthbar/EnergyPop.png" id="56_acrhl"]
+[ext_resource type="Script" uid="uid://bugucep7t5pi8" path="res://scripts/GUI/lbl_scrap.gd" id="57_ew5bm"]
 [ext_resource type="Script" uid="uid://b20gfq5n7jr2e" path="res://scripts/GUI/shop_panel.gd" id="58_4hhnj"]
+[ext_resource type="Texture2D" uid="uid://cwmvdja6ssr4s" path="res://graphics/images/HUD/scrapGear.png" id="58_u8j3h"]
 [ext_resource type="Script" uid="uid://dt2fcq66d7j4r" path="res://scripts/GUI/setting_button.gd" id="60_f85oj"]
 [ext_resource type="Script" uid="uid://c4yyqxsrfwwc8" path="res://scripts/GUI/lbl_weight.gd" id="75_yktpx"]
 [ext_resource type="Texture2D" uid="uid://7w8x30ybnvlf" path="res://graphics/images/HUD/statIcons/weightIconPaint.png" id="76_gj2xt"]
@@ -1313,6 +1315,78 @@ offset_right = 85.0
 offset_bottom = 22.0
 texture = ExtResource("56_acrhl")
 
+[node name="Lbl_Scrap" type="Label" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/RightSide" node_paths=PackedStringArray("zeroesBG")]
+z_index = 1
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = 209.0
+offset_top = -190.0
+offset_right = 264.0
+offset_bottom = -173.0
+theme_override_fonts/font = ExtResource("13_6c18d")
+theme_override_font_sizes/font_size = 15
+text = "1"
+horizontal_alignment = 2
+vertical_alignment = 1
+script = ExtResource("57_ew5bm")
+zeroesBG = NodePath("BG_zeroes")
+
+[node name="AbilityIconBG" type="NinePatchRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/RightSide/Lbl_Scrap"]
+z_index = -1
+layout_mode = 0
+offset_left = -3.0
+offset_top = -3.0
+offset_right = 60.0
+offset_bottom = 20.0
+texture = ExtResource("19_vehjn")
+patch_margin_left = 1
+patch_margin_top = 3
+patch_margin_right = 1
+patch_margin_bottom = 1
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1
+
+[node name="Label" type="Label" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/RightSide/Lbl_Scrap/AbilityIconBG"]
+layout_mode = 0
+offset_left = -11.0
+offset_top = -18.0
+offset_right = 85.0
+offset_bottom = 2.41666
+theme = ExtResource("20_k23rv")
+theme_type_variation = &"HeaderLarge"
+theme_override_constants/shadow_outline_size = 0
+text = "SCRAP"
+
+[node name="Icon" type="TextureRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/RightSide/Lbl_Scrap"]
+layout_mode = 0
+offset_left = -24.0
+offset_top = -1.0
+offset_right = -5.0
+offset_bottom = 20.0
+texture = ExtResource("58_u8j3h")
+flip_h = true
+
+[node name="BG_zeroes" type="Label" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/RightSide/Lbl_Scrap"]
+z_index = -1
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -26.5
+offset_top = -17.0
+offset_right = 28.5
+theme_override_colors/font_color = Color(0.47451, 0.47451, 0.47451, 1)
+theme_override_fonts/font = ExtResource("13_6c18d")
+theme_override_font_sizes/font_size = 15
+text = "00000"
+vertical_alignment = 1
+
 [node name="LeftSide" type="TextureRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud"]
 z_index = 3
 texture_filter = 1
@@ -1548,7 +1622,7 @@ width = 329.0
 height = 117.0
 paddingStart = 0.0
 paddingEnd = 36.0
-currentAmt = 72.2
+currentAmt = 67.9
 maskTexture = ExtResource("47_fmmmj")
 fullTexture = ExtResource("48_ed2oa")
 emptyTexture = ExtResource("49_4hhnj")
@@ -1594,9 +1668,9 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -267.0
+offset_left = -266.0
 offset_top = -190.0
-offset_right = -212.0
+offset_right = -211.0
 offset_bottom = -173.0
 theme_override_fonts/font = ExtResource("13_6c18d")
 theme_override_font_sizes/font_size = 15
@@ -2253,6 +2327,7 @@ text = "Bajillion Moneys"
 alignment = 2
 script = ExtResource("60_f85oj")
 settingName = &"startingScrap"
+numValueWhenTrue = 999999
 metadata/_edit_use_anchors_ = true
 
 [node name="godmode" type="CheckButton" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/Options/DevCheats/Cheats"]

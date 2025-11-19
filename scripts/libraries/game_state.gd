@@ -191,6 +191,13 @@ func get_player_position():
 		return bdy.global_position;
 	return Vector3(0,0,0);
 
+func get_player_selected_or_pipette():
+	var ply = get_player()
+	
+	if is_instance_valid(ply):
+		return ply.get_selected_or_pipette();
+	return null
+
 func get_camera_pointer() -> Node3D:
 	var board = get_game_board();
 	
@@ -277,7 +284,7 @@ func get_engine_viewer() -> PartsHolder_Engine:
 		return ghud.get_node_or_null("LeftSide/PartsHolder_Engine");
 	return null;
 
-
+## @deprecated
 func get_inventory() -> InventoryPlayer:
 	var ply = get_player();
 	
@@ -650,7 +657,7 @@ func get_profiler_string() -> String:
 	return s;
 
 func get_profiler_label():
-	return str("TOTAL PLAY TIME: ", TextFunc.format_time(totalPlayTime, 0, -1), "\nPROFILER UPDATE TIME: ",TextFunc.format_stat(timeCounter),"\nFPS: ",profilerFPS,"\nSTATE: ",get_game_board_state_string(),get_profiler_string());
+	return str("TOTAL PLAY TIME: ", TextFunc.format_time(totalPlayTime, 0, -1), "\nPROFILER UPDATE TIME: ",TextFunc.format_stat(timeCounter),"\nFPS: ",profilerFPS,"\nCURRENTLY SELECTED: ",str(get_player_selected_or_pipette()),"\nSTATE: ",get_game_board_state_string(),"\nPAUSED: ",is_paused(),get_profiler_string());
 	
 
 func profiler(delta):

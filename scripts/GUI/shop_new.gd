@@ -1,19 +1,18 @@
 extends Control
 class_name ShopStation
 
-var player : Robot_Player;
-@export var manager : ShopManager;
+var player : Robot_Player; ## The player.
+@export var manager : ShopManager; ## The manager.
+@export var shopDoor : TextureRect; ## The big door.
+var shopDoorVelocity := 0.0; ## The door's Y velocity for its fancy animation.
+var shopDoorPrevPosY := 0.0; ## THe door's previous Y position.
+var doorOpen := false; ## Set by [method clopen_door].
+var doorActuallyClosed := true; ## Is set to true if the 
+var doorStomps := 9; ## How many times the door should stomp when it closes.
+var thumping := true; ## @deprecated: Not used.
+var shopOpen := false; ## Set when [method close_up_shop] or [method open_up_shop] is called.
 
-@export var shopDoor : TextureRect;
-var shopDoorVelocity := 0.0;
-var shopDoorPrevPosY := 0.0;
-var doorOpen := false;
-var doorActuallyClosed := true;
-var doorStomps := 9;
-var thumping := true;
-var shopOpen := false;
-
-var awaiting_reroll := false;
+var awaiting_reroll := false; ## If this is true, the next time all shop stalls are closed, all the stalls have their contents refreshed.
 
 
 func _ready():
@@ -57,15 +56,15 @@ func _physics_process(delta):
 					clopen_stalls(true);
 
 
-
-
-
+## Deselects all [ShopStall] children.
 func deselect():
 	for stall in get_children():
 		if stall is ShopStall:
 			stall.deselect();
 
+## Clears out all stalls and resets the item pool.
 func reset_shop():
+	clear_shop_stalls(true);
 	new_round(-1);
 
 ## Opens this hop up. Only run once at the start of the shop.
@@ -74,6 +73,7 @@ func open_up_shop():
 	shopOpen = true;
 	clopen_stalls(true);
 
+## Opens or closes all shop stalls that are able to be closed/opened.
 func clopen_stalls(open:bool):
 	if open:
 		for stall in get_children():
@@ -84,18 +84,19 @@ func clopen_stalls(open:bool):
 			if stall is ShopStall:
 				stall.close_stall();
 
-
-## Closes the shop.
+## Closes the shop, sets the new wave of items, then rerolls in preparation for the next round.
 func new_round(roundNumber:int):
 	set_item_pool_waves(roundNumber);
 	close_up_shop();
 	reroll_shop();
 
+## Closes the door and all unfrozen stalls.
 func close_up_shop():
 	clopen_door(false);
 	shopOpen = false;
 	clopen_stalls(false);
 
+## Opens or closes the big door.
 func clopen_door(open:=false):
 	if open:
 		if ! doorOpen:
@@ -107,20 +108,24 @@ func clopen_door(open:=false):
 		doorOpen = false;
 		shopDoorVelocity = 0;
 
+## Called when the door is decreed to be "actually closed", which is when its fancy animation is done playing as we leave the shop.
 func door_closed():
 	reroll_shop();
 	doorActuallyClosed = true;
 	door_closed_sound(0.9);
 
+## PLays the sound for the door closing.
 func door_closed_sound(volume := 1.0):
 	if GameState.get_in_state_of_play():
 		var pitchMod = randf_range(0.7, 1.3)
 		SND.play_sound_nondirectional("Shop.Door.Thump", volume, pitchMod);
 
-
+## Returns true if we're not paused, we have at least one unfrozen stall, we're not too broke to reroll, and we're not already anticipating a reroll.
 func can_reroll():
-	return not GameState.is_paused() and ScrapManager.is_affordable(manager.get_reroll_price()) and not awaiting_reroll and not all_stalls_frozen();
+	return not GameState.is_paused() and not all_stalls_frozen() and ScrapManager.is_affordable(manager.get_reroll_price()) and not awaiting_reroll;
 
+## Fires when the reroll button is pressed.[br]
+## Checks if we can reroll, then closes the stalls and queues a reroll.
 func _on_reroll_button_pressed():
 	if can_reroll():
 		clopen_stalls(false);
@@ -128,16 +133,18 @@ func _on_reroll_button_pressed():
 		Hooks.OnRerollShop();
 	pass # Replace with function body.
 
+## Returns true if all [ShopStall] children are frozen, and false if not.
 func all_stalls_frozen() -> bool:
-	var count = 0;
+	var count := 0;
+	var frozenCount := 0;
 	for stall in get_children():
 		if stall is ShopStall:
+			count += 1;
 			if stall.is_frozen():
-				count += 1;
-				if count >= 3:
-					return true;
-	return false;
+				frozenCount += 1;
+	return frozenCount >= count;
 
+## Returns false if any [ShopStall] child is not closed.
 func all_stalls_closed() -> bool:
 	for stall in get_children():
 		if stall is ShopStall:
@@ -145,54 +152,50 @@ func all_stalls_closed() -> bool:
 				return false;
 	return true;
 
-func clear_shop_stalls():
+## Clears out all [ShopStall] children.
+func clear_shop_stalls(ignoreFrozen := false):
 	for stall in get_children():
 		if stall is ShopStall:
-			if ! stall.doors_actually_closed():
-				return false;
-	return true;
+			clear_shop_stall(stall, ignoreFrozen);
 
+## Clears out a specific [ShopStall].
 func clear_shop_stall(stall:ShopStall, ignoreFrozen := false):
 	if is_instance_valid(stall):
-		if is_instance_valid(stall.partRef): ## Destroys whatever part was in here.
-			if ignoreFrozen:
-				stall.freeze(false);
-				stall.partRef.destroy();
-			else:
-				if (stall.curState != ShopStall.doorState.FROZEN): ## Destroys whatever part was in here.
-					#print(stall.name + " is NOT frozen")
-					stall.partRef.destroy();
+		stall.destroy_contents(ignoreFrozen);
 
-
-
-##The pool of parts currently available
+## The pool of things currently available for this shop station, as a list of scenes and weights.
 var partPool := {};
+## The pool of things currently available for this shop station, as an [Array] of scenes, with each scene showing up- as manyh times as its weight decrees.
 var partPoolCalculated := [];
 
+## CLears out the entire pool.
 func clear_shop_spawn_list():
 	partPool.clear();
 
+## Adds a part scene to the pool.
 func add_part_to_spawn_list(_scene : String, weightOverride := -99, recalculate := false):
-	var scene = load(_scene);
-	var part = scene.instantiate();
-	var weight = 1;
-	if is_instance_valid(weightOverride) && weightOverride != -99:
-		weight = weightOverride;
-	else:
-		weight = part.poolWeight;
-	var rarity = part.myPartRarity;
-	if scene in partPool.keys():
-		if partPool[scene]:
-			if partPool[scene]["weight"]:
-				partPool[scene]["weight"] += weight;
-				if partPool[scene]["weight"] && partPool[scene]["weight"]  <= 0:
-					partPool.erase(scene);
-	else:
-		partPool[scene] = {"weight":weight,"rarity":rarity};
-	part.queue_free();
-	if recalculate:
-		calculate_part_pool()
+	if FileAccess.file_exists(_scene):
+		var scene = load(_scene);
+		var part = scene.instantiate();
+		var weight = 1;
+		if is_instance_valid(weightOverride) && weightOverride != -99:
+			weight = weightOverride;
+		else:
+			weight = part.poolWeight;
+		var rarity = part.myPartRarity;
+		if scene in partPool.keys():
+			if partPool[scene]:
+				if partPool[scene]["weight"]:
+					partPool[scene]["weight"] += weight;
+					if partPool[scene]["weight"] && partPool[scene]["weight"]  <= 0:
+						partPool.erase(scene);
+		else:
+			partPool[scene] = {"weight":weight,"rarity":rarity};
+		part.queue_free();
+		if recalculate:
+			calculate_part_pool()
 
+## Calculates the item pool.
 func calculate_part_pool():
 	var pool = []
 	var spawnListCopy = partPool.duplicate(true);
@@ -213,6 +216,7 @@ func calculate_part_pool():
 	partPoolCalculated = pool;
 	print_rich("[color=yellow]",translated_part_pool());
 
+## Returns a string representing the current pool.
 func translated_part_pool():
 	var poolDict = {}
 	var pool = partPoolCalculated.duplicate();
@@ -280,31 +284,44 @@ func return_random_part() -> PackedScene:
 	var sceneReturn = pool.pick_random();
 	return sceneReturn;
 
-var slots = {
-	"StallA" = null,
-	"StallB" = null,
-	"StallC" = null,
-}
+var stalls = []
+
+func gather_stalls():
+	stalls.clear();
+	for stall in get_children():
+		if stall is ShopStall:
+			stalls.append(stall);
 
 func reroll_shop():
 	clear_shop();
 	var counter = 0;
-	while (next_empty_shop_stall() != null) and counter < 4:
+	gather_stalls();
+	while (next_empty_shop_stall() != null) and counter < stalls.size():
 		var thing: = return_random_part();
 		if is_instance_valid(thing):
 			var sceneString = thing.resource_path;
-			add_part_to_shop(sceneString);
+			add_thing_to_shop(sceneString);
 			counter += 1;
 
-func add_part_to_shop(_partScene:String):
+func add_thing_to_shop(_partScene:String):
+	var partScene = load(_partScene);
+	var part = partScene.instantiate();
+	var result = false;
+	if part is Part:
+		result = add_part_to_shop(part)
+	if part is Piece:
+		result = add_piece_to_shop(part)
+	
+	if ! result:
+		part.queue_free();
+
+func add_part_to_shop(inPart : Part):
 	var stall = next_empty_shop_stall();
 	if is_instance_valid(stall):
 		if is_instance_valid(stall.partRef):
 			print("No part is to be placed here!!! (", stall.name,")")
-			slots[str(stall.name)] = stall.partRef;
-			return
-		var partScene = load(_partScene);
-		var part:Part = partScene.instantiate();
+			return false
+		var part:Part = inPart;
 		print(stall.partRef)
 		part.hostShopStall = stall;
 		part.thisRobot = GameState.get_player();
@@ -313,24 +330,27 @@ func add_part_to_shop(_partScene:String):
 		if part is PartActive:
 			part.set_equipped(false);
 		stall.partRef = part;
-		slots[str(stall.name)] = part;
+		
 		print(stall.partRef)
 		#part.
 		print("Adding ", part.name, " to shop stall ", stall.name)
 		part.inventory_vanity_setup();
 		add_child(part);
+		return true;
+	return false;
 	pass
 
+func add_piece_to_shop(part : Piece):
+	var stall = next_empty_shop_stall();
+	if is_instance_valid(stall):
+		pass;
+	return false;
+
+## Returns the next [ShopStall] in [member stalls] which is empty.
 func next_empty_shop_stall():
-	if !is_instance_valid(slots["StallA"]):
-		if ! StallA.is_frozen():
-			return StallA;
-	if !is_instance_valid(slots["StallB"]):
-		if ! StallB.is_frozen():
-			return StallB;
-	if !is_instance_valid(slots["StallC"]):
-		if ! StallC.is_frozen():
-			return StallC;
+	for stall in stalls:
+		if stall.is_empty():
+			return stall;
 	return null;
 
 @export var StallA : ShopStall;
@@ -338,9 +358,9 @@ func next_empty_shop_stall():
 @export var StallC : ShopStall;
 
 func clear_shop(ignoreFrozen := false, reroll := false):
-	clear_shop_stall(StallA, ignoreFrozen);
-	clear_shop_stall(StallB, ignoreFrozen);
-	clear_shop_stall(StallC, ignoreFrozen);
+	gather_stalls();
+	
+	clear_shop_stalls(ignoreFrozen);
 	
 	if reroll:
 		reroll_shop();

@@ -1,22 +1,20 @@
-[gd_scene load_steps=41 format=3]
+[gd_scene load_steps=39 format=3 uid="uid://0iyltgl5si2u"]
 
-[ext_resource type="Script" path="res://scripts/objects/pieces/buildingBlocks/piece.gd" id="1_vd8ek"]
-[ext_resource type="Script" path="res://scripts/libraries/richTextConstructor.gd" id="2_ltw0n"]
-[ext_resource type="Script" path="res://scripts/objects/weapons/stat_tracker.gd" id="3_lx4wq"]
-[ext_resource type="Texture2D" path="res://graphics/images/HUD/statIcons/cooldownIconStriped.png" id="4_1bljo"]
-[ext_resource type="Texture2D" path="res://graphics/images/HUD/statIcons/damageIconStriped.png" id="5_w2eo3"]
-[ext_resource type="Texture2D" path="res://graphics/images/HUD/statIcons/weightIconStriped.png" id="6_i61qa"]
-[ext_resource type="Texture2D" path="res://graphics/images/HUD/statIcons/energyIconStriped.png" id="7_mx6u2"]
-[ext_resource type="Texture2D" path="res://graphics/images/HUD/statIcons/magazineIconStriped.png" id="8_6pj8q"]
-[ext_resource type="Texture2D" path="res://graphics/images/models/sockets/socketM.png" id="9_taym8"]
-[ext_resource type="Texture2D" path="res://graphics/images/models/sockets/prong.png" id="10_l0waw"]
-[ext_resource type="PackedScene" path="res://scenes/prefabs/objects/pieces/buildingBlocks/socket.tscn" id="11_ska8h"]
-[ext_resource type="Script" path="res://scripts/GUI/socket.gd" id="12_lx4wq"]
-[ext_resource type="Script" path="res://scripts/objects/pieces/buildingBlocks/hitbox_shapes.gd" id="12_rob4d"]
-[ext_resource type="Script" path="res://scripts/objects/pieces/buildingBlocks/hurtbox_shapes.gd" id="13_qmiug"]
-[ext_resource type="Script" path="res://scripts/objects/pieces/buildingBlocks/placement_shapes.gd" id="14_s0vp0"]
-[ext_resource type="PackedScene" path="res://scenes/prefabs/objects/pieces/buildingBlocks/piece_collision_box.tscn" id="15_xo8ij"]
-[ext_resource type="Script" path="res://scripts/objects/pieces/buildingBlocks/collisionBox.gd" id="17_1bljo"]
+[ext_resource type="Script" uid="uid://sgpk4fry4yvo" path="res://scripts/objects/pieces/buildingBlocks/piece.gd" id="1_vd8ek"]
+[ext_resource type="Script" uid="uid://cybmjhuctmfaw" path="res://scripts/libraries/richTextConstructor.gd" id="2_ltw0n"]
+[ext_resource type="Script" uid="uid://clcmggkeaqnyx" path="res://scripts/objects/weapons/stat_tracker.gd" id="3_lx4wq"]
+[ext_resource type="Texture2D" uid="uid://uflissj08i1o" path="res://graphics/images/HUD/statIcons/cooldownIconStriped.png" id="4_1bljo"]
+[ext_resource type="Texture2D" uid="uid://cnfat2kqvmdcd" path="res://graphics/images/HUD/statIcons/damageIconStriped.png" id="5_w2eo3"]
+[ext_resource type="Texture2D" uid="uid://b775d1fn78gcv" path="res://graphics/images/HUD/statIcons/weightIconStriped.png" id="6_i61qa"]
+[ext_resource type="Texture2D" uid="uid://bdgkd60c8qtud" path="res://graphics/images/HUD/statIcons/energyIconStriped.png" id="7_mx6u2"]
+[ext_resource type="Texture2D" uid="uid://s6s6ugfdhqhy" path="res://graphics/images/HUD/statIcons/magazineIconStriped.png" id="8_6pj8q"]
+[ext_resource type="Texture2D" uid="uid://c3ddwskowvvoi" path="res://graphics/images/models/sockets/socketM.png" id="9_taym8"]
+[ext_resource type="Texture2D" uid="uid://cobiyocwh7d3p" path="res://graphics/images/models/sockets/prong.png" id="10_l0waw"]
+[ext_resource type="PackedScene" uid="uid://dosh155duu70e" path="res://scenes/prefabs/objects/pieces/buildingBlocks/socket.tscn" id="11_ska8h"]
+[ext_resource type="Script" uid="uid://dikbphvd0xff7" path="res://scripts/objects/pieces/buildingBlocks/hitbox_shapes.gd" id="12_rob4d"]
+[ext_resource type="Script" uid="uid://bkwxna02gqgqu" path="res://scripts/objects/pieces/buildingBlocks/hurtbox_shapes.gd" id="13_qmiug"]
+[ext_resource type="Script" uid="uid://rbm6p8ggs13f" path="res://scripts/objects/pieces/buildingBlocks/placement_shapes.gd" id="14_s0vp0"]
+[ext_resource type="PackedScene" uid="uid://dckvl43g2kjvx" path="res://scenes/prefabs/objects/pieces/buildingBlocks/piece_collision_box.tscn" id="15_xo8ij"]
 
 [sub_resource type="Resource" id="Resource_ujwhk"]
 script = ExtResource("2_ltw0n")
@@ -45,24 +43,6 @@ endingSpace = false
 startingSpace = true
 metadata/_custom_type_script = "uid://cybmjhuctmfaw"
 
-[sub_resource type="Resource" id="Resource_lx4wq"]
-resource_name = "PassiveEnergyDraw0"
-script = ExtResource("3_lx4wq")
-statFriendlyName = "Passive Energy Draw"
-statName = "PassiveEnergyDraw0"
-statIcon = ExtResource("7_mx6u2")
-baseStat = 1.0
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_1bljo"]
-resource_name = "PassiveCooldown0"
-script = ExtResource("3_lx4wq")
-statFriendlyName = "Passive Cooldown"
-statName = "PassiveCooldown0"
-statIcon = ExtResource("4_1bljo")
-baseStat = 1.0
-roundingMode = 0
-
 [sub_resource type="Resource" id="Resource_w2eo3"]
 resource_name = "ContactCooldown0"
 script = ExtResource("3_lx4wq")
@@ -72,48 +52,21 @@ statIcon = ExtResource("4_1bljo")
 baseStat = 0.0
 roundingMode = 0
 
-[sub_resource type="Resource" id="Resource_i61qa"]
-resource_name = "ScrapCost0"
-script = ExtResource("3_lx4wq")
-statFriendlyName = "Scrap Cost"
-statName = "ScrapCost0"
-statIcon = ExtResource("8_6pj8q")
-baseStat = 5.0
-roundingMode = 6
-
-[sub_resource type="Resource" id="Resource_mx6u2"]
-resource_name = "ScrapSellModifier0"
-script = ExtResource("3_lx4wq")
-statFriendlyName = "Scrap Sell Modifier"
-statName = "ScrapSellModifier0"
-statIcon = ExtResource("8_6pj8q")
-baseStat = 0.666667
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_6pj8q"]
-resource_name = "ScrapSalvageModifier0"
-script = ExtResource("3_lx4wq")
-statFriendlyName = "Scrap Salvage Modifier"
-statName = "ScrapSalvageModifier0"
-statIcon = ExtResource("8_6pj8q")
-baseStat = 0.666667
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_taym8"]
-resource_name = "Weight0"
-script = ExtResource("3_lx4wq")
-statFriendlyName = "Weight"
-statName = "Weight0"
-statIcon = ExtResource("6_i61qa")
-baseStat = 0.5
-roundingMode = 0
-
 [sub_resource type="Resource" id="Resource_l0waw"]
 resource_name = "Damage0"
 script = ExtResource("3_lx4wq")
 statFriendlyName = "Damage"
 statName = "Damage0"
 statIcon = ExtResource("5_w2eo3")
+baseStat = 0.0
+roundingMode = 0
+
+[sub_resource type="Resource" id="Resource_rob4d"]
+resource_name = "Kickback0"
+script = ExtResource("3_lx4wq")
+statFriendlyName = "Kickback"
+statName = "Kickback0"
+statIcon = ExtResource("6_i61qa")
 baseStat = 0.0
 roundingMode = 0
 
@@ -126,13 +79,58 @@ statIcon = ExtResource("6_i61qa")
 baseStat = 0.0
 roundingMode = 0
 
-[sub_resource type="Resource" id="Resource_rob4d"]
-resource_name = "Kickback0"
+[sub_resource type="Resource" id="Resource_1bljo"]
+resource_name = "PassiveCooldown0"
 script = ExtResource("3_lx4wq")
-statFriendlyName = "Kickback"
-statName = "Kickback0"
+statFriendlyName = "Passive Cooldown"
+statName = "PassiveCooldown0"
+statIcon = ExtResource("4_1bljo")
+baseStat = 1.0
+roundingMode = 0
+
+[sub_resource type="Resource" id="Resource_lx4wq"]
+resource_name = "PassiveEnergyDraw0"
+script = ExtResource("3_lx4wq")
+statFriendlyName = "Passive Energy Draw"
+statName = "PassiveEnergyDraw0"
+statIcon = ExtResource("7_mx6u2")
+baseStat = 1.0
+roundingMode = 0
+
+[sub_resource type="Resource" id="Resource_i61qa"]
+resource_name = "ScrapCost0"
+script = ExtResource("3_lx4wq")
+statFriendlyName = "Scrap Cost"
+statName = "ScrapCost0"
+statIcon = ExtResource("8_6pj8q")
+baseStat = 5.0
+roundingMode = 6
+
+[sub_resource type="Resource" id="Resource_6pj8q"]
+resource_name = "ScrapSalvageModifier0"
+script = ExtResource("3_lx4wq")
+statFriendlyName = "Scrap Salvage Modifier"
+statName = "ScrapSalvageModifier0"
+statIcon = ExtResource("8_6pj8q")
+baseStat = 0.666667
+roundingMode = 0
+
+[sub_resource type="Resource" id="Resource_mx6u2"]
+resource_name = "ScrapSellModifier0"
+script = ExtResource("3_lx4wq")
+statFriendlyName = "Scrap Sell Modifier"
+statName = "ScrapSellModifier0"
+statIcon = ExtResource("8_6pj8q")
+baseStat = 0.666667
+roundingMode = 0
+
+[sub_resource type="Resource" id="Resource_taym8"]
+resource_name = "Weight0"
+script = ExtResource("3_lx4wq")
+statFriendlyName = "Weight"
+statName = "Weight0"
 statIcon = ExtResource("6_i61qa")
-baseStat = 0.0
+baseStat = 0.5
 roundingMode = 0
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_g4w8c"]
@@ -176,7 +174,7 @@ albedo_texture = ExtResource("10_l0waw")
 height = 0.25
 radius = 0.25
 
-[node name="Piece_Hockey Puck" type="Node3D" node_paths=PackedStringArray("meshesHolder", "hitboxCollisionHolder", "hurtboxCollisionHolder", "placementCollisionHolder", "femaleSocketHolder", "hostSocket") groups=["Piece"]]
+[node name="Piece_Hockey Puck" type="Node3D" node_paths=PackedStringArray("meshesHolder", "hitboxCollisionHolder", "hurtboxCollisionHolder", "placementCollisionHolder", "femaleSocketHolder") groups=["Piece"]]
 visible = false
 script = ExtResource("1_vd8ek")
 pieceName = &"Hockey Puck"
@@ -191,7 +189,6 @@ hitboxCollisionHolder = NodePath("HitboxShapes [Leave empty]")
 hurtboxCollisionHolder = NodePath("HurtboxShapes [Leave empty]")
 placementCollisionHolder = NodePath("PlacementShapes [Leave empty]")
 femaleSocketHolder = NodePath("FemaleSockets")
-hostSocket = NodePath("..")
 engineSlots = {
 Vector2i(2, 2): null,
 Vector2i(2, 3): null
@@ -260,13 +257,9 @@ metadata/_edit_lock_ = true
 editor_description = "Put all female sockets in this box. Make sure they align with the grid!"
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.01328e-05, -0.0045355, 0.000500202)
 
-[node name="Socket" type="Area3D" parent="FemaleSockets" node_paths=PackedStringArray("hostPiece", "collisionSphere") instance=ExtResource("11_ska8h")]
+[node name="Socket" parent="FemaleSockets" node_paths=PackedStringArray("hostPiece") instance=ExtResource("11_ska8h")]
 transform = Transform3D(-1, -8.74228e-08, -3.82137e-15, -8.74228e-08, 1, 1.06581e-14, 3.82137e-15, 1.06581e-14, -1, 0, 0.25, 1.74623e-10)
-collision_layer = 32
-collision_mask = 0
-script = ExtResource("12_lx4wq")
 hostPiece = NodePath("../..")
-collisionSphere = NodePath("CollisionShape3D")
 
 [node name="HitboxShapes [Leave empty]" type="Area3D" parent="."]
 editor_description = "Leave this node empty. "
@@ -334,13 +327,9 @@ mesh = SubResource("PlaneMesh_k8cvo")
 skeleton = NodePath("../../../..")
 surface_material_override/0 = SubResource("StandardMaterial3D_ts5ym")
 
-[node name="PieceCollisionBox" type="CollisionShape3D" parent="." instance=ExtResource("15_xo8ij")]
-editor_description = "A handy dandy box for all your collision needs.
-Edit 'thisColliderType' to have it be copied in as a Hitbox, Hurtbox, Placement check, or a mixture of them."
+[node name="PieceCollisionBox" parent="." instance=ExtResource("15_xo8ij")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.125, 0)
 shape = SubResource("CylinderShape3D_k5fgq")
-disabled = true
 debug_color = Color(0, 0.6, 0.701961, 0.419608)
-script = ExtResource("17_1bljo")
 
 [connection signal="body_shape_entered" from="HitboxShapes [Leave empty]" to="." method="_on_hitbox_body_shape_entered"]

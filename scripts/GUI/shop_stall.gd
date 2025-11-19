@@ -7,6 +7,7 @@ var rightDoor : TextureRect;
 var freezerDoor : TextureRect;
 var freezerBlinky : TextureRect;
 
+var pieceRef : Piece;
 var partRef : Part;
 var inventory : InventoryPlayer;
 var player : Robot_Player
@@ -112,6 +113,12 @@ func freeze(toggled_on:=true):
 func is_frozen() -> bool:
 	return (curState == ShopStall.doorState.FROZEN);
 
+func is_empty() -> bool:
+	return not is_frozen() and ! has_ref();
+
+func has_ref() -> bool:
+	return is_instance_valid(partRef) or is_instance_valid(pieceRef);
+
 func updatePrice():
 	if is_instance_valid(partRef):
 		if curState == doorState.CLOSED:
@@ -127,21 +134,37 @@ func updatePrice():
 					TextFunc.set_text_color($BuyButton/TextHolder/Price, "scrap");
 			else:
 				TextFunc.set_text_color($BuyButton/TextHolder/Price, "unaffordable");
+	elif is_instance_valid(pieceRef):
+		pass;
 	else:
 		TextFunc.set_text_color($BuyButton/TextHolder/Price, "unaffordable");
 		$BuyButton/TextHolder/Price.text = "-/-";
 
 func is_affordable() -> bool:
-	var price = partRef._get_buy_price();
+	var price = 0;
+	if is_instance_valid(partRef):
+		price = partRef._get_buy_price();
+	elif is_instance_valid(pieceRef):
+		price = pieceRef.get_buy_price_piece_only();
 	return ScrapManager.is_affordable(price);
 
 func _on_buy_button_toggled(toggled_on):
-	if (curState == ShopStall.doorState.OPEN):
-		player.deselect_part();
-		if is_instance_valid(partRef):
-			partRef.select(toggled_on);
-			if is_affordable():
-				player.buy_mode_enable(toggled_on);
+	player = GameState.get_player();
+	if is_instance_valid(player):
+		if (curState == ShopStall.doorState.OPEN):
+			player.deselect_part();
+			if is_instance_valid(partRef):
+				partRef.select(toggled_on);
+				if is_affordable():
+					player.buy_mode_enable(toggled_on);
+				else:
+					$BuyButton.button_pressed = false;
+			elif is_instance_valid(pieceRef):
+				if is_affordable():
+					pieceRef.remove_and_add_to_robot_stash(player);
+					pieceRef = null;
+				else:
+					$BuyButton.button_pressed = false;
 			else:
 				$BuyButton.button_pressed = false;
 		else:
@@ -183,3 +206,20 @@ func doors_actually_closed() -> bool:
 		if is_zero_approx(leftDoor.position.x) && is_zero_approx(rightDoor.position.x):
 			return true
 	return false;
+
+func destroy_contents(ignoreFrozen := false):
+	var destroyme = false;
+	if ignoreFrozen:
+		destroyme = true;
+	else:
+		if ! is_frozen():
+			destroyme = true;
+	
+	if destroyme:
+		if is_instance_valid(partRef):
+			partRef.destroy();
+		if is_instance_valid(pieceRef):
+			pieceRef.destroy();
+	
+	if ! has_ref():
+		freeze(false);

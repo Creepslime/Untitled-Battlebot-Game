@@ -290,6 +290,7 @@ func enter_state(newState:gameState, oldState:gameState):
 		gameState.INIT_NEW_GAME:
 			MUSIC.change_state(MusicHandler.musState.PREGAME);
 			
+			ScrapManager.set_scrap(GameState.get_setting("startingScrap"));
 			HUD_shopManager.reset_shop();
 			
 			GameState.start_death_timer(120.0,true)

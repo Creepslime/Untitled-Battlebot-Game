@@ -195,11 +195,12 @@ func process_hud(delta):
 		deselect_in_hierarchy();
 	if is_instance_valid(engineViewer):
 		if queueUpdateEngineWithSelectedOrPipette:
-			var selectionResult = get_selected_or_pipette();
+			var selectionResult = get_selected_or_pipette(true);
 			#print("Selection result ", selectionResult)
 			if selectionResult != null:
 				if selectionResult is Piece:
 					engineViewer.open_with_new_piece(selectionResult);
+				
 			else:
 				queue_close_engine();
 			
@@ -1112,21 +1113,22 @@ func is_piece_selected() -> bool:
 func is_pipette_loaded() -> bool:
 	return is_instance_valid(pipettePieceInstance) or is_instance_valid(pipettePartInstance);
 ## Returns what's selected, or what's in the pipette. Returns [code]null[/code] elsewise.[br]Priority is [member pipettePartPath] > [member pipettePiecePath] > [member selectedPart] > [member selectedPiece] > [code]null[/code].
-func get_selected_or_pipette():
+func get_selected_or_pipette(ignoreParts := false):
 	#if is_instance_valid(pipettePartPath): ##TODO: Part pipette logic.
 		#return pipettePartPath;
 	var pipette = get_current_pipette();
 	if is_instance_valid(pipette):
 		return pipette;
-	var selected = get_selected();
+	var selected = get_selected(ignoreParts);
 	if is_instance_valid(selected):
 		return selected;
 	return null;
 
 ## Returns what's selected. Returns [code]null[/code] if it's invalid.[br]Priority is [member selectedPart] > [member selectedPiece] > [code]null[/code].
-func get_selected():
-	if is_instance_valid(get_selected_part()):
-		return selectedPart;
+func get_selected(ignoreParts := false):
+	if ! ignoreParts:
+		if is_instance_valid(get_selected_part()):
+			return selectedPart;
 	var selPiece = get_selected_piece();
 	if is_instance_valid(selPiece):
 		return selPiece;
