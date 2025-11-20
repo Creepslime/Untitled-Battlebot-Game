@@ -83,6 +83,8 @@ var referencedThing : Node;
 var statsUsed : Array = [];
 
 func update_ability_stats():
+	if ! is_instance_valid(referencedAbility) or !is_instance_valid(referencedThing):
+		queue_free();
 	isPassive = referencedAbility.isPassive;
 	disabled = referencedAbility.disabled;
 	var assignedBot = referencedAbility.assignedRobot;
