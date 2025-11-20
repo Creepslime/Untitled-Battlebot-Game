@@ -261,7 +261,8 @@ func set_item_pool_waves(inWave:int):
 		##Pieces
 		#add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_con_spacer_0.tscn");
 		#add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_cannon.tscn");
-		add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_con_pipe_right_long.tscn");
+		#add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_con_pipe_right_long.tscn");
+		add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_dvd_launcher.tscn");
 		##passives
 		#add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/part_RoundBell.tscn", 2);
 		#add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/part_impact_generator.tscn", 1);
