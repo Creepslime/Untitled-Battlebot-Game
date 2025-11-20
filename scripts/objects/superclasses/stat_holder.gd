@@ -61,11 +61,26 @@ func _ready():
 	stat_registry();
 
 func clear_stats():
+	var keysToRemove = []
 	if statCollection.size() > 0:
 		#print_rich("[color=red]Stat collection is NOT empty at start.")
 		#print_all_stats();
+		for statName in statCollection.keys():
+			var stat = statCollection[statName]
+			if is_instance_valid(stat):
+				if stat is StatTracker:
+					if stat.stat_id_invalid_or_matching(statHolderID):
+						keysToRemove.append(statName);
+						print("Erasing stat ", statName, " from ", name,"; Was found to have an invalid ID or a matching ID to this StatHolder")
+				else:
+					print("Erasing stat ", statName, " from ", name,"; Was somehow not a StatTracker")
+					keysToRemove.append(statName);
+			else:
+				print("Erasing stat ", statName, "; Was invalid")
+				keysToRemove.append(statName);
 		pass;
-	statCollection.clear();
+	for statName in keysToRemove:
+		statCollection.erase(statName);
 	nonexistentStats.clear();
 
 func regenerate_stats():
@@ -148,7 +163,8 @@ func register_stat(statName : String, baseStat : float, statIcon : Texture2D = g
 		if setFunction != null and setFunction is Callable:
 			statTracked.setFunc = setFunction;
 		statTracked.resource_name = stat_name_with_id(statName);
-		statTracked.statID = GameState.get_unique_stat_id();
+		statTracked.statID = get_stat_holder_id();
+		GameState.log_unique_stat(statTracked);
 		statCollection[stat_name_with_id(statName)] = statTracked;
 	else:
 		#print_rich("[color=red]stat"+statName+"already exists...")

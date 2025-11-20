@@ -101,7 +101,7 @@ func populate_info_piece(piece:Piece):
 	
 	if piece.is_equipped():
 		iconBase.texture = icon_piece;
-		btn_removeButton
+		#btn_removeButton
 	else:
 		iconBase.texture = icon_piece_unequipped;
 	
@@ -159,44 +159,64 @@ func ref_is_part() -> bool:
 @export var btn_removeButton : Button;
 var sell_areYouSure := false; ## 
 func _on_sell_button_pressed():
-	if get_ref() is Part:
-		if sell_areYouSure:
-			sellPart.emit(partRef);
-			clear_info();
-		else:
-			sell_areYouSure = true;
+	if ref_is_part():
+		if is_instance_valid(partRef.hostShopStall):
 			var txt = "SURE? "
 			lbl_sellButton.text = txt + TextFunc.format_stat(partRef._get_sell_price(), 0);
-	elif get_ref() is Piece:
-		if sell_areYouSure:
-			sellPiece.emit(pieceRef);
-			clear_info();
 		else:
-			sell_areYouSure = true;
-			var txt = "SURE? "
-			lbl_sellButton.text = txt + TextFunc.format_stat(pieceRef.get_sell_price(), 0);
+			if sell_areYouSure:
+				sellPart.emit(partRef);
+				clear_info();
+			else:
+				sell_areYouSure = true;
+				var txt = "SURE? "
+				lbl_sellButton.text = txt + TextFunc.format_stat(partRef._get_sell_price(), 0);
+	elif ref_is_piece():
+		if pieceRef.is_buyable():
+			pieceRef.try_buy_from_shop();
+		else:
+			if sell_areYouSure:
+				sellPiece.emit(pieceRef);
+				clear_info();
+			else:
+				sell_areYouSure = true;
+				var txt = "SURE? "
+				lbl_sellButton.text = txt + TextFunc.format_stat(pieceRef.get_sell_price(), 0);
 	pass # Replace with function body.
 
 var sellError = false; ## Whether [member lbl_sellButton] should be red or scrap yellow.
 ## Gets the string for the sell button and sets [member sellError].
 func get_sell_string() -> String:
 	var prefix = "SELL:\n"
+	var number = "ERROR"
 	if ref_is_part():
-		sellError = btn_sellButton.disabled;
-		return prefix + TextFunc.format_stat(partRef._get_sell_price(), 0)
-	elif ref_is_piece():
-		if pieceRef.is_sellable():
+		if is_instance_valid(partRef.hostShopStall):
+			prefix = "BUY\n"
 			sellError = btn_sellButton.disabled;
-			return prefix + TextFunc.format_stat(pieceRef.get_sell_price(), 0)
-		elif pieceRef.inShop:
+			number = TextFunc.format_stat(partRef._get_buy_price(), 0)
+		else:
+			sellError = btn_sellButton.disabled;
+			number = TextFunc.format_stat(partRef._get_sell_price(), 0)
+	elif ref_is_piece():
+		if pieceRef.inShop:
 			prefix = "BUY:\n";
 			sellError = !pieceRef.is_buyable();
-			return prefix + TextFunc.format_stat(pieceRef.get_sell_price(), 0)
+			number = TextFunc.format_stat(pieceRef.get_buy_price(), 0)
+		elif pieceRef.is_sellable():
+			sellError = btn_sellButton.disabled;
+			number = TextFunc.format_stat(pieceRef.get_sell_price(), 0)
 		else:
-			sellError = true;
-			return "NOT FOR\nSALE"
-	sellError = true;
-	return "SELL:\nERROR"
+			if pieceRef.removable:
+				sellError = true;
+				number = TextFunc.format_stat(pieceRef.get_sell_price(), 0)
+			else:
+				sellError = true;
+				return "NOT FOR\nSALE"
+	else:
+		sellError = true;
+	if sell_areYouSure and prefix == "SELL:\n":
+		prefix = "SURE?\n"
+	return prefix + number;
 
 ##Updates the sell button string.
 func update_sell_string():
@@ -224,8 +244,8 @@ func populate_abilities(thing):
 					abilityHolder.add_child(newBox);
 					effectiveSize += 1;
 	abilityScrollContainer.visible = effectiveSize > 0;
+	set_queue_ability_post_update();
 	if abilityScrollContainer.visible:
-		set_queue_ability_post_update();
 		for child in abilityHolder.get_children():
 			child.queue_show();
 
@@ -267,15 +287,14 @@ func _physics_process(delta):
 	var removeDisabled = true;
 	var moveDisabled = true;
 	var sellDisabled = true;
-	var buyDisabled = true;
-	if GameState.get_in_state_of_building():
+	if GameState.get_in_one_of_given_states([GameBoard.gameState.SHOP, GameBoard.gameState.SHOP_BUILD]):
 		if ref_is_piece():
 			if pieceRef.is_removable():
 				removeDisabled = false;
-				if pieceRef.is_sellable():
-					sellDisabled = false;
+			if pieceRef.is_sellable():
+				sellDisabled = false;
 			if pieceRef.is_buyable():
-				buyDisabled = false;
+				sellDisabled = false;
 		elif ref_is_part():
 			moveDisabled = false;
 			removeDisabled = false;
@@ -286,9 +305,9 @@ func _physics_process(delta):
 	if is_instance_valid(btn_moveButton):
 		btn_moveButton.disabled = moveDisabled;
 	if is_instance_valid(btn_sellButton):
-		btn_sellButton.disabled = (!GameState.get_in_state_of_building() and sellDisabled and buyDisabled);
-		if is_instance_valid(lbl_sellButton):
-			update_sell_string();
+		## Sell but
+		btn_sellButton.disabled = sellDisabled;
+		update_sell_string();
 	
 	
 	if queueAbilityPostUpdateCounter == 1:

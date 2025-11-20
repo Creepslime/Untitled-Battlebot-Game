@@ -37,8 +37,8 @@ func _integrate_forces(state):
 				linear_velocity.z = lerp(linear_velocity.z, cvFIxd.y, 0.85);
 			#print(global_position.y);
 			if global_position.y > 3:
-				var force = global_position.y - 3
-				constant_force.y = move_toward(constant_force.y, force * -1, -0.05 * force);
+				var force = -(global_position.y) + 3
+				constant_force.y = move_toward(constant_force.y, force, 0.05 * force);
 				Utils.print_if_true(str("force: ",constant_force.y),get_robot() is Robot_Player)
 			else:
 				if global_position.y < 1:

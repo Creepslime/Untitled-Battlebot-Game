@@ -6,7 +6,7 @@ class_name StatTracker
 
 @export var statFriendlyName : String; ## This stat's name [i]without[/i] [member statID] appended.
 @export var statName : String; ## This stat's name [i]with[/i] [member statID] appended.
-var statID : int;  ## A unique identifier created so the Robots stop sharing custody.
+var statID : int = -1;  ## A unique identifier created so the Robots stop sharing custody.
 @export var statIcon : Texture2D = preload("res://graphics/images/HUD/statIcons/magazineIconStriped.png"); ## The icon used when a [InspectorStatIcon] node displays this stat.
 var textColor := Color("789be9"); ## The text color used when a [InspectorStatIcon] node displays this stat.
 @export var baseStat : float; ## The base number defined before calculation.
@@ -92,3 +92,9 @@ func get_stat_path():
 ## TODO: Make this do anything. Port over the bonuses system from [Part].
 func register_bonus():
 	pass;
+
+## Used to determine whether to erase this resource during [method StatHolder3D.clear_stats].
+func stat_id_invalid_or_matching(idToCheck):
+	if statID == -1:
+		return true;
+	return idToCheck == statID;

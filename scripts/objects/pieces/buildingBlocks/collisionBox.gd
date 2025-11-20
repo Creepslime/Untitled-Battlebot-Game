@@ -15,6 +15,7 @@ var copiedByBody : = false; ##Set by the Robot when it's copied for the body.
 @export var isHurtbox:= true; ##This collider is for detecting incoming attacks and impacts.
 @export var isHitbox:= false;  ##This collider is for dishing out attacks.
 var isOriginal = true;
+var lastGlobalPosition : Vector3;
 
 var copies : Array[PieceCollisionBox] = [];
 var shapecasts : Array[ShapeCast3D] = [];
@@ -100,3 +101,30 @@ func get_collider_id():
 
 func get_piece() -> Piece:
 	return originalHost;
+
+var speedOfMovement : float;
+var angleOfMovement : float;
+var vector3OfMovement : Vector3;
+var vector2OfMovement : Vector2;
+func _physics_process(delta: float) -> void:
+	vector3OfMovement = global_position - lastGlobalPosition;
+	vector2OfMovement = Vector2(vector3OfMovement.x, vector3OfMovement.z);
+	
+	speedOfMovement = vector3OfMovement.length();
+	
+	angleOfMovement = vector2OfMovement.angle();
+	
+	lastGlobalPosition = global_position;
+
+## Compares the XY velocity lengths of this box and another one, then returns a multiplier for damage/knockback. Factor is what the difference of differences is multiplied against for the multiplier.
+func compared_projected_position(otherBox : PieceCollisionBox, factor := 1.0) -> float:
+	var otherSpeed = otherBox.speedOfMovement;
+	var speedDif = speedOfMovement - otherBox.speedOfMovement;
+	
+	var posDif = global_position.distance_to(otherBox.global_position) ## Get the length between this box and the other one.
+	var posDifProjected = (global_position + vector3OfMovement).distance_to((otherBox.global_position + otherBox.vector3OfMovement)) ## Get the position difference between this box and the other one given that they move at the same velocity next frame.
+	var posDifDif = posDif - posDifProjected; ## Get the difference bwetween current distance and projected distance.
+	
+	#var movingTowards = posDifDif < 0; ## If posDifDif < 0, then we're projected to be moving towards the other box.
+	
+	return maxf(0.0, posDifDif / factor)

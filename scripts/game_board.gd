@@ -24,6 +24,7 @@ var scrapGained := 0;
 
 var scrapCount := 0;
 
+
 @export_subgroup("HUD nodes")
 #@export var HUD_playerStats : Control;
 @export var HUD_mainMenu : Control;
@@ -37,7 +38,7 @@ var scrapCount := 0;
 @export var CANVAS_GAMECAMERA : CanvasLayer;
 
 @export var CANVAS_SHOP : CanvasLayer;
-@export var HUD_shopPanel : ShopPanel;
+@export var HUD_shopTabs : ShopPanel;
 @export var HUD_shopManager : ShopManager;
 
 ##Camera stuff
@@ -236,15 +237,19 @@ func exit_state(oldState:gameState):
 			pass
 		gameState.SHOP:
 			pass
+		gameState.SHOP_TEST:
+			pass
+		gameState.SHOP_BUILD:
+			pass
 		gameState.LEAVE_SHOP:
-			HUD_shopPanel.hide();
+			HUD_shopTabs.open = false;
 			CANVAS_SHOP.hide();
 			move_out_of_workshop();
 			pass
 		gameState.INIT_ROUND:
 			pass
 		gameState.START:
-			HUD_shopPanel.hide();
+			HUD_shopTabs.open = false;
 			CANVAS_SHOP.hide();
 			HUD_mainMenu.hide();
 			HUD_credits.hide();
@@ -260,7 +265,7 @@ func enter_state(newState:gameState, oldState:gameState):
 		gameState.SPLASH:
 			GameState.init_screen_transition_vanity();
 		gameState.MAIN_MENU:
-			HUD_shopPanel.hide();
+			HUD_shopTabs.open = false;
 			CANVAS_SHOP.hide();
 			HUD_shopManager.close_up_shop();
 			MUSIC.change_state(MusicHandler.musState.MENU);
@@ -305,6 +310,7 @@ func enter_state(newState:gameState, oldState:gameState):
 			
 			pass
 		gameState.INIT_ROUND:
+			
 			MUSIC.change_state(MusicHandler.musState.PREGAME);
 			destroy_all_enemies(false);
 			
@@ -329,12 +335,13 @@ func enter_state(newState:gameState, oldState:gameState):
 			player.end_round();
 			GameState.call_deferred("make_screen_transition_arrive", 3);
 		gameState.INIT_SHOP:
-			HUD_shopPanel.show();
+			HUD_shopTabs.change_tab(0);
 			CANVAS_SHOP.show();
 			##TODO: Reimplementation of shop logic.
 			
 			move_player_to_workshop();
 		gameState.LOAD_SHOP:
+			HUD_shopTabs.open = true;
 			MUSIC.change_state(MusicHandler.musState.SHOP);
 			GameState.call_deferred("make_screen_transition_leave");
 			pass;
@@ -359,6 +366,7 @@ func enter_state(newState:gameState, oldState:gameState):
 			##TODO: BUILD MODE / TEST MODE SWITCHING LOGIC
 			pass
 		gameState.LEAVE_SHOP:
+			HUD_shopTabs.open = false;
 			queuedShopLeave = false;
 			player.exit_shop();
 			GameState.call_deferred("make_screen_transition_arrive", 3);

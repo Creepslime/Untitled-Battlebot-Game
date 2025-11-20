@@ -196,13 +196,7 @@ func _on_buy_button_toggled(toggled_on):
 					btn_buy.button_pressed = false;
 			elif ref_is_piece():
 				if toggled_on:
-					if ScrapManager.try_spend_scrap(get_price(), "Piece Purchase"):
-						pieceRef.inShop = false;
-						pieceRef.remove_and_add_to_robot_stash(player);
-						pieceRef = null;
-						btn_buy.button_pressed = false;
-					else:
-						btn_buy.button_pressed = false;
+					try_buy_piece();
 			else:
 				btn_buy.button_pressed = false;
 		else:
@@ -210,6 +204,17 @@ func _on_buy_button_toggled(toggled_on):
 	else:
 		btn_buy.button_pressed = false;
 	pass # Replace with function body.
+
+func try_buy_piece():
+	if ref_is_piece():
+		if ScrapManager.try_spend_scrap(get_price(), "Piece Purchase"):
+			pieceRef.inShop = false;
+			pieceRef.shopStall = null;
+			pieceRef.remove_and_add_to_robot_stash(player);
+			pieceRef = null;
+			btn_buy.button_pressed = false;
+		else:
+			btn_buy.button_pressed = false;
 
 func deselect(deselectPart:=false):
 	btn_buy.button_pressed = false;
@@ -288,8 +293,9 @@ func update_behavior_to_reflect_contents():
 func add_piece(piece):
 	rotisserie_socket.remove_occupant(true);
 	pieceRef = piece;
-	rotisserie_socket.add_occupant(piece);
-	piece.inShop = true;
+	rotisserie_socket.add_occupant(pieceRef);
+	pieceRef.inShop = true;
+	pieceRef.shopStall = self;
 
 func get_shop_stall_id():
 	if stallID == -1:

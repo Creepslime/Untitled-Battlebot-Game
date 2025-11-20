@@ -241,12 +241,16 @@ func declare_names():
 @export var isBody := false;
 ## Whether this piece is removable.
 @export var removable := true;
+## Returns true if this [Piece] is equipped, removable, and we're shopping.
 func is_removable() -> bool:
-	return removable and is_equipped() and GameState.get_in_state_of_building();
+	return removable and is_equipped() and GameState.get_in_state_of_shopping() or GameState.get_in_state_of_building();
 func is_sellable() -> bool:
-	return is_removable() and ! isBody;
+	return removable and ! isBody;
 func is_buyable() -> bool:
 	return ScrapManager.is_affordable(get_buy_price()) and inShop;
+func try_buy_from_shop():
+	if is_instance_valid(shopStall):
+		shopStall.try_buy_piece();
 @export var weightBase := 1.0;
 @export var force_visibility := false;  
 @export var temporaryPreview := false; ## When true, calls [method destroy] at the first possible opportunity.
@@ -257,6 +261,7 @@ func is_buyable() -> bool:
 @export var scrapSellModifierBase := (2.0/3.0);
 @export var scrapSalvageModifierBase := (1.0/6.0);
 @export var inShop := false; ## Set by [ShopStall] when adding this piece to itself.
+var shopStall : ShopStall = null;
 
 ## How much weight this Piece is carrying, including itself.
 var weightLoad := 0.0;
@@ -649,6 +654,47 @@ func ability_validation():
 	print_rich("[color=pink]INIT ACTIVES:", activeAbilities);
 	pass;
 
+func clear_abilities():
+	var passivesToRemove = []
+	if passiveAbilities.size() > 0:
+		#print_rich("[color=red]Stat collection is NOT empty at start.")
+		#print_all_stats();
+		for passive in passiveAbilities:
+			if is_instance_valid(passive):
+				if passive is AbilityManager:
+					if passive.ability_id_invalid_or_matching(statHolderID):
+						passivesToRemove.append(passive);
+						print("Erasing passive ", passive.abilityName, " from ", name,"; Was found to have an invalid ID or a matching ID to this StatHolder")
+				else:
+					print("Erasing passive ", passive.abilityName, " from ", name,"; Was somehow not an AbilityManager")
+					passivesToRemove.append(passive);
+			else:
+				print("Erasing passive ", passive.abilityName, "; Was invalid")
+				passivesToRemove.append(passive);
+		pass;
+	for passive in passivesToRemove:
+		passiveAbilities.erase(passive);
+	
+	var activesToRemove = []
+	if passiveAbilities.size() > 0:
+		#print_rich("[color=red]Stat collection is NOT empty at start.")
+		#print_all_stats();
+		for active in activeAbilities:
+			if is_instance_valid(active):
+				if active is AbilityManager:
+					if active.ability_id_invalid_or_matching(statHolderID):
+						activesToRemove.append(active);
+						print("Erasing ability ", active.abilityName, " from ", name,"; Was found to have an invalid ID or a matching ID to this StatHolder")
+				else:
+					print("Erasing ability ", active.abilityName, " from ", name,"; Was somehow not an AbilityManager")
+					activesToRemove.append(active);
+			else:
+				print("Erasing ability ", active.abilityName, "; Was invalid")
+				activesToRemove.append(active);
+		pass;
+	for passive in passivesToRemove:
+		activeAbilities.erase(passive);
+
 ## returns an array of all abilities, active and passive.
 func get_all_abilities(passiveFirst := false) -> Array[AbilityManager]:
 	var abilitiesToCheck : Array[AbilityManager] = [];
@@ -804,11 +850,25 @@ func get_all_meshes() -> Array:
 @export var damageTypes : Array[DamageData.damageTypes] = [];
 @export var disableHitboxesWhileOnCooldown := true;
 @export var contactCooldown := 0.0;
-
+## When true, damage run through [method contact_damage] will be averaged with a compared-velocity multiplier provided by the [PieceCollisionBox]es.[br]
+## In practice, this makes contact damage deal more damage depending on how fast this piece is going compared to the target.[br][br]For example, a charging [Robot_Pokey] will be dealing much less damage with its Horn pieces when you're both goig the same speed, but will absolutely skewer you if you're running towards it.
+@export var contactDamageBasedOnComparedVelocities := true; 
+## A [float] scale from 1 to 0. When 1, velocity will have bias. When 0, base damage will have bias. Does nothing if [member contactDamageBasedOnComparedVelocities] is true.
+@export_range(0.0, 1.0, 0.05) var contactDamageComparedVelocitiesBias := 1.0; 
 var damageModifier := 1.0; ##This variable can be used to modify damage on the fly without needing to go thru set/get stat.
 
 func get_damage() -> float:
 	return get_stat("Damage") * damageModifier;
+
+func get_contact_damage(colliderThis : PieceCollisionBox, colliderThat : PieceCollisionBox) -> float:
+	var damageBase = get_damage();
+	if ! contactDamageBasedOnComparedVelocities:
+		return damageBase;
+	var velocityMult = contactDamageComparedVelocitiesBias * colliderThis.compared_projected_position(colliderThat);
+	var baseMult = 1.0 - contactDamageComparedVelocitiesBias;
+	var comparedMultiplier = velocityMult + baseMult;
+	
+	return comparedMultiplier * damageBase;
 
 func get_knockback_force() -> float:
 	return get_stat("Knockback");
@@ -863,6 +923,7 @@ func get_kickback_damage_data(targetPosition := global_position, _damageAmount :
 	print(DD.damageDirection)
 	return DD;
 
+
 ##Fired AFTER a hitbox hits an enemy's hurtbox, via [method _on_hitbox_shape_entered]. Calculates the damage and knockback.
 func contact_damage(otherPiece : Piece, otherPieceCollider : PieceCollisionBox, thisPieceCollider : PieceCollisionBox):
 	#print (self, otherPiece)
@@ -871,6 +932,8 @@ func contact_damage(otherPiece : Piece, otherPieceCollider : PieceCollisionBox, 
 		#print("Target was not self.")
 		##Handle damaging the opposition.
 		var DD = get_damage_data();
+		var contactDamage = get_contact_damage(thisPieceCollider, otherPieceCollider);
+		DD.damageAmount = contactDamage;
 		#DD.damageDirection = KB;
 		otherPiece.hurtbox_collision_from_piece(self, DD);
 		

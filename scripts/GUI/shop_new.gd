@@ -251,57 +251,100 @@ func translated_part_pool():
 		partInst.queue_free();
 	return poolDict;
 
+enum poolTypes {
+	PARTS,
+	CONSTRUCTION,
+	BATTLE,
+	TEST
+}
+@export var myPool := poolTypes.TEST;
+
 func set_item_pool_waves(inWave:int):
 	print_rich("[b]Setting item pool for wave ", inWave)
 	var changed = false;
+	
 	if inWave == -1:
 		clear_shop_spawn_list();
 		inWave = 0;
-	if inWave == 0:
-		##Pieces
-		#add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_con_spacer_0.tscn");
-		#add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_cannon.tscn");
-		#add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_con_pipe_right_long.tscn");
-		add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_dvd_launcher.tscn");
-		##passives
-		#add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/part_RoundBell.tscn", 2);
-		#add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/part_impact_generator.tscn", 1);
-		#add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/part_impact_magnet.tscn", 1);
-		##passives with adjacenty bonuses
-		#add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/part_fan.tscn", 2);
-		##Batteries
-		#add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/batteries/part_jank_battery.tscn", 2);
-		#add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/batteries/battery_1x1.tscn", 3);
-		#add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/batteries/battery_1x2.tscn", 2);
-		##melee
-		#add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/part_sawblade.tscn", 1);
-		##ranged
-		#add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/part_cannon.tscn", 1);
-		#add_part_to_spawn_list("res://scenes/prefabs/objects/parts/enemyParts/part_ranger_gun.tscn", 3);
-		##utility
-		##trap
-			#none yet lol
-		changed = true;
-	if inWave == 3:
-		##Pieces
-		
-		##Passives
-		#add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/scrapthirsty.tscn");
-		#add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/turtle_coil.tscn");
-		#add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/part_coolant.tscn");
-		#add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/part_scrap_plating.tscn", 1);
-		##Batteries
-		#add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/batteries/battery_1x3.tscn", 1);
-		#add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/batteries/battery_2x3.tscn", 1);
-		##Ranged
-		#add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/part_peashooter.tscn", 1);
-		#add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/part_sniper.tscn", 1);
-		##Utility
-		#add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/part_repair.tscn");
-		#add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/part_dash.tscn");
-		#add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/part_jump.tscn");
-		changed = true;
-		
+	
+	match myPool:
+		poolTypes.PARTS:
+			match inWave:
+				0:
+					##passives
+					add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/part_RoundBell.tscn", 2);
+					add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/part_impact_generator.tscn", 1);
+					add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/part_impact_magnet.tscn", 1);
+					##passives with adjacenty bonuses
+					add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/part_fan.tscn", 2);
+					##Batteries
+					add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/batteries/part_jank_battery.tscn", 2);
+					add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/batteries/battery_1x1.tscn", 3);
+					add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/batteries/battery_1x2.tscn", 2);
+					##melee
+					#add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/part_sawblade.tscn", 1);
+					##ranged
+					#add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/part_cannon.tscn", 1);
+					#add_part_to_spawn_list("res://scenes/prefabs/objects/parts/enemyParts/part_ranger_gun.tscn", 3);
+					##utility
+					##trap
+						#none yet lol
+					changed = true;
+				3:
+					##Pieces
+					
+					##Passives
+					add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/scrapthirsty.tscn");
+					add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/turtle_coil.tscn");
+					add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/part_coolant.tscn");
+					add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/part_scrap_plating.tscn", 1);
+					##Batteries
+					add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/batteries/battery_1x3.tscn", 1);
+					add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/batteries/battery_2x3.tscn", 1);
+					##Ranged
+					#add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/part_peashooter.tscn", 1);
+					#add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/part_sniper.tscn", 1);
+					##Utility
+					#add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/part_repair.tscn");
+					#add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/part_dash.tscn");
+					#add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/part_jump.tscn");
+					changed = true;
+		poolTypes.CONSTRUCTION:
+			match inWave:
+				0:
+					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_con_corner_small.tscn");
+					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_con_L_Block_2.tscn");
+					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_con_pipe_right_long.tscn");
+					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_con_pipe_right_short.tscn");
+					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_con_spacer_0.tscn");
+					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_con_spacer_1.tscn");
+					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_con_spacer_2.tscn");
+					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_con_T_Junction.tscn");
+					
+					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_swivel_manual.tscn");
+					#add_part_to_spawn_list();
+					changed = true;
+		poolTypes.BATTLE:
+			match inWave:
+				0:
+					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_cannon.tscn");
+					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_cannon_sniper.tscn");
+					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_dvd_launcher.tscn");
+					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_rocket.tscn");
+					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_shield_face.tscn");
+					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_horn.tscn");
+					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_bumper.tscn");
+					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_sawblade.tscn");
+					
+					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_swivel_pointer.tscn");
+		poolTypes.TEST:
+			match inWave:
+				0:
+					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_con_spacer_0.tscn");
+					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_cannon.tscn");
+					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_con_pipe_right_long.tscn");
+					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_dvd_launcher.tscn");
+					changed = true;
 	if changed: 
 		calculate_part_pool();
 

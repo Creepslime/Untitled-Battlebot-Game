@@ -18,6 +18,8 @@ var initialized := false;
 var transitionCalled := false;
 var shops : Array[ShopStation];
 
+@export var HUD_stationsParent : Control; ## Located on the main HUD. Makes the stations usable.
+@export var HUD_stationsStepParent : Control; ## Located here. Hides the stations behind the screen transition.
 
 func _ready():
 	Hooks.add(self,"OnRerollShop", "ShopManager", _on_reroll_button_pressed);
@@ -114,6 +116,8 @@ func open_up_shop():
 		initialized = true;
 	for shop in shops:
 		shop.open_up_shop();
+	
+	HUD_stations.reparent(HUD_stationsParent);
 	pass;
 
 func close_up_shop():
@@ -122,6 +126,8 @@ func close_up_shop():
 	
 	for shop in shops:
 		shop.new_round(GameState.get_round_number() + 1);
+	
+	HUD_stations.reparent(HUD_stationsStepParent);
 
 func turn_on_cam_feed():
 	camScreenOn = true;

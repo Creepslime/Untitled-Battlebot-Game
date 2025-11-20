@@ -359,6 +359,12 @@ func get_unique_part_age() -> int:
 	partAge += 1;
 	return ret;
 
+var statLog = []
+func log_unique_stat(inStat : StatTracker):
+	if inStat in statLog:
+		print_rich("[color=red][b]Duplicate stat being created.")
+	else:
+		statLog.append(inStat);
 var statID := 0;
 
 func get_unique_stat_id() -> int:

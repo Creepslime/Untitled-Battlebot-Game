@@ -18,8 +18,9 @@ class_name AbilityManager
 @export var initialized := false;
 @export var disabled := false;
 @export var functionWhenUsed : Callable;
+var statHolderID := -1;
+var abilityID := -1;
 var assignedSlots : Array[int] = [];
-var abilityID;
 
 var cooldownTimer := 0.0;
 enum runTypes {
@@ -38,7 +39,6 @@ func create_copy() -> AbilityManager:
 	construct_description();
 	var newAbility = AbilityManager.new();
 	newAbility.abilityName = abilityName;
-	newAbility.abilityID = GameState.get_unique_ability_id();
 	newAbility.abilityDescription = abilityDescription;
 	newAbility.cooldownStatName = cooldownStatName;
 	newAbility.cooldownTimeBase = cooldownTimeBase;
@@ -49,6 +49,7 @@ func create_copy() -> AbilityManager:
 	newAbility.statsUsed = statsUsed;
 	newAbility.runType = runType;
 	newAbility.icon = icon;
+	newAbility.abilityID = GameState.get_unique_ability_id();
 	return newAbility;
 
 func assign_robot(robot : Robot, slotNum : int):
@@ -216,3 +217,19 @@ func is_on_piece() -> bool:
 
 func is_on_assigned_piece() -> bool:
 	return is_on_piece() and is_instance_valid(get_assigned_piece_or_part()) and get_assigned_piece_or_part().assignedToSocket;
+
+## Used to determine whether to erase this resource during [method Piece.clear_abilities].[br]
+## Also returns true if its actual assigned thing is invalid.
+func ability_id_invalid_or_matching(idToCheck):
+	if abilityID == -1:
+		return true;
+	if statHolderID == -1:
+		return true;
+	return idToCheck == abilityID;
+
+func should_delete(thingToCheck : StatHolder3D):
+	if thingToCheck != assignedPieceOrPart:
+		return true;
+	if ability_id_invalid_or_matching(thingToCheck.get_stat_holder_id()):
+		return false;
+	return true;
