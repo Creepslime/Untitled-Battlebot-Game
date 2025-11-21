@@ -20,8 +20,9 @@ func _on_shops_tab_changed(tab):
 				pass;
 	pass # Replace with function body.
 
-func change_tab(num:int):
-	tabsControl.current_tab = 0;
+func change_tab(num:int=0):
+	tabsControl.current_tab = num;
 
 func _process(delta: float) -> void:
-	position.y = move_toward(position.y, 0 if open else -size.y, 120 * delta);
+	open = GameState.get_in_state_of_shopping();
+	position.y = move_toward(position.y, 0.0 if open else -size.y, 120 * delta);

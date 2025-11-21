@@ -2,6 +2,7 @@ extends Resource
 
 class_name DamageData
 
+var attackerRobot : Robot;
 var damageAmount := 1.0;
 var knockbackAmount := 0.0;
 var damageDirection := Vector3.ZERO;

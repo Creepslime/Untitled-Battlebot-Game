@@ -7,7 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://dpqcoxkidln0c" path="res://graphics/images/HUD/screenGFX/screenBG_grey.png" id="6_jowbw"]
 [ext_resource type="Texture2D" uid="uid://fra5o6cwa5nn" path="res://graphics/images/HUD/screenGFX/screenBG_darkGrey.png" id="7_pt6ty"]
 
-[node name="ActiveAbilityInfobox" type="MarginContainer" node_paths=PackedStringArray("lbl_name", "rlbl_desc", "outlineBox", "statHolder", "assignButton", "separatorName", "scroll_separatorStats", "separatorStats")]
+[node name="ActiveAbilityInfobox" type="MarginContainer" node_paths=PackedStringArray("lbl_name", "rlbl_desc", "outlineBox", "statHolder", "btn_assign", "separatorName", "scroll_separatorStats", "separatorStats")]
 z_index = -1
 custom_minimum_size = Vector2(252, 0)
 offset_right = 252.0
@@ -22,7 +22,7 @@ lbl_name = NodePath("Box/Name")
 rlbl_desc = NodePath("Box/AbilityDescription")
 outlineBox = NodePath("Box")
 statHolder = NodePath("Box/StatsScroll/Stats")
-assignButton = NodePath("Box/Assign")
+btn_assign = NodePath("Box/Assign")
 separatorName = NodePath("Box/separator")
 scroll_separatorStats = NodePath("Box/StatsScroll")
 separatorStats = NodePath("Box/separator2")

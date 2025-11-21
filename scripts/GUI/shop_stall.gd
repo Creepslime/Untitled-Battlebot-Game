@@ -26,6 +26,7 @@ var stallID := -1;
 @export var bg_Piece : Control;
 @export var node_PiecePreview : Node3D;
 @export var btn_PieceSelect : Button;
+var mousingOverPreview := false;
 @export var lbl_name : Label;
 
 @export var bg_Part : Control;
@@ -84,6 +85,7 @@ func _ready():
 	node_PiecePreview.global_position.y = -20;
 	
 	rotisserie_socket.remove_occupant(true);
+	rotisserie_socket.shopStall = self;
 
 func _physics_process(delta):
 	updatePrice();
@@ -115,6 +117,8 @@ func _physics_process(delta):
 	update_behavior_to_reflect_contents();
 
 func _on_freeze_button_toggled(toggled_on):
+	if ! has_ref() or buyQueued:
+		toggled_on = false;
 	freeze(toggled_on);
 	pass # Replace with function body.
 
@@ -126,9 +130,9 @@ func freeze(toggled_on:=true):
 				SND.play_sound_nondirectional("Part.Select", 0.60, 0.5);
 				SND.play_sound_nondirectional("Shop.Freezer.Close", 0.86, 0.15);
 		else:
-			changeState(ShopStall.doorState.OPEN);
-			if GameState.get_in_state_of_play():
+			if GameState.get_in_state_of_play() and curState == ShopStall.doorState.FROZEN:
 				SND.play_sound_nondirectional("Part.Select", 0.60, 0.5);
+			changeState(ShopStall.doorState.OPEN);
 		deselect(true);
 	elif curState == ShopStall.doorState.CLOSED:
 		btn_freeze.button_pressed = false;
@@ -157,7 +161,7 @@ func ref_is_piece() -> bool:
 func updatePrice():
 	var price = get_price();
 	
-	lbl_price.update_label(price);
+	lbl_price.update_amt(price);
 	
 	if curState == doorState.CLOSED:
 		TextFunc.set_text_color(lbl_price, "unaffordable");
@@ -172,6 +176,7 @@ func updatePrice():
 
 ## Gets the price of the ref, or -1 if no ref. -1 makes the scrap counter zero out.
 func get_price():
+	if buyQueued: return -1;
 	var price = -1;
 	if ref_is_part():
 		price = partRef._get_buy_price();
@@ -205,21 +210,26 @@ func _on_buy_button_toggled(toggled_on):
 		btn_buy.button_pressed = false;
 	pass # Replace with function body.
 
-func try_buy_piece():
+var buyQueued = false
+func try_buy_piece() -> bool:
+	if buyQueued:
+		return false;
 	if ref_is_piece():
 		if ScrapManager.try_spend_scrap(get_price(), "Piece Purchase"):
-			pieceRef.inShop = false;
-			pieceRef.shopStall = null;
-			pieceRef.remove_and_add_to_robot_stash(player);
-			pieceRef = null;
-			btn_buy.button_pressed = false;
+			pieceRef.start_buying(player);
+			buyQueued = true;
+			btn_buy.button_pressed = true;
+			return true;
 		else:
 			btn_buy.button_pressed = false;
+	return false;
 
 func deselect(deselectPart:=false):
 	btn_buy.button_pressed = false;
 	if update_player():
 		player.part_buy_mode_enable(false);
+		if is_instance_valid(pieceRef):
+			pieceRef.select_via_robot(player, false);
 	if deselectPart && is_instance_valid(partRef):
 		partRef.select(false);
 
@@ -265,17 +275,19 @@ func destroy_contents(ignoreFrozen := false):
 		if is_instance_valid(pieceRef):
 			pieceRef.destroy();
 		pieceRef = null;
-	
-	if ! has_ref():
-		freeze(false);
 
 ## Updates the background if there is something in the stall. If there is nothing in the stall, nothing happens, as to keep the illusion of an empty stall.
 func update_behavior_to_reflect_contents():
 	if has_ref():
+		if buyQueued:
+			btn_buy.disabled = true;
+			btn_buy.button_pressed = true;
+			btn_freeze.disabled = true;
+			btn_freeze.button_pressed = true;
 		if ref_is_piece():
 			bg_Piece.show();
 			bg_Part.hide();
-			btn_PieceSelect.disabled = false;
+			btn_PieceSelect.disabled = buyQueued;
 			lbl_name.text = pieceRef.pieceName;
 			TextFunc.set_text_color(lbl_name, "white");
 		elif ref_is_part():
@@ -288,6 +300,9 @@ func update_behavior_to_reflect_contents():
 		btn_PieceSelect.disabled = true;
 		lbl_name.text = "OUT OF STOCK";
 		TextFunc.set_text_color(lbl_name, "unaffordable");
+	
+	if (! has_ref()) or buyQueued:
+		freeze(false);
 
 @export var rotisserie_socket : Socket;
 func add_piece(piece):
@@ -308,10 +323,19 @@ func _on_btn_piece_select_pressed():
 	if ref_is_piece() and update_player():
 		print("what")
 		thingSelected.emit(self);
-		pieceRef.select_via_robot(player, true);
+		pieceRef.select_via_robot(player);
 	pass # Replace with function body.
 
 ## Updates [member player] then returns true if it is valid.
 func update_player() -> bool:
 	player = GameState.get_player();
 	return is_instance_valid(player);
+
+
+func _on_btn_piece_select_mouse_entered():
+	mousingOverPreview = true;
+	pass # Replace with function body.
+
+func _on_btn_piece_select_mouse_exited():
+	mousingOverPreview = false;
+	pass # Replace with function body.

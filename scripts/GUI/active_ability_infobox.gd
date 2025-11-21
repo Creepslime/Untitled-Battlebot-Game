@@ -1,7 +1,7 @@
 @icon ("res://graphics/images/class_icons/inspector.png")
 extends Control
-
 class_name AbilityInfobox
+
 
 @export_subgroup("Outlines")
 @export var outlineDisabled := "res://graphics/images/HUD/buttonGFX/digitalOutline_disabled.png";
@@ -20,7 +20,7 @@ class_name AbilityInfobox
 @export var rlbl_desc : RichTextLabel;
 @export var outlineBox : NinePatchRect;
 @export var statHolder : HBoxContainer;
-@export var assignButton : Button;
+@export var btn_assign : Button;
 @export var separatorName : TextureRect;
 @export var scroll_separatorStats : ScrollContainer;
 @export var separatorStats : TextureRect;
@@ -65,37 +65,39 @@ func update_outline():
 	
 	if isPassive:
 		if disabled:
-			assignButton.text = "ENABLE"
+			btn_assign.text = "ENABLE"
 		else:
-			assignButton.text = "DISABLE"
+			btn_assign.text = "DISABLE"
 	else:
-		assignButton.text = "ASSIGN"
+		btn_assign.text = "ASSIGN"
 	pass;
 
 var referencedAbility : AbilityManager;
+var referencedThing : Node;
+
 var isPassive : bool;
 var selected := false;
 var disabled := false;
 var equipped := false;
 var bot : Robot;
 
-var referencedThing : Node;
 var statsUsed : Array = [];
 
 func update_ability_stats():
 	if ! is_instance_valid(referencedAbility) or !is_instance_valid(referencedThing):
 		queue_free();
+		return;
 	isPassive = referencedAbility.isPassive;
 	disabled = referencedAbility.disabled;
-	var assignedBot = referencedAbility.assignedRobot;
-	referencedThing = referencedAbility.get_assigned_piece_or_part();
+	
 	if referencedThing is Piece:
 		var _bot = referencedThing.get_host_robot();
 		if is_instance_valid(_bot):
 			bot = referencedThing.get_host_robot();
 	if referencedThing is Part:
 		bot = referencedThing.thisBot;
-	equipped = assignedBot != null;
+	
+	equipped = referencedAbility.is_equipped(referencedThing.statHolderID);
 	statsUsed = referencedAbility.statsUsed;
 	
 	update_outline();
@@ -109,8 +111,8 @@ func populate_stats():
 		##Make a dummy stat.
 		var energyStat = StatTracker.new();
 		energyStat.statIcon = load("res://graphics/images/HUD/statIcons/energyIconStriped.png");
-		energyStat.baseStat  = referencedAbility.get_energy_cost();
-		energyStat.set_stat(referencedAbility.get_energy_cost());
+		energyStat.baseStat  = referencedAbility.get_energy_cost(referencedThing.statHolderID);
+		energyStat.set_stat(referencedAbility.get_energy_cost(referencedThing.statHolderID));
 		if isPassive:
 			energyStat.statFriendlyName = "Passive Energy Draw";
 		else:
@@ -126,11 +128,14 @@ func add_stat_icon(stat:StatTracker):
 	newIcon.load_data_from_statTracker(stat);
 	statHolder.add_child(newIcon);
 
-func populate_with_ability(ability:AbilityManager):
+func populate_with_ability(ability:AbilityManager, thing : Node):
+	if !is_instance_valid(thing): queue_free(); return;
 	if !is_instance_valid(ability): queue_free(); return;
+	referencedThing = thing;
 	referencedAbility = ability;
-	referencedAbility.currentAbilityInfobox = self;
 	update_ability_stats();
+	referencedAbility.set_ability_infobox(referencedThing.statHolderID, self);
+	#referencedAbility.currentAbilityInfobox = self;
 	populate_stats();
 	
 	var nametxt = "";
@@ -191,8 +196,9 @@ func _process(delta):
 		queueShow = false;
 		doneWithSetup.emit();
 	## If the action assigned to this is not in a piece/part that's on the robot, disable the button.
-	if is_instance_valid(referencedAbility) and referencedAbility is AbilityManager:
-		assignButton.disabled = ! referencedAbility.is_on_assigned_piece();
+	if is_instance_valid(referencedThing) and is_instance_valid(referencedAbility) and referencedAbility is AbilityManager:
+		btn_assign.disabled = ! referencedAbility.is_on_assigned_piece(referencedThing.statHolderID);
+		#prints(referencedThing.statHolderID,referencedAbility.get_ability_data(referencedThing.statHolderID),referencedAbility.is_on_assigned_piece(referencedThing.statHolderID))
 
 func showtime():
 	resize_box();
@@ -216,15 +222,15 @@ func _on_focus_exited():
 	pass # Replace with function body.
 
 func _exit_tree():
-	if is_instance_valid(referencedAbility):
-		referencedAbility.currentAbilityInfobox = null;
+	if is_instance_valid(referencedAbility) and is_instance_valid(referencedThing):
+		referencedAbility.clear_ability_infobox(referencedThing.statHolderID);
 
 ## When the assignment button gets pressed, it should either start up the active assignment pipette if it is active, or toggle disabled if it is passive.
 func _on_assign_pressed():
 	if is_instance_valid(referencedAbility):
-		referencedAbility.currentAbilityInfobox = self;
+		referencedAbility.set_ability_infobox(referencedThing.statHolderID, self);
 		if isPassive:
-			referencedAbility.disable();
+			referencedAbility.disable(referencedThing.statHolderID);
 			update_ability_stats();
 			pass;
 		else:
@@ -233,7 +239,7 @@ func _on_assign_pressed():
 				if selected:
 					bot.clear_ability_pipette();
 				else:
-					bot.set_ability_pipette(referencedAbility);
+					bot.set_ability_pipette(referencedAbility.get_ability_data(referencedThing.statHolderID));
 				pass;
 			else:
 				print("ability what")

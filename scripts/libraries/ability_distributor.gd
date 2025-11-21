@@ -1,4 +1,4 @@
-@icon("res://graphics/images/class_icons/energy_white.png")
+@icon("res://graphics/images/class_icons/abilityDistributor.png")
 ## This serves to store all abilities and distribut copies of them.[br]
 ## Super annoying, I know.
 extends Node
@@ -8,15 +8,19 @@ var passiveAbilities : Dictionary[StringName,AbilityManager] = {};
 
 func distribute_active_ability_to_piece(piece:Piece, abilityName:StringName):
 	if activeAbilities.has(abilityName):
-		if ! has_active_with_same_name(abilityName, piece):
-			var dupe = activeAbilities[abilityName].create_copy();
-			#print(dupe.resource_scene_unique_id)
-			dupe.assign_references(piece);
-			dupe.initialized = true;
-			piece.activeAbilities.append(dupe);
-			dupe.assignedPieceOrPart = piece;
-			dupe.statHolderID = piece.get_stat_holder_id();
-			print("ABILITY REGISTRAR: Active with name ",dupe.abilityName," and ID ",dupe.abilityID," being copied to piece ", piece);
+		var ability = activeAbilities[abilityName];
+		ability.assign_stat_holder(piece);
+		piece.activeAbilities.append(ability);
+		#print("ABILITY REGISTRAR: Active with name ",ability.abilityName," and ID ",ability.abilityID," being copied to piece ", piece);
+		#if ! has_active_with_same_name(abilityName, piece):
+			#var dupe = activeAbilities[abilityName].create_copy();
+			##print(dupe.resource_scene_unique_id)
+			#dupe.assign_references(piece);
+			#dupe.initialized = true;
+			#piece.activeAbilities.append(dupe);
+			#dupe.assignedPieceOrPart = piece;
+			#dupe.statHolderID = piece.statHolderID;
+			#print("ABILITY REGISTRAR: Active with name ",dupe.abilityName," and ID ",dupe.abilityID," being copied to piece ", piece);
 
 func distribute_all_actives_to_piece(piece:Piece, abilityNames : Array):
 	for abilityName in abilityNames:
@@ -24,15 +28,18 @@ func distribute_all_actives_to_piece(piece:Piece, abilityNames : Array):
 
 func distribute_passive_ability_to_piece(piece:Piece, abilityName:StringName):
 	if passiveAbilities.has(abilityName):
-		if ! has_passive_with_same_name(abilityName, piece):
-			var dupe = passiveAbilities[abilityName].create_copy();
-			dupe.assign_references(piece);
-			dupe.initialized = true;
-			dupe.isPassive = true;
-			dupe.abilityID = piece.get_stat_holder_id();
-			dupe.assignedPieceOrPart = piece;
-			piece.passiveAbilities.append(dupe);
-			print("ABILITY REGISTRAR: Passive with name ",dupe.abilityName," and ID ",dupe.abilityID," being copied to piece ", piece);
+		var ability = passiveAbilities[abilityName];
+		ability.assign_stat_holder(piece);
+		piece.passiveAbilities.append(ability);
+		#if ! has_passive_with_same_name(abilityName, piece):
+			#var dupe = passiveAbilities[abilityName].create_copy();
+			#dupe.assign_references(piece);
+			#dupe.initialized = true;
+			#dupe.isPassive = true;
+			#dupe.abilityID = piece.statHolderID;
+			#dupe.assignedPieceOrPart = piece;
+			#piece.passiveAbilities.append(dupe);
+			#print("ABILITY REGISTRAR: Passive with name ",dupe.abilityName," and ID ",dupe.abilityID," being copied to piece ", piece);
 
 func distribute_all_passives_to_piece(piece:Piece, abilityNames : Array):
 	for abilityName in abilityNames:
@@ -46,11 +53,13 @@ func distribute_all_abilities_to_piece(piece:Piece):
 	for ability in piece.activeAbilities:
 		if ability is AbilityManager:
 			activeNames.append(ability.abilityName);
+			piece.activeAbilities.erase(ability);
 	
 	var passiveNames = [];
 	for ability in piece.passiveAbilities:
 		if ability is AbilityManager:
 			passiveNames.append(ability.abilityName);
+			piece.activeAbilities.erase(ability);
 	
 	piece.clear_abilities();
 	
@@ -58,6 +67,7 @@ func distribute_all_abilities_to_piece(piece:Piece):
 	distribute_all_passives_to_piece(piece, passiveNames);
 	
 	#piece.ability
+	print("StatHolder Piece with id ", piece.statHolderID, )
 	pass;
 
 func has_passive_with_same_name(abilityName : String, piece:Piece):
@@ -100,6 +110,7 @@ func get_passives():
 					if loadedFile is AbilityManager:
 						var abilityName = loadedFile.abilityName;
 						loadedFile.construct_description();
+						loadedFile.isPassive = true;
 						passiveAbilities[abilityName] = loadedFile;
 			file_name = dir.get_next()
 	else:
@@ -134,3 +145,29 @@ func get_actives():
 	else:
 		print("An error occurred when trying to access the path.")
 	print(activeAbilities);
+
+func get_all_ability_managers() -> Array[AbilityManager]:
+	var ret : Array[AbilityManager] = [];
+	for value in activeAbilities.values():
+		ret.append(value);
+	for value in passiveAbilities.values():
+		ret.append(value);
+	return ret;
+
+func remove_id_from_abilities(id):
+	for ability in get_all_ability_managers():
+		ability.remove_stat_holder_id(id);
+
+## abilityID stuff.
+var abilityID := 0;
+
+func get_unique_ability_id() -> int:
+	var ret = abilityID;
+	abilityID += 1;
+	return ret;
+
+func get_ability_manager_with_id(id:int) -> AbilityManager:
+	for ability in get_all_ability_managers():
+		if ability.abilityID == id:
+			return ability;
+	return null;

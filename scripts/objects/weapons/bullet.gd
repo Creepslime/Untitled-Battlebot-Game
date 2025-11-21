@@ -248,6 +248,8 @@ func shot_something(inbody):
 			#print_rich("[color=purple]Bullet needs a new DamageData")
 			damageData = DamageData.new();
 			damageData.create(damage, knockbackMult, dir, [DamageData.damageTypes.PIERCING])
+			if get_attacker() is Robot:
+				damageData.attackerRobot = attacker;
 		#print(inbody.get_parent())
 		#print_rich("[color=purple]Bullet hit robot. Yippie!")
 		parent.take_damage_from_damageData(damageData);

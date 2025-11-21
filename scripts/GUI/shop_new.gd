@@ -56,7 +56,7 @@ func _physics_process(delta):
 		
 		shopDoor.position.y = clamp(shopDoor.position.y + shopDoorVelocity, -shopDoor.size.y, 0);
 		
-		lbl_reroll.update_label(manager.get_reroll_price());
+		lbl_reroll.update_amt(manager.get_reroll_price());
 		
 		if awaiting_reroll:
 			if all_stalls_closed():

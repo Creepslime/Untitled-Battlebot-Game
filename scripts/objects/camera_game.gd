@@ -183,7 +183,7 @@ func _physics_process(delta):
 					rotYspeed = 1;
 					targetRotationY += rotYspeed * delta;
 				else:
-					if not (pitching or zooming):
+					if not (pitching or zooming or is_instance_valid(socketHovering)):
 						if Input.is_action_pressed("CameraYawLeft") or Input.is_action_pressed("CameraYawRight"):
 							if rotYspeed < 2: 
 								rotYspeed = 2

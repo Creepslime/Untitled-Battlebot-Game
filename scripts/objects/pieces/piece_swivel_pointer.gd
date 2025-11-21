@@ -32,7 +32,7 @@ func phys_process_pre(delta):
 func use_passive(passiveAbility : AbilityManager):
 	if passiveAbility.abilityName == "Target":
 		if is_instance_valid(cam):
-			if test_energy_available(passiveAbility.get_energy_cost()):
+			if test_energy_available(passiveAbility.get_energy_cost(statHolderID)):
 				if can_use_passive(passiveAbility):
 					return use_ability(passiveAbility);
 				else:

@@ -41,6 +41,7 @@ cooldownStatName = "MagazineRefreshRate"
 runType = 1
 functionNameWhenUsed = &"add_one_bullet"
 statsUsed = Array[String](["MagazineRefreshRate", "MagazineSize"])
+hookName = ""
 initialized = false
 disabled = false
 functionWhenUsed = Callable()

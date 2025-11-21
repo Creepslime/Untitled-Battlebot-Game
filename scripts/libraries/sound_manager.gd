@@ -413,6 +413,10 @@ static func play_sound_nondirectional(inSound, inVolume := 1.0, inPitch := 1.0):
 	newSound.set_and_play_sound(snd);
 	return newSound;
 
+static func play_purchase_sound(inVolume := 1.0):
+	var randomSpeed = randf_range(0.9, 1.05);
+	play_sound_nondirectional("Shop.Chaching", inVolume, randomSpeed)
+
 static func play_collision_sound(collider1: Node3D, collider2: Node3D, inGlobalPositionOffset:=Vector3.ZERO, inVolume := 1.0, inPitch := 1.0):
 	if not (is_instance_valid(collider1) and is_instance_valid(collider2)): return null;
 	var sound = get_proper_collision_sound(collider1, collider2);

@@ -1,6 +1,6 @@
 [gd_scene load_steps=7 format=3 uid="uid://bpdsk7pomm6u3"]
 
-[ext_resource type="PackedScene" path="res://scenes/prefabs/particle-fx/smoke_explosion.tscn" id="1_2ssvd"]
+[ext_resource type="PackedScene" uid="uid://c4mkh7dsukkav" path="res://scenes/prefabs/particle-fx/smoke_explosion.tscn" id="1_2ssvd"]
 [ext_resource type="Script" uid="uid://bixet4dmtwy3k" path="res://scripts/objects/particle/particle_fx_killer.gd" id="1_b8s2e"]
 [ext_resource type="Shader" uid="uid://b7dgrp41ygv7f" path="res://scenes/prefabs/particle-fx/fire_explosion.res" id="2_b8s2e"]
 [ext_resource type="SphereMesh" uid="uid://cnufyrbkyl2d2" path="res://scenes/prefabs/particle-fx/fire_explosion_mesh.tres" id="3_4ka20"]

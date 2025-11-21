@@ -188,7 +188,7 @@ func queue_update_engine_with_selected_or_pipette():
 func process_hud(delta):
 	if Input.is_action_just_pressed("StashSelected") and GameState.get_in_state_of_building():
 		print("Stash button pressed")
-		stash_selected_piece();
+		stash_selected_piece(true);
 		update_hud();
 	if Input.is_action_just_pressed("Unselect"):
 		print("Unselect button pressed")
@@ -305,6 +305,7 @@ func die():
 	ParticleFX.play("BigBoom", GameState.get_game_board(), get_global_body_position());
 	
 	
+	Hooks.OnDeath(self, lastAttacker);
 	destroy();
 
 func destroy():
@@ -514,10 +515,11 @@ func modify_damage_based_on_immunities(damageData : DamageData):
 	if is_invincible(): return min(0.0, dmg)
 	return dmg;
 
+var lastAttacker : Variant;
 func take_damage_from_damageData(damageData : DamageData):
 	take_damage(modify_damage_based_on_immunities(damageData));
 	take_knockback(damageData.get_knockback(), damageData.get_damage_position_local(true))
-	##TODO: Readd Hooks functionality.
+	lastAttacker = damageData.attackerRobot;
 
 func take_damage(damage:float):
 	#print("Damage being taken: ", damage)
@@ -905,8 +907,8 @@ func reset_collision_helpers():
 ##################################################### 3D INVENTORY STUFF
 
 @export_category("Piece Management")
-## Holds [AbilityManager] resources to be fired at the press of a button input is this is a [Robot_Player], or by code elsewise.[br]There's presently only 5 slots.
-var active_abilities : Dictionary[int, AbilityManager] = {
+## Holds [AbilityData] resources to be fired at the press of a button input is this is a [Robot_Player], or by code elsewise.[br]There's presently only 5 slots.
+var active_abilities : Dictionary[int, AbilityData] = {
 	0 : null,
 	1 : null,
 	2 : null,
@@ -924,8 +926,9 @@ func on_add_piece(piece:Piece):
 	if is_ready: ## Prevent the Piece from automatically adding abilities if we aren't fully initialized yet.
 		for ability in piece.activeAbilities:
 			if ability is AbilityManager:
+				var AD = ability.get_ability_data(piece.statHolderID)
 				print("Adding ability ", ability.abilityName)
-				assign_ability_to_next_active_slot(ability);
+				assign_ability_to_next_active_slot(AD);
 	regen_piece_tree_stats()
 	get_all_pieces_regenerate();
 	update_hud();
@@ -944,9 +947,8 @@ func on_remove_piece(piece:Piece):
 func remove_abilities_of_piece(piece:Piece):
 	for abilityKey in active_abilities:
 		var ability = active_abilities[abilityKey];
-		if ability is AbilityManager:
-			if ability.get_assigned_piece_or_part() == piece:
-				unassign_ability_slot(abilityKey);
+		if ability is AbilityData:
+			unassign_ability_slot(abilityKey);
 
 ## A list of all Pieces attached to this Robot and which have it set as their host.
 var allPieces : Array[Piece]= []; 
@@ -965,7 +967,6 @@ func get_all_pieces_regenerate() -> Array[Piece]:
 	print("regenerating piece list")
 	var piecesGathered : Array[Piece] = [];
 	for child:Piece in Utils.get_all_children_of_type(body, Piece):
-		#print("CHILD OF BOT BODY: ",child)
 		if child.hostRobot == self and child.assignedToSocket:
 			piecesGathered.append(child);
 	allPieces = piecesGathered;
@@ -1015,8 +1016,8 @@ func get_all_gathered_hurtboxes():
 		get_all_gathered_hurtboxes_regenerate();
 	return allHurtboxes;
 
-##Adds an AbilityManager to the given slot index in active_abilities.
-func assign_ability_to_slot(slotNum : int, abilityManager : AbilityManager):
+##Adds an AbilityData to the given slot index in active_abilities.
+func assign_ability_to_slot(slotNum : int, abilityManager : AbilityData):
 	unassign_ability_slot(slotNum); ## Unassign whatever was in the slot.
 	
 	if slotNum in active_abilities.keys():
@@ -1028,7 +1029,7 @@ func assign_ability_to_slot(slotNum : int, abilityManager : AbilityManager):
 ##Turns the given slot null and unassigns this robot from that ability on the resource.
 func unassign_ability_slot(slotNum : int):
 	if slotNum in active_abilities.keys():
-		if active_abilities[slotNum] is AbilityManager: 
+		if active_abilities[slotNum] is AbilityData: 
 			var abilityManager = active_abilities[slotNum];
 			if is_instance_valid(abilityManager):
 				abilityManager.unassign_slot(slotNum);
@@ -1055,7 +1056,7 @@ func fire_active(slotNum) -> bool:
 	check_abilities_are_valid();
 	if slotNum in active_abilities.keys():
 		var ability = active_abilities[slotNum];
-		if ability is AbilityManager:
+		if ability is AbilityData:
 			#print("ROBOT FIRING ABILITY ", ability.abilityName)
 			return ability.call_ability();
 	return false;
@@ -1072,15 +1073,15 @@ func get_next_available_active_slot():
 	return null;
 
 ##Assigns an ability to the next available slot, if there are any.
-func assign_ability_to_next_active_slot(abilityManager : AbilityManager):
+func assign_ability_to_next_active_slot(abilityManager : AbilityData):
 	var slot = get_next_available_active_slot();
 	if slot == null: return;
 	assign_ability_to_slot(slot, abilityManager);
 
-var abilityPipette : AbilityManager;
+var abilityPipette : AbilityData;
 ## Gets the currently selected ability.
-func get_ability_pipette() -> AbilityManager:
-	if abilityPipette != null and abilityPipette is AbilityManager:
+func get_ability_pipette() -> AbilityData:
+	if abilityPipette != null and abilityPipette is AbilityData:
 		return abilityPipette;
 	return null;
 
@@ -1090,7 +1091,7 @@ func clear_ability_pipette():
 		abilityPipette.deselect();
 	abilityPipette = null;
 
-func set_ability_pipette(new : AbilityManager):
+func set_ability_pipette(new : AbilityData):
 	var assignedThing = new.assignedPieceOrPart;
 	if assignedThing is Piece:
 		if ! assignedThing.assignedToSocket:
@@ -1137,17 +1138,24 @@ func get_selected(ignoreParts := false):
 
 func get_selected_piece(mustBeInTree := false)->Piece:
 	if is_instance_valid(selectedPiece):
-		if selectedPiece.selected:
-			if mustBeInTree:
-				if selectedPiece.is_inside_tree():
-					return selectedPiece;
-			else:
-				return selectedPiece;
-		else:
+		## If the "selected piece" is not selected, then select it.
+		if !selectedPiece.selected:
 			selectedPiece.select(true);
-			if mustBeInTree:
-				if selectedPiece.is_inside_tree():
+		
+		## If selectedPiece is inside the tree, or is not but we aren't checking, then continue
+		var go = ! mustBeInTree;
+		if mustBeInTree:
+			if selectedPiece.is_inside_tree():
+				go = true;
+		
+		
+		if go:
+			## If the thing is in the shop, we have to be in state SHOP for it to remain selected.
+			if selectedPiece.inShop:
+				if GameState.get_in_one_of_given_states([GameBoard.gameState.SHOP]):
 					return selectedPiece;
+				else:
+					deselect_piece(selectedPiece);
 			else:
 				return selectedPiece;
 	return null;
@@ -1190,7 +1198,10 @@ func deselect_all_pieces(ignoredPiece : Piece = null):
 
 ## Force-deselects one specific piece.
 func deselect_piece(piece:Piece):
-	piece.deselect();
+	if piece == selectedPiece:
+		deselect_all_pieces();
+	else:
+		piece.deselect();
 
 ## Runs [member Piece.select] and then acts on the result.
 func select_piece(piece : Piece, forcedValue = null):
@@ -1254,11 +1265,11 @@ func part_move_mode_enable(foo:bool):
 
 ######################## STASH
 
-func stash_selected_piece():
+func stash_selected_piece(fancy := false):
 	if is_instance_valid(selectedPiece):
 		print("Attempting to stash ", selectedPiece)
 		if selectedPiece.removable:
-			selectedPiece.remove_and_add_to_robot_stash(self);
+			selectedPiece.remove_and_add_to_robot_stash(self, fancy);
 	get_all_pieces_regenerate();
 
 ##TODO: Parts and Engine bs.

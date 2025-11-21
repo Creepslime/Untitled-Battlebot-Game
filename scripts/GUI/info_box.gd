@@ -177,7 +177,8 @@ func _on_sell_button_pressed():
 		else:
 			if sell_areYouSure:
 				sellPiece.emit(pieceRef);
-				clear_info();
+				if pieceRef.try_sell():
+					clear_info();
 			else:
 				sell_areYouSure = true;
 				var txt = "SURE? "
@@ -240,7 +241,7 @@ func populate_abilities(thing):
 			if is_instance_valid(ability) and ability is AbilityManager:
 				var newBox = abilityInfoboxScene.instantiate();
 				if newBox is AbilityInfobox:
-					newBox.populate_with_ability(ability);
+					newBox.populate_with_ability(ability, thing);
 					abilityHolder.add_child(newBox);
 					effectiveSize += 1;
 	abilityScrollContainer.visible = effectiveSize > 0;
@@ -336,7 +337,7 @@ func clear_abilities():
 ## Removes the piece or part we're inspecting.
 func _on_remove_button_pressed():
 	if ref_is_piece():
-		pieceRef.remove_and_add_to_robot_stash();
+		pieceRef.remove_and_add_to_robot_stash(pieceRef.get_host_robot(), true);
 	elif ref_is_part():
 		pass;
 	pass # Replace with function body.

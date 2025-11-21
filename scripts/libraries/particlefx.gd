@@ -32,7 +32,7 @@ func get_effect_scene(pfxName: String):
 		return null;
 
 ## Plays the given particle effect by name in the location specified. Returns the effect if we need to keep track of it for whatever reason.
-func play(pfxName: String, parent: Node3D, location: Vector3, _scale = 1.0, nodeToFollow = GameState.get_game_board()):
+func play(pfxName: String, parent: Node3D, location: Vector3, _scale = 1.0, nodeToFollow = GameState.get_game_board()) -> ParticleEffect:
 	var scale = 1.0;
 	if scale is float:
 		scale = _scale;
@@ -52,3 +52,4 @@ func play(pfxName: String, parent: Node3D, location: Vector3, _scale = 1.0, node
 		sceneInst.set("nodeToFollow", nodeToFollow);
 		
 		return sceneInst;
+	return null;

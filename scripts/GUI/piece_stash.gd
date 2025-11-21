@@ -82,10 +82,11 @@ func regenerate_list(robotToReference : Robot = get_current_robot(), mode : mode
 	pass;
 
 func spawn_button(thing : Variant) -> StashButton:
-	if thing is Piece:
-		return spawn_piece_button(thing);
-	if thing is Part:
-		return spawn_part_button(thing);
+	if is_instance_valid(thing):
+		if thing is Piece:
+			return spawn_piece_button(thing);
+		if thing is Part:
+			return spawn_part_button(thing);
 	return null;
 
 func spawn_piece_button(tiedPiece : Piece):

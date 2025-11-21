@@ -68,6 +68,7 @@ btn_moveButton = NodePath("MoveButton")
 btn_removeButton = NodePath("RemoveButton")
 abilityScrollContainer = NodePath("AbilityScrollContainer")
 abilityHolder = NodePath("AbilityScrollContainer/AbilityHolder")
+abilityBoxMaxSize = null
 
 [node name="InfoIconBase" type="TextureRect" parent="InfoBox"]
 layout_mode = 1

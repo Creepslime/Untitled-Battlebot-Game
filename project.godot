@@ -27,6 +27,8 @@ TextFunc="*res://scripts/libraries/text_func.gd"
 Utils="*res://scripts/libraries/utils.gd"
 AbilityDistributor="*res://scripts/libraries/ability_distributor.gd"
 ScrapManager="*res://scripts/libraries/scrap_manager.gd"
+StatHolderManager="*res://stat_holder_manager.gd"
+InputManager="*res://scripts/libraries/input_manager.gd"
 
 [debug]
 

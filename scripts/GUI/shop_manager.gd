@@ -18,8 +18,13 @@ var initialized := false;
 var transitionCalled := false;
 var shops : Array[ShopStation];
 
+@export var HUD_stations : Control;
 @export var HUD_stationsParent : Control; ## Located on the main HUD. Makes the stations usable.
 @export var HUD_stationsStepParent : Control; ## Located here. Hides the stations behind the screen transition.
+
+var player : Robot_Player:
+	get:
+		return GameState.get_player();
 
 func _ready():
 	Hooks.add(self,"OnRerollShop", "ShopManager", _on_reroll_button_pressed);
@@ -95,8 +100,6 @@ func _process(delta):
 					GameState.set_game_board_state(GameBoard.gameState.LEAVE_SHOP)
 					transitionCalled = true;
 
-var player : Robot_Player;
-@export var HUD_stations : Control;
 
 func all_shops_closed():
 	for shop in shops:
@@ -105,9 +108,8 @@ func all_shops_closed():
 	return true;
 
 func init_shop():
-	player = GameState.get_player();
 	for shop in shops:
-		shop.player = GameState.get_player();
+		shop.player = player;
 	pass;
 
 func open_up_shop():
@@ -196,13 +198,15 @@ var healPriceIncrementPermanent := 0.0;
 func update_health_button():
 	lbl_healAmount.text = "HEAL\n"+TextFunc.format_stat(get_heal_amount()) + " HP"
 	lbl_healPrice.text = TextFunc.format_stat(get_heal_price(), 0);
-	if ScrapManager.is_affordable(get_heal_price()) && ! player.at_max_health():
+	if is_instance_valid(player) && ScrapManager.is_affordable(get_heal_price()) && ! player.at_max_health():
 		TextFunc.set_text_color(lbl_healPrice, "scrap");
 	else:
 		TextFunc.set_text_color(lbl_healPrice, "unaffordable");
 
 func get_heal_amount():
-	return (healAmountBase * healAmountModifier) * player.get_max_health();
+	if is_instance_valid(player):
+		return (healAmountBase * healAmountModifier) * player.get_max_health();
+	return (healAmountBase * healAmountModifier) * 3;
 func get_heal_price():
 	return ceili((healPriceBase + healPriceIncrement) * ScrapManager.get_discount_for_type(ScrapManager.priceTypes.HEALING));
 
@@ -213,10 +217,11 @@ func _on_heal_button_pressed():
 	pass # Replace with function body.
 
 func _shop_heal():
-	if ScrapManager.is_affordable(get_heal_price()):
-		if ! player.at_max_health():
-			ScrapManager.remove_scrap(get_heal_price(), "ShopHeal");
-			healPriceIncrement += healPricePressIncrement;
-			player.heal(get_heal_amount());
-			healPriceIncrementPermanent += 0.5;
-			return true;
+	if is_instance_valid(player):
+		if ScrapManager.is_affordable(get_heal_price()):
+			if ! player.at_max_health():
+				ScrapManager.remove_scrap(get_heal_price(), "ShopHeal");
+				healPriceIncrement += healPricePressIncrement;
+				player.heal(get_heal_amount());
+				healPriceIncrementPermanent += 0.5;
+				return true;

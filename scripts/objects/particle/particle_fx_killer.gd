@@ -53,3 +53,10 @@ func check_emitting():
 
 func start_free():
 	dying = true;
+
+## Changes which layer mask the particles appear on.
+func set_visibility_layer(num:int):
+	for child in get_children():
+		if child is GPUParticles3D:
+			child.layers = 0;
+			child.set_layer_mask_value(num, true);

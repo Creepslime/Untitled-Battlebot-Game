@@ -53,10 +53,15 @@ func get_stat_color_from_image(statIcon : Texture2D):
 	return get_stat_color();
 
 @export var filepathForThisEntity : String;
-var statHolderID := -1;
+var statHolderID := -1:
+	get:
+		if statHolderID == -1:
+			statHolderID = set_stat_holder_id();
+		return statHolderID;
 
 func _ready():
 	super();
+	
 	clear_stats();
 	stat_registry();
 
@@ -71,12 +76,12 @@ func clear_stats():
 				if stat is StatTracker:
 					if stat.stat_id_invalid_or_matching(statHolderID):
 						keysToRemove.append(statName);
-						print("Erasing stat ", statName, " from ", name,"; Was found to have an invalid ID or a matching ID to this StatHolder")
+						#print("Erasing stat ", statName, " from ", name,"; Was found to have an invalid ID or a matching ID to this StatHolder")
 				else:
-					print("Erasing stat ", statName, " from ", name,"; Was somehow not a StatTracker")
+					#print("Erasing stat ", statName, " from ", name,"; Was somehow not a StatTracker")
 					keysToRemove.append(statName);
 			else:
-				print("Erasing stat ", statName, "; Was invalid")
+				#print("Erasing stat ", statName, "; Was invalid")
 				keysToRemove.append(statName);
 		pass;
 	for statName in keysToRemove:
@@ -163,7 +168,7 @@ func register_stat(statName : String, baseStat : float, statIcon : Texture2D = g
 		if setFunction != null and setFunction is Callable:
 			statTracked.setFunc = setFunction;
 		statTracked.resource_name = stat_name_with_id(statName);
-		statTracked.statID = get_stat_holder_id();
+		statTracked.statID = statHolderID;
 		GameState.log_unique_stat(statTracked);
 		statCollection[stat_name_with_id(statName)] = statTracked;
 	else:
@@ -180,16 +185,12 @@ func stat_registry():
 	pass;
 
 func set_stat_holder_id():
-	statHolderID = GameState.get_unique_stat_holder_id();
-	return statHolderID;
-
-func get_stat_holder_id():
-	if statHolderID == -1:
-		return set_stat_holder_id();
+	statHolderID = StatHolderManager.get_unique_stat_holder_id();
+	StatHolderManager.register_stat_holder(self);
 	return statHolderID;
 
 func stat_name_with_id(statName):
-	return str(statName, get_stat_holder_id());
+	return str(statName, statHolderID);
 
 func stat_exists(statName):
 	return get_stat_resource(statName, true) != null;

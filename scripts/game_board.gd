@@ -17,6 +17,8 @@ var roundEnemiesInit := 1;
 var roundEnemies := 0;
 var roundNum := 0;
 var enemiesAlive = [];
+var enemiesSpawned = [];
+var enemiesDead = [];
 var player : Robot_Player;
 
 var enemiesKilled := 0;
@@ -72,10 +74,12 @@ func _on_scenetree_ready():
 	
 	Hooks.add(self, "OnDeath", "LifetimeKillCounter", 
 		func(thisBot, killer):
-			if killer is Player:
+			Utils.append_unique(enemiesDead, thisBot);
+			if killer is Robot_Player:
 				enemiesKilled += 1;
 				print_rich("[color=red][b]Enemies killed: ",enemiesKilled)
 			)
+			
 	Hooks.add(self, "OnGainScrap", "LifetimeScrapCounter", 
 		func(source, amt):
 			if amt > 0:
@@ -320,6 +324,8 @@ func enter_state(newState:gameState, oldState:gameState):
 			wave = 0;
 			roundEnemiesInit += 2;
 			roundEnemies = roundEnemiesInit;
+			enemiesSpawned.clear();
+			enemiesDead.clear();
 			
 			new_round_arena_sequence();
 			
@@ -958,14 +964,16 @@ func return_random_unoccupied_spawn_location() -> RobotSpawnLocation:
 
 func spawn_wave(numOfEnemies := 0):
 	#return
-	while numOfEnemies > 0 && roundEnemies > 0 && check_alive_enemies() <= 30:
+	while numOfEnemies > 0 && roundEnemies > 0 && check_alive_enemies() <= 30 and ! at_enemy_capacity():
 		var enemyScene = return_random_enemy();
 		var pos = return_random_unoccupied_spawn_location();
 		waveSpawnList.append(enemyScene)
 		numOfEnemies -= 1;
+	if at_enemy_capacity():
+		waveSpawnList.clear();
 
 func spawn_enemy_from_wave():
-	if waveSpawnList.size() > 0:
+	if waveSpawnList.size() > 0 and ! at_enemy_capacity():
 		var newEnemySpawner = return_random_unoccupied_spawn_location();
 		if newEnemySpawner != null:
 			var enemyScene = waveSpawnList.pop_front();
@@ -974,12 +982,14 @@ func spawn_enemy_from_wave():
 			newEnemySpawner.assign_enemy_type_from_resource(enemyScene);
 			newEnemySpawner.assign_enemy_type(enemyScene);
 			var enemy = newEnemySpawner.start_spawn();
+			enemiesSpawned.append(enemy);
 			enemiesAlive.append(enemy);
 			roundEnemies -= 1;
 
 func check_alive_enemies():
 	var removals = [];
 	for enemy in enemiesAlive:
+		#print(enemy)
 		var _continue = true
 		if !is_instance_valid(enemy):
 			removals.append(enemy);
@@ -1003,11 +1013,17 @@ func check_alive_enemies():
 					if _continue: ## Hasn't been spawned yet.
 						if checkedEnemy.spawned == false:
 							_continue = false;
+						else:
+							Utils.append_unique(enemiesSpawned, checkedEnemy);
 	
 	for enemy in removals:
 		enemiesAlive.erase(enemy);
 	
 	return enemiesAlive.size();
+
+## Returns true if the amount of enemies spawned this round has reached the round spawn amount number.
+func at_enemy_capacity():
+	return enemiesSpawned.size() >= roundEnemiesInit;
 
 ##Should give us the amount of enemies left after all spawning is completed
 func check_round_completion() -> float:
@@ -1021,6 +1037,7 @@ func get_enemies_left_for_wave() -> int:
 
 func destroy_all_enemies(destroyPlayer := false):
 	check_alive_enemies();
+	
 	for enemy in enemiesAlive:
 		if enemy:
 			enemy.call_deferred("die");

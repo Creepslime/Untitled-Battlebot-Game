@@ -83,7 +83,7 @@ func OnActiveUse(activePart: PartActive):
 		activePart;
 
 ## Called when a combatant dies.
-func OnDeath(thisBot : Robot, killer : Robot):
+func OnDeath(thisBot : Robot, killer):
 	for hookFunc in getValidHooks("OnDeath"):
 		hookFunc.call(thisBot, killer);
 

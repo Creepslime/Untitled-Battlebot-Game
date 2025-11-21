@@ -1,7 +1,7 @@
 @icon ("res://graphics/images/class_icons/abilitySlot.png")
 extends Control
 class_name AbilitySlot
-## The visual representation on the [GameHUD] for each of the player's currently equipped Active Abilities ([member Robot.active_abilities]).
+## The visual representation on the [GameHUD] for each of the player's currently equipped Active Abilities ([member Robot.active_abilities]).[br]Holds the [AbilityData] for that ability and displays it with furvor.
 
 enum modes {
 	NONE,
@@ -35,12 +35,28 @@ var curMode : modes = modes.NONE;
 const bgIconBaseY := 77.0;
 
 var index : int;
-var referencedAbility : AbilityManager;
+var referencedAbility : AbilityData;
+var inputActionString : String:
+	get:
+		return "Fire" + str(index);
+var inputKeysString : String:
+	get:
+		return InputManager.get_action_string(inputActionString);
 
 func _ready():
 	focus_next = get_path_to(nextSlot);
 	focus_previous = get_path_to(prevSlot);
 	clear_assignment();
+
+func set_index(in_index):
+	index = in_index;
+	update_base_tooltips();
+
+func update_base_tooltips():
+	tooltip_text = inputKeysString;
+	for child in Utils.get_all_children(self, self):
+		if child is Control:
+			child.tooltip_text = inputKeysString;
 
 func _process(delta):
 	
@@ -62,29 +78,30 @@ func _process(delta):
 			curMode = modes.NONE;
 			pass;
 	
-	
+	#print(inputKeysString)
+
 func _on_assign_pressed():
 	manager.button_pressed.emit(self);
 	pass # Replace with function body.
 
 
-func assign_ability(ability : AbilityManager):
+func assign_ability(ability : AbilityData):
 	if (ability == referencedAbility):
 		return;
-	if ! is_instance_valid(ability):
+	if ! is_instance_valid(ability) or ! is_instance_valid(ability.assignedPieceOrPart):
 		return;
-	if ! ability.initialized:
-		return;
-	if is_instance_valid(ability) and ability is AbilityManager:
+	if is_instance_valid(ability) and ability is AbilityData:
 		print("Ability assigned!")
 		referencedAbility = ability;
 		set_deferred("referencedAbility", ability);
 		
+		var mgr = ability.get_manager()
+		
 		## Change the icon data.
-		spr_icon.texture = ability.icon;
+		spr_icon.texture = mgr.icon;
 		
 		TextFunc.set_text_color(lbl_name, "white");
-		lbl_name.text = ability.abilityName;
+		lbl_name.text = mgr.abilityName;
 		
 		btn_selectReference.disabled = false;
 		
@@ -95,7 +112,7 @@ func assign_ability(ability : AbilityManager):
 	pass;
 
 var counter := 0.;
-func update_ability(ability : AbilityManager):
+func update_ability(ability : AbilityData):
 	counter += 1;
 	if counter > 200:
 		counter = 0;
@@ -109,6 +126,7 @@ func update_ability(ability : AbilityManager):
 	
 	## Icon and the button.
 	var ref = referencedAbility.get_assigned_piece_or_part();
+	var mgr = referencedAbility.get_manager();
 	var iconBG = "res://graphics/images/HUD/screenGFX/screenBG.png";
 	if is_instance_valid(ref):
 		if ref is Piece:

@@ -11,6 +11,7 @@ class_name Piece
 func _ready():
 	if temporaryPreview:
 		queue_free();
+		return;
 	
 	if ! Engine.is_editor_hint():
 		#if pieceName == "BodyCube":
@@ -31,6 +32,7 @@ func _physics_process(delta):
 	if ! Engine.is_editor_hint():
 		super(delta);
 		if not is_paused():
+			fix_sockets(delta);
 			phys_process_collision(delta);
 			phys_process_abilities(delta);
 
@@ -150,16 +152,15 @@ func create_startup_data():
 		socketDict[index] = socketData;
 	
 	## Abilities. If an ability has been assigned to a slot and is not passive, add its name and assigned slots to the data.
-	ability_validation();
 	var abilityDict := {}
 	var disabled := []
 	for ability in get_all_abilities():
 		if ! ability.isPassive:
-			var slots = ability.get_assigned_slots();
+			var slots = ability.get_assigned_slots(statHolderID);
 			if ! slots.is_empty():
 				abilityDict[ability.abilityName] = slots;
 		else:
-			if ability.is_disabled():
+			if ability.is_disabled(statHolderID):
 				disabled.append(ability.abilityName);
 	
 	var data = {
@@ -190,14 +191,14 @@ func load_startup_data(data, robot : Robot):
 			var ability = get_named_action(abilityName);
 			if is_instance_valid(ability):
 				for slotNum in abilitySlots:
-					robot.assign_ability_to_slot(slotNum, ability);
+					robot.assign_ability_to_slot(slotNum, ability.get_ability_data(statHolderID));
 	
 	## An array of names that are disabled abilities.
 	if data.keys().has("disabledAbilities"):
 		for abilityName in data["disabledAbilities"]:
 			var ability = get_named_action(abilityName);
 			if is_instance_valid(ability):
-				ability.disable(true);
+				ability.disable(statHolderID, true);
 	pass;
 
 ######################## TIMERS
@@ -212,7 +213,7 @@ func phys_process_timers(delta):
 		var bot = get_host_robot();
 		if bot.is_running_cooldowns():
 			for ability in get_all_abilities():
-				ability.tick_cooldown(delta);
+				ability.tick_cooldown(statHolderID, delta);
 	pass;
 
 func phys_process_pre(delta):
@@ -243,14 +244,35 @@ func declare_names():
 @export var removable := true;
 ## Returns true if this [Piece] is equipped, removable, and we're shopping.
 func is_removable() -> bool:
-	return removable and is_equipped() and GameState.get_in_state_of_shopping() or GameState.get_in_state_of_building();
+	return removable and is_equipped() and (GameState.get_in_state_of_shopping() or GameState.get_in_state_of_building());
 func is_sellable() -> bool:
 	return removable and ! isBody;
 func is_buyable() -> bool:
 	return ScrapManager.is_affordable(get_buy_price()) and inShop;
-func try_buy_from_shop():
+var queuedBuyer : Robot = null;
+func try_buy_from_shop() -> bool:
 	if is_instance_valid(shopStall):
-		shopStall.try_buy_piece();
+		return shopStall.try_buy_piece();
+	return false;
+func start_buying(buyer:Robot):
+	queuedBuyer = buyer;
+	start_buying_animation();
+func submit_queued_buy():
+	if is_instance_valid(queuedBuyer):
+		inShop = false;
+		shopStall.buyQueued = false;
+		shopStall.pieceRef = null;
+		shopStall = null;
+		remove_and_add_to_robot_stash(queuedBuyer);
+		queuedBuyer = null;
+## Tries to sell this [Piece], then returns the result.[br]
+## TODO: Determine whether selling a [Piece] should also sell any [Part]s in its engine, or stash them.
+func try_sell():
+	if is_sellable():
+		ScrapManager.add_scrap(get_sell_price(), "Sell Piece");
+		destroy();
+		return true;
+	return false;
 @export var weightBase := 1.0;
 @export var force_visibility := false;  
 @export var temporaryPreview := false; ## When true, calls [method destroy] at the first possible opportunity.
@@ -352,20 +374,20 @@ var transmittingPower := true; ##While false, no power is transmitted from this 
 
 func set_cooldown_active(action:AbilityManager, immediate := false):
 	if immediate:
-		action.set_cooldown(get_cooldown_active(action));
+		action.set_cooldown(statHolderID, get_cooldown_active(action));
 	else:
-		action.queue_cooldown(get_cooldown_active(action));
+		action.queue_cooldown(statHolderID, get_cooldown_active(action));
 
 func on_cooldown_active(action : AbilityManager) -> bool:
-	return action.on_cooldown();
+	return action.on_cooldown(statHolderID);
 func on_cooldown_active_any() -> bool:
 	for ability in activeAbilities:
-		if ability.on_cooldown():
+		if ability.on_cooldown(statHolderID):
 			return true;
 	return false;
 func get_cooldown_active(action : AbilityManager) -> float:
 	if is_instance_valid(action):
-		return action.get_cooldown();
+		return action.get_cooldown(statHolderID);
 	return false;
 func set_all_cooldowns():
 	for action in get_all_abilities():
@@ -373,30 +395,30 @@ func set_all_cooldowns():
 func set_cooldown_for_ability(action : AbilityManager):
 	if is_instance_valid(action):
 		if action.isPassive:
-			action.queue_cooldown(get_stat("PassiveCooldown"));
+			action.queue_cooldown(statHolderID, get_stat("PassiveCooldown"));
 		else:
-			action.queue_cooldown(get_stat("ActiveCooldown"));
+			action.queue_cooldown(statHolderID, get_stat("ActiveCooldown"));
 
 ##Never called in base, but to be used for stuff like Bumpers needing a cooldown before they can Bump again.
 func set_cooldown_passive(passiveAbility : AbilityManager, immediate := false):
 	if is_instance_valid(passiveAbility):
 		if immediate:
-			passiveAbility.set_cooldown(get_cooldown_passive(passiveAbility));
+			passiveAbility.set_cooldown(statHolderID, get_cooldown_passive(passiveAbility));
 		else:
-			passiveAbility.queue_cooldown(get_cooldown_passive(passiveAbility));
+			passiveAbility.queue_cooldown(statHolderID, get_cooldown_passive(passiveAbility));
 func on_cooldown_passive(action : AbilityManager) -> bool:
 	return get_cooldown_passive(action) > 0;
 func on_cooldown_passive_any() -> bool:
 	for ability in passiveAbilities:
-		if ability.on_cooldown():
+		if ability.on_cooldown(statHolderID):
 			return true;
 	return false;
 func get_cooldown_passive(passiveAbility : AbilityManager) -> float:
 	if is_instance_valid(passiveAbility):
-		return passiveAbility.get_cooldown();
+		return passiveAbility.get_cooldown(statHolderID);
 	return false;
 func on_cooldown_action(action : AbilityManager) -> bool:
-	return action.on_cooldown();
+	return action.on_cooldown(statHolderID);
 func on_cooldown_named_action(actionName : String) -> bool:
 	var action = get_named_action(actionName);
 	if action != null:
@@ -410,7 +432,7 @@ func on_contact_cooldown():
 	for ability in get_all_abilities():
 		if is_instance_valid(ability) and ability is AbilityManager:
 			if ability.runType == AbilityManager.runTypes.OnContactDamage:
-				if ability.on_cooldown():
+				if ability.on_cooldown(statHolderID):
 					return true;
 	return false;
 
@@ -533,7 +555,7 @@ func standard_ability_checks(action : AbilityManager):
 	if get_local_ability(action) == null:
 		return false;
 	## Check if it's disabled.
-	if action.is_disabled():
+	if action.is_disabled(statHolderID):
 		return false;
 	## Check the bot, and also check aliveness.
 	var bot = get_host_robot();
@@ -627,13 +649,19 @@ func can_use_ability(action):
 		return can_use_active(action);
 
 func use_looping_passives():
+	var passiveNamesUsed = [];
 	for passiveAbility in passiveAbilities:
-		if passiveAbility.runType == AbilityManager.runTypes.Default or passiveAbility.runType == AbilityManager.runTypes.LoopingCooldown:
-			use_passive(passiveAbility);
+		if ! passiveNamesUsed.has(passiveAbility.abilityName):
+			if passiveAbility.runType == AbilityManager.runTypes.Default or passiveAbility.runType == AbilityManager.runTypes.LoopingCooldown:
+				passiveNamesUsed.append(passiveAbility.abilityName);
+				use_passive(passiveAbility);
 func use_contact_passives():
+	var passiveNamesUsed = [];
 	for passiveAbility in passiveAbilities:
-		if passiveAbility.runType == AbilityManager.runTypes.OnContactDamage:
-			use_passive(passiveAbility);
+		if ! passiveNamesUsed.has(passiveAbility.abilityName):
+			if passiveAbility.runType == AbilityManager.runTypes.OnContactDamage:
+				passiveNamesUsed.append(passiveAbility.abilityName);
+				use_passive(passiveAbility);
 func use_passive(passiveAbility:AbilityManager):
 	if can_use_passive(passiveAbility):
 		use_ability(passiveAbility);
@@ -655,55 +683,59 @@ func ability_validation():
 	pass;
 
 func clear_abilities():
-	var passivesToRemove = []
-	if passiveAbilities.size() > 0:
-		#print_rich("[color=red]Stat collection is NOT empty at start.")
-		#print_all_stats();
-		for passive in passiveAbilities:
-			if is_instance_valid(passive):
-				if passive is AbilityManager:
-					if passive.ability_id_invalid_or_matching(statHolderID):
-						passivesToRemove.append(passive);
-						print("Erasing passive ", passive.abilityName, " from ", name,"; Was found to have an invalid ID or a matching ID to this StatHolder")
-				else:
-					print("Erasing passive ", passive.abilityName, " from ", name,"; Was somehow not an AbilityManager")
-					passivesToRemove.append(passive);
-			else:
-				print("Erasing passive ", passive.abilityName, "; Was invalid")
-				passivesToRemove.append(passive);
-		pass;
-	for passive in passivesToRemove:
-		passiveAbilities.erase(passive);
+	activeAbilities.clear();
+	passiveAbilities.clear();
 	
-	var activesToRemove = []
-	if passiveAbilities.size() > 0:
-		#print_rich("[color=red]Stat collection is NOT empty at start.")
-		#print_all_stats();
-		for active in activeAbilities:
-			if is_instance_valid(active):
-				if active is AbilityManager:
-					if active.ability_id_invalid_or_matching(statHolderID):
-						activesToRemove.append(active);
-						print("Erasing ability ", active.abilityName, " from ", name,"; Was found to have an invalid ID or a matching ID to this StatHolder")
-				else:
-					print("Erasing ability ", active.abilityName, " from ", name,"; Was somehow not an AbilityManager")
-					activesToRemove.append(active);
-			else:
-				print("Erasing ability ", active.abilityName, "; Was invalid")
-				activesToRemove.append(active);
-		pass;
-	for passive in passivesToRemove:
-		activeAbilities.erase(passive);
+	#var passivesToRemove = []
+	#if passiveAbilities.size() > 0:
+		##print_rich("[color=red]Stat collection is NOT empty at start.")
+		##print_all_stats();
+		#for passive in passiveAbilities:
+			#if is_instance_valid(passive):
+				#if passive is AbilityManager:
+					#if passive.ability_id_invalid_or_matching(statHolderID):
+						#passivesToRemove.append(passive);
+						#print("Erasing passive ", passive.abilityName, " from ", name,"; Was found to have an invalid ID or a matching ID to this StatHolder")
+				#else:
+					#print("Erasing passive ", passive.abilityName, " from ", name,"; Was somehow not an AbilityManager")
+					#passivesToRemove.append(passive);
+			#else:
+				#print("Erasing passive ", passive.abilityName, "; Was invalid")
+				#passivesToRemove.append(passive);
+		#pass;
+	#for passive in passivesToRemove:
+		#passiveAbilities.erase(passive);
+	
+	#var activesToRemove = []
+	#if passiveAbilities.size() > 0:
+		##print_rich("[color=red]Stat collection is NOT empty at start.")
+		##print_all_stats();
+		#for active in activeAbilities:
+			#if is_instance_valid(active):
+				#if active is AbilityManager:
+					#if active.ability_id_invalid_or_matching(statHolderID):
+						#activesToRemove.append(active);
+						#print("Erasing ability ", active.abilityName, " from ", name,"; Was found to have an invalid ID or a matching ID to this StatHolder")
+				#else:
+					#print("Erasing ability ", active.abilityName, " from ", name,"; Was somehow not an AbilityManager")
+					#activesToRemove.append(active);
+			#else:
+				#print("Erasing ability ", active.abilityName, "; Was invalid")
+				#activesToRemove.append(active);
+		#pass;
+	#for passive in passivesToRemove:
+		#activeAbilities.erase(passive);
+	pass;
 
 ## returns an array of all abilities, active and passive.
 func get_all_abilities(passiveFirst := false) -> Array[AbilityManager]:
 	var abilitiesToCheck : Array[AbilityManager] = [];
 	if passiveFirst:
-		abilitiesToCheck.append_array(passiveAbilities);
-		abilitiesToCheck.append_array(activeAbilities);
+		Utils.append_array_unique(abilitiesToCheck, passiveAbilities);
+		Utils.append_array_unique(abilitiesToCheck, activeAbilities);
 	else:
-		abilitiesToCheck.append_array(activeAbilities);
-		abilitiesToCheck.append_array(passiveAbilities);
+		Utils.append_array_unique(abilitiesToCheck, activeAbilities);
+		Utils.append_array_unique(abilitiesToCheck, passiveAbilities);
 	return abilitiesToCheck;
 
 ## This should be run in ability_registry() only.
@@ -757,9 +789,15 @@ func use_ability(action : AbilityManager) -> bool:
 
 
 var placingAnimationTimer = -1;
+var placingAnimationStart = 15;
+var buyingAnimationTimer = -1;
+var buyingAnimationStart = 15;
 
 func start_placing_animation():
-	placingAnimationTimer = 15;
+	placingAnimationTimer = placingAnimationStart;
+	pass;
+func start_buying_animation():
+	buyingAnimationTimer = buyingAnimationStart;
 	pass;
 
 func process_draw(delta):
@@ -776,6 +814,7 @@ func process_draw(delta):
 	
 	if not has_host(true, false, false) and not force_visibility:
 		placingAnimationTimer = -1;
+		buyingAnimationTimer = -1;
 		if visible: hide()
 	else:
 		if not visible: show()
@@ -805,6 +844,29 @@ func process_draw(delta):
 				SND.play_sound_at("Zap.Short", socket.global_position, socket, 0.7, randomSpeed_2);
 				position.y = 0;
 				pass;
+			
+			if buyingAnimationTimer >= 0:
+				buyingAnimationTimer -= 1;
+				position.y = (buyingAnimationStart - buyingAnimationTimer) * 0.03 * (buyingAnimationStart - buyingAnimationTimer);
+				pass;
+			if buyingAnimationTimer == buyingAnimationStart:
+				var sparks = ParticleFX.play("Sparks", socket, socket.global_position);
+				sparks.set_visibility_layer(2);
+				SND.play_purchase_sound();
+				var randomSpeed_2 = randf_range(0.85, 1.1);
+				SND.play_sound_nondirectional("Zap.Short", 0.7, randomSpeed_2);
+				position.y = 0;
+				pass;
+			elif buyingAnimationTimer == 0:
+				submit_queued_buy();
+				SND.play_purchase_sound();
+				var randomSpeed_2 = randf_range(0.85, 1.1);
+				SND.play_sound_at("Zap.Short", socket.global_position, socket, 0.7, randomSpeed_2);
+				position.y = 0;
+				pass;
+		else:
+			placingAnimationTimer = -1;
+			buyingAnimationTimer = -1;
 
 enum selectionModes {
 	NOT_SELECTED,
@@ -909,6 +971,7 @@ func get_damage_types() -> Array[DamageData.damageTypes]:
 ## Creates a brand new [DamageData] based on your current stats.
 func get_damage_data(targetPosition := global_position, _damageAmount := get_damage(), _knockbackForce := get_knockback_force(), _direction := Vector3(0,0,0), _damageTypes := get_damage_types()) -> DamageData:
 	var DD = DamageData.new();
+	DD.attackerRobot = get_host_robot();
 	DD.create(_damageAmount, _knockbackForce, _direction, _damageTypes);
 	DD.calc_damage_direction_based_on_targets(global_position, targetPosition, false);
 	return DD;
@@ -917,6 +980,7 @@ func get_damage_data(targetPosition := global_position, _damageAmount := get_dam
 func get_kickback_damage_data(targetPosition := global_position, _damageAmount := 0.0, _knockbackForce := get_kickback_force(), _direction := Vector3(0,0,0), _damageTypes :Array[DamageData.damageTypes]= []):
 	var DD = DamageData.new();
 	DD.create(_damageAmount, _knockbackForce, _direction, _damageTypes);
+	DD.attackerRobot = get_host_robot();
 	prints(targetPosition, global_position)
 	print(DD.calc_damage_direction_based_on_targets(global_position, targetPosition, true));
 	DD.calc_damage_direction_based_on_targets(global_position, targetPosition, true);
@@ -928,7 +992,7 @@ func get_kickback_damage_data(targetPosition := global_position, _damageAmount :
 func contact_damage(otherPiece : Piece, otherPieceCollider : PieceCollisionBox, thisPieceCollider : PieceCollisionBox):
 	#print (self, otherPiece)
 	#print("COntactdamage function.")
-	if otherPiece != self and otherPiece.is_inside_tree():
+	if otherPiece != self and otherPiece.is_inside_tree() and is_inside_tree():
 		#print("Target was not self.")
 		##Handle damaging the opposition.
 		var DD = get_damage_data();
@@ -1033,9 +1097,22 @@ func phys_process_collision(delta):
 
 ##Assign all sockets with this as their host piece.
 func autoassign_child_sockets_to_self():
-	for child in Utils.get_all_children_of_type(self, Socket, self):
+	for child in get_all_female_sockets():
 		child.hostRobot = get_host_robot();
 		child.hostPiece = self;
+
+func fix_sockets(delta):
+	if is_inside_tree():
+		#autoassign_child_sockets_to_self();
+		if get_selected():
+			#print(assignedToSocket, hostSocket, StatHolderManager.get_stat_holder_by_id(statHolderID).assignedToSocket)
+			print(activeAbilities.front().get_ability_data(statHolderID) if ! activeAbilities.is_empty() else "ActiveAbilities is empty")
+		#if ! assignedToSocket:
+			#var parent =  get_parent();
+			#if parent is Socket:
+				#if ! parent.preview == self:
+					#parent.add_occupant(self, true);
+		pass;
 
 ##This function assigns socket data and generates all hitboxes. Should only ever be run once at [method _ready()].
 func gather_colliders_and_meshes():
@@ -1043,6 +1120,7 @@ func gather_colliders_and_meshes():
 	get_all_mesh_init_materials();
 	autoassign_child_sockets_to_self();
 	refresh_and_gather_collision_helpers();
+	print_rich("[color=orange]GATHERING COLLIDERS AND MESHES ON PIECE ", self);
 
 ##This function regenerates all collision boxes. Should in theory only ever be run at [method _ready()], but the Piece Helper tool scene uses it also.
 func refresh_and_gather_collision_helpers():
@@ -1197,6 +1275,9 @@ func get_facing_direction(front := Vector3(0,0,1), addPosition := false):
 var selected := false;
 func get_selected() -> bool:
 	if selected: set_selection_mode(selectionModes.SELECTED);
+	else:
+		if is_assigned():
+			set_selection_mode(selectionModes.NOT_SELECTED);
 	return selected;
 
 var isPreview := false;
@@ -1300,16 +1381,19 @@ func assign_socket(socket:Socket):
 func assign_socket_post(socket:Socket):
 	isPreview = false;
 	assignedToSocket = true;
-	hostRobot.on_add_piece(self);
+	if has_robot_host():
+		hostRobot.on_add_piece(self);
 	hurtboxCollisionHolder.set_collision_mask_value(8, false);
+	hostSocket = socket;
 	set_selection_mode(selectionModes.NOT_SELECTED);
-	print("ASSIGNED TO SOCKET?")
+	print("ASSIGNED TO SOCKET? ")
 
 func is_assigned() -> bool:
 	return assignedToSocket;
 
 ##Removes this piece from its assigned Socket. Essentially removes it from the [Robot], too.
 func remove_from_socket():
+	print("REMOVING FROM SOCKET.")
 	if assignedToSocket and is_instance_valid(hostRobot):
 		hostRobot.on_remove_piece(self);
 	disconnect_from_host_socket();
@@ -1411,12 +1495,24 @@ func get_all_pieces_regenerate() -> Array[Piece]:
 ####################### INVENTORY STUFF
 @export_category("Stash")
 
+## Calls [method remove_and_add_to_robot_stash] after a short removal animation plays.
+func fancy_remove(botOverride : Robot = get_host_robot(true)):
+	remove_and_add_to_robot_stash(botOverride);
+
 ## Removes this Piece and any Pieces below it, then adds them to the stash of the robot they're on, if there is one. Calls [method remove_from_socket], then [method Robot.add_something_to_stash], then [method Robot_Player.queue_close_engine].
-func remove_and_add_to_robot_stash(botOverride : Robot = get_host_robot(true)):
+func remove_and_add_to_robot_stash(botOverride : Robot = get_host_robot(true), fancy := false, silentFancy := false):
+	if fancy:
+		var socket = get_host_socket();
+		if socket != null:
+			var sparks = ParticleFX.play("Sparks", socket, socket.global_position);
+			if !silentFancy:
+				var randomSpeed_2 = randf_range(0.85, 1.1);
+				SND.play_sound_nondirectional("Zap.Short", 0.7, randomSpeed_2);
+	
 	deselect();
 	##Stash everything below this.
 	for subPiece in get_all_pieces_regenerate():
-		subPiece.remove_and_add_to_robot_stash(botOverride);
+		subPiece.remove_and_add_to_robot_stash(botOverride, fancy, true);
 	
 	remove_from_socket();
 	var bot = botOverride;

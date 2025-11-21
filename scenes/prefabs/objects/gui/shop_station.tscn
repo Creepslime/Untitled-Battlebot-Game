@@ -61,6 +61,7 @@ offset_bottom = 217.0
 metadata/_edit_group_ = true
 
 [node name="ShopDoor" type="NinePatchRect" parent="."]
+visible = false
 z_index = 8
 layout_mode = 0
 offset_right = 480.0
@@ -163,8 +164,12 @@ theme_override_font_sizes/font_size = 15
 text = "00000"
 vertical_alignment = 1
 
-[node name="IconScrapGear" type="Sprite2D" parent="ButtonReroll"]
-position = Vector2(152, 20)
+[node name="IconScrapGear" type="TextureRect" parent="ButtonReroll"]
+layout_mode = 0
+offset_left = 143.0
+offset_top = 9.0
+offset_right = 162.0
+offset_bottom = 30.0
 texture = ExtResource("8_u5ko2")
 
 [connection signal="pressed" from="ButtonReroll" to="." method="_on_reroll_button_pressed"]

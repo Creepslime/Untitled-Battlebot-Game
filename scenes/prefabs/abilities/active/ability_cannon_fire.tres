@@ -43,6 +43,7 @@ runType = 0
 functionNameWhenUsed = &"fireBullet"
 statsUsed = Array[String](["ProjectileFireRate", "ProjectileSpeed", "Inaccuracy", "ProjectileGravity", "ProjectileLifetime"])
 icon = ExtResource("2_0nak7")
+hookName = ""
 initialized = false
 disabled = false
 functionWhenUsed = Callable()

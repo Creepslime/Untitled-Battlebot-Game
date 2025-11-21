@@ -10,16 +10,17 @@ func _ready():
 func _process(delta):
 	forcedUpdatetimer -= 1;
 	if forcedUpdatetimer <= 0:
-		update_label(min(999999, ScrapManager.get_scrap()));
+		update_amt(min(999999, ScrapManager.get_scrap()));
 		forcedUpdatetimer = 6;
+	super(delta);
 
-func hook_update(source, amount):
-	update_label(min(999999, ScrapManager.get_scrap()));
+func hook_update(_source, _amount):
+	update_amt(min(999999, ScrapManager.get_scrap()));
 
-func update_label(amt := 0):
-	super(amt);
+func update_label():
+	super();
 	
-	if amt >= 999999:
+	if actualAmount >= 999999:
 		TextFunc.set_text_color(self, "scrap");
 	else:
 		TextFunc.set_text_color(self, "white");

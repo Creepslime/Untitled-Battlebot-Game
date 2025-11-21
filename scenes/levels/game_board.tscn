@@ -1,4 +1,4 @@
-[gd_scene load_steps=102 format=4 uid="uid://cno0jw8hq6h1i"]
+[gd_scene load_steps=89 format=4 uid="uid://cno0jw8hq6h1i"]
 
 [ext_resource type="Script" uid="uid://b8hseesj7vrc" path="res://scripts/game_board.gd" id="1_mlcvp"]
 [ext_resource type="Material" uid="uid://c6b1ums81prw8" path="res://graphics/materials/models/arena/arena_floor.tres" id="2_4jixe"]
@@ -45,28 +45,15 @@
 [ext_resource type="Script" uid="uid://dxmqurrcqgdl7" path="res://scripts/GUI/bgm.gd" id="20_l8dsy"]
 [ext_resource type="Texture2D" uid="uid://csqo5aaepfs34" path="res://graphics/images/HUD/nextRound/progressBar.png" id="20_ridgm"]
 [ext_resource type="TileSet" uid="uid://dicxuohkdpmlx" path="res://graphics/images/HUD/engine/engineTileMap.tres" id="20_u76c3"]
-[ext_resource type="Script" uid="uid://cdymr1vwdiwxo" path="res://scripts/GUI/info_box.gd" id="21_n0uq6"]
 [ext_resource type="Shader" uid="uid://egarbougi4ef" path="res://graphics/shaders/healthbar.gdshader" id="21_sb58i"]
-[ext_resource type="Texture2D" uid="uid://drjmrl4v24oq6" path="res://graphics/images/HUD/infobox/typeIcons/info_melee.png" id="22_t18ps"]
-[ext_resource type="Texture2D" uid="uid://bdgkd60c8qtud" path="res://graphics/images/HUD/statIcons/energyIconStriped.png" id="23_sb58i"]
-[ext_resource type="Texture2D" uid="uid://cnfat2kqvmdcd" path="res://graphics/images/HUD/statIcons/damageIconStriped.png" id="24_dcin4"]
 [ext_resource type="Script" uid="uid://56vk7o0gmt7p" path="res://scripts/GUI/shop_button.gd" id="24_gqxs8"]
 [ext_resource type="PackedScene" uid="uid://rwrbd0hg75ad" path="res://scenes/prefabs/utilities/health_bar.tscn" id="25_4upc1"]
-[ext_resource type="Texture2D" uid="uid://uflissj08i1o" path="res://graphics/images/HUD/statIcons/cooldownIconStriped.png" id="25_hi0i4"]
 [ext_resource type="FontFile" uid="uid://qklyfj282mg3" path="res://graphics/font/Scrap8x14.ttf" id="25_k23rv"]
 [ext_resource type="Texture2D" uid="uid://ccklnmdcymtig" path="res://graphics/images/HUD/shop/heal_unselected.png" id="25_mcp8b"]
-[ext_resource type="Texture2D" uid="uid://djth0eo8kvkcm" path="res://graphics/images/HUD/sell_unselected.png" id="26_4upc1"]
 [ext_resource type="Texture2D" uid="uid://g2oapmprsygp" path="res://graphics/images/HUD/shop/heal_selected.png" id="26_kbpb2"]
-[ext_resource type="Texture2D" uid="uid://btfetdy0ahup8" path="res://graphics/images/HUD/sell_selected.png" id="27_iqmcf"]
-[ext_resource type="Texture2D" uid="uid://b71g2q13wr7do" path="res://graphics/images/HUD/sell_disabled.png" id="28_2kc6q"]
-[ext_resource type="Texture2D" uid="uid://dsl0x2nq48gga" path="res://graphics/images/HUD/move_unselected.png" id="29_o0v2b"]
-[ext_resource type="Texture2D" uid="uid://cxeur7wg8nvq7" path="res://graphics/images/HUD/move_selected.png" id="30_lb2e7"]
 [ext_resource type="PackedScene" uid="uid://bvv3y50mckawn" path="res://scenes/prefabs/objects/gui/ability_slot_manager.tscn" id="31_o0v2b"]
-[ext_resource type="Texture2D" uid="uid://dnu6ivnxlduxo" path="res://graphics/images/HUD/move_hover.png" id="31_vehjn"]
 [ext_resource type="Texture2D" uid="uid://ctnkq5igq82au" path="res://graphics/images/HUD/healthbar/energy_overlay.png" id="32_lk4jc"]
-[ext_resource type="Texture2D" uid="uid://dyotls8fcbklx" path="res://graphics/images/HUD/move_disabled.png" id="32_u76c3"]
 [ext_resource type="Texture2D" uid="uid://bq452mx8iaye5" path="res://graphics/images/HUD/healthbar/NRG.png" id="33_ed2oa"]
-[ext_resource type="Texture2D" uid="uid://s6s6ugfdhqhy" path="res://graphics/images/HUD/statIcons/magazineIconStriped.png" id="33_k23rv"]
 [ext_resource type="Texture2D" uid="uid://t82a6tmnn51i" path="res://graphics/images/HUD/healthbar/energy_mask.png" id="34_ndayd"]
 [ext_resource type="Texture2D" uid="uid://c3tc66mps41fj" path="res://graphics/images/HUD/healthbar/energy_full.png" id="35_ngcqk"]
 [ext_resource type="Texture2D" uid="uid://2mr86d446ipq" path="res://graphics/images/HUD/healthbar/energy_empty.png" id="36_f85oj"]
@@ -241,7 +228,7 @@ camToFollow = NodePath("../../../../CameraPointer/GameCamera")
 [node name="ShopCanvas_SHOP" type="CanvasLayer" parent="."]
 layer = 2
 
-[node name="SHOP" type="NinePatchRect" parent="ShopCanvas_SHOP" node_paths=PackedStringArray("spr_REC", "camScreenContents", "camScreenFlash", "camScreenBlack", "HUD_stationsParent", "HUD_stationsStepParent", "HUD_stations", "btn_heal", "lbl_healAmount", "lbl_healPrice")]
+[node name="SHOP" type="NinePatchRect" parent="ShopCanvas_SHOP" node_paths=PackedStringArray("spr_REC", "camScreenContents", "camScreenFlash", "camScreenBlack", "HUD_stations", "HUD_stationsParent", "HUD_stationsStepParent", "btn_heal", "lbl_healAmount", "lbl_healPrice")]
 z_index = -1
 anchors_preset = -1
 anchor_left = 0.158333
@@ -259,9 +246,9 @@ spr_REC = NodePath("CamScreen/CamScreenContents/REC")
 camScreenContents = NodePath("CamScreen/CamScreenContents")
 camScreenFlash = NodePath("CamScreen/Flash")
 camScreenBlack = NodePath("CamScreen/Black")
+HUD_stations = NodePath("ShopStationsStepParent/ShopStations")
 HUD_stationsParent = NodePath("../../HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStationsParent")
 HUD_stationsStepParent = NodePath("ShopStationsStepParent")
-HUD_stations = NodePath("ShopStationsStepParent/ShopStations")
 btn_heal = NodePath("HealButton")
 lbl_healAmount = NodePath("HealButton/TextHolder/HEAL")
 lbl_healPrice = NodePath("HealButton/TextHolder/Price")
@@ -985,197 +972,6 @@ mouse_filter = 2
 texture = SubResource("AtlasTexture_kjpyk")
 metadata/_edit_lock_ = true
 
-[node name="InfoBox" type="Control" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/LeftSide" node_paths=PackedStringArray("iconBase", "lbl_partName")]
-unique_name_in_owner = true
-layout_mode = 1
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -456.0
-offset_top = -720.0
-offset_right = -192.0
-offset_bottom = -528.0
-grow_horizontal = 2
-grow_vertical = 0
-script = ExtResource("21_n0uq6")
-iconBase = NodePath("InfoIconBase")
-lbl_partName = NodePath("Name")
-
-[node name="InfoIconBase" type="TextureRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/LeftSide/InfoBox"]
-layout_mode = 1
-anchors_preset = -1
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 208.0
-offset_top = 8.0
-offset_right = -8.0
-offset_bottom = -136.0
-texture = ExtResource("22_t18ps")
-
-[node name="Name" type="Label" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/LeftSide/InfoBox"]
-layout_mode = 0
-offset_left = 2.0
-offset_top = 1.16602
-offset_right = 113.0
-offset_bottom = 35.166
-theme_override_colors/font_outline_color = Color(0.141176, 0.054902, 0.054902, 1)
-theme_override_constants/outline_size = 5
-theme_override_font_sizes/font_size = 24
-text = "No Part Selected"
-
-[node name="Description" type="RichTextLabel" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/LeftSide/InfoBox"]
-layout_mode = 0
-offset_left = 2.0
-offset_top = 40.0
-offset_right = 262.0
-offset_bottom = 151.0
-theme_override_colors/font_outline_color = Color(0.141176, 0.054902, 0.054902, 1)
-theme_override_constants/outline_size = 5
-theme_override_font_sizes/normal_font_size = 13
-bbcode_enabled = true
-text = "[color=e0dede]No [color=ffffff]description [color=e0dede]given."
-
-[node name="EnergyIcon" type="TextureRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/LeftSide/InfoBox"]
-layout_mode = 1
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_left = 7.0
-offset_top = -25.834
-offset_right = 27.0
-offset_bottom = -2.83398
-grow_vertical = 0
-texture = ExtResource("23_sb58i")
-
-[node name="Label" type="Label" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/LeftSide/InfoBox/EnergyIcon"]
-layout_mode = 0
-offset_top = -18.0
-offset_right = 20.0
-offset_bottom = 2.0
-theme_override_colors/font_color = Color(0.470588, 0.607843, 0.913725, 1)
-theme_override_colors/font_outline_color = Color(0.141176, 0.054902, 0.054902, 1)
-theme_override_constants/outline_size = 4
-theme_override_font_sizes/font_size = 14
-text = "0"
-horizontal_alignment = 1
-
-[node name="DamageIcon" type="TextureRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/LeftSide/InfoBox"]
-layout_mode = 1
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_left = 73.0
-offset_top = -25.834
-offset_right = 93.0
-offset_bottom = -2.83398
-grow_vertical = 0
-texture = ExtResource("24_dcin4")
-
-[node name="Label" type="Label" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/LeftSide/InfoBox/DamageIcon"]
-layout_mode = 0
-offset_top = -18.0
-offset_right = 20.0
-offset_bottom = 2.0
-theme_override_colors/font_color = Color(1, 0.431373, 0.286275, 1)
-theme_override_colors/font_outline_color = Color(0.141176, 0.054902, 0.054902, 1)
-theme_override_constants/outline_size = 4
-theme_override_font_sizes/font_size = 14
-text = "0"
-horizontal_alignment = 1
-
-[node name="CooldownIcon" type="TextureRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/LeftSide/InfoBox"]
-layout_mode = 1
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_left = 40.0
-offset_top = -25.834
-offset_right = 60.0
-offset_bottom = -2.83398
-grow_vertical = 0
-texture = ExtResource("25_hi0i4")
-
-[node name="Label" type="Label" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/LeftSide/InfoBox/CooldownIcon"]
-layout_mode = 0
-offset_top = -18.0
-offset_right = 20.0
-offset_bottom = 2.0
-theme_override_colors/font_color = Color(0.666667, 0.878431, 0.356863, 1)
-theme_override_colors/font_outline_color = Color(0.141176, 0.054902, 0.054902, 1)
-theme_override_constants/outline_size = 4
-theme_override_font_sizes/font_size = 14
-text = "0"
-horizontal_alignment = 1
-
-[node name="SellButton" type="TextureButton" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/LeftSide/InfoBox"]
-layout_mode = 1
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -94.0
-offset_top = -35.834
-offset_right = -2.0
-offset_bottom = -1.83398
-grow_horizontal = 0
-grow_vertical = 0
-texture_normal = ExtResource("26_4upc1")
-texture_pressed = ExtResource("27_iqmcf")
-texture_hover = ExtResource("27_iqmcf")
-texture_disabled = ExtResource("28_2kc6q")
-
-[node name="Label" type="Label" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/LeftSide/InfoBox/SellButton"]
-layout_mode = 0
-offset_left = 28.0
-offset_top = 8.0
-offset_right = 67.0
-offset_bottom = 28.0
-theme_override_colors/font_color = Color(0.94902, 0.92549, 0.419608, 1)
-theme_override_colors/font_outline_color = Color(0.141176, 0.054902, 0.054902, 1)
-theme_override_constants/outline_size = 4
-theme_override_font_sizes/font_size = 14
-text = "SELL: "
-horizontal_alignment = 1
-
-[node name="MoveButton" type="TextureButton" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/LeftSide/InfoBox"]
-layout_mode = 0
-offset_left = 131.0
-offset_top = 156.0
-offset_right = 165.0
-offset_bottom = 190.0
-toggle_mode = true
-texture_normal = ExtResource("29_o0v2b")
-texture_pressed = ExtResource("30_lb2e7")
-texture_hover = ExtResource("31_vehjn")
-texture_disabled = ExtResource("32_u76c3")
-
-[node name="MagazineIcon" type="TextureRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/LeftSide/InfoBox"]
-layout_mode = 1
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_left = 104.0
-offset_top = -25.834
-offset_right = 124.0
-offset_bottom = -2.83398
-grow_vertical = 0
-texture = ExtResource("33_k23rv")
-
-[node name="Label" type="Label" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/LeftSide/InfoBox/MagazineIcon"]
-layout_mode = 0
-offset_top = -18.0
-offset_right = 20.0
-offset_bottom = 2.0
-theme_override_colors/font_color = Color(0.470588, 0.607843, 0.913725, 1)
-theme_override_colors/font_outline_color = Color(0.141176, 0.054902, 0.054902, 1)
-theme_override_constants/outline_size = 4
-theme_override_font_sizes/font_size = 14
-text = "0"
-horizontal_alignment = 1
-
 [node name="HealthBarHolder" type="TextureRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/LeftSide"]
 z_index = 1
 layout_mode = 0
@@ -1205,7 +1001,7 @@ width = 329.0
 height = 117.0
 paddingStart = 0.0
 paddingEnd = 36.0
-currentAmt = 46.85
+currentAmt = 31.05
 maskTexture = ExtResource("47_fmmmj")
 fullTexture = ExtResource("48_ed2oa")
 emptyTexture = ExtResource("49_4hhnj")
@@ -2176,7 +1972,6 @@ mesh = ExtResource("5_4jixe")
 [connection signal="button_down" from="ShopCanvas_SHOP/SHOP/HealButton" to="ShopCanvas_SHOP/SHOP/HealButton" method="_on_button_down"]
 [connection signal="button_up" from="ShopCanvas_SHOP/SHOP/HealButton" to="ShopCanvas_SHOP/SHOP/HealButton" method="_on_button_up"]
 [connection signal="tab_changed" from="HUDCanvas/HUD Viewport/SubViewport/HUD_shopTabs/Shops" to="HUDCanvas/HUD Viewport/SubViewport/HUD_shopTabs" method="_on_shops_tab_changed"]
-[connection signal="pressed" from="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/LeftSide/InfoBox/SellButton" to="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/LeftSide/InfoBox" method="_on_sell_button_pressed"]
 [connection signal="pressed" from="HUDCanvas/HUD Viewport/SubViewport/HUD/MainMenu/Btn_Play" to="." method="_on_btn_play_pressed"]
 [connection signal="pressed" from="HUDCanvas/HUD Viewport/SubViewport/HUD/MainMenu/Btn_Credits" to="." method="_on_btn_credits_pressed"]
 [connection signal="pressed" from="HUDCanvas/HUD Viewport/SubViewport/HUD/MainMenu/Btn_Exit" to="." method="_on_btn_exit_pressed"]

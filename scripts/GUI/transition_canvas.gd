@@ -12,7 +12,8 @@ class_name TransitionCanvas
 var dbg_hidden := false;
 var dbg_prof := false;
 @export var debug_canvas : CanvasLayer;
-@export var debug_label : Label;
+@export var lbl_profiler : Label;
+@export var margin_profiler : MarginContainer;
 
 
 func initialize():
@@ -44,8 +45,8 @@ func _process(delta):
 	dbg_prof = GameState.get_setting("ProfilerLabelsVisible");
 	if dbg_prof:
 		debug_canvas.visible = true;
-		if is_instance_valid(debug_label):
-			debug_label.text = GameState.get_profiler_label();
+		if is_instance_valid(lbl_profiler):
+			lbl_profiler.text = GameState.get_profiler_label();
 	else:
 		debug_canvas.hide();
 	
@@ -55,9 +56,6 @@ func _process(delta):
 			modulator.color.a = 0.15;
 		else:
 			modulator.color.a = 1;
-		
-		debug_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT;
-		debug_label.vertical_alignment = VERTICAL_ALIGNMENT_TOP;
 		
 		if logoTime:
 			lbl_companyName.visible = true;
@@ -82,9 +80,6 @@ func _process(delta):
 				logoTime = false;
 	else:
 		hide();
-		
-		debug_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT;
-		debug_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER;
 
 const LOGO_STRING = "METAL CHIMERA\n\nPRESENTING"
 

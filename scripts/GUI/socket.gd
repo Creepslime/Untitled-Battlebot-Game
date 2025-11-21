@@ -20,6 +20,9 @@ var previewPlaceable := false;
 var initialRotation : Vector3;
 
 @export var shopRotisserie := false;
+@export var shopStall : ShopStall = null;
+var rotisserieSpeed := 0.0;
+var rotisserieSpeedTarget := 0.0;
 @export var mesh_face : MeshInstance3D;
 @export var mesh_selector : MeshInstance3D;
 
@@ -86,21 +89,24 @@ func remove_occupant(delete := false):
 ##Sets the given piece as a child of this [Socket], and sets its [member Robot.hostPiece] and [member Robot.hostRobot] as this [Socket]'s hosts.
 func add_occupant(newPiece : Piece, manual := false):
 	if is_instance_valid(newPiece):
+		GameState.profiler_ping_create("Piece added to socket as occupant")
 		occupant = newPiece;
 		#print("SETTING AS OCCUPANT!")
-		if is_instance_valid(occupant.get_parent()):
-			occupant.reparent(self, false);
+		if is_instance_valid(newPiece.get_parent()):
+			newPiece.reparent(self, false);
 		else:
-			add_child(occupant);
+			add_child(newPiece);
 		
-		occupant.hostPiece = hostPiece;
-		occupant.hostSocket = self;
+		newPiece.hostPiece = hostPiece;
+		newPiece.hostSocket = self;
 		
 		if ! manual:
-			occupant.hostRobot = get_robot();
+			newPiece.hostRobot = get_robot();
 		else:
-			occupant.hostRobot = get_host_robot_unsafe();
-			occupant.assign_socket_post(self);
+			newPiece.hostRobot = get_host_robot_unsafe();
+			newPiece.assign_socket_post(self);
+		
+		newPiece.assignedToSocket = true;
 		$Selector.hide();
 
 func get_energy_transmitted():
@@ -194,9 +200,22 @@ func _process(delta):
 		mesh_face.set_layer_mask_value(2, false)
 	
 	if shopRotisserie:
-		mesh_face.set_layer_mask_value(1, false)
-		mesh_face.set_layer_mask_value(2, true)
-		rotate_y(deg_to_rad(delta * 40));
+		if is_instance_valid(shopStall):
+			match shopStall.curState:
+				shopStall.doorState.NONE:
+					rotisserieSpeedTarget = 0.0;
+				shopStall.doorState.OPEN:
+					rotisserieSpeedTarget = 80.0 if shopStall.mousingOverPreview else 50.0;
+				shopStall.doorState.CLOSED:
+					rotisserieSpeedTarget = 0.0 if shopStall.doors_actually_closed() else 15.0;
+					if shopStall.doors_actually_closed():
+						rotisserieSpeed = 0.0;
+						rotation.y = 0;
+				shopStall.doorState.FROZEN:
+					rotisserieSpeedTarget = 30.0;
+		rotisserieSpeed = move_toward(rotisserieSpeed, rotisserieSpeedTarget, delta * 100);
+		rotate_y(deg_to_rad(delta * rotisserieSpeed));
+		
 		pass;
 	if Engine.is_editor_hint(): return;
 	selectionCheckLoop -= 1;
@@ -346,6 +365,8 @@ func set_occupant_as_preview(): ##TODO: This.
 
 func get_occupant() -> Piece:
 	if is_instance_valid(occupant):
+		if ! occupant.assignedToSocket:
+			add_occupant(occupant, true)
 		return occupant;
 	return null;
 
@@ -355,6 +376,14 @@ func get_occupant_or_child() -> Piece:
 		if child is Piece:
 			return child;
 	return null;
+
+## Force any child pieces that aren't a preview to be added to this.
+func set_child_as_occupant():
+	if occupant == null and preview == null:
+		for child in get_children():
+			if child is Piece:
+				add_occupant(child, true);
+				
 
 func hover_from_camera(cam) -> Piece:
 	selectionCheckLoop = 4;

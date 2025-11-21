@@ -24,7 +24,8 @@ func _process(delta):
 	
 	for slot in allSlots:
 		slot.manager = self;
-		slot.index = allSlots.find(slot);
+		
+		slot.set_index(allSlots.find(slot));
 	
 	if is_instance_valid(currentRobot):
 		## Assign abilities based on the contents of the robot's active_abilities dictionary.

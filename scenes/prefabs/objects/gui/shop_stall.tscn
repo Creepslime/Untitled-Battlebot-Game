@@ -88,7 +88,7 @@ render_target_update_mode = 4
 [node name="Camera3D" type="Camera3D" parent="PieceGFX/SubViewportContainer/SubViewport/Stall"]
 transform = Transform3D(1, 0, 0, 0, 0.943974, 0.33002, 0, -0.33002, 0.943974, 0, 1.35448, 2.06308)
 cull_mask = 2
-fov = 96.9368
+fov = 85.0
 
 [node name="SpotLight3D" type="SpotLight3D" parent="PieceGFX/SubViewportContainer/SubViewport/Stall/Camera3D"]
 transform = Transform3D(1, 0, 0, 0, 0.819292, 0.573376, 0, -0.573376, 0.819292, 0, 2.64203, 1.8628)
@@ -114,6 +114,7 @@ mesh = ExtResource("6_t8nqo")
 skeleton = NodePath("../../root/@EditorNode@21269/@Panel@14/@VBoxContainer@15/DockHSplitLeftL/DockHSplitLeftR/DockHSplitMain/@VBoxContainer@26/DockVSplitCenter/@VSplitContainer@54/@VBoxContainer@55/@EditorMainScreen@102/MainScreen/@CanvasItemEditor@11479/@VSplitContainer@11131/@HSplitContainer@11133/@HSplitContainer@11135/@Control@11136/@SubViewportContainer@11137/@SubViewport@11138/StallA/PieceGFX/SubViewportContainer/SubViewport")
 
 [node name="Rim2" type="TileMapLayer" parent="PieceGFX"]
+z_index = 1
 tile_map_data = PackedByteArray("AAAFAAAAAAAHAAEAAAAEAAAAAAAGAAAAAAAFAAEAAAAHAAIAAAAFAAIAAAAHAAIAAAAFAAMAAAAHAAIAAAADAAAAAAAGAAAAAAAAAAIAAAAEAAEAAAAAAAMAAAAEAAEAAAAAAAEAAAAEAAEAAAAAAAQAAAAEAAEAAAACAAAAAAAGAAAAAAABAAAAAAAGAAAAAAAAAAAAAAAEAAIAAAAFAAQAAAAHAAIAAAAAAAUAAAAEAAMAAAABAAUAAAAGAAMAAAACAAUAAAAGAAMAAAADAAUAAAAGAAMAAAAEAAUAAAAGAAMAAAAFAAUAAAAHAAMAAAA=")
 tile_set = ExtResource("3_t8nqo")
 
@@ -290,7 +291,7 @@ theme = ExtResource("18_7lfx4")
 theme_type_variation = &"HeaderLarge"
 text = "Piece Name"
 
-[node name="NinePatchRect" type="NinePatchRect" parent="."]
+[node name="WindowBG" type="NinePatchRect" parent="."]
 layout_mode = 0
 offset_left = -1.0
 offset_top = -3.0
@@ -302,4 +303,6 @@ patch_margin_top = 3
 patch_margin_right = 1
 patch_margin_bottom = 1
 
+[connection signal="mouse_entered" from="btn_PieceSelect" to="." method="_on_btn_piece_select_mouse_entered"]
+[connection signal="mouse_exited" from="btn_PieceSelect" to="." method="_on_btn_piece_select_mouse_exited"]
 [connection signal="pressed" from="btn_PieceSelect" to="." method="_on_btn_piece_select_pressed"]

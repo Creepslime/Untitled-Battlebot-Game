@@ -22,6 +22,10 @@ func clamp_speed():
 	_integrate_forces("Speed Clamp");
 
 func _integrate_forces(state):
+	set_collision_layer_value(1, true);
+	set_collision_layer_value(11, false);
+	set_collision_mask_value(1, true);
+	set_collision_mask_value(11, true);
 	match state:
 		"Rotation":
 			rotation.y = currentRotation;

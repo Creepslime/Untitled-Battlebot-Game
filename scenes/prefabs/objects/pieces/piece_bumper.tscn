@@ -29,6 +29,7 @@ cooldownStatName = "ContactCooldown"
 runType = 2
 functionNameWhenUsed = &""
 statsUsed = Array[String]([])
+hookName = ""
 initialized = true
 disabled = false
 functionWhenUsed = Callable()

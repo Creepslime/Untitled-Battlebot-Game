@@ -51,18 +51,19 @@ func phys_process_combat(delta):
 	super(delta);
 	if Input.is_action_pressed("Fire0"):
 		if fire_active(0):
-			print("Ability? ",active_abilities[0].abilityName)
+			print("Ability 1? ",active_abilities[0].manager.abilityName)
 	if Input.is_action_pressed("Fire1"):
 		if fire_active(1):
-			print("Ability? ",active_abilities[1].abilityName)
+			print("Ability 2? ",active_abilities[1].manager.abilityName)
 	if Input.is_action_pressed("Fire2"):
 		if fire_active(2):
-			print("Ability? ",active_abilities[2].abilityName)
+			print("Ability 3? ",active_abilities[2].manager.abilityName)
 	if Input.is_action_pressed("Fire3"):
 		if fire_active(3):
-			print("Ability? ",active_abilities[3].abilityName)
-	#if Input.is_action_just_pressed("Fire4"):
-		#fire_active(4);
+			print("Ability 4? ",active_abilities[3].manager.abilityName)
+	if Input.is_action_just_pressed("Fire4"):
+		if fire_active(4):
+			print("Ability 5? ",active_abilities[4].manager.abilityName)
 
 func get_movement_vector(rotatedByCamera : bool = true) -> Vector2:
 	movementVector = Vector2.ZERO

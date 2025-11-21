@@ -47,7 +47,7 @@ func phys_process_timers(delta):
 	## If the magazine is full, stop adding new ones.
 	if get_available_bullets() == get_magazine_max():
 		var factory = get_named_passive("Bullet Factory");
-		factory.add_freeze_frames(1);
+		factory.add_freeze_frames(statHolderID, 1);
 	
 	super(delta);
 	
@@ -194,7 +194,7 @@ func fireBullet():
 		availableBullets -= 1;
 		
 		var factory = get_named_passive("Bullet Factory");
-		factory.add_freeze_time(get_stat("ProjectileFireRate") + get_physics_process_delta_time());
+		factory.add_freeze_time(statHolderID, get_stat("ProjectileFireRate") + get_physics_process_delta_time());
 		
 		initiate_kickback(firingAngle + global_position);
 	else:
