@@ -1,24 +1,24 @@
-[gd_scene load_steps=39 format=3 uid="uid://chi2adlhly5pm"]
+[gd_scene load_steps=39 format=3]
 
-[ext_resource type="Script" uid="uid://sgpk4fry4yvo" path="res://scripts/objects/pieces/buildingBlocks/piece.gd" id="1_8tbom"]
-[ext_resource type="Script" uid="uid://cybmjhuctmfaw" path="res://scripts/libraries/richTextConstructor.gd" id="2_uwv47"]
-[ext_resource type="Script" uid="uid://clcmggkeaqnyx" path="res://scripts/objects/weapons/stat_tracker.gd" id="3_u5pnx"]
-[ext_resource type="Texture2D" uid="uid://c3ddwskowvvoi" path="res://graphics/images/models/sockets/socketM.png" id="3_uq2w3"]
-[ext_resource type="Texture2D" uid="uid://bdgkd60c8qtud" path="res://graphics/images/HUD/statIcons/energyIconStriped.png" id="4_bub1r"]
-[ext_resource type="Texture2D" uid="uid://cobiyocwh7d3p" path="res://graphics/images/models/sockets/prong.png" id="4_nl45e"]
-[ext_resource type="PackedScene" uid="uid://dosh155duu70e" path="res://scenes/prefabs/objects/pieces/buildingBlocks/socket.tscn" id="5_o6g7c"]
-[ext_resource type="Texture2D" uid="uid://uflissj08i1o" path="res://graphics/images/HUD/statIcons/cooldownIconStriped.png" id="5_y1frp"]
-[ext_resource type="Texture2D" uid="uid://s6s6ugfdhqhy" path="res://graphics/images/HUD/statIcons/magazineIconStriped.png" id="6_e60i5"]
-[ext_resource type="Script" uid="uid://dikbphvd0xff7" path="res://scripts/objects/pieces/buildingBlocks/hitbox_shapes.gd" id="6_ssuhc"]
-[ext_resource type="Texture2D" uid="uid://b775d1fn78gcv" path="res://graphics/images/HUD/statIcons/weightIconStriped.png" id="7_650nr"]
-[ext_resource type="Script" uid="uid://bkwxna02gqgqu" path="res://scripts/objects/pieces/buildingBlocks/hurtbox_shapes.gd" id="7_xtkwn"]
-[ext_resource type="Texture2D" uid="uid://cnfat2kqvmdcd" path="res://graphics/images/HUD/statIcons/damageIconStriped.png" id="8_u1ssf"]
-[ext_resource type="Script" uid="uid://rbm6p8ggs13f" path="res://scripts/objects/pieces/buildingBlocks/placement_shapes.gd" id="8_ysdpo"]
-[ext_resource type="PackedScene" uid="uid://dckvl43g2kjvx" path="res://scenes/prefabs/objects/pieces/buildingBlocks/piece_collision_box.tscn" id="9_u5pnx"]
-[ext_resource type="ArrayMesh" uid="uid://c5ex7keixe1ff" path="res://graphics/models/obj/botparts/Bot_TPipe.obj" id="15_ysdpo"]
+[ext_resource type="Script" path="res://scripts/objects/pieces/buildingBlocks/piece.gd" id="1_v61av"]
+[ext_resource type="Script" path="res://scripts/libraries/richTextConstructor.gd" id="2_jcntw"]
+[ext_resource type="Script" path="res://scripts/objects/weapons/stat_tracker.gd" id="3_lmibo"]
+[ext_resource type="Texture2D" path="res://graphics/images/HUD/statIcons/energyIconStriped.png" id="4_mxb05"]
+[ext_resource type="Texture2D" path="res://graphics/images/HUD/statIcons/cooldownIconStriped.png" id="5_k4vuu"]
+[ext_resource type="Texture2D" path="res://graphics/images/HUD/statIcons/magazineIconStriped.png" id="6_xahbi"]
+[ext_resource type="Texture2D" path="res://graphics/images/HUD/statIcons/weightIconStriped.png" id="7_0gkp8"]
+[ext_resource type="Texture2D" path="res://graphics/images/HUD/statIcons/damageIconStriped.png" id="8_80nr4"]
+[ext_resource type="Texture2D" path="res://graphics/images/models/sockets/socketM.png" id="9_s51gn"]
+[ext_resource type="Texture2D" path="res://graphics/images/models/sockets/prong.png" id="10_5k1f1"]
+[ext_resource type="Script" path="res://scripts/objects/pieces/buildingBlocks/hitbox_shapes.gd" id="11_6ru5o"]
+[ext_resource type="Script" path="res://scripts/objects/pieces/buildingBlocks/hurtbox_shapes.gd" id="12_5u2md"]
+[ext_resource type="Script" path="res://scripts/objects/pieces/buildingBlocks/placement_shapes.gd" id="13_1047n"]
+[ext_resource type="PackedScene" path="res://scenes/prefabs/objects/pieces/buildingBlocks/piece_collision_box.tscn" id="14_8avui"]
+[ext_resource type="ArrayMesh" path="res://graphics/models/obj/botparts/ComputerShield.obj" id="14_v61av"]
+[ext_resource type="Script" path="res://scripts/objects/pieces/buildingBlocks/collisionBox.gd" id="16_jcntw"]
 
 [sub_resource type="Resource" id="Resource_ujwhk"]
-script = ExtResource("2_uwv47")
+script = ExtResource("2_jcntw")
 string = "Serves no purpose other than to provide "
 color = 1
 newline = false
@@ -27,7 +27,7 @@ startingSpace = true
 metadata/_custom_type_script = "uid://cybmjhuctmfaw"
 
 [sub_resource type="Resource" id="Resource_agd5d"]
-script = ExtResource("2_uwv47")
+script = ExtResource("2_jcntw")
 string = "structure"
 color = 0
 newline = false
@@ -36,7 +36,7 @@ startingSpace = true
 metadata/_custom_type_script = "uid://cybmjhuctmfaw"
 
 [sub_resource type="Resource" id="Resource_7qnf5"]
-script = ExtResource("2_uwv47")
+script = ExtResource("2_jcntw")
 string = "to your robot."
 color = 1
 newline = false
@@ -44,94 +44,94 @@ endingSpace = false
 startingSpace = true
 metadata/_custom_type_script = "uid://cybmjhuctmfaw"
 
-[sub_resource type="Resource" id="Resource_y1frp"]
-resource_name = "ContactCooldown17"
-script = ExtResource("3_u5pnx")
-statFriendlyName = "Contact Cooldown"
-statName = "ContactCooldown17"
-statIcon = ExtResource("5_y1frp")
-baseStat = 0.0
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_3v416"]
-resource_name = "Damage17"
-script = ExtResource("3_u5pnx")
-statFriendlyName = "Damage"
-statName = "Damage17"
-statIcon = ExtResource("8_u1ssf")
-baseStat = 0.0
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_3u35h"]
-resource_name = "Kickback17"
-script = ExtResource("3_u5pnx")
-statFriendlyName = "Kickback"
-statName = "Kickback17"
-statIcon = ExtResource("7_650nr")
-baseStat = 0.0
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_atyn5"]
-resource_name = "Knockback17"
-script = ExtResource("3_u5pnx")
-statFriendlyName = "Knockback"
-statName = "Knockback17"
-statIcon = ExtResource("7_650nr")
-baseStat = 0.0
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_bub1r"]
-resource_name = "PassiveCooldown17"
-script = ExtResource("3_u5pnx")
-statFriendlyName = "Passive Cooldown"
-statName = "PassiveCooldown17"
-statIcon = ExtResource("5_y1frp")
-baseStat = 1.0
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_u5pnx"]
-resource_name = "PassiveEnergyDraw17"
-script = ExtResource("3_u5pnx")
+[sub_resource type="Resource" id="Resource_lmibo"]
+resource_name = "PassiveEnergyDraw0"
+script = ExtResource("3_lmibo")
 statFriendlyName = "Passive Energy Draw"
-statName = "PassiveEnergyDraw17"
-statIcon = ExtResource("4_bub1r")
+statName = "PassiveEnergyDraw0"
+statIcon = ExtResource("4_mxb05")
 baseStat = 1.0
 roundingMode = 0
 
-[sub_resource type="Resource" id="Resource_e60i5"]
-resource_name = "ScrapCost17"
-script = ExtResource("3_u5pnx")
-statFriendlyName = "Scrap Cost"
-statName = "ScrapCost17"
-statIcon = ExtResource("6_e60i5")
+[sub_resource type="Resource" id="Resource_mxb05"]
+resource_name = "PassiveCooldown0"
+script = ExtResource("3_lmibo")
+statFriendlyName = "Passive Cooldown"
+statName = "PassiveCooldown0"
+statIcon = ExtResource("5_k4vuu")
+baseStat = 1.0
+roundingMode = 0
+
+[sub_resource type="Resource" id="Resource_k4vuu"]
+resource_name = "ContactCooldown0"
+script = ExtResource("3_lmibo")
+statFriendlyName = "Contact Cooldown"
+statName = "ContactCooldown0"
+statIcon = ExtResource("5_k4vuu")
 baseStat = 0.0
+roundingMode = 0
+
+[sub_resource type="Resource" id="Resource_xahbi"]
+resource_name = "ScrapCost0"
+script = ExtResource("3_lmibo")
+statFriendlyName = "Scrap Cost"
+statName = "ScrapCost0"
+statIcon = ExtResource("6_xahbi")
+baseStat = 9.0
 roundingMode = 6
 
-[sub_resource type="Resource" id="Resource_u1ssf"]
-resource_name = "ScrapSalvageModifier17"
-script = ExtResource("3_u5pnx")
-statFriendlyName = "Scrap Salvage Modifier"
-statName = "ScrapSalvageModifier17"
-statIcon = ExtResource("6_e60i5")
-baseStat = 0.666667
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_650nr"]
-resource_name = "ScrapSellModifier17"
-script = ExtResource("3_u5pnx")
+[sub_resource type="Resource" id="Resource_0gkp8"]
+resource_name = "ScrapSellModifier0"
+script = ExtResource("3_lmibo")
 statFriendlyName = "Scrap Sell Modifier"
-statName = "ScrapSellModifier17"
-statIcon = ExtResource("6_e60i5")
+statName = "ScrapSellModifier0"
+statIcon = ExtResource("6_xahbi")
 baseStat = 0.666667
 roundingMode = 0
 
-[sub_resource type="Resource" id="Resource_i4bcq"]
-resource_name = "Weight17"
-script = ExtResource("3_u5pnx")
+[sub_resource type="Resource" id="Resource_80nr4"]
+resource_name = "ScrapSalvageModifier0"
+script = ExtResource("3_lmibo")
+statFriendlyName = "Scrap Salvage Modifier"
+statName = "ScrapSalvageModifier0"
+statIcon = ExtResource("6_xahbi")
+baseStat = 0.666667
+roundingMode = 0
+
+[sub_resource type="Resource" id="Resource_s51gn"]
+resource_name = "Weight0"
+script = ExtResource("3_lmibo")
 statFriendlyName = "Weight"
-statName = "Weight17"
-statIcon = ExtResource("7_650nr")
-baseStat = 3.0
+statName = "Weight0"
+statIcon = ExtResource("7_0gkp8")
+baseStat = 1.25
+roundingMode = 0
+
+[sub_resource type="Resource" id="Resource_5k1f1"]
+resource_name = "Damage0"
+script = ExtResource("3_lmibo")
+statFriendlyName = "Damage"
+statName = "Damage0"
+statIcon = ExtResource("8_80nr4")
+baseStat = 0.0
+roundingMode = 0
+
+[sub_resource type="Resource" id="Resource_6ru5o"]
+resource_name = "Knockback0"
+script = ExtResource("3_lmibo")
+statFriendlyName = "Knockback"
+statName = "Knockback0"
+statIcon = ExtResource("7_0gkp8")
+baseStat = 0.0
+roundingMode = 0
+
+[sub_resource type="Resource" id="Resource_5u2md"]
+resource_name = "Kickback0"
+script = ExtResource("3_lmibo")
+statFriendlyName = "Kickback"
+statName = "Kickback0"
+statIcon = ExtResource("7_0gkp8")
+baseStat = 0.0
 roundingMode = 0
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_g4w8c"]
@@ -140,7 +140,7 @@ size = Vector2(0.25, 0.25)
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sqnxc"]
 transparency = 1
 cull_mode = 2
-albedo_texture = ExtResource("3_uq2w3")
+albedo_texture = ExtResource("9_s51gn")
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_kphb4"]
 size = Vector2(0.1, 0.15)
@@ -148,7 +148,7 @@ size = Vector2(0.1, 0.15)
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_t8ht0"]
 transparency = 1
 cull_mode = 2
-albedo_texture = ExtResource("4_nl45e")
+albedo_texture = ExtResource("10_5k1f1")
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_ubwoj"]
 size = Vector2(0.25, 0.25)
@@ -156,7 +156,7 @@ size = Vector2(0.25, 0.25)
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_s0cu2"]
 transparency = 1
 cull_mode = 2
-albedo_texture = ExtResource("3_uq2w3")
+albedo_texture = ExtResource("9_s51gn")
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_k8cvo"]
 size = Vector2(0.1, 0.15)
@@ -164,17 +164,18 @@ size = Vector2(0.1, 0.15)
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ts5ym"]
 transparency = 1
 cull_mode = 2
-albedo_texture = ExtResource("4_nl45e")
+albedo_texture = ExtResource("10_5k1f1")
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_u5m20"]
-size = Vector3(1.5, 0.5, 0.5)
+[sub_resource type="BoxShape3D" id="BoxShape3D_jcntw"]
+size = Vector3(1, 0.25, 1)
 
-[node name="Piece_T-Junction" type="Node3D" node_paths=PackedStringArray("meshesHolder", "hitboxCollisionHolder", "hurtboxCollisionHolder", "placementCollisionHolder", "femaleSocketHolder") groups=["Piece"]]
-script = ExtResource("1_8tbom")
-pieceName = &"T-Junction"
-descriptionConstructor = Array[ExtResource("2_uwv47")]([SubResource("Resource_ujwhk"), SubResource("Resource_agd5d"), SubResource("Resource_7qnf5")])
+[node name="Piece_Monitor Shield" type="Node3D" node_paths=PackedStringArray("meshesHolder", "hitboxCollisionHolder", "hurtboxCollisionHolder", "placementCollisionHolder", "femaleSocketHolder", "hostSocket") groups=["Piece"]]
+visible = false
+script = ExtResource("1_v61av")
+pieceName = &"Monitor Shield"
+descriptionConstructor = Array[ExtResource("2_jcntw")]([SubResource("Resource_ujwhk"), SubResource("Resource_agd5d"), SubResource("Resource_7qnf5")])
 pieceDescription = "[color=ffffffff]Serves no purpose other than to provide [color=ffffffff]structure [color=ffffffff]to your robot."
-weightBase = 4.5
+weightBase = 3.0
 force_visibility = true
 scrapCostBase = 15
 hurtboxAlwaysEnabled = true
@@ -183,23 +184,28 @@ hitboxCollisionHolder = NodePath("HitboxShapes [Leave empty]")
 hurtboxCollisionHolder = NodePath("HurtboxShapes [Leave empty]")
 placementCollisionHolder = NodePath("PlacementShapes [Leave empty]")
 femaleSocketHolder = NodePath("FemaleSockets")
+hostSocket = NodePath("..")
+assignedToSocket = true
 engineSlots = {
+Vector2i(1, 1): null,
 Vector2i(1, 2): null,
+Vector2i(2, 1): null,
 Vector2i(2, 2): null,
 Vector2i(2, 3): null,
+Vector2i(3, 1): null,
 Vector2i(3, 2): null
 }
-statCollection = Dictionary[String, ExtResource("3_u5pnx")]({
-"ContactCooldown17": SubResource("Resource_y1frp"),
-"Damage17": SubResource("Resource_3v416"),
-"Kickback17": SubResource("Resource_3u35h"),
-"Knockback17": SubResource("Resource_atyn5"),
-"PassiveCooldown17": SubResource("Resource_bub1r"),
-"PassiveEnergyDraw17": SubResource("Resource_u5pnx"),
-"ScrapCost17": SubResource("Resource_e60i5"),
-"ScrapSalvageModifier17": SubResource("Resource_u1ssf"),
-"ScrapSellModifier17": SubResource("Resource_650nr"),
-"Weight17": SubResource("Resource_i4bcq")
+statCollection = Dictionary[String, ExtResource("3_lmibo")]({
+"ContactCooldown0": SubResource("Resource_k4vuu"),
+"Damage0": SubResource("Resource_5k1f1"),
+"Kickback0": SubResource("Resource_5u2md"),
+"Knockback0": SubResource("Resource_6ru5o"),
+"PassiveCooldown0": SubResource("Resource_mxb05"),
+"PassiveEnergyDraw0": SubResource("Resource_lmibo"),
+"ScrapCost0": SubResource("Resource_xahbi"),
+"ScrapSalvageModifier0": SubResource("Resource_80nr4"),
+"ScrapSellModifier0": SubResource("Resource_0gkp8"),
+"Weight0": SubResource("Resource_s51gn")
 })
 filepathForThisEntity = "res://scenes/prefabs/objects/pieces/piece_bumper_T.tscn"
 
@@ -253,39 +259,27 @@ metadata/_edit_lock_ = true
 editor_description = "Put all female sockets in this box. Make sure they align with the grid!"
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.01328e-05, -0.0045355, 0.000500202)
 
-[node name="Socket" parent="FemaleSockets" node_paths=PackedStringArray("hostPiece") instance=ExtResource("5_o6g7c")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
-hostPiece = NodePath("../..")
-
-[node name="Socket2" parent="FemaleSockets" node_paths=PackedStringArray("hostPiece") instance=ExtResource("5_o6g7c")]
-transform = Transform3D(-4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0, 1, 0.75, 0.25, 0)
-hostPiece = NodePath("../..")
-
-[node name="Socket3" parent="FemaleSockets" node_paths=PackedStringArray("hostPiece") instance=ExtResource("5_o6g7c")]
-transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, -0.75, 0.25, 0)
-hostPiece = NodePath("../..")
-
 [node name="HitboxShapes [Leave empty]" type="Area3D" parent="."]
 editor_description = "Leave this node empty. "
 collision_layer = 16
 collision_mask = 513
-script = ExtResource("6_ssuhc")
+script = ExtResource("11_6ru5o")
 
 [node name="HurtboxShapes [Leave empty]" type="Area3D" parent="." groups=["Piece"]]
 editor_description = "Leave this node empty. "
 collision_layer = 8
 collision_mask = 0
-script = ExtResource("7_xtkwn")
+script = ExtResource("12_5u2md")
 
 [node name="PlacementShapes [Leave empty]" type="Node3D" parent="."]
 editor_description = "Leave this node empty. "
-script = ExtResource("8_ysdpo")
+script = ExtResource("13_1047n")
 
 [node name="Meshes" type="Node3D" parent="."]
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Meshes"]
-transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0.25, 0)
-mesh = ExtResource("15_ysdpo")
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="Meshes"]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0.125, 0)
+mesh = ExtResource("14_v61av")
 skeleton = NodePath("../../PieceCollisionBox")
 
 [node name="MaleSocket" type="Node3D" parent="Meshes"]
@@ -331,9 +325,13 @@ mesh = SubResource("PlaneMesh_k8cvo")
 skeleton = NodePath("../../../..")
 surface_material_override/0 = SubResource("StandardMaterial3D_ts5ym")
 
-[node name="PieceCollisionBox" parent="." instance=ExtResource("9_u5pnx")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
-shape = SubResource("BoxShape3D_u5m20")
+[node name="PieceCollisionBox" type="CollisionShape3D" parent="." instance=ExtResource("14_8avui")]
+editor_description = "A handy dandy box for all your collision needs.
+Edit 'thisColliderType' to have it be copied in as a Hitbox, Hurtbox, Placement check, or a mixture of them."
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.125, 0)
+shape = SubResource("BoxShape3D_jcntw")
+disabled = true
 debug_color = Color(0, 0.6, 0.701961, 0.419608)
+script = ExtResource("16_jcntw")
 
 [connection signal="body_shape_entered" from="HitboxShapes [Leave empty]" to="." method="_on_hitbox_body_shape_entered"]
