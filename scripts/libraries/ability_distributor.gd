@@ -5,6 +5,9 @@ extends Node
 
 var activeAbilities : Dictionary[StringName,AbilityManager] = {};
 var passiveAbilities : Dictionary[StringName,AbilityManager] = {};
+var allAbilities :
+	get:
+		return get_all_ability_managers();
 
 func distribute_active_ability_to_piece(piece:Piece, abilityName:StringName):
 	if activeAbilities.has(abilityName):
@@ -152,3 +155,11 @@ func get_ability_manager_with_id(id:int) -> AbilityManager:
 		if ability.abilityID == id:
 			return ability;
 	return null;
+
+func tick_all_cooldowns(delta):
+	if not GameState.is_paused():
+		for manager in allAbilities:
+			manager.tick_all_cooldowns(delta);
+
+func _process(delta):
+	tick_all_cooldowns(delta);

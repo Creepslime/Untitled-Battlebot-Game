@@ -1,17 +1,26 @@
-[gd_scene load_steps=4 format=3 uid="uid://clsvb0b2mydc7"]
+[gd_scene load_steps=5 format=3 uid="uid://clsvb0b2mydc7"]
 
 [ext_resource type="Script" uid="uid://bujcs1qe34eqy" path="res://scripts/objects/weapons/bullet.gd" id="1_lph27"]
 [ext_resource type="ArrayMesh" uid="uid://bxrjs85uq3lv1" path="res://graphics/models/extracted/bullet1.res" id="2_lvy2m"]
 
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_lph27"]
+
 [sub_resource type="SphereShape3D" id="SphereShape3D_8grda"]
 radius = 0.8
 
-[node name="Bullet" type="Node3D" node_paths=PackedStringArray("lifeTimer", "raycast", "collision", "hitbox") groups=["Metal", "Projectile"]]
+[node name="Bullet" type="Node3D" node_paths=PackedStringArray("lifeTimer", "raycast", "shapecast", "collision", "hitbox") groups=["Metal", "Projectile"]]
 script = ExtResource("1_lph27")
 lifeTimer = NodePath("LifeTimer")
 raycast = NodePath("RayCast3D")
+shapecast = NodePath("ShapeCast3D")
 collision = NodePath("Hitbox/CollisionShape3D")
 hitbox = NodePath("Hitbox")
+
+[node name="ShapeCast3D" type="ShapeCast3D" parent="."]
+shape = SubResource("CapsuleShape3D_lph27")
+target_position = Vector3(0, 0, 1)
+max_results = 1
+collision_mask = 1537
 
 [node name="Hitbox" type="Area3D" parent="."]
 collision_layer = 512
@@ -30,6 +39,7 @@ mesh = ExtResource("2_lvy2m")
 
 [node name="RayCast3D" type="RayCast3D" parent="."]
 target_position = Vector3(0, 0, 0)
+collision_mask = 1537
 debug_shape_custom_color = Color(0, 0.745098, 0, 1)
 debug_shape_thickness = 5
 

@@ -45,3 +45,50 @@ func get_stat_holder_by_id(id):
 	if all_stat_holders.keys().has(id):
 		return all_stat_holders[id];
 	return null;
+
+### Vanity stuff.
+
+@onready var statIconDefault = preload("res://graphics/images/HUD/statIcons/defaultIconStriped.png");
+@onready var statIconCooldown = preload("res://graphics/images/HUD/statIcons/cooldownIconStriped.png");
+@onready var statIconMagazine = preload("res://graphics/images/HUD/statIcons/magazineIconStriped.png");
+@onready var statIconEnergy = preload("res://graphics/images/HUD/statIcons/energyIconStriped.png");
+@onready var statIconDamage = preload("res://graphics/images/HUD/statIcons/damageIconStriped.png");
+@onready var statIconWeight = preload("res://graphics/images/HUD/statIcons/weightIconStriped.png");
+@onready var statIconScrap = preload("res://graphics/images/HUD/statIcons/scrapIconStriped.png");
+@onready var statIconMove = preload("res://graphics/images/HUD/statIcons/moveIconStriped.png");
+@onready var statIconPiece = preload("res://graphics/images/HUD/statIcons/pieceIconStriped.png");
+@onready var statIconPart = preload("res://graphics/images/HUD/statIcons/partIconStriped.png");
+@onready var statIconPiecePart = preload("res://graphics/images/HUD/statIcons/piecePartIconStriped.png");
+
+@onready var statIconColorDict = {
+	"Default" : {"icon" = statIconDefault, "color" = "grey"},
+	"Cooldown" : {"icon" = statIconCooldown, "color" = "lightgreen"},
+	"Magazine" : {"icon" = statIconMagazine, "color" = "lightblue"},
+	"Energy" : {"icon" = statIconEnergy, "color" = "lightblue"},
+	"Damage" : {"icon" = statIconDamage, "color" = "lightred"},
+	"Weight" : {"icon" = statIconWeight, "color" = "grey"},
+	"Move" : {"icon" = statIconMove, "color" = "lightgreen"},
+	"Scrap" : {"icon" = statIconScrap, "color" = "scrap"},
+	"Piece" : {"icon" = statIconPiece, "color" = "orange"},
+	"Part" : {"icon" = statIconPart, "color" = "lightgreen"},
+	"PiecePart" : {"icon" = statIconPiecePart, "color" = "scrap"},
+}
+
+func get_stat_icon(statIconName : String = "Default") -> Texture2D:
+	if statIconColorDict.has(statIconName.capitalize()):
+		return statIconColorDict[statIconName.capitalize()].icon;
+	else:
+		return statIconColorDict["Default"].icon;
+func get_stat_color(statIconName : String = "Default") -> Color:
+	var color
+	if statIconColorDict.has(statIconName.capitalize()):
+		color = statIconColorDict[statIconName.capitalize()].color;
+	else:
+		color = statIconColorDict["Default"].color;
+	return TextFunc.get_color(color);
+func get_stat_color_from_image(statIcon : Texture2D):
+	for statIconName in statIconColorDict:
+		var statIconData = statIconColorDict[statIconName];
+		if statIconData.icon == statIcon:
+			return get_stat_color(statIconName);
+	return get_stat_color();

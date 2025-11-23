@@ -21,7 +21,7 @@ enum axes {
 ## @hidden
 func stat_registry():
 	super();
-	register_stat("RotationSpeed", rotationSpeed, statIconCooldown);
+	register_stat("RotationSpeed", rotationSpeed, StatHolderManager.statIconCooldown);
 
 ## Extended from [Piece].[br]
 ## This is where the rotation happens. Wowza.

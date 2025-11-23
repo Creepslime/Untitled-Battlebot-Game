@@ -34,7 +34,6 @@ var playerBody : RigidBody3D;
 var viewport : Viewport;
 @export var marker : MeshInstance3D; ## @experimental: Used for showing where the mouse projection is landing while experimenting.
 @export var ray : RayCast3D; ## @deprecated: Used to have a ray attached to the camera at all times. Don't now. May again, who knows.
-@export var floor : StaticBody3D;
 @export var positionParent : Node;
 
 @export var targetNode : Node3D;

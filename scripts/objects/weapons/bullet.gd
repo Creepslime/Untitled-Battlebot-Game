@@ -23,6 +23,8 @@ var lifetime := 1.0;
 var lifeDeltaTimer := 1.0;
 ## A [RayCast3D] used to scan the distance traveled in the previous frame, to scan for any hits that may have been missed by high speeds.
 @export var raycast : RayCast3D;
+## A [ShapeCast3D] used to scan the distance traveled in the previous frame, to scan for any hits that may have been missed by high speeds.
+@export var shapecast : ShapeCast3D;
 ## The [CollisionShape3D] that [member hitbox] uses to determine whether it's been hit.
 @export var collision : CollisionShape3D;
 ## Set when fired. Stores the original [member global_position] of this Bullet at the time of firing.
@@ -47,10 +49,16 @@ var damageData : DamageData;
 @export var gravity := -0.0987;
 ## How much y position is going to be affected each frame.
 var verticalVelocity := 0.0;
+## Updated every frame; The difference in positions from last frame to this one.
+var positionDif := Vector3.ZERO;
 ## @deprecated: How many frames this bullet has been alive. Not in use for anything.
 var framesAlive := 0;
 ## If this is true, next time [method die] is called, then this [Bullet] will call [method queue_free] and delete itself.
 var leaking := false;
+## How many times this bullet is allowed to deflect itself after hitting a wall before it goes kaput.
+@export var bounces := 0; 
+var bouncesLeft := bounces;
+var collisionDisableFrames := 0;
 
 func _ready():
 	die();
@@ -78,6 +86,12 @@ func available(printWhy := false):
 func _physics_process(delta):
 	super(delta);
 	if not is_frozen():
+		collision.disabled = collisionDisableFrames > 0;
+		raycast.enabled = collisionDisableFrames == 0;
+		shapecast.enabled = false;
+		if collisionDisableFrames > 0:
+			collisionDisableFrames -= 1;
+		
 		if fired && visible:
 			positionAppend += (dir * speed * delta);
 			positionAppend += Vector3(0,1,0) * verticalVelocity;
@@ -86,14 +100,11 @@ func _physics_process(delta):
 			var oldPos = global_position;
 			position = initPosition + positionAppend;
 			var newPos = global_position;
-			var positionDif = oldPos - newPos;
-			var difLen = positionDif.length();
-			raycast.position.z = difLen;
-			raycast.target_position.z = -difLen;
-			if raycast.is_colliding():
-				var col = raycast.get_collider();
-				#print("Bullet Raycast hit something this time")
-				shot_something(col);
+			positionDif = oldPos - newPos;
+			
+			var colPassed = check_passed_through();
+			if colPassed is CollisionObject3D:
+				shot_something(colPassed);
 	if not visible:
 		if leaking:
 			die();
@@ -131,7 +142,7 @@ func fire(_attacker : Combatant, _launcher : Node ,_initPosition : Vector3, _dir
 	collision.set_deferred("disabled", false);
 	raycast.set("enabled", true);
 	rotateTowardVector3(dir);
-	
+	bouncesLeft = bounces;
 	show();
 	ParticleFX.play("SmokePuffSingle", GameState.get_game_board(), Vector3.ZERO, 0.5, self);
 	ParticleFX.play(tracerFXString, GameState.get_game_board(), Vector3.ZERO, sizeMult, self,);
@@ -161,7 +172,7 @@ func fire_from_robot(_attacker : Robot, _launcher : Piece ,_initPosition : Vecto
 	collision.set_deferred("disabled", false);
 	raycast.set("enabled", true);
 	rotateTowardVector3(dir);
-	
+	bouncesLeft = bounces;
 	show();
 	unfreeze();
 	ParticleFX.play("SmokePuffSingle", GameState.get_game_board(), Vector3.ZERO, 0.5, self);
@@ -185,9 +196,48 @@ func flip_direction():
 	dir *= -1;
 	rotateTowardVector3(dir);
 
+## Gets the normal of whatever collider is ahead of this bullet.
+func get_normal_ahead():
+	var difLen = positionDif.length();
+	shapecast.enabled = true
+	shapecast.shape = collision.shape;
+	shapecast.scale = hitbox.scale;
+	shapecast.position.z = difLen; 
+	shapecast.target_position.z = -difLen * 2;
+	shapecast.force_shapecast_update();
+	if shapecast.is_colliding():
+		var allNorm := Vector3.ZERO
+		for id in shapecast.get_collision_count():
+			var norm = shapecast.get_collision_normal(id);
+			allNorm += norm
+		return (allNorm / shapecast.get_collision_count()).normalized();
+	return false;
+
+func check_passed_through():
+	var difLen = positionDif.length();
+	raycast.position.z = difLen;
+	raycast.target_position.z = -difLen;
+	if raycast.is_colliding():
+		var col = raycast.get_collider();
+		#print("Bullet Raycast hit something this time")
+		return col;
+	return false;
+
+func bounceBullet():
+	if bouncesLeft <= 0:
+		die();
+		return;
+	add_collision_disable_frames(2);
+	var normal = get_normal_ahead();
+	if normal is Vector3:
+		change_direction(dir.bounce(normal));
+	bouncesLeft -= 1;
+	print("BOUNCES LEFT: " ,bouncesLeft)
+	print("BOUNCE NORMAL: " ,normal)
+
 ## Called when this [Bullet] hits something. Kills it off and starts it leaking.
 func die():
-	if visible:
+	if visible: 
 		ParticleFX.play("SmokePuffSingle", GameState.get_game_board(), position, 0.5);
 	#position = Vector3.ZERO;
 	fired = false;
@@ -236,13 +286,15 @@ func shot_something(inbody):
 	var parent = inbody.get_parent();
 	if parent == attacker:
 		return;
+	if parent == launcher:
+		return;
 	if parent is Combatant:
 		#print(inbody.get_parent())
 		parent.take_damage(damage);
 		parent.call_deferred("take_knockback",(dir + Vector3(0,0.01,0)) * knockbackMult);
 		#print("should be taking knockback....")
 		validTarget = true;
-	if inbody is RobotBody:
+	elif inbody is RobotBody:
 		parent = inbody.get_robot()
 		if !is_instance_valid(damageData):
 			#print_rich("[color=purple]Bullet needs a new DamageData")
@@ -253,6 +305,8 @@ func shot_something(inbody):
 		#print(inbody.get_parent())
 		#print_rich("[color=purple]Bullet hit robot. Yippie!")
 		parent.take_damage_from_damageData(damageData);
+		validTarget = true;
+	elif inbody is StaticBody3D:
 		validTarget = true;
 		#parent.call_deferred("take_knockback",(dir + Vector3(0,0.01,0)) * knockbackMult);
 		#print("should be taking knockback....")
@@ -272,7 +326,7 @@ func shot_something(inbody):
 	
 	#hitSomething = true;
 	#print(validTarget)
-	die();
+	bounceBullet();
 
 ## Sets [member leaking] to true.
 func leak():
@@ -291,10 +345,15 @@ func get_launcher():
 ## Sets the attacker to a new attacker. Works with both Combatants and Robots while we transition.
 func set_attacker(atkr):
 	attacker = atkr;
+	raycast.clear_exceptions();
+	
 	if attacker is Combatant:
-		raycast.clear_exceptions();
 		raycast.add_exception(get_attacker().body);
 	if attacker is Robot:
-		raycast.clear_exceptions();
 		raycast.add_exception(get_attacker().body);
 		raycast.add_exception(get_launcher().hurtboxCollisionHolder);
+	
+	raycast.add_exception(hitbox);
+
+func add_collision_disable_frames(amt:=1):
+	collisionDisableFrames += amt;

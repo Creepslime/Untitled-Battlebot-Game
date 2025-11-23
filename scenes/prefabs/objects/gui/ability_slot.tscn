@@ -92,6 +92,7 @@ offset_bottom = 18.0
 texture = ExtResource("5_mm2y6")
 
 [node name="PieceNameBG" type="NinePatchRect" parent="."]
+layout_mode = 0
 offset_left = 45.0
 offset_top = 50.0
 offset_right = 119.0
@@ -105,6 +106,7 @@ axis_stretch_horizontal = 1
 axis_stretch_vertical = 1
 
 [node name="pieceName" type="Label" parent="PieceNameBG"]
+layout_mode = 0
 offset_left = 4.0
 offset_top = 5.0
 offset_right = 70.0
@@ -163,7 +165,6 @@ width = 46.0
 height = 65.0
 paddingStart = 13.0
 paddingEnd = -2.0
-currentAmt = 61.05
 maskTexture = ExtResource("11_g6gak")
 fullTexture = ExtResource("12_rf4fe")
 emptyTexture = ExtResource("13_x17s8")

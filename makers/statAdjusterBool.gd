@@ -1,4 +1,4 @@
-@icon("res://graphics/images/class_icons/statEditNumber.png")
+@icon("res://graphics/images/class_icons/statEditBoolean.png")
 extends CheckBox
 class_name StatAdjusterBoolean
 ## Interfaces with [StatAdjusterDataPanel]. The variable name being changed is placed within [member suffix].

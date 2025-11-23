@@ -1,17 +1,11 @@
-[gd_scene load_steps=37 format=3 uid="uid://t7n0rf04odxt"]
+[gd_scene load_steps=19 format=3 uid="uid://t7n0rf04odxt"]
 
 [ext_resource type="PackedScene" uid="uid://dosh155duu70e" path="res://scenes/prefabs/objects/pieces/buildingBlocks/socket.tscn" id="2_hcxml"]
 [ext_resource type="Script" uid="uid://bo2fp3wcxcmo0" path="res://scripts/objects/pieces/piece_rocket.gd" id="2_tvl21"]
 [ext_resource type="Script" uid="uid://cybmjhuctmfaw" path="res://scripts/libraries/richTextConstructor.gd" id="3_lt6vi"]
 [ext_resource type="Texture2D" uid="uid://6dla8kdo4d2f" path="res://graphics/images/HUD/parts/Icons/piston.png" id="4_sdho2"]
 [ext_resource type="Script" uid="uid://crpa3dbgxwyeg" path="res://scripts/objects/weapons/ability_manager.gd" id="4_xavqm"]
-[ext_resource type="Script" uid="uid://clcmggkeaqnyx" path="res://scripts/objects/weapons/stat_tracker.gd" id="5_4ienm"]
 [ext_resource type="ArrayMesh" uid="uid://b51ot51vonroh" path="res://graphics/models/obj/botparts/Rocket.obj" id="5_xavqm"]
-[ext_resource type="Texture2D" uid="uid://bdgkd60c8qtud" path="res://graphics/images/HUD/statIcons/energyIconStriped.png" id="6_ppytw"]
-[ext_resource type="Texture2D" uid="uid://uflissj08i1o" path="res://graphics/images/HUD/statIcons/cooldownIconStriped.png" id="7_85hjo"]
-[ext_resource type="Texture2D" uid="uid://s6s6ugfdhqhy" path="res://graphics/images/HUD/statIcons/magazineIconStriped.png" id="8_8v7vh"]
-[ext_resource type="Texture2D" uid="uid://b775d1fn78gcv" path="res://graphics/images/HUD/statIcons/weightIconStriped.png" id="9_u236t"]
-[ext_resource type="Texture2D" uid="uid://cnfat2kqvmdcd" path="res://graphics/images/HUD/statIcons/damageIconStriped.png" id="10_3momp"]
 [ext_resource type="Script" uid="uid://dikbphvd0xff7" path="res://scripts/objects/pieces/buildingBlocks/hitbox_shapes.gd" id="11_2d2qc"]
 [ext_resource type="Script" uid="uid://bkwxna02gqgqu" path="res://scripts/objects/pieces/buildingBlocks/hurtbox_shapes.gd" id="12_ni8i8"]
 [ext_resource type="Script" uid="uid://rbm6p8ggs13f" path="res://scripts/objects/pieces/buildingBlocks/placement_shapes.gd" id="13_emqnl"]
@@ -35,114 +29,6 @@ hookName = ""
 initialized = true
 disabled = false
 functionWhenUsed = Callable()
-
-[sub_resource type="Resource" id="Resource_3momp"]
-resource_name = "ActiveCooldown12"
-script = ExtResource("5_4ienm")
-statFriendlyName = "Active Cooldown"
-statName = "ActiveCooldown12"
-statIcon = ExtResource("7_85hjo")
-baseStat = 1.0
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_u236t"]
-resource_name = "ActiveEnergyDraw12"
-script = ExtResource("5_4ienm")
-statFriendlyName = "Active Energy Draw"
-statName = "ActiveEnergyDraw12"
-statIcon = ExtResource("6_ppytw")
-baseStat = 1.0
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_8v7vh"]
-resource_name = "ContactCooldown12"
-script = ExtResource("5_4ienm")
-statFriendlyName = "Contact Cooldown"
-statName = "ContactCooldown12"
-statIcon = ExtResource("7_85hjo")
-baseStat = 0.0
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_bayum"]
-resource_name = "Damage12"
-script = ExtResource("5_4ienm")
-statFriendlyName = "Damage"
-statName = "Damage12"
-statIcon = ExtResource("10_3momp")
-baseStat = 0.0
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_gtuyr"]
-resource_name = "Kickback12"
-script = ExtResource("5_4ienm")
-statFriendlyName = "Kickback"
-statName = "Kickback12"
-statIcon = ExtResource("9_u236t")
-baseStat = 80.0
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_3aovy"]
-resource_name = "Knockback12"
-script = ExtResource("5_4ienm")
-statFriendlyName = "Knockback"
-statName = "Knockback12"
-statIcon = ExtResource("9_u236t")
-baseStat = 0.0
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_85hjo"]
-resource_name = "PassiveCooldown12"
-script = ExtResource("5_4ienm")
-statFriendlyName = "Passive Cooldown"
-statName = "PassiveCooldown12"
-statIcon = ExtResource("7_85hjo")
-baseStat = 1.0
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_ppytw"]
-resource_name = "PassiveEnergyDraw12"
-script = ExtResource("5_4ienm")
-statFriendlyName = "Passive Energy Draw"
-statName = "PassiveEnergyDraw12"
-statIcon = ExtResource("6_ppytw")
-baseStat = 1.0
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_2d2qc"]
-resource_name = "ScrapCost12"
-script = ExtResource("5_4ienm")
-statFriendlyName = "Scrap Cost"
-statName = "ScrapCost12"
-statIcon = ExtResource("8_8v7vh")
-baseStat = 0.0
-roundingMode = 6
-
-[sub_resource type="Resource" id="Resource_emqnl"]
-resource_name = "ScrapSalvageModifier12"
-script = ExtResource("5_4ienm")
-statFriendlyName = "Scrap Salvage Modifier"
-statName = "ScrapSalvageModifier12"
-statIcon = ExtResource("8_8v7vh")
-baseStat = 0.666667
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_ni8i8"]
-resource_name = "ScrapSellModifier12"
-script = ExtResource("5_4ienm")
-statFriendlyName = "Scrap Sell Modifier"
-statName = "ScrapSellModifier12"
-statIcon = ExtResource("8_8v7vh")
-baseStat = 0.666667
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_ibkc0"]
-resource_name = "Weight12"
-script = ExtResource("5_4ienm")
-statFriendlyName = "Weight"
-statName = "Weight12"
-statIcon = ExtResource("9_u236t")
-baseStat = 8.0
-roundingMode = 0
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_7egt2"]
 height = 1.5
@@ -189,20 +75,6 @@ Vector2i(2, 2): null,
 Vector2i(3, 2): null,
 Vector2i(4, 2): null
 }
-statCollection = Dictionary[String, ExtResource("5_4ienm")]({
-"ActiveCooldown12": SubResource("Resource_3momp"),
-"ActiveEnergyDraw12": SubResource("Resource_u236t"),
-"ContactCooldown12": SubResource("Resource_8v7vh"),
-"Damage12": SubResource("Resource_bayum"),
-"Kickback12": SubResource("Resource_gtuyr"),
-"Knockback12": SubResource("Resource_3aovy"),
-"PassiveCooldown12": SubResource("Resource_85hjo"),
-"PassiveEnergyDraw12": SubResource("Resource_ppytw"),
-"ScrapCost12": SubResource("Resource_2d2qc"),
-"ScrapSalvageModifier12": SubResource("Resource_emqnl"),
-"ScrapSellModifier12": SubResource("Resource_ni8i8"),
-"Weight12": SubResource("Resource_ibkc0")
-})
 
 [node name="FemaleSockets" type="Node3D" parent="."]
 editor_description = "Put all female sockets in this box. Make sure they align with the grid!"

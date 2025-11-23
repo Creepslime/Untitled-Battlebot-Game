@@ -1,120 +1,15 @@
-[gd_scene load_steps=33 format=3 uid="uid://mccgt6wqvufk"]
+[gd_scene load_steps=16 format=3 uid="uid://mccgt6wqvufk"]
 
 [ext_resource type="Script" uid="uid://bxkvldgxyfk6p" path="res://scripts/objects/pieces/piece_swivel.gd" id="1_3tbmm"]
 [ext_resource type="ArrayMesh" uid="uid://cfvtjsean8sey" path="res://graphics/models/obj/botparts/SwivelBottom.obj" id="2_f1afw"]
-[ext_resource type="Script" uid="uid://clcmggkeaqnyx" path="res://scripts/objects/weapons/stat_tracker.gd" id="2_p5af1"]
-[ext_resource type="Texture2D" uid="uid://bdgkd60c8qtud" path="res://graphics/images/HUD/statIcons/energyIconStriped.png" id="3_6p25t"]
 [ext_resource type="ArrayMesh" uid="uid://dddqhdde83f7e" path="res://graphics/models/obj/botparts/SwivelTop.obj" id="3_yjtb5"]
-[ext_resource type="Texture2D" uid="uid://uflissj08i1o" path="res://graphics/images/HUD/statIcons/cooldownIconStriped.png" id="4_0x5a8"]
 [ext_resource type="PackedScene" uid="uid://dosh155duu70e" path="res://scenes/prefabs/objects/pieces/buildingBlocks/socket.tscn" id="4_1a8uf"]
 [ext_resource type="Script" uid="uid://rbm6p8ggs13f" path="res://scripts/objects/pieces/buildingBlocks/placement_shapes.gd" id="4_o2kdu"]
-[ext_resource type="Texture2D" uid="uid://s6s6ugfdhqhy" path="res://graphics/images/HUD/statIcons/magazineIconStriped.png" id="5_bk6my"]
 [ext_resource type="Script" uid="uid://dikbphvd0xff7" path="res://scripts/objects/pieces/buildingBlocks/hitbox_shapes.gd" id="5_bso77"]
 [ext_resource type="Script" uid="uid://bkwxna02gqgqu" path="res://scripts/objects/pieces/buildingBlocks/hurtbox_shapes.gd" id="5_qbujc"]
-[ext_resource type="Texture2D" uid="uid://b775d1fn78gcv" path="res://graphics/images/HUD/statIcons/weightIconStriped.png" id="6_bbfv5"]
 [ext_resource type="PackedScene" uid="uid://dckvl43g2kjvx" path="res://scenes/prefabs/objects/pieces/buildingBlocks/piece_collision_box.tscn" id="6_p5af1"]
-[ext_resource type="Texture2D" uid="uid://cnfat2kqvmdcd" path="res://graphics/images/HUD/statIcons/damageIconStriped.png" id="7_gxtyg"]
 [ext_resource type="Texture2D" uid="uid://c3ddwskowvvoi" path="res://graphics/images/models/sockets/socketM.png" id="8_0x5a8"]
 [ext_resource type="Texture2D" uid="uid://cobiyocwh7d3p" path="res://graphics/images/models/sockets/prong.png" id="9_bk6my"]
-
-[sub_resource type="Resource" id="Resource_0x5a8"]
-resource_name = "ContactCooldown23"
-script = ExtResource("2_p5af1")
-statFriendlyName = "Contact Cooldown"
-statName = "ContactCooldown23"
-statIcon = ExtResource("4_0x5a8")
-baseStat = 0.0
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_bhmkc"]
-resource_name = "Damage23"
-script = ExtResource("2_p5af1")
-statFriendlyName = "Damage"
-statName = "Damage23"
-statIcon = ExtResource("7_gxtyg")
-baseStat = 0.0
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_hr632"]
-resource_name = "Kickback23"
-script = ExtResource("2_p5af1")
-statFriendlyName = "Kickback"
-statName = "Kickback23"
-statIcon = ExtResource("6_bbfv5")
-baseStat = 0.0
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_4bq6p"]
-resource_name = "Knockback23"
-script = ExtResource("2_p5af1")
-statFriendlyName = "Knockback"
-statName = "Knockback23"
-statIcon = ExtResource("6_bbfv5")
-baseStat = 0.0
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_6p25t"]
-resource_name = "PassiveCooldown23"
-script = ExtResource("2_p5af1")
-statFriendlyName = "Passive Cooldown"
-statName = "PassiveCooldown23"
-statIcon = ExtResource("4_0x5a8")
-baseStat = 1.0
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_p5af1"]
-resource_name = "PassiveEnergyDraw23"
-script = ExtResource("2_p5af1")
-statFriendlyName = "Passive Energy Draw"
-statName = "PassiveEnergyDraw23"
-statIcon = ExtResource("3_6p25t")
-baseStat = 1.0
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_kr8n2"]
-resource_name = "RotationSpeed23"
-script = ExtResource("2_p5af1")
-statFriendlyName = "Rotation Speed"
-statName = "RotationSpeed23"
-statIcon = ExtResource("4_0x5a8")
-baseStat = 0.9
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_bk6my"]
-resource_name = "ScrapCost23"
-script = ExtResource("2_p5af1")
-statFriendlyName = "Scrap Cost"
-statName = "ScrapCost23"
-statIcon = ExtResource("5_bk6my")
-baseStat = 15.0
-roundingMode = 6
-
-[sub_resource type="Resource" id="Resource_gxtyg"]
-resource_name = "ScrapSalvageModifier23"
-script = ExtResource("2_p5af1")
-statFriendlyName = "Scrap Salvage Modifier"
-statName = "ScrapSalvageModifier23"
-statIcon = ExtResource("5_bk6my")
-baseStat = 0.666667
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_bbfv5"]
-resource_name = "ScrapSellModifier23"
-script = ExtResource("2_p5af1")
-statFriendlyName = "Scrap Sell Modifier"
-statName = "ScrapSellModifier23"
-statIcon = ExtResource("5_bk6my")
-baseStat = 0.666667
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_dfa6w"]
-resource_name = "Weight23"
-script = ExtResource("2_p5af1")
-statFriendlyName = "Weight"
-statName = "Weight23"
-statIcon = ExtResource("6_bbfv5")
-baseStat = 2.5
-roundingMode = 0
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_l000f"]
 size = Vector3(0.5, 0.5, 0.5)
@@ -135,15 +30,14 @@ transparency = 1
 cull_mode = 2
 albedo_texture = ExtResource("9_bk6my")
 
-[node name="Piece_Swivel" type="Node3D" node_paths=PackedStringArray("swivelNode", "movingSockets", "meshesHolder", "hitboxCollisionHolder", "hurtboxCollisionHolder", "placementCollisionHolder", "femaleSocketHolder") groups=["Piece"]]
+[node name="Piece_Swivel" type="Node3D" node_paths=PackedStringArray("swivelNode", "meshesHolder", "hitboxCollisionHolder", "hurtboxCollisionHolder", "placementCollisionHolder", "femaleSocketHolder") groups=["Piece"]]
 visible = false
 script = ExtResource("1_3tbmm")
 swivelNode = NodePath("SwivelTop")
-movingSockets = [NodePath("SwivelTop/Socket")]
 pieceName = &"Swivel"
 weightBase = 1.25
-scrapCostBase = 13
 force_visibility = true
+scrapCostBase = 13
 meshesHolder = NodePath("Meshes")
 hitboxCollisionHolder = NodePath("HitboxShapes [Leave empty]")
 hurtboxCollisionHolder = NodePath("HurtboxShapes [Leave empty]")
@@ -154,19 +48,6 @@ Vector2i(2, 1): null,
 Vector2i(2, 2): null,
 Vector2i(2, 3): null
 }
-statCollection = Dictionary[String, ExtResource("2_p5af1")]({
-"ContactCooldown23": SubResource("Resource_0x5a8"),
-"Damage23": SubResource("Resource_bhmkc"),
-"Kickback23": SubResource("Resource_hr632"),
-"Knockback23": SubResource("Resource_4bq6p"),
-"PassiveCooldown23": SubResource("Resource_6p25t"),
-"PassiveEnergyDraw23": SubResource("Resource_p5af1"),
-"RotationSpeed23": SubResource("Resource_kr8n2"),
-"ScrapCost23": SubResource("Resource_bk6my"),
-"ScrapSalvageModifier23": SubResource("Resource_gxtyg"),
-"ScrapSellModifier23": SubResource("Resource_bbfv5"),
-"Weight23": SubResource("Resource_dfa6w")
-})
 filepathForThisEntity = "res://scenes/prefabs/objects/pieces/piece_swivel.tscn"
 
 [node name="FemaleSockets" type="Node3D" parent="."]

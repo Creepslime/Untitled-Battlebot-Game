@@ -226,7 +226,12 @@ func add_freeze_time(id : int, amt := 1.0):
 	var data = get_ability_data(id);
 	if is_instance_valid(data):
 		data.freezeTime += amt;
-## Ticks all cooldowns variables.[br]If [member freezeFrames] > 0, removes 1 from that this frame, then ends.[br]If [member freezeTime] > 0, removes [param delta] from that this frame, then ends.[br]If [member cooldownTimer] > 0, removes [param delta] from that this frame. Additionally adds [member freezeTime] if < 0, as compensation for delta rollover.
+
+func tick_all_cooldowns(delta):
+	for data in statHolderUserData.values():
+		if data.is_running_cooldowns():
+			tick_cooldown(data.statHolderID, delta);
+## Ticks cooldowns variables for the given ID.[br]If [member freezeFrames] > 0, removes 1 from that this frame, then ends.[br]If [member freezeTime] > 0, removes [param delta] from that this frame, then ends.[br]If [member cooldownTimer] > 0, removes [param delta] from that this frame. Additionally adds [member freezeTime] if < 0, as compensation for delta rollover.
 func tick_cooldown(id : int, delta):
 	var data = get_ability_data(id);
 	if is_instance_valid(data):

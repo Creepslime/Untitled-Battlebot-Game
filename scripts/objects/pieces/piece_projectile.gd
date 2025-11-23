@@ -74,13 +74,13 @@ func assign_references():
 
 func stat_registry():
 	super();
-	register_stat("MagazineSize", magazineMaxBase, statIconMagazine, null, null, StatTracker.roundingModes.Floori);
-	register_stat("MagazineRefreshRate", magazineRefreshRate, statIconCooldown);
-	register_stat("ProjectileSpeed", launchSpeed, statIconCooldown);
-	register_stat("ProjectileLifetime", bulletLifetime, statIconCooldown);
-	register_stat("ProjectileGravity", bulletGravity, statIconWeight);
-	register_stat("ProjectileFireRate", fireRate, statIconCooldown);
-	register_stat("Inaccuracy", bulletLifetime, statIconWeight);
+	register_stat("MagazineSize", magazineMaxBase, StatHolderManager.statIconMagazine, null, null, StatTracker.roundingModes.Floori);
+	register_stat("MagazineRefreshRate", magazineRefreshRate, StatHolderManager.statIconCooldown);
+	register_stat("ProjectileSpeed", launchSpeed, StatHolderManager.statIconCooldown);
+	register_stat("ProjectileLifetime", bulletLifetime, StatHolderManager.statIconCooldown);
+	register_stat("ProjectileGravity", bulletGravity, StatHolderManager.statIconWeight);
+	register_stat("ProjectileFireRate", fireRate, StatHolderManager.statIconCooldown);
+	register_stat("Inaccuracy", bulletLifetime, StatHolderManager.statIconWeight);
 
 func get_magazine_max() -> int:
 	return get_stat("MagazineSize");

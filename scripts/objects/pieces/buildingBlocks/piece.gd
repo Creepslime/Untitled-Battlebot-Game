@@ -41,27 +41,27 @@ func _process(delta):
 
 func stat_registry():
 	if energyDrawPassiveMultiplier > 0:
-		register_stat("PassiveEnergyDraw", energyDrawPassiveMultiplier, statIconEnergy);
+		register_stat("PassiveEnergyDraw", energyDrawPassiveMultiplier, StatHolderManager.statIconEnergy);
 	if energyDrawPassiveMultiplier < 0:
-		register_stat("PassiveEnergyRegeneration", energyDrawPassiveMultiplier, statIconEnergy);
-	register_stat("PassiveCooldown", passiveCooldownTimeMultiplier, statIconCooldown);
-	register_stat("ContactCooldown", contactCooldown, statIconCooldown);
+		register_stat("PassiveEnergyRegeneration", energyDrawPassiveMultiplier, StatHolderManager.statIconEnergy);
+	register_stat("PassiveCooldown", passiveCooldownTimeMultiplier, StatHolderManager.statIconCooldown);
+	register_stat("ContactCooldown", contactCooldown, StatHolderManager.statIconCooldown);
 	
 	#Stats that only matter if the thing has abilities.
 	if activeAbilitiesDistributed.size() > 0:
-		register_stat("ActiveEnergyDraw", energyDrawActiveMultiplier, statIconEnergy);
-		register_stat("ActiveCooldown", activeCooldownTimeMultiplier, statIconCooldown);
+		register_stat("ActiveEnergyDraw", energyDrawActiveMultiplier, StatHolderManager.statIconEnergy);
+		register_stat("ActiveCooldown", activeCooldownTimeMultiplier, StatHolderManager.statIconCooldown);
 	
 	#Stats regardig Scrap Cost.
-	register_stat("ScrapCost", scrapCostBase, statIconMagazine, null, null, StatTracker.roundingModes.Ceili);
-	register_stat("ScrapSellModifier", scrapSellModifierBase, statIconMagazine);
-	register_stat("ScrapSalvageModifier", scrapSellModifierBase, statIconMagazine);
-	register_stat("Weight", weightBase, statIconWeight);
+	register_stat("ScrapCost", scrapCostBase, StatHolderManager.statIconMagazine, null, null, StatTracker.roundingModes.Ceili);
+	register_stat("ScrapSellModifier", scrapSellModifierBase, StatHolderManager.statIconMagazine);
+	register_stat("ScrapSalvageModifier", scrapSellModifierBase, StatHolderManager.statIconMagazine);
+	register_stat("Weight", weightBase, StatHolderManager.statIconWeight);
 	
 	#Stats regarding damage.
-	register_stat("Damage", damageBase, statIconDamage);
-	register_stat("Knockback", knockbackBase, statIconWeight);
-	register_stat("Kickback", kickbackBase, statIconWeight);
+	register_stat("Damage", damageBase, StatHolderManager.statIconDamage);
+	register_stat("Knockback", knockbackBase, StatHolderManager.statIconWeight);
+	register_stat("Kickback", kickbackBase, StatHolderManager.statIconWeight);
 
 ##This is here for when things get out of whack and some of the export variables disconnect themselves for no good reason.
 func assign_references():
@@ -208,12 +208,6 @@ func phys_process_timers(delta):
 	super(delta);
 	##tick down hitbox timer.
 	hitboxRescaleTimer -= 1;
-	##Tick down ability cooldowns.
-	if is_equipped():
-		var bot = get_host_robot();
-		if bot.is_running_cooldowns():
-			for ability in get_all_abilities():
-				ability.tick_cooldown(statHolderID, delta);
 	pass;
 
 func phys_process_pre(delta):
@@ -437,7 +431,13 @@ func on_contact_cooldown():
 				if ability.on_cooldown(statHolderID):
 					return true;
 	return false;
-
+func is_running_cooldowns():
+	if is_equipped():
+		var bot = get_host_robot();
+		if is_instance_valid(bot):
+			return bot.is_running_cooldowns();
+	return false;
+	
 ##Physics process step for abilities.
 func phys_process_abilities(delta):
 	##Un-disable hurtboxes.
@@ -1452,6 +1452,16 @@ func get_all_pieces_regenerate() -> Array[Piece]:
 			if occupant != self:
 				ret.append(occupant);
 	#print("ALL PIECES REGENRATED: ", ret)
+	return ret;
+
+func get_all_pieces_recursive() -> Array[Piece]:
+	var ret : Array[Piece] = [self];
+	
+	for socket in get_all_female_sockets():
+		if is_instance_valid(socket) and is_instance_valid(socket.get_occupant()):
+			var occupant = socket.get_occupant();
+			ret.append_array(occupant.get_all_pieces_recursive())
+	
 	return ret;
 
 ####################### INVENTORY STUFF

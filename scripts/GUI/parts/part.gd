@@ -27,6 +27,13 @@ var scrapSellModifierBase := (2.0/3.0);
 @export var inventoryNode : Inventory; ##@deprecated
 @export var hostPiece : Piece;
 @export var hostShopStall : ShopStall;
+@export var hostRobot : Robot:
+	get:
+		if is_instance_valid(hostPiece):
+			var _bot = hostPiece.get_host_robot();
+			if is_instance_valid(_bot):
+				return _bot;
+		return null;
 
 @export var dimensions : Array[Vector2i];
 @export var myPartType := partTypes.UNASSIGNED;

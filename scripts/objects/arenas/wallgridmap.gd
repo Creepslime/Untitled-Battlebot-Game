@@ -14,7 +14,7 @@ func start_building_sequence() -> int:
 	built = false;
 	return cells.size() + 1;
 
-func _process(delta):
+func _process(_delta):
 	if cells.size() > 0:
 		built = false;
 		var tileCoord = cells.pop_front();

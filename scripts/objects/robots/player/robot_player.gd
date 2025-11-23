@@ -13,7 +13,7 @@ func _ready():
 
 func stat_registry():
 	super();
-	register_stat("RoundTimeRegen", roundTimeRegen, statIconCooldown);
+	register_stat("RoundTimeRegen", roundTimeRegen, StatHolderManager.statIconCooldown);
 
 func grab_references():
 	super();

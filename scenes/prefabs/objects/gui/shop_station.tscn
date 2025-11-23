@@ -61,7 +61,6 @@ offset_bottom = 217.0
 metadata/_edit_group_ = true
 
 [node name="ShopDoor" type="NinePatchRect" parent="."]
-visible = false
 z_index = 8
 layout_mode = 0
 offset_right = 480.0

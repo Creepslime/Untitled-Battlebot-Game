@@ -113,11 +113,11 @@ func grab_references():
 
 func stat_registry():
 	super();
-	register_stat("HealthMax", maxHealth, statIconDamage);
+	register_stat("HealthMax", maxHealth, StatHolderManager.statIconDamage);
 	register_stat(
 		"Health", 
 		maxHealth, 
-		statIconDamage, 
+		StatHolderManager.statIconDamage, 
 		null, 
 		func(newValue): 
 			health_or_energy_changed.emit(); 
@@ -128,11 +128,11 @@ func stat_registry():
 			,
 		StatTracker.roundingModes.None
 		);
-	register_stat("EnergyMax", maxEnergy, statIconDamage);
-	register_stat("Energy", maxEnergy, statIconEnergy, null, (func(newValue): self.health_or_energy_changed.emit(); return clampf(newValue, 0.0, self.get_stat("EnergyMax"))));
-	register_stat("InvincibilityTime", maxInvincibleTimer, statIconCooldown);
-	register_stat("MovementSpeedAcceleration", acceleration, statIconCooldown);
-	register_stat("MovementSpeedMax", maxSpeed, statIconCooldown);
+	register_stat("EnergyMax", maxEnergy, StatHolderManager.statIconDamage);
+	register_stat("Energy", maxEnergy, StatHolderManager.statIconEnergy, null, (func(newValue): self.health_or_energy_changed.emit(); return clampf(newValue, 0.0, self.get_stat("EnergyMax"))));
+	register_stat("InvincibilityTime", maxInvincibleTimer, StatHolderManager.statIconCooldown);
+	register_stat("MovementSpeedAcceleration", acceleration, StatHolderManager.statIconCooldown);
+	register_stat("MovementSpeedMax", maxSpeed, StatHolderManager.statIconCooldown);
 	pass;
 
 ################## SAVING/LOADING
@@ -527,7 +527,7 @@ func take_damage(damage:float):
 		#print(damage," damage being taken.")
 		var health = get_health();
 		var isInvincible = is_invincible();
-		TextFunc.flyaway(damage, get_global_body_position() + Vector3(0,1,0), "unaffordable")
+		TextFunc.flyaway(TextFunc.round_to_dec(damage, 3), get_global_body_position() + Vector3(0,1,0), "unaffordable")
 		if damage > 0:
 			if !isInvincible:
 				#print("Health b4 taking", damage, "damage:", health)
@@ -700,7 +700,7 @@ var bodyRotationSpeed := bodyRotationSpeedBase;
 var lastLinearVelocity : Vector3 = Vector3(0,0,0);
 @export var treadsRotationSpeed : float = 6.0;
 @export var treadsRotationSpeedClamp : float = 1.0;
-@export var weightSpeedPenaltyMultiplier := 0.01;
+@export var weightSpeedPenaltyMultiplier := 0.005;
 
 ##Physics process step to adjust collision box positions according to the parts they're attached to.
 func phys_process_collision(delta):
@@ -722,7 +722,7 @@ func phys_process_collision(delta):
 var wasOnFloorLastFrame := true;
 var coyoteTimer := 0;
 ## Steps the "coyote timer" ([member coyoteTimer])- if you're off the ground for less than five frames, the game lets you drive.
-func step_coyote_timer():
+func step_coyote_timer() -> bool:
 	if ! treads.is_on_driveable(): 
 		coyoteTimer = max(coyoteTimer - 1, 0);
 	else:
@@ -970,9 +970,11 @@ func get_all_pieces() -> Array[Piece]:
 func get_all_pieces_regenerate() -> Array[Piece]:
 	print("regenerating piece list")
 	var piecesGathered : Array[Piece] = [];
-	for child:Piece in Utils.get_all_children_of_type(body, Piece):
-		if child.hostRobot == self and child.assignedToSocket:
-			piecesGathered.append(child);
+	if bodySocket.get_occupant() != null:
+		piecesGathered = bodySocket.occupant.get_all_pieces_recursive();
+	#for child:Piece in Utils.get_all_children_of_type(body, Piece):
+		#if child.hostRobot == self and child.assignedToSocket:
+			#piecesGathered.append(child);
 	allPieces = piecesGathered;
 	return piecesGathered;
 
@@ -1280,6 +1282,6 @@ func stash_selected_piece(fancy := false):
 func stash_selected_part():
 	if is_instance_valid(selectedPart):
 		print("Attempting to stash ", selectedPart)
-		#if selectedPiece.removable:
-			#selectedPiece.remove_and_add_to_robot_stash(self);
+		if selectedPiece.removable:
+			selectedPiece.remove_and_add_to_robot_stash(self);
 	get_all_parts_regenerate();

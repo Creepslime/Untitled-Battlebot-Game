@@ -16,11 +16,15 @@ var assignedSlots : Array[int] = []
 var assignedRobot : Robot;
 var abilityName:
 	get:
-		return manager.abilityName;
+		if abilityName == null:
+			abilityName = manager.abilityName;
+		return abilityName;
 
 var manager: AbilityManager:
 	get:
-		return get_manager();
+		if manager == null:
+			manager = get_manager();
+		return manager;
 
 func call_ability():
 	return manager.call_ability(statHolderID);
@@ -55,8 +59,10 @@ func get_assigned_slots():
 
 var assignedPieceOrPart:
 	get:
+		if assignedPieceOrPart == null:
+			assignedPieceOrPart = get_assigned_piece_or_part();
 		GameState.profiler_ping_create("Ability assignedPieceOrPart Ping");
-		return get_assigned_piece_or_part();
+		return assignedPieceOrPart;
 
 func get_assigned_piece_or_part():
 	var thing = StatHolderManager.get_stat_holder_by_id(statHolderID);
@@ -113,3 +119,10 @@ func get_ability_slot_data():
 
 func get_manager() -> AbilityManager:
 	return AbilityDistributor.get_ability_manager_with_id(abilityID);
+
+func is_running_cooldowns() -> bool:
+	if assignedPieceOrPart is Piece:
+		return assignedPieceOrPart.is_running_cooldowns();
+	elif assignedPieceOrPart is Part:
+		pass;
+	return false;

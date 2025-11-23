@@ -1,16 +1,10 @@
-[gd_scene load_steps=50 format=3 uid="uid://vbt5gi85ihvm"]
+[gd_scene load_steps=25 format=3 uid="uid://vbt5gi85ihvm"]
 
 [ext_resource type="Script" uid="uid://blmbkcjl8udq2" path="res://scripts/objects/pieces/piece_projectile.gd" id="1_t7twg"]
 [ext_resource type="ArrayMesh" uid="uid://cow7flmco3152" path="res://graphics/models/obj/botparts/SniperCannon.obj" id="2_3xkur"]
 [ext_resource type="Script" uid="uid://cybmjhuctmfaw" path="res://scripts/libraries/richTextConstructor.gd" id="2_rfcio"]
 [ext_resource type="Script" uid="uid://crpa3dbgxwyeg" path="res://scripts/objects/weapons/ability_manager.gd" id="3_abq4e"]
 [ext_resource type="Texture2D" uid="uid://bg8rjtbi4nuw" path="res://graphics/images/HUD/parts/Icons/Cannon.png" id="4_b31gf"]
-[ext_resource type="Script" uid="uid://clcmggkeaqnyx" path="res://scripts/objects/weapons/stat_tracker.gd" id="5_ns1lj"]
-[ext_resource type="Texture2D" uid="uid://bdgkd60c8qtud" path="res://graphics/images/HUD/statIcons/energyIconStriped.png" id="6_1ob63"]
-[ext_resource type="Texture2D" uid="uid://uflissj08i1o" path="res://graphics/images/HUD/statIcons/cooldownIconStriped.png" id="7_2qjut"]
-[ext_resource type="Texture2D" uid="uid://s6s6ugfdhqhy" path="res://graphics/images/HUD/statIcons/magazineIconStriped.png" id="8_kllrh"]
-[ext_resource type="Texture2D" uid="uid://b775d1fn78gcv" path="res://graphics/images/HUD/statIcons/weightIconStriped.png" id="9_8fb4h"]
-[ext_resource type="Texture2D" uid="uid://cnfat2kqvmdcd" path="res://graphics/images/HUD/statIcons/damageIconStriped.png" id="10_01d03"]
 [ext_resource type="PackedScene" uid="uid://dosh155duu70e" path="res://scenes/prefabs/objects/pieces/buildingBlocks/socket.tscn" id="11_r5a53"]
 [ext_resource type="Script" uid="uid://dikbphvd0xff7" path="res://scripts/objects/pieces/buildingBlocks/hitbox_shapes.gd" id="13_jmsd7"]
 [ext_resource type="Script" uid="uid://bkwxna02gqgqu" path="res://scripts/objects/pieces/buildingBlocks/hurtbox_shapes.gd" id="14_xwd6y"]
@@ -88,177 +82,6 @@ initialized = true
 disabled = false
 functionWhenUsed = Callable()
 
-[sub_resource type="Resource" id="Resource_01d03"]
-resource_name = "ActiveCooldown8"
-script = ExtResource("5_ns1lj")
-statFriendlyName = "Active Cooldown"
-statName = "ActiveCooldown8"
-statIcon = ExtResource("7_2qjut")
-baseStat = 1.0
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_8fb4h"]
-resource_name = "ActiveEnergyDraw8"
-script = ExtResource("5_ns1lj")
-statFriendlyName = "Active Energy Draw"
-statName = "ActiveEnergyDraw8"
-statIcon = ExtResource("6_1ob63")
-baseStat = 1.0
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_kllrh"]
-resource_name = "ContactCooldown8"
-script = ExtResource("5_ns1lj")
-statFriendlyName = "Contact Cooldown"
-statName = "ContactCooldown8"
-statIcon = ExtResource("7_2qjut")
-baseStat = 0.0
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_t21l2"]
-resource_name = "Damage8"
-script = ExtResource("5_ns1lj")
-statFriendlyName = "Damage"
-statName = "Damage8"
-statIcon = ExtResource("10_01d03")
-baseStat = 1.0
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_vl7nr"]
-resource_name = "Inaccuracy8"
-script = ExtResource("5_ns1lj")
-statFriendlyName = "Inaccuracy"
-statName = "Inaccuracy8"
-statIcon = ExtResource("9_8fb4h")
-baseStat = 1.0
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_mmshg"]
-resource_name = "Kickback8"
-script = ExtResource("5_ns1lj")
-statFriendlyName = "Kickback"
-statName = "Kickback8"
-statIcon = ExtResource("9_8fb4h")
-baseStat = 250.0
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_p2vul"]
-resource_name = "Knockback8"
-script = ExtResource("5_ns1lj")
-statFriendlyName = "Knockback"
-statName = "Knockback8"
-statIcon = ExtResource("9_8fb4h")
-baseStat = 250.0
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_bum3y"]
-resource_name = "MagazineRefreshRate8"
-script = ExtResource("5_ns1lj")
-statFriendlyName = "Magazine Refresh Rate"
-statName = "MagazineRefreshRate8"
-statIcon = ExtResource("7_2qjut")
-baseStat = 0.75
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_ko0xg"]
-resource_name = "MagazineSize8"
-script = ExtResource("5_ns1lj")
-statFriendlyName = "Magazine Size"
-statName = "MagazineSize8"
-statIcon = ExtResource("8_kllrh")
-baseStat = 3.0
-roundingMode = 4
-
-[sub_resource type="Resource" id="Resource_2qjut"]
-resource_name = "PassiveCooldown8"
-script = ExtResource("5_ns1lj")
-statFriendlyName = "Passive Cooldown"
-statName = "PassiveCooldown8"
-statIcon = ExtResource("7_2qjut")
-baseStat = 1.0
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_1ob63"]
-resource_name = "PassiveEnergyDraw8"
-script = ExtResource("5_ns1lj")
-statFriendlyName = "Passive Energy Draw"
-statName = "PassiveEnergyDraw8"
-statIcon = ExtResource("6_1ob63")
-baseStat = 1.0
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_sbg7f"]
-resource_name = "ProjectileFireRate8"
-script = ExtResource("5_ns1lj")
-statFriendlyName = "Projectile Fire Rate"
-statName = "ProjectileFireRate8"
-statIcon = ExtResource("7_2qjut")
-baseStat = 0.85
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_po02g"]
-resource_name = "ProjectileGravity8"
-script = ExtResource("5_ns1lj")
-statFriendlyName = "Projectile Gravity"
-statName = "ProjectileGravity8"
-statIcon = ExtResource("9_8fb4h")
-baseStat = -0.0987
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_8nuk7"]
-resource_name = "ProjectileLifetime8"
-script = ExtResource("5_ns1lj")
-statFriendlyName = "Projectile Lifetime"
-statName = "ProjectileLifetime8"
-statIcon = ExtResource("7_2qjut")
-baseStat = 1.0
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_8wwqs"]
-resource_name = "ProjectileSpeed8"
-script = ExtResource("5_ns1lj")
-statFriendlyName = "Projectile Speed"
-statName = "ProjectileSpeed8"
-statIcon = ExtResource("7_2qjut")
-baseStat = 60.0
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_r5a53"]
-resource_name = "ScrapCost8"
-script = ExtResource("5_ns1lj")
-statFriendlyName = "Scrap Cost"
-statName = "ScrapCost8"
-statIcon = ExtResource("8_kllrh")
-baseStat = 0.0
-roundingMode = 6
-
-[sub_resource type="Resource" id="Resource_jmsd7"]
-resource_name = "ScrapSalvageModifier8"
-script = ExtResource("5_ns1lj")
-statFriendlyName = "Scrap Salvage Modifier"
-statName = "ScrapSalvageModifier8"
-statIcon = ExtResource("8_kllrh")
-baseStat = 0.666667
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_mk7pf"]
-resource_name = "ScrapSellModifier8"
-script = ExtResource("5_ns1lj")
-statFriendlyName = "Scrap Sell Modifier"
-statName = "ScrapSellModifier8"
-statIcon = ExtResource("8_kllrh")
-baseStat = 0.666667
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_xwd6y"]
-resource_name = "Weight8"
-script = ExtResource("5_ns1lj")
-statFriendlyName = "Weight"
-statName = "Weight8"
-statIcon = ExtResource("9_8fb4h")
-baseStat = 15.0
-roundingMode = 0
-
 [sub_resource type="PlaneMesh" id="PlaneMesh_ubwoj"]
 size = Vector2(0.25, 0.25)
 
@@ -320,27 +143,6 @@ Vector2i(2, 4): null,
 Vector2i(3, 3): null,
 Vector2i(3, 4): null
 }
-statCollection = Dictionary[String, ExtResource("5_ns1lj")]({
-"ActiveCooldown8": SubResource("Resource_01d03"),
-"ActiveEnergyDraw8": SubResource("Resource_8fb4h"),
-"ContactCooldown8": SubResource("Resource_kllrh"),
-"Damage8": SubResource("Resource_t21l2"),
-"Inaccuracy8": SubResource("Resource_vl7nr"),
-"Kickback8": SubResource("Resource_mmshg"),
-"Knockback8": SubResource("Resource_p2vul"),
-"MagazineRefreshRate8": SubResource("Resource_bum3y"),
-"MagazineSize8": SubResource("Resource_ko0xg"),
-"PassiveCooldown8": SubResource("Resource_2qjut"),
-"PassiveEnergyDraw8": SubResource("Resource_1ob63"),
-"ProjectileFireRate8": SubResource("Resource_sbg7f"),
-"ProjectileGravity8": SubResource("Resource_po02g"),
-"ProjectileLifetime8": SubResource("Resource_8nuk7"),
-"ProjectileSpeed8": SubResource("Resource_8wwqs"),
-"ScrapCost8": SubResource("Resource_r5a53"),
-"ScrapSalvageModifier8": SubResource("Resource_jmsd7"),
-"ScrapSellModifier8": SubResource("Resource_mk7pf"),
-"Weight8": SubResource("Resource_xwd6y")
-})
 filepathForThisEntity = "res://scenes/prefabs/objects/pieces/piece_cannon.tscn"
 
 [node name="FemaleSockets" type="Node3D" parent="."]

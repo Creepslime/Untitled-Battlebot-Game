@@ -5,7 +5,8 @@ var loopCounter := 0;
 ##Returns an array of every single child and grandchild of a Node.
 func get_all_children(node, ownerToCheck : Node = null, init := true) -> Array:
 	if init:
-		GameState.profiler_ping_create("get_all_children");
+		GameState.profiler_ping_create("get_all_children init");
+	GameState.profiler_ping_create("get_all_children loop");
 	if init: 
 		nodesChecked = []; 
 		loopCounter = 0;

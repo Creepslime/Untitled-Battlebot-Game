@@ -263,9 +263,9 @@ func exit_state(oldState:gameState):
 			HUD_options.load_settings();
 			pass
 
-func enter_state(newState:gameState, oldState:gameState):
-	print("ENTERING STATE ",var_to_str(gameState.keys()[newState]));
-	match newState:
+func enter_state(_newState:gameState, _oldState:gameState):
+	print("ENTERING STATE ",var_to_str(gameState.keys()[_newState]));
+	match _newState:
 		gameState.SPLASH:
 			GameState.init_screen_transition_vanity();
 		gameState.MAIN_MENU:
@@ -310,7 +310,7 @@ func enter_state(newState:gameState, oldState:gameState):
 			enemiesKilled = 0;
 			player = null;
 			
-			GameState.call_deferred("make_screen_transition_arrive", 5);
+			GameState.call_deferred("make_screen_transition_arrive", 3);
 			
 			pass
 		gameState.INIT_ROUND:
@@ -394,7 +394,7 @@ func queue_shop_exit():
 var splashTimer := 5.5;
 var initArenaFrameWait := 0;
 var lightingUpdateTimer := 0;
-func process_state(delta : float, state : gameState):
+func process_state(delta : float, _state : gameState):
 	lightingUpdateTimer -= 1;
 	if lightingUpdateTimer < 0:
 		update_lighting();

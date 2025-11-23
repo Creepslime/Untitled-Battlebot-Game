@@ -178,11 +178,9 @@ size = Vector3(0.5, 0.5, 0.5)
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_gm1wa"]
 radius = 0.75
 
-[node name="Piece_BodyCube" type="Node3D" node_paths=PackedStringArray("swivelNode", "movingSockets", "meshesHolder", "hitboxCollisionHolder", "hurtboxCollisionHolder", "placementCollisionHolder", "femaleSocketHolder") groups=["Piece"]]
+[node name="Piece_BodyCube" type="Node3D" node_paths=PackedStringArray("swivelNode", "meshesHolder", "hitboxCollisionHolder", "hurtboxCollisionHolder", "placementCollisionHolder", "femaleSocketHolder") groups=["Piece"]]
 visible = false
 script = ExtResource("1_gm1wa")
-swivelNode = NodePath("Meshes/SwivelTop")
-movingSockets = [NodePath("Meshes/SwivelTop/Socket")]
 pieceName = &"BodyCube"
 pieceDescription = ""
 isBody = true
@@ -190,11 +188,6 @@ weightBase = 23.0
 force_visibility = true
 scrapCostBase = 50
 passiveAbilities = Array[ExtResource("2_xcdtu")]([SubResource("Resource_08d67"), SubResource("Resource_061wq")])
-meshesHolder = NodePath("Meshes")
-hitboxCollisionHolder = NodePath("HitboxShapes [Leave empty]")
-hurtboxCollisionHolder = NodePath("HurtboxShapes [Leave empty]")
-placementCollisionHolder = NodePath("PlacementShapes [Leave empty]")
-femaleSocketHolder = NodePath("FemaleSockets")
 engineSlots = {
 Vector2i(0, 1): null,
 Vector2i(0, 2): null,
@@ -232,6 +225,12 @@ statCollection = Dictionary[String, ExtResource("4_8k5ef")]({
 "Weight2": SubResource("Resource_k43o2")
 })
 filepathForThisEntity = "res://scenes/prefabs/objects/pieces/piece_bodyCube.tscn"
+swivelNode = NodePath("Meshes/SwivelTop")
+meshesHolder = NodePath("Meshes")
+hitboxCollisionHolder = NodePath("HitboxShapes [Leave empty]")
+hurtboxCollisionHolder = NodePath("HurtboxShapes [Leave empty]")
+placementCollisionHolder = NodePath("PlacementShapes [Leave empty]")
+femaleSocketHolder = NodePath("FemaleSockets")
 
 [node name="FemaleSockets" type="Node3D" parent="."]
 editor_description = "Put all female sockets in this box. Make sure they align with the grid!"
