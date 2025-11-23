@@ -1,7 +1,7 @@
 @icon ("res://graphics/images/class_icons/part.png")
 ##The base class for Parts the player and enemies use.[br]
 ##TODO: Placed within the engines of [Piece]s.
-extends Control
+extends StatHolderControl
 class_name Part
 
 
@@ -11,19 +11,11 @@ var inPlayerInventory := false;
 var ownedByPlayer := false;
 var invHolderNode : Control;
 var thisBot : Combatant;
-var thisRobot : Robot;
 
 @export_group("References")
 @export var textureBase : Control;
 @export var textureIcon : TextureRect;
 @export var tilemaps : PartTileset;
-
-var selected := false;
-
-@export_group("Gameplay")
-@export var scrapCostBase : int;
-var scrapSellModifier := 1.0;
-var scrapSellModifierBase := (2.0/3.0);
 @export var inventoryNode : Inventory; ##@deprecated
 @export var hostPiece : Piece;
 @export var hostShopStall : ShopStall;
@@ -35,12 +27,22 @@ var scrapSellModifierBase := (2.0/3.0);
 				return _bot;
 		return null;
 
+var selected := false;
+
+@export_subgroup("Gameplay")
+@export var weightBase := 0;
+
 @export var dimensions : Array[Vector2i];
+@export_subgroup("Shop")
+var contactCooldown := 0.25; ## If this Part has an ability that applies when the Piece it's on deals contact damage, then this is how long that should run.
+@export var scrapCostBase : int;
+var scrapSellModifier := 1.0;
+var scrapSellModifierBase := (2.0/3.0);
 @export var myPartType := partTypes.UNASSIGNED;
 @export var myPartRarity := partRarities.COMMON;
 @export var poolWeight := 1; ##This is multiplied by 5 when Rare, 10 when Uncommon, and 15 when Common.
 
-@export_group("Vanity")
+@export_subgroup("Vanity")
 @export var partName := "Part";
 @export_multiline var partDescription := "No description given.";
 @export var partIcon : CompressedTexture2D;
@@ -70,6 +72,7 @@ func _ready():
 	
 	get_age();
 	mods_prepare_innate();
+	stat_registry();
 	
 	##Set part type
 	if myPartType == partTypes.UNASSIGNED:
@@ -82,6 +85,16 @@ func _ready():
 				myPartType = partTypes.UTILITY;
 		else:
 			myPartType = partTypes.PASSIVE;
+
+func stat_registry():
+	register_stat("ContactCooldown", contactCooldown, StatHolderManager.statIconCooldown);
+	
+	#Stats regardig Scrap Cost.
+	register_stat("ScrapCost", scrapCostBase, StatHolderManager.statIconMagazine, null, null, StatTracker.roundingModes.Ceili);
+	register_stat("ScrapSellModifier", scrapSellModifierBase, StatHolderManager.statIconMagazine);
+	register_stat("ScrapSalvageModifier", scrapSellModifierBase, StatHolderManager.statIconMagazine);
+	register_stat("Weight", weightBase, StatHolderManager.statIconWeight);
+	pass;
 
 func set_age_and_name():
 	ageOrdering = GameState.get_unique_part_age();
@@ -107,8 +120,6 @@ func _populate_buttons():
 		button.buttonHolder = %Buttons;
 		
 		button.set_deferred("position", index * 48);
-		#button.set_deferred("size", Vector2i(48, 48));
-		#print(button.disabled)
 
 func _get_part_type() -> partTypes:
 	return myPartType;
@@ -161,7 +172,7 @@ func _process(delta):
 		textureBase.show();
 		var bot = GameState.get_player();
 		if is_instance_valid(bot):
-			thisRobot  = bot;
+			hostRobot  = bot;
 		#if inPlayerInventory:
 			#if ownedByPlayer:
 				#textureBase.global_position = invHolderNode.global_position + Vector2(invPosition * 48);
@@ -172,12 +183,12 @@ func _process(delta):
 		%Buttons.disable();
 
 func _on_buttons_on_select(foo:bool):
-	if ! selected == foo and is_instance_valid(thisRobot):
+	if ! selected == foo and is_instance_valid(hostRobot):
 		selected = foo;
 		if foo:
-			thisRobot.select_part(self);
+			hostRobot.select_part(self);
 		else:
-			thisRobot.deselect_all_parts();
+			hostRobot.deselect_all_parts();
 	pass # Replace with function body.
 
 func select(foo:bool):

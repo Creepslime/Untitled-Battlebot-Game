@@ -1244,10 +1244,10 @@ func deselect_all_parts(ignoredPart : Part = null):
 		selectedPart = null;
 
 ## Sets the given [Part] as "selected," even if it is not inside the player's ecosystem.
-func select_part(part : Part):
+func select_part(part : Part, foo:=true):
 	if is_instance_valid(part):
 		deselect_all_parts(part)
-		part.select(true);
+		part.select(foo);
 		selectedPart = part;
 		return part;
 	return null;

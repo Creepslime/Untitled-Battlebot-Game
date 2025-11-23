@@ -151,7 +151,7 @@ func create_startup_data():
 		var socketData = { "rotation" : rotationVal, "occupant" : occupantVal};
 		socketDict[index] = socketData;
 	
-	## Abilities. If an ability has been assigned to a slot and is not passive, add its name and assigned slots to the data.
+	## Abilities. If an ability has been assigned to a slot and is not passive, add its name and assigned engineSlots to the data.
 	var abilityDict := {}
 	var disabled := []
 	for ability in get_all_abilities():
@@ -232,52 +232,14 @@ func declare_names():
 		pieceDescription = TextFunc.parse_text_constructor_array(descriptionConstructor);
 	pass;
 @export_multiline var pieceDescription := "No Description Found.";
-## If this piece fulfills the requirements for being a bot's "body", this is true. You aren't allowed to exit the shop if you don't have a body piece equipped.
-@export var isBody := false;
-## Whether this piece is removable.
-@export var removable := true;
-## Returns true if this [Piece] is equipped, removable, and we're shopping.
-func is_removable() -> bool:
-	return removable and is_equipped() and (GameState.get_in_state_of_shopping() or GameState.get_in_state_of_building());
-func is_sellable() -> bool:
-	return removable and ! isBody;
-func is_buyable() -> bool:
-	return ScrapManager.is_affordable(get_buy_price()) and inShop;
-var queuedBuyer : Robot = null;
-func try_buy_from_shop() -> bool:
-	if is_instance_valid(shopStall):
-		return shopStall.try_buy_piece();
-	return false;
-func start_buying(buyer:Robot):
-	queuedBuyer = buyer;
-	start_buying_animation();
-func submit_queued_buy():
-	if is_instance_valid(queuedBuyer):
-		inShop = false;
-		shopStall.buyQueued = false;
-		shopStall.pieceRef = null;
-		shopStall = null;
-		remove_and_add_to_robot_stash(queuedBuyer);
-		queuedBuyer = null;
-## Tries to sell this [Piece], then returns the result.[br]
-## TODO: Determine whether selling a [Piece] should also sell any [Part]s in its engine, or stash them.
-func try_sell():
-	if is_sellable():
-		ScrapManager.add_scrap(get_sell_price(), "Sell Piece");
-		destroy();
-		return true;
-	return false;
+@export var material := pieceMaterials.METAL;
+enum pieceMaterials {
+	METAL,
+	WOOD,
+	PLASTIC,
+	STONE,
+}
 @export var weightBase := 1.0;
-@export var force_visibility := false;  
-@export var temporaryPreview := false; ## When true, calls [method destroy] at the first possible opportunity.
-@export_subgroup("Shop Data")
-@export var poolWeight := 1; ##This is multiplied by 5 when Rare, 10 when Uncommon, and 15 when Common.
-@export var myPartRarity := Part.partRarities.COMMON;
-@export var scrapCostBase : int;
-@export var scrapSellModifierBase := (2.0/3.0);
-@export var scrapSalvageModifierBase := (1.0/6.0);
-@export var inShop := false; ## Set by [ShopStall] when adding this piece to itself.
-var shopStall : ShopStall = null;
 
 ## How much weight this Piece is carrying, including itself.
 var weightLoad := 0.0;
@@ -312,6 +274,54 @@ func get_regenerated_weight_load():
 	queue_regenerate_weight_load();
 	return get_weight_load();
 
+
+@export_category("Technical Data")
+@export var force_visibility := false;  
+@export var temporaryPreview := false; ## When true, calls [method destroy] at the first possible opportunity.
+## If this piece fulfills the requirements for being a bot's "body", this is true. You aren't allowed to exit the shop if you don't have a body piece equipped.
+@export var isBody := false;
+## Whether this piece is at all removable.
+@export var removable := true;
+## Returns true if this [Piece] is equipped, removable, and we're shopping.
+func is_removable() -> bool:
+	return removable and is_equipped() and (GameState.get_in_state_of_shopping() or GameState.get_in_state_of_building());
+func is_sellable() -> bool:
+	return removable and ! isBody;
+func is_buyable() -> bool:
+	return ScrapManager.is_affordable(get_buy_price()) and inShop;
+var queuedBuyer : Robot = null;
+func try_buy_from_shop() -> bool:
+	if is_instance_valid(shopStall):
+		return shopStall.try_buy_piece();
+	return false;
+func start_buying(buyer:Robot):
+	queuedBuyer = buyer;
+	start_buying_animation();
+func submit_queued_buy():
+	if is_instance_valid(queuedBuyer):
+		inShop = false;
+		shopStall.buyQueued = false;
+		shopStall.pieceRef = null;
+		shopStall = null;
+		remove_and_add_to_robot_stash(queuedBuyer);
+		queuedBuyer = null;
+## Tries to sell this [Piece], then returns the result.[br]
+## TODO: Determine whether selling a [Piece] should also sell any [Part]s in its engine, or stash them.
+func try_sell():
+	if is_sellable():
+		ScrapManager.add_scrap(get_sell_price(), "Sell Piece");
+		destroy();
+		return true;
+	return false;
+
+@export_subgroup("Shop Data")
+@export var poolWeight := 1; ##This is multiplied by 5 when Rare, 10 when Uncommon, and 15 when Common.
+@export var myPartRarity := Part.partRarities.COMMON;
+@export var scrapCostBase : int;
+@export var scrapSellModifierBase := (2.0/3.0);
+@export var scrapSalvageModifierBase := (1.0/6.0);
+@export var inShop := false; ## Set by [ShopStall] when adding this piece to itself.
+var shopStall : ShopStall = null;
 ##TODO: Scrap sell/buy/salvage functions for when this has Parts inside of it.
 func get_sell_price(discountMultiplier := 1.0):
 	## TODO: Write this up so it adds the combined sell price of this piece as well as all parts contained within its engine.
@@ -958,11 +968,12 @@ func contact_damage(otherPiece : Piece, otherPieceCollider : PieceCollisionBox, 
 		var DD = get_damage_data();
 		var contactDamage = get_contact_damage(thisPieceCollider, otherPieceCollider);
 		DD.damageAmount = contactDamage;
+		var otherPieceGlobalPos = otherPiece.global_position
 		#DD.damageDirection = KB;
 		otherPiece.hurtbox_collision_from_piece(self, DD);
 		
 		##Handle kickback.
-		initiate_kickback(otherPiece.global_position);
+		initiate_kickback(otherPieceGlobalPos);
 		
 		use_contact_passives();
 		return true;
@@ -1289,7 +1300,7 @@ func deselect_other_pieces(filterPiece := self):
 ##Position should NEVER be changed from 0,0,0. 0,0,0 Origin is where this thing plugs in.
 
 ####################### CHAIN MANAGEMENT
-##Needs ways of pinging 3D spacve when trying to place it with its collision to check where it can be placed.
+##Needs ways of pinging 3D space when trying to place it with its collision to check where it can be placed.
 ##
 
 ##TODO: Functions for assigning the host robot and host piece.
@@ -1465,7 +1476,7 @@ func get_all_pieces_recursive() -> Array[Piece]:
 	return ret;
 
 ####################### INVENTORY STUFF
-@export_category("Stash")
+@export_category("Stash and Ability Slots")
 
 ## Calls [method remove_and_add_to_robot_stash] after a short removal animation plays.
 func fancy_remove(botOverride : Robot = get_host_robot(true)):
@@ -1492,6 +1503,20 @@ func remove_and_add_to_robot_stash(botOverride : Robot = get_host_robot(true), f
 		bot.add_something_to_stash(self);
 		if bot is Robot_Player:
 			bot.queue_update_engine_with_selected_or_pipette();
+
+func get_stash_button_name(showTree := false, prelude := "") -> String:
+	var ret = prelude + pieceName;
+	if showTree:
+		for piece in get_all_pieces():
+			ret += "\n" + prelude + "-" + piece.get_stash_button_name(true, prelude + "-");
+	return ret;
+
+func get_ability_slot_data(action : AbilityManager):
+	return {
+		"incomingPower" : get_incoming_energy(),
+		"usable" : can_use_ability(action),
+	};
+	pass;
 
 @export_category("Engine")
 #var pieceBonusOut : Array[PartModifier] = [] ##TODO: MAKE A PIECE BONUS THING
@@ -1533,9 +1558,19 @@ func remove_and_add_to_robot_stash(botOverride : Robot = get_host_robot(true), f
 	Vector2i(3,4) : null,
 	Vector2i(4,4) : null,
 }
+## Set to [code]true[/code] to regenerate [member listOfParts] using [method get_all_parts] the next time it is gotten.
+var regeneratePartList := true; 
+## The total list of all [Part]s within [member engineSlots].
+var listOfParts : Array[Part] = []:
+	get:
+		if regeneratePartList:
+			regeneratePartList = false;
+			listOfParts = engine_get_all_parts();
+		return listOfParts;
+var selectedPart : Part;
 
-## Returns a list of all the [Part] inside the [member engineSlots]. Utilizes [method Utils.append_unique] so each [Part] is only added once to the resulting [Array].
-func get_all_parts() -> Array[Part]:
+## Returns a list of all the [Part]s inside the [member engineSlots]. Utilizes [method Utils.append_unique] so each [Part] is only added once to the resulting [Array].
+func engine_get_all_parts() -> Array[Part]:
 	var gatheredParts : Array[Part] = [];
 	for slot in engineSlots.keys():
 		var slotContents = engineSlots[slot];
@@ -1543,18 +1578,287 @@ func get_all_parts() -> Array[Part]:
 			if slotContents is Part:
 				if slotContents.get_engine() == self:
 					Utils.append_unique(gatheredParts, slotContents);
+	listOfParts = gatheredParts;
 	return gatheredParts;
 
-func get_stash_button_name(showTree := false, prelude := "") -> String:
-	var ret = prelude + pieceName;
-	if showTree:
-		for piece in get_all_pieces():
-			ret += "\n" + prelude + "-" + piece.get_stash_button_name(true, prelude + "-");
-	return ret;
+## Erases a single slot at the given index in [member engineSlots].
+func engine_clear_slot_at(x: int, y: int):
+	var index = Vector2i(x, y);
+	if index in engineSlots.keys():
+		engineSlots[index] = null;
+	regeneratePartList = true; 
 
-func get_ability_slot_data(action : AbilityManager):
-	return {
-		"incomingPower" : get_incoming_energy(),
-		"usable" : can_use_ability(action),
-	};
+## Gets the [Part] or [code]null[/code] at the given index in [member engineSlots].
+func engine_get_slot_at(x: int, y: int):
+	var index = Vector2i(x, y);
+	var pointer = null;
+	
+	if index in engineSlots.keys():
+		pointer = engineSlots[index];
+	
+	return pointer
+
+## Returns true if the slot at the given index in [member engineSlots] is free ([code]null[/code] or holds [param filterPart].
+func engine_is_slot_free(x: int, y: int, filterPart:Part) -> bool:
+	var index = Vector2i(x, y);
+	
+	if index in engineSlots.keys():
+		var slotAt = engine_get_slot_at(x, y)
+		if slotAt == null:
+			return true;
+		else:
+			if is_instance_valid(filterPart):
+				if slotAt == filterPart:
+					return true;
+	return false;
+
+## Returns true if [member engineSlots] has a slot at the given index.
+func engine_is_slot_in_bounds(x: int, y: int):
+	var index = Vector2i(x, y);
+	if index in engineSlots.keys():
+		return true;
+	return false;
+
+## Returns the combined results of [method is_slot_free] and [method is_slot_in_bounds], then optionally returns it as a [Dictionary] if [param separateIntoDict] is [code]true[/code]. EX. below:[br][br]
+## [codeblock]
+## ## Assuming the slot at 1,1 exists and is in bounds...
+## is_slot_free_and_in_bounds(1, 1, null, false); ## Returns true
+## is_slot_free_and_in_bounds(1, 1, null, false); ## Returns {"free" : true, "inBounds" : true}
+## [/codeblock]
+func engine_is_slot_free_and_in_bounds(x: int, y: int, filterPart:Part, separateIntoDict := false):
+	var free = engine_is_slot_free(x, y, filterPart);
+	var inBounds = engine_is_slot_in_bounds(x, y);
+	if separateIntoDict:
+		return {"free" : free, "inBounds" : inBounds}
+	else:
+		return (free and inBounds);
+
+func engine_get_modified_part_dimensions(part: Part, modifier: Vector2i):
+	var dimensions = part.dimensions;
+	var coords = [];
+	for index in dimensions:
+		var newCoord = index + modifier;
+		coords.append(newCoord);
+	
+	return coords
+
+func engine_check_coordinate_table_is_free(coords:Array, filterPart:Part):
+	for index in coords:
+		if engine_is_slot_free(index.x, index.y,filterPart):
+			pass
+		else:
+			return false
+	return true
+
+func is_there_space_for_part(part:Part, invPosition : Vector2i) -> bool:
+	if is_instance_valid(part):
+		var partCoords = engine_get_modified_part_dimensions(part, invPosition)
+		if engine_check_coordinate_table_is_free(partCoords, part):
+			return true;
+	return false;
+
+func add_part(part: Part, invPosition : Vector2i, noisy := false):
+	var coordsToCheck = engine_get_modified_part_dimensions(part, invPosition);
+	
+	if engine_check_coordinate_table_is_free(coordsToCheck, part):
+		#print("Coord table is free... somehow ", coordsToCheck)
+		for index in coordsToCheck:
+			engine_set_slot_at(index.x, index.y, part);
+		listOfParts.append(part);
+		part.invPosition = invPosition;
+		part.hostPiece = self;
+		##TODO: Decide whether PartActive is gonna persist.
+		#if part is PartActive:
+			#part.positionNode = battleBotBody;
+			#part.meshNode.reparent(battleBotBody); 
+		engine_add_part_post(part, noisy);
+	else:
+		pass 
+	pass
+
+func engine_add_part_post(part:Part, noisy:=false):
+	regeneratePartList = true; 
+	partMods_deploy();
 	pass;
+
+func remove_part(part: Part, destroy:=false, beingSold := false, beingBought := false, stash := false):
+	var coordsToRemove = engine_get_modified_part_dimensions(part, part.invPosition);
+	part.invPosition = Vector2i(0,0);
+	if part is PartActive:
+		part.positionNode = null;
+		part.meshNode.reparent(part);
+	
+	if is_equipped_by_player():
+		part.inPlayerInventory = false;
+	
+	for coord : Vector2i in coordsToRemove:
+		engine_clear_slot_at(coord.x, coord.y);
+	
+	while listOfParts.find(part) != -1:
+		listOfParts.remove_at(listOfParts.find(part));
+	
+	part.invHolderNode = null;
+	
+	if destroy:
+		part.destroy();
+	elif has_robot_host():
+		if stash:
+			hostRobot.add_something_to_stash(part);
+	
+	##This is for the shop
+	engine_remove_part_post(part, beingSold, beingBought);
+
+## A step two for removing a [Part]. Used for interactions with the shop, according to old comments.
+func engine_remove_part_post(part:Part, beingSold := false, beingBought := false):
+	regeneratePartList = true;
+	pass;
+
+## Removes and then moves a Part.
+func engine_move_part(part:Part, invPosition : Vector2i):
+	if is_there_space_for_part(part, invPosition):
+		var beingBought = false;
+		if part.invHolderNode is ShopStall:
+			beingBought = true;
+		remove_part(part, TYPE_NIL,TYPE_NIL, beingBought);
+		add_part(part, invPosition);
+		#deselect_part();
+		select_part(part);
+	pass
+
+func engine_set_slot_at(x: int, y: int, part: Part):
+	if engine_is_slot_free(x, y, part):
+		var index = Vector2i(x, y);
+		engineSlots[index] = part;
+
+func add_part_from_scene(x: int, y:int, _partScene:String, activeSlot = null):
+	if engine_is_slot_free(x,y, null):
+		var partScene = load(_partScene);
+		var part = partScene.instantiate();
+		if part is PartActive && activeSlot is int && activeSlot != null:
+			add_child(part);
+			add_part(part, Vector2i(x,y), false);
+			part.set_equipped(true);
+			return
+		else:
+			print("Adding ", part.name)
+			add_child(part);
+			add_part(part, Vector2i(x,y), false);
+			return
+		part.queue_free();
+
+
+##This is in here for parts like Repair to look at; Returns a fixed 0 here, but the player's version ([InventoryPlayer]) returns a different value based on the shop.
+func get_heal_price():
+	return 0;
+##This is in here for parts like Repair to look at; Returns a fixed 1 here, but the player's version ([InventoryPlayer]) returns a different value based on the shop.
+func get_heal_amount():
+	return 1;
+
+## Selects the given [Part] through this [Piece]'s [member hostRobot] (or the player if we're in the shop), then returns it.
+func select_part(part:Part, foo:bool = !part.selected if is_instance_valid(part) else TYPE_NIL):
+	if is_instance_valid(part):
+		if has_robot_host():
+			selectedPart = hostRobot.select_part(part, foo);
+		elif inShop:
+			var player = GameState.get_player();
+			if is_instance_valid(player):
+				selectedPart = player.select_part(part, foo);
+	return selectedPart;
+
+## Deselects [member selectedPart] if it exists.
+func deselect_part():
+	if is_instance_valid(selectedPart):
+		select_part(selectedPart, false);
+	else:
+		selectedPart = null;
+
+## Gets [member selectedPart] or null.
+func get_selected_part():
+	if is_instance_valid(selectedPart):
+		if ! selectedPart.selected:
+			select_part(selectedPart, true)
+		return selectedPart;
+	return null;
+
+## Deletes all [Part]s contained within [member engineSlots]. Optionally [param destroy]s or [param stash]es the [Part] to the host robot.
+func engine_clear(destroy := true, stash := true):
+	regeneratePartList = true;
+	while listOfParts.size() > 0:
+		for part in listOfParts:
+			remove_part(part, destroy, TYPE_NIL, TYPE_NIL, stash);
+	regeneratePartList = true;
+
+@export_category("Modifier Management")
+
+## Clears all modifiers.
+func partMods_clear_all():
+	for part in listOfParts:
+		if part is Part:
+			part.mods_reset(true);
+	pass
+
+## Deploys all modifiers. [b]VERY[/b] HEFTY.
+func partMods_deploy():
+	##All bonuses cleared.
+	partMods_clear_all();
+	##Organizes all parts.
+	var parts = prioritized_parts();
+	for part in parts:
+		if part is Part:
+			part.mods_distribute();
+	##Applies all modifiers after the fact.
+	for part in listOfParts:
+		if part is Part:
+			part.mods_apply_all();
+	##Runs mods_conditional_post().
+	for part in listOfParts:
+		if part is Part:
+			part.mods_conditional_post();
+	##Prints the modifiers of the parts as a debug.
+	for part in listOfParts:
+		if part is Part:
+			print_rich("[color=green]", part.partName, " ", part.incomingModifiers)
+			if part is PartActive:
+				print_rich(part.mod_energyCost);
+				print_rich(part.energyCost);
+				print_rich(part.get_energy_cost());
+	pass
+
+## Organizes a given list of parts (default [member listOfPieces]) by the order in which they should be prioritized.[br]
+## Part priorty is first priority, then index, then age, then finally the internal ordering of the engine array.
+func prioritized_parts(partsArray : Array[Part] = listOfParts) -> Array:
+	var partPrio = {};
+	##Should end up as this dict: {part.get_effect_priority() : {part.get_inventory_slot_priority() : {part.get_age() : [mod, mod, ...]}}
+	for part in partsArray:
+		if is_instance_valid(part):
+			print(part.partName, " ", part.outgoingModifiers.size())
+			if part.outgoingModifiers.size() > 0:
+				var prio = part.get_effect_priority();
+				var IDX = part.get_inventory_slot_priority();
+				var age = part.get_age();
+				print(prio, IDX, age)
+				
+				if partPrio.has(prio):
+					if partPrio[prio].has(IDX):
+						if partPrio[prio][IDX].has(age):
+							partPrio[prio][IDX][age].append(part);
+						else:
+							partPrio[prio][IDX][age] = [part];
+					else:
+						partPrio[prio][IDX] = {age : [part]};
+				else:
+					partPrio[prio] = {IDX : {age : [part]}}
+	
+	print(partPrio)
+	
+	var returnArray = [];
+	
+	for lv1 in partPrio.keys(): ## looping thru part priority
+		var lv1Dict = partPrio[lv1]
+		for lv2 in lv1Dict.keys(): ##looping thru index
+			var lv2Dict = lv1Dict[lv2]
+			for lv3 in lv2Dict.keys(): ##looping thru age
+				var lv3Array = lv2Dict[lv3]
+				returnArray.append_array(lv3Array); ##Appends the 3rd level to the array
+	print(returnArray)
+	return returnArray;
