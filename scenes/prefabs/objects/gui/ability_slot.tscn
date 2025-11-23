@@ -27,7 +27,7 @@ resource_local_to_scene = true
 shader = ExtResource("9_0tj24")
 shader_parameter/mask = ExtResource("11_g6gak")
 
-[node name="AbilitySlot0" type="Control" node_paths=PackedStringArray("btn_assign", "lbl_name", "lbl_energy", "bar_energy", "blinky_energy", "blinky_usable", "misc_energy", "energyCase", "misc_ammo", "misc_magazine", "misc_text", "lbl_cooldownCurrent", "blinky_cooldown", "tr_icon", "spr_icon", "btn_selectReference", "bg_icon")]
+[node name="AbilitySlot0" type="Control" node_paths=PackedStringArray("btn_assign", "lbl_name", "lbl_thingname", "lbl_energy", "bar_energy", "blinky_energy", "blinky_usable", "misc_energy", "energyCase", "misc_ammo", "misc_magazine", "misc_text", "lbl_cooldownCurrent", "blinky_cooldown", "tr_icon", "spr_icon", "btn_selectReference", "bg_icon")]
 texture_filter = 1
 clip_contents = true
 layout_mode = 3
@@ -37,6 +37,7 @@ offset_bottom = 132.0
 script = ExtResource("1_w0yrw")
 btn_assign = NodePath("Assign")
 lbl_name = NodePath("NameBG/Name")
+lbl_thingname = NodePath("PieceNameBG/pieceName")
 lbl_energy = NodePath("MiscBG/Energy/EnergyIconStriped/lbl_energy")
 bar_energy = NodePath("EnergyBar_Case/EnergyBar")
 blinky_energy = NodePath("EnergyBar_Case/Blinky")
@@ -90,6 +91,32 @@ offset_right = 14.0
 offset_bottom = 18.0
 texture = ExtResource("5_mm2y6")
 
+[node name="PieceNameBG" type="NinePatchRect" parent="."]
+offset_left = 45.0
+offset_top = 50.0
+offset_right = 119.0
+offset_bottom = 64.0
+texture = ExtResource("6_ifvkn")
+patch_margin_left = 1
+patch_margin_top = 3
+patch_margin_right = 1
+patch_margin_bottom = 1
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1
+
+[node name="pieceName" type="Label" parent="PieceNameBG"]
+offset_left = 4.0
+offset_top = 5.0
+offset_right = 70.0
+offset_bottom = 12.0
+theme = ExtResource("7_4isuo")
+theme_override_colors/font_color = Color(1, 0.431373, 0.286275, 1)
+theme_override_constants/outline_size = 4
+theme_override_constants/shadow_outline_size = 0
+theme_override_font_sizes/font_size = 5
+text = "Cannon"
+autowrap_mode = 1
+
 [node name="NameBG" type="NinePatchRect" parent="."]
 layout_mode = 0
 offset_left = 25.0
@@ -136,6 +163,7 @@ width = 46.0
 height = 65.0
 paddingStart = 13.0
 paddingEnd = -2.0
+currentAmt = 61.05
 maskTexture = ExtResource("11_g6gak")
 fullTexture = ExtResource("12_rf4fe")
 emptyTexture = ExtResource("13_x17s8")
@@ -154,9 +182,9 @@ texture = ExtResource("12_rf4fe")
 
 [node name="EmptyHealth" parent="EnergyBar_Case/EnergyBar/SubViewport/BarHolder" index="1"]
 offset_left = 0.0
-offset_top = -19.897
+offset_top = -30.94
 offset_right = 0.0
-offset_bottom = -19.897
+offset_bottom = -30.94
 texture = ExtResource("13_x17s8")
 
 [node name="Lbl_Health" parent="EnergyBar_Case/EnergyBar/SubViewport/BarHolder" index="2"]

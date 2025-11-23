@@ -13,6 +13,9 @@ var magazineCount := 0;
 ##The base speed to launch fired projectiles.
 @export var launchSpeed := 30.0;
 @export var fireRate := 0.5;
+@export var postFireFrameFreeze := 0; ## How many frames, after firing the weapon, the ammo generator should pause.
+##Calculated.
+@export var postFireTimeFreeze := 0.0; ## How many seconds, after firing the weapon, the ammo generator should pause.
 ##Calculated.
 var firingAngle := Vector3.BACK;
 
@@ -30,7 +33,7 @@ var fireRateTimer := 0.0;
 func get_bullet_gravity():
 	return get_stat("ProjectileGravity");
 
-@export var firingOffsetNode : Node3D;
+@export var firingOffsetNode : RayCast3D;
 var firingOffset : Vector3;
 
 @export_subgroup("Firing FX")
@@ -121,12 +124,15 @@ func get_firing_offset():
 func get_firing_direction() -> Vector3:
 	#return Vector3.ZERO;
 	
+	var firingOffsetPos = firingOffsetNode.global_position;
+	var firingOffsetTargetPos = firingOffsetNode.to_global(firingOffsetNode.target_position);
+	firingAngle = firingOffsetTargetPos - firingOffsetPos;
 	
-	firingAngle = Vector3(0,0,1);
-	firingAngle += inaccuracy * Vector3(randf_range(-1,1),randf_range(0,0),randf_range(-1,1));
-	firingAngle = firingAngle.rotated(Vector3(1,0,0), global_rotation.x)
-	firingAngle = firingAngle.rotated(Vector3(0,1,0), global_rotation.y)
-	firingAngle = firingAngle.rotated(Vector3(0,0,1), global_rotation.z)
+	#firingAngle = Vector3(0,0,1);
+	#firingAngle += inaccuracy * Vector3(randf_range(-1,1),randf_range(0,0),randf_range(-1,1));
+	#firingAngle = firingAngle.rotated(Vector3(1,0,0), global_rotation.x)
+	#firingAngle = firingAngle.rotated(Vector3(0,1,0), global_rotation.y)
+	#firingAngle = firingAngle.rotated(Vector3(0,0,1), global_rotation.z)
 	#Hooks.OnFireProjectile(self, bullet); ##TODO: Hooks implementation
 	firingAngle = firingAngle.normalized();
 	return firingAngle;
@@ -195,6 +201,9 @@ func fireBullet():
 		
 		var factory = get_named_passive("Bullet Factory");
 		factory.add_freeze_time(statHolderID, get_stat("ProjectileFireRate") + get_physics_process_delta_time());
+		
+		factory.add_freeze_frames(statHolderID, postFireFrameFreeze);
+		factory.add_freeze_time(statHolderID, postFireTimeFreeze);
 		
 		initiate_kickback(firingAngle + global_position);
 	else:

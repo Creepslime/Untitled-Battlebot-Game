@@ -416,8 +416,10 @@ surface_material_override/0 = SubResource("StandardMaterial3D_ts5ym")
 transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, 0, 0.25, 0)
 mesh = ExtResource("2_3xkur")
 
-[node name="FiringOffset" type="Node3D" parent="Meshes/MeshInstance3D"]
+[node name="FiringOffset" type="RayCast3D" parent="Meshes/MeshInstance3D"]
 transform = Transform3D(0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.25, 0, 0, 0.375)
+enabled = false
+target_position = Vector3(0, 0, 1)
 
 [node name="PieceCollisionBox" parent="." instance=ExtResource("19_ko0xg")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)

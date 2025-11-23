@@ -52,6 +52,6 @@ func _process(delta):
 func _on_button_pressed(slot):
 	if is_instance_valid(currentRobot):
 		var ability = currentRobot.get_ability_pipette();
-		if is_instance_valid(ability) and ability is AbilityManager:
+		if is_instance_valid(ability) and ability is AbilityData:
 			currentRobot.assign_ability_to_slot(slot.index, ability);
 	pass # Replace with function body.

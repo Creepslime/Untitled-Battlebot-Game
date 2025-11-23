@@ -59,6 +59,7 @@ runType = 0
 functionNameWhenUsed = &"fireBullet"
 statsUsed = Array[String](["ProjectileFireRate", "ProjectileSpeed", "Inaccuracy", "ProjectileGravity", "ProjectileLifetime"])
 icon = ExtResource("4_t3v0x")
+hookName = ""
 initialized = true
 disabled = false
 functionWhenUsed = Callable()
@@ -74,6 +75,7 @@ cooldownStatName = "MagazineRefreshRate"
 runType = 1
 functionNameWhenUsed = &"add_one_bullet"
 statsUsed = Array[String](["MagazineRefreshRate", "MagazineSize"])
+hookName = ""
 initialized = true
 disabled = false
 functionWhenUsed = Callable()
@@ -275,7 +277,7 @@ magazineMaxBase = 1
 magazineRefreshRate = 0.2
 inaccuracy = 0.0
 bulletGravity = -0.049
-firingOffsetNode = NodePath("Meshes/MeshInstance3D/FiringOffset")
+firingOffsetNode = NodePath("Meshes/MeshInstance3D/FiringOffset2")
 pieceName = &"DVD Launcher"
 descriptionConstructor = Array[ExtResource("2_ojg0m")]([SubResource("Resource_861xr"), SubResource("Resource_f406y"), SubResource("Resource_shgbd")])
 pieceDescription = "[color=ffffffff]Shoots [color=ffffffff]projectiles[color=ffffffff]."
@@ -404,8 +406,10 @@ surface_material_override/0 = SubResource("StandardMaterial3D_ts5ym")
 transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0.25, 0)
 mesh = ExtResource("17_wwwbb")
 
-[node name="FiringOffset" type="Node3D" parent="Meshes/MeshInstance3D"]
-transform = Transform3D(0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.25, -0.002, -0.03, 0.25)
+[node name="FiringOffset2" type="RayCast3D" parent="Meshes/MeshInstance3D"]
+transform = Transform3D(0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.25, 0, -0.03, 0.25)
+enabled = false
+target_position = Vector3(0, 0, 1)
 
 [node name="PieceCollisionBox" parent="." instance=ExtResource("19_bppw5")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)

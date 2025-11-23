@@ -53,7 +53,7 @@ func play_sound(soundID, audioplayer = null):
 		if !audioplayer:
 			assert("tried to play sound on nonexistent channel");
 		else:
-			var audioStream = Sound.pick_sound(soundID);
+			var audioStream = SND.pick_sound(soundID);
 			audioplayer.set_stream(audioStream);
 			audioplayer.play();
 

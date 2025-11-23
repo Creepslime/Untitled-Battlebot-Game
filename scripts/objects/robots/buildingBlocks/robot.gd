@@ -924,7 +924,7 @@ func on_add_piece(piece:Piece):
 	remove_something_from_stash(piece);
 	piece.owner = self;
 	if is_ready: ## Prevent the Piece from automatically adding abilities if we aren't fully initialized yet.
-		for ability in piece.activeAbilities:
+		for ability in piece.activeAbilitiesDistributed:
 			if ability is AbilityManager:
 				var AD = ability.get_ability_data(piece.statHolderID)
 				print("Adding ability ", ability.abilityName)
@@ -948,7 +948,11 @@ func remove_abilities_of_piece(piece:Piece):
 	for abilityKey in active_abilities:
 		var ability = active_abilities[abilityKey];
 		if ability is AbilityData:
-			unassign_ability_slot(abilityKey);
+			if ! is_instance_valid(piece):
+				unassign_ability_slot(abilityKey, str("INVALID piece being removed, deleting the whole lot"));
+			else:
+				if ability.statHolderID == piece.statHolderID:
+					unassign_ability_slot(abilityKey, str("piece ", piece.pieceName, " being removed"));
 
 ## A list of all Pieces attached to this Robot and which have it set as their host.
 var allPieces : Array[Piece]= []; 
@@ -1018,7 +1022,7 @@ func get_all_gathered_hurtboxes():
 
 ##Adds an AbilityData to the given slot index in active_abilities.
 func assign_ability_to_slot(slotNum : int, abilityManager : AbilityData):
-	unassign_ability_slot(slotNum); ## Unassign whatever was in the slot.
+	unassign_ability_slot(slotNum, str("new ability ",abilityManager.abilityName," assigned to slot")); ## Unassign whatever was in the slot.
 	
 	if slotNum in active_abilities.keys():
 		if is_instance_valid(abilityManager):
@@ -1027,14 +1031,14 @@ func assign_ability_to_slot(slotNum : int, abilityManager : AbilityData):
 			clear_ability_pipette();
 
 ##Turns the given slot null and unassigns this robot from that ability on the resource.
-func unassign_ability_slot(slotNum : int):
+func unassign_ability_slot(slotNum : int, reason := ""):
 	if slotNum in active_abilities.keys():
 		if active_abilities[slotNum] is AbilityData: 
 			var abilityManager = active_abilities[slotNum];
 			if is_instance_valid(abilityManager):
 				abilityManager.unassign_slot(slotNum);
 	active_abilities[slotNum] = null;
-	print_rich("[color=red][b]ABILITY IN SLOT ",slotNum," INVALID.");
+	print_rich("[color=red][b]ABILITY IN SLOT ",slotNum," INVALID","."if reason == "" else " because of reason [ ",reason," ]");
 
 ##Runs thru active_abilities and deletes AbilityManager resources that no longer have a valid Piece or Part reference.
 func check_abilities_are_valid():
@@ -1044,11 +1048,11 @@ func check_abilities_are_valid():
 			if ability is AbilityManager:
 				var assignedPieceOrPart = ability.assignedPieceOrPart
 				if !is_instance_valid(assignedPieceOrPart):
-					unassign_ability_slot(slot);
+					unassign_ability_slot(slot, str("Validity check found an ability without a valid piece or part."));
 				else:
 					if assignedPieceOrPart is Piece:
 						if !assignedPieceOrPart.is_equipped():
-							unassign_ability_slot(slot);
+							unassign_ability_slot(slot, str("Validity check found piece ", assignedPieceOrPart.pieceName, " to be not equipped."));
 				##TODO: Part support
 
 ##Attempts to fire the active ability in the given slot, if that slot has one.

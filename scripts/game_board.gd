@@ -75,7 +75,7 @@ func _on_scenetree_ready():
 	Hooks.add(self, "OnDeath", "LifetimeKillCounter", 
 		func(thisBot, killer):
 			Utils.append_unique(enemiesDead, thisBot);
-			if killer is Robot_Player:
+			if is_instance_valid(killer) and killer is Robot_Player:
 				enemiesKilled += 1;
 				print_rich("[color=red][b]Enemies killed: ",enemiesKilled)
 			)
@@ -444,6 +444,11 @@ func process_state(delta : float, state : gameState):
 		gameState.INIT_SHOP:
 			if wait_for_arena_to_build_and_respawn_to_happen():
 				change_state(gameState.LOAD_SHOP);
+			pass
+		gameState.LOAD_SHOP:
+			ping_screen_transition_result();
+		gameState.GOTO_SHOP:
+			ping_screen_transition_result();
 			pass
 		gameState.SHOP:
 			pass
@@ -920,14 +925,16 @@ func spawn_player_new_game() -> Robot_Player:
 
 func teleport_player(_in_position := playerSpawnPosition):
 	var teleportResult = false;
+	print("STATE: TELEPORTING PLAYER")
 	if player != null and is_instance_valid(player):
 		player.body.set_deferred("position", _in_position);
 		teleportResult = true;
+		print("STATE: TELEPORTING PLAYER DOES EXISTd")
 	return teleportResult;
 
 func respawn_player():
 	var respawnResult := false;
-	
+	var respawnError := ""
 	if is_instance_valid(player):
 		if is_instance_valid(currentArena):
 			if is_instance_valid(currentArena.obstaclesNode):
@@ -935,10 +942,17 @@ func respawn_player():
 				print("STATE: RESPAWNING PLAYER ATTEMPT NOW; ", currentArena.obstaclesNode, currentArena.spawningLocations.size())
 				if currentArena.spawningLocations.size() > 0:
 					var location = return_random_unoccupied_spawn_location_position();
-					if location != null:
-						respawnResult = teleport_player(location);
-					print("STATE: PLAYER RESPAWN RESULT: ",respawnResult)
-					return respawnResult;
+					if currentArena.spawningLocations.size() > 1:
+						if location != null:
+							respawnResult = teleport_player(location);
+							respawnError = "" if respawnResult else " || Error: Teleport to a valid location failed"
+						else:
+							respawnError = " || Error: No valid spawning locations"
+					else:
+						respawnResult = teleport_player(currentArena.spawningLocations.front().global_position);
+						respawnError = "" if respawnResult else " || Error: Teleport to the ONLY LOCATION failed"
+	print("STATE: PLAYER RESPAWN RESULT: ",respawnResult,respawnError)
+	return respawnResult;
 
 func spawn_or_respawn_player():
 	var respawnResult = false;

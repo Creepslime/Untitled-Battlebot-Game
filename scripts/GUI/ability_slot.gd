@@ -13,6 +13,7 @@ var curMode : modes = modes.NONE;
 @export var nextSlot : AbilitySlot;
 @export var manager : AbilitySlotManager;
 @export var lbl_name : Label;
+@export var lbl_thingname : Label;
 @export var lbl_energy : Label;
 @export var bar_cooldown : HealthBar;
 @export var bar_energy : HealthBar;
@@ -53,10 +54,11 @@ func set_index(in_index):
 	update_base_tooltips();
 
 func update_base_tooltips():
-	tooltip_text = inputKeysString;
+	var tooltip = str(inputKeysString,"\n","\n"if !is_instance_valid(referencedAbility) or !is_instance_valid(referencedAbility.assignedPieceOrPart) else lbl_thingname.text + "\n","Ability Slot Empty" if referencedAbility == null else referencedAbility.manager.abilityName)
+	tooltip_text = tooltip;
 	for child in Utils.get_all_children(self, self):
 		if child is Control:
-			child.tooltip_text = inputKeysString;
+			child.tooltip_text = tooltip;
 
 func _process(delta):
 	
@@ -100,8 +102,14 @@ func assign_ability(ability : AbilityData):
 		## Change the icon data.
 		spr_icon.texture = mgr.icon;
 		
-		TextFunc.set_text_color(lbl_name, "white");
+		
 		lbl_name.text = mgr.abilityName;
+		if ability.assignedPieceOrPart is Piece:
+			lbl_thingname.text = ability.assignedPieceOrPart.pieceName;
+			TextFunc.set_text_color(lbl_thingname, "lightred");
+		if ability.assignedPieceOrPart is Part:
+			lbl_thingname.text = ability.assignedPieceOrPart.partName;
+			TextFunc.set_text_color(lbl_thingname, "lightgreen");
 		
 		btn_selectReference.disabled = false;
 		
@@ -162,6 +170,7 @@ func update_ability(ability : AbilityData):
 	
 	var usable = data.usable;
 	blinky_usable.visible = usable;
+	TextFunc.set_text_color(lbl_name, "white" if usable else "scrap");
 	
 	## Miscellaneous text.
 	var miscTextDat = "";
@@ -201,6 +210,7 @@ func update_ability(ability : AbilityData):
 func clear_assignment():
 	referencedAbility = null;
 	lbl_name.text = "Ability Slot Empty";
+	lbl_thingname.text = "";
 	TextFunc.set_text_color(lbl_name, "lightred");
 	bar_energy.set_health(0, 0);
 	blinky_energy.visible = false;

@@ -48,7 +48,7 @@ func stat_registry():
 	register_stat("ContactCooldown", contactCooldown, statIconCooldown);
 	
 	#Stats that only matter if the thing has abilities.
-	if activeAbilities.size() > 0:
+	if activeAbilitiesDistributed.size() > 0:
 		register_stat("ActiveEnergyDraw", energyDrawActiveMultiplier, statIconEnergy);
 		register_stat("ActiveCooldown", activeCooldownTimeMultiplier, statIconCooldown);
 	
@@ -175,7 +175,7 @@ func create_startup_data():
 	return dict;
 
 func load_startup_data(data, robot : Robot):
-	print_rich("[color=pink]REALLY INIT ACTIVES:", activeAbilities);
+	print_rich("[color=pink]REALLY INIT ACTIVES:", activeAbilitiesDistributed);
 	
 	for socketIndex in data["sockets"].keys():
 		var socketData = data["sockets"][socketIndex];
@@ -351,7 +351,9 @@ func get_buy_price_piece_only(discountMultiplier := 1.0, fixedMarkup := 0):
 
 @export_subgroup("AbilityManagers")
 @export var activeAbilities : Array[AbilityManager] = [];
+var activeAbilitiesDistributed : Array[AbilityManager] = [];
 @export var passiveAbilities : Array[AbilityManager] = [];
+var passiveAbilitiesDistributed : Array[AbilityManager] = [];
 
 @export_subgroup("Ability Details")
 @export var hurtboxAlwaysEnabled := false;
@@ -381,7 +383,7 @@ func set_cooldown_active(action:AbilityManager, immediate := false):
 func on_cooldown_active(action : AbilityManager) -> bool:
 	return action.on_cooldown(statHolderID);
 func on_cooldown_active_any() -> bool:
-	for ability in activeAbilities:
+	for ability in activeAbilitiesDistributed:
 		if ability.on_cooldown(statHolderID):
 			return true;
 	return false;
@@ -409,7 +411,7 @@ func set_cooldown_passive(passiveAbility : AbilityManager, immediate := false):
 func on_cooldown_passive(action : AbilityManager) -> bool:
 	return get_cooldown_passive(action) > 0;
 func on_cooldown_passive_any() -> bool:
-	for ability in passiveAbilities:
+	for ability in passiveAbilitiesDistributed:
 		if ability.on_cooldown(statHolderID):
 			return true;
 	return false;
@@ -574,8 +576,8 @@ func standard_ability_checks(action : AbilityManager):
 func can_use_active(action : AbilityManager): 
 	## Check that the thing is valid. If not, get the first ability in the relevant list.
 	if ! is_instance_valid(action):
-		if activeAbilities.size() > 0:
-			action = activeAbilities.front();
+		if activeAbilitiesDistributed.size() > 0:
+			action = activeAbilitiesDistributed.front();
 		else:
 			return false
 	## Check all the checks passives and actives share.
@@ -592,8 +594,8 @@ func can_use_passive(passiveAbility : AbilityManager):
 	GameState.profiler_ping_create("Can Use Passive");
 	## Check that the thing is valid. If not, get the first ability in the relevant list.
 	if ! is_instance_valid(passiveAbility):
-		if passiveAbilities.size() > 0:
-			passiveAbility = passiveAbilities.front();
+		if passiveAbilitiesDistributed.size() > 0:
+			passiveAbility = passiveAbilitiesDistributed.front();
 		else:
 			return false
 	## Check all the checks passives and actives share.
@@ -606,17 +608,17 @@ func can_use_passive(passiveAbility : AbilityManager):
 	## You passed!
 	return true;
 func can_use_passive_any() -> bool:
-	for passiveAbility in passiveAbilities:
+	for passiveAbility in passiveAbilitiesDistributed:
 		if can_use_passive(passiveAbility) : return true;
 	return false;
 
 var namedActions : Dictionary[String,AbilityManager] = {};
 func regen_namedActions():
 	namedActions.clear();
-	for action in activeAbilities:
+	for action in activeAbilitiesDistributed:
 		if is_instance_valid(action) and action is AbilityManager:
 			namedActions["A_"+action.abilityName] = action;
-	for action in passiveAbilities:
+	for action in passiveAbilitiesDistributed:
 		if is_instance_valid(action) and action is AbilityManager:
 			namedActions["P_"+action.abilityName] = action;
 func get_named_action(actionName : String) -> AbilityManager:
@@ -650,14 +652,14 @@ func can_use_ability(action):
 
 func use_looping_passives():
 	var passiveNamesUsed = [];
-	for passiveAbility in passiveAbilities:
+	for passiveAbility in passiveAbilitiesDistributed:
 		if ! passiveNamesUsed.has(passiveAbility.abilityName):
 			if passiveAbility.runType == AbilityManager.runTypes.Default or passiveAbility.runType == AbilityManager.runTypes.LoopingCooldown:
 				passiveNamesUsed.append(passiveAbility.abilityName);
 				use_passive(passiveAbility);
 func use_contact_passives():
 	var passiveNamesUsed = [];
-	for passiveAbility in passiveAbilities:
+	for passiveAbility in passiveAbilitiesDistributed:
 		if ! passiveNamesUsed.has(passiveAbility.abilityName):
 			if passiveAbility.runType == AbilityManager.runTypes.OnContactDamage:
 				passiveNamesUsed.append(passiveAbility.abilityName);
@@ -679,63 +681,21 @@ func ability_validation():
 	## Duplicate the resources so the ability doesn't get joint custody with another piece of the same type.
 	## Construct the description FIRST, because the constructor array is not going to get copied over.
 	AbilityDistributor.distribute_all_abilities_to_piece(self);
-	print_rich("[color=pink]INIT ACTIVES:", activeAbilities);
+	print_rich("[color=pink]INIT ACTIVES:", activeAbilitiesDistributed);
 	pass;
 
 func clear_abilities():
-	activeAbilities.clear();
-	passiveAbilities.clear();
-	
-	#var passivesToRemove = []
-	#if passiveAbilities.size() > 0:
-		##print_rich("[color=red]Stat collection is NOT empty at start.")
-		##print_all_stats();
-		#for passive in passiveAbilities:
-			#if is_instance_valid(passive):
-				#if passive is AbilityManager:
-					#if passive.ability_id_invalid_or_matching(statHolderID):
-						#passivesToRemove.append(passive);
-						#print("Erasing passive ", passive.abilityName, " from ", name,"; Was found to have an invalid ID or a matching ID to this StatHolder")
-				#else:
-					#print("Erasing passive ", passive.abilityName, " from ", name,"; Was somehow not an AbilityManager")
-					#passivesToRemove.append(passive);
-			#else:
-				#print("Erasing passive ", passive.abilityName, "; Was invalid")
-				#passivesToRemove.append(passive);
-		#pass;
-	#for passive in passivesToRemove:
-		#passiveAbilities.erase(passive);
-	
-	#var activesToRemove = []
-	#if passiveAbilities.size() > 0:
-		##print_rich("[color=red]Stat collection is NOT empty at start.")
-		##print_all_stats();
-		#for active in activeAbilities:
-			#if is_instance_valid(active):
-				#if active is AbilityManager:
-					#if active.ability_id_invalid_or_matching(statHolderID):
-						#activesToRemove.append(active);
-						#print("Erasing ability ", active.abilityName, " from ", name,"; Was found to have an invalid ID or a matching ID to this StatHolder")
-				#else:
-					#print("Erasing ability ", active.abilityName, " from ", name,"; Was somehow not an AbilityManager")
-					#activesToRemove.append(active);
-			#else:
-				#print("Erasing ability ", active.abilityName, "; Was invalid")
-				#activesToRemove.append(active);
-		#pass;
-	#for passive in passivesToRemove:
-		#activeAbilities.erase(passive);
 	pass;
 
 ## returns an array of all abilities, active and passive.
 func get_all_abilities(passiveFirst := false) -> Array[AbilityManager]:
 	var abilitiesToCheck : Array[AbilityManager] = [];
 	if passiveFirst:
-		Utils.append_array_unique(abilitiesToCheck, passiveAbilities);
-		Utils.append_array_unique(abilitiesToCheck, activeAbilities);
+		Utils.append_array_unique(abilitiesToCheck, passiveAbilitiesDistributed);
+		Utils.append_array_unique(abilitiesToCheck, activeAbilitiesDistributed);
 	else:
-		Utils.append_array_unique(abilitiesToCheck, activeAbilities);
-		Utils.append_array_unique(abilitiesToCheck, passiveAbilities);
+		Utils.append_array_unique(abilitiesToCheck, activeAbilitiesDistributed);
+		Utils.append_array_unique(abilitiesToCheck, passiveAbilitiesDistributed);
 	return abilitiesToCheck;
 
 ## This should be run in ability_registry() only.
@@ -747,7 +707,7 @@ func get_all_abilities(passiveFirst := false) -> Array[AbilityManager]:
 func register_active_ability(abilityName : String = "Active Ability", abilityDescription : String = "No Description Found.", functionWhenUsed : Callable = func(): pass, statsUsed : Array[String] = []):
 	var newAbility = AbilityManager.new();
 	newAbility.register(self, abilityName, abilityDescription, functionWhenUsed, statsUsed);
-	activeAbilities.append(newAbility);
+	activeAbilitiesDistributed.append(newAbility);
 	newAbility.initialized = true;
 	pass;
 
@@ -1106,12 +1066,13 @@ func fix_sockets(delta):
 		#autoassign_child_sockets_to_self();
 		if get_selected():
 			#print(assignedToSocket, hostSocket, StatHolderManager.get_stat_holder_by_id(statHolderID).assignedToSocket)
-			print(activeAbilities.front().get_ability_data(statHolderID) if ! activeAbilities.is_empty() else "ActiveAbilities is empty")
+			#print(activeAbilitiesDistributed.front().get_ability_data(statHolderID) if ! activeAbilitiesDistributed.is_empty() else "ActiveAbilities is empty")
 		#if ! assignedToSocket:
 			#var parent =  get_parent();
 			#if parent is Socket:
 				#if ! parent.preview == self:
 					#parent.add_occupant(self, true);
+			pass;
 		pass;
 
 ##This function assigns socket data and generates all hitboxes. Should only ever be run once at [method _ready()].
@@ -1158,6 +1119,7 @@ func refresh_and_gather_collision_helpers():
 						shapeCastNew.add_exception(hitboxCollisionHolder);
 						shapeCastNew.add_exception(hurtboxCollisionHolder);
 						
+						#shapeCastNew.rotation = child.originalRotation;
 					##if the PieceCollisionBox is of type HITBOX or HURTBOX then it should copy itself into those.
 					if child.isHurtbox:
 						var dupe = child.make_copy();

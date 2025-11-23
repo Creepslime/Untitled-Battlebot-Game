@@ -192,7 +192,6 @@ height = 0.5
 radius = 1.375
 
 [node name="Piece_Sawblade" type="Node3D" node_paths=PackedStringArray("blade", "meshesHolder", "hitboxCollisionHolder", "hurtboxCollisionHolder", "placementCollisionHolder", "femaleSocketHolder") groups=["Piece"]]
-visible = false
 script = ExtResource("1_5k0fg")
 blade = NodePath("Blade2")
 pieceName = &"Sawblade"
@@ -326,7 +325,7 @@ debug_color = Color(0, 0.6, 0.701961, 0.419608)
 identifier = &"sawblade hurtbox"
 
 [node name="PieceCollisionBox3" parent="." instance=ExtResource("12_k1jne")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.027344, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.152344, 0)
 shape = SubResource("CylinderShape3D_j66hk")
 debug_color = Color(0.964706, 0, 0.498039, 0.419608)
 isPlacementBox = false

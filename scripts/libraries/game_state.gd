@@ -28,7 +28,7 @@ func _process(delta: float) -> void:
 	if dbg_prof:
 		profiler(delta);
 	
-	ping_screen_transition();
+	#ping_screen_transition();
 	
 	
 	if Input.is_action_just_pressed("dbg_RestartGame"):

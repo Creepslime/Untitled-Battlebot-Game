@@ -14,6 +14,9 @@ var freezeTime := 0.0;
 
 var assignedSlots : Array[int] = []
 var assignedRobot : Robot;
+var abilityName:
+	get:
+		return manager.abilityName;
 
 var manager: AbilityManager:
 	get:

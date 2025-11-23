@@ -48,7 +48,7 @@ func make_shapecast():
 	posNew = Vector3(0,0,0);
 	shapeCastNew.set("position", posNew);
 	shapeCastNew.set("scale", scale * 0.95);
-	shapeCastNew.set("rotation", rotation);
+	shapeCastNew.set("global_rotation", global_rotation);
 	shapeCastNew.set("shape", shape);
 	shapeCastNew.set("target_position", Vector3(0,0,0));	
 	shapeCastNew.collide_with_areas = true;
