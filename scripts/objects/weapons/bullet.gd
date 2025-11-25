@@ -232,8 +232,8 @@ func bounceBullet():
 	if normal is Vector3:
 		change_direction(dir.bounce(normal));
 	bouncesLeft -= 1;
-	print("BOUNCES LEFT: " ,bouncesLeft)
-	print("BOUNCE NORMAL: " ,normal)
+	#print("BOUNCES LEFT: " ,bouncesLeft)
+	#print("BOUNCE NORMAL: " ,normal)
 
 ## Called when this [Bullet] hits something. Kills it off and starts it leaking.
 func die():
@@ -318,9 +318,10 @@ func shot_something(inbody):
 		
 	#Hooks.OnCollision(self, inbody);
 	#prints("Bullet hit a thing! If this doesn't show, then something borked...")
-	#prints("BULLET INBODY: ", inbody)
+	prints("BULLET INBODY: ", inbody)
 	#prints(self, inbody)
 	#prints(fired, lifeTimer, lifeDeltaTimer)
+	
 	SND.play_collision_sound(self, inbody, get_current_position(), 0.85, 1.5);
 	ParticleFX.play("Sparks", GameState.get_game_board(), get_current_position(), 0.5);
 	

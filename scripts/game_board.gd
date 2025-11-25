@@ -310,7 +310,7 @@ func enter_state(_newState:gameState, _oldState:gameState):
 			enemiesKilled = 0;
 			player = null;
 			
-			GameState.call_deferred("make_screen_transition_arrive", 3);
+			call_screen_transition_in();
 			
 			pass
 		gameState.INIT_ROUND:
@@ -331,7 +331,7 @@ func enter_state(_newState:gameState, _oldState:gameState):
 			
 			pass
 		gameState.LOAD_ROUND:
-			GameState.call_deferred("make_screen_transition_leave");
+			call_screen_transition_out()
 		gameState.PLAY:
 			player.start_round();
 			pass
@@ -339,7 +339,8 @@ func enter_state(_newState:gameState, _oldState:gameState):
 			MUSIC.change_state(MusicHandler.musState.PREGAME);
 			
 			player.end_round();
-			GameState.call_deferred("make_screen_transition_arrive", 3);
+			
+			call_screen_transition_in();
 		gameState.INIT_SHOP:
 			HUD_shopTabs.change_tab(0);
 			CANVAS_SHOP.show();
@@ -349,7 +350,8 @@ func enter_state(_newState:gameState, _oldState:gameState):
 		gameState.LOAD_SHOP:
 			HUD_shopTabs.open = true;
 			MUSIC.change_state(MusicHandler.musState.SHOP);
-			GameState.call_deferred("make_screen_transition_leave");
+			
+			call_screen_transition_out();
 			pass;
 		gameState.SHOP:
 			CANVAS_SHOP.show();
@@ -375,7 +377,7 @@ func enter_state(_newState:gameState, _oldState:gameState):
 			HUD_shopTabs.open = false;
 			queuedShopLeave = false;
 			player.exit_shop();
-			GameState.call_deferred("make_screen_transition_arrive", 3);
+			call_screen_transition_out();
 
 
 func new_round_arena_sequence():
@@ -399,6 +401,9 @@ func process_state(delta : float, _state : gameState):
 	if lightingUpdateTimer < 0:
 		update_lighting();
 		lightingUpdateTimer = 15;
+	
+	if awaitingScreenTransition:
+		ping_screen_transition_result();
 	
 	match curState:
 		gameState.SPLASH:
@@ -446,27 +451,39 @@ func process_state(delta : float, _state : gameState):
 				change_state(gameState.LOAD_SHOP);
 			pass
 		gameState.LOAD_SHOP:
-			ping_screen_transition_result();
+			#ping_screen_transition_result();
+			pass;
 		gameState.GOTO_SHOP:
-			ping_screen_transition_result();
+			#ping_screen_transition_result();
 			pass
 		gameState.SHOP:
 			pass
 		gameState.INIT_ROUND:
-			ping_screen_transition_result();
+			#ping_screen_transition_result();
 			
 			if wait_for_arena_to_build_and_respawn_to_happen():
 				change_state(gameState.LOAD_ROUND);
 			pass
 		gameState.LOAD_ROUND:
-			ping_screen_transition_result();
+			#ping_screen_transition_result();
+			pass;
 		gameState.LEAVE_SHOP:
-			ping_screen_transition_result();
+			#ping_screen_transition_result();
+			pass;
 	pass
 
+var awaitingScreenTransition := false; ## If set to true, then [method ping_screen_transition_result] will be called every frame until [method screen_transition] is called from [GameState].
+## Pings the [ScreenTransition] to try to coax a result out of it.
 func ping_screen_transition_result():
-	
 	GameState.ping_screen_transition();
+## At the end of the frame, makes the screen transition leave and sets [member awaitingScreenTransition] to true.
+func call_screen_transition_in(transitionLayer := 3):
+	GameState.call_deferred("make_screen_transition_arrive", transitionLayer);
+	set_deferred("awaitingScreenTransition", true);
+## At the end of the frame, makes the screen transition leave and sets [member awaitingScreenTransition] to true.
+func call_screen_transition_out():
+	GameState.call_deferred("make_screen_transition_leave");
+	set_deferred("awaitingScreenTransition", true);
 
 var queuedRightTransitionState := gameState.QUEUE_EMPTY;
 var queuedCenterTransitionState := gameState.QUEUE_EMPTY;
@@ -474,6 +491,9 @@ var queuedCenterTransitionForceLeave := false;
 func screen_transition(scr_state : ScreenTransition.mode):
 	match scr_state:
 		ScreenTransition.mode.RIGHT:
+			awaitingScreenTransition = false; ## Stop waiting for the transition.
+			
+			## Handle state-specfic transitions.
 			match curState:
 				gameState.LOAD_ROUND:
 					if is_instance_valid(player):
@@ -484,7 +504,11 @@ func screen_transition(scr_state : ScreenTransition.mode):
 			if queuedRightTransitionState != gameState.QUEUE_EMPTY:
 				change_state(queuedRightTransitionState);
 				queuedRightTransitionState = gameState.QUEUE_EMPTY;
+			
 		ScreenTransition.mode.CENTER:
+			awaitingScreenTransition = false; ## Stop waiting for the transition.
+			
+			## Handle state-specfic transitions.
 			match curState:
 				gameState.INIT_NEW_GAME:
 					change_state(gameState.INIT_ROUND);
@@ -497,17 +521,18 @@ func screen_transition(scr_state : ScreenTransition.mode):
 				change_state(queuedCenterTransitionState);
 				queuedCenterTransitionState = gameState.QUEUE_EMPTY;
 				if queuedCenterTransitionForceLeave:
-					GameState.call_deferred("make_screen_transition_leave");
+					call_screen_transition_out();
 			pass;
 ## Sets a state to be called when the screen transition shows up, then makes it show up.
 func queue_center_transition_state(state := gameState.QUEUE_EMPTY, layer := 3, instantLeave := false):
 	queuedCenterTransitionState = state;
-	GameState.call_deferred("make_screen_transition_arrive", layer);
 	queuedCenterTransitionForceLeave = instantLeave;
+	call_screen_transition_in(layer);
+
 ## Sets a state to be called when the screen transition leaves, then makes it leave.
 func queue_right_transition_state(state := gameState.QUEUE_EMPTY):
 	queuedRightTransitionState = state;
-	GameState.call_deferred("make_screen_transition_leave");
+	call_screen_transition_out();
 
 func wait_for_arena_to_build_and_respawn_to_happen() -> bool:
 	var respawnResult = false;
