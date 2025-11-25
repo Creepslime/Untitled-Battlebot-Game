@@ -64,7 +64,7 @@ func _physics_process(delta):
 		#print(stallClopenQueued)
 		match stallClopenQueued:
 			true:
-				if ! all_stalls_open():
+				if ! all_stalls_open_or_frozen():
 					clopen_stalls(true);
 				else:
 					stallClopenQueued = null;
@@ -191,6 +191,16 @@ func all_stalls_open() -> bool:
 	for stall in stalls:
 		if stall is ShopStall:
 			if stall.doors_actually_closed():
+				return false;
+	return true;
+
+## Returns false if any [ShopStall] child is closed.
+func all_stalls_open_or_frozen() -> bool:
+	for stall in stalls:
+		if stall is ShopStall:
+			if stall.is_frozen():
+				pass;
+			elif stall.doors_actually_closed():
 				return false;
 	return true;
 

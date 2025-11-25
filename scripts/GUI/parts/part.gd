@@ -146,7 +146,11 @@ func try_buy_from_shop() -> bool:
 	return false;
 
 func start_buying(robot : Robot):
+	hostShopStall.buyQueued = false;
+	hostShopStall.partRef = null;
+	hostShopStall = null;
 	hostRobot = robot;
+	SND.play_purchase_sound();
 	remove_and_add_to_stash(robot);
 
 func remove_and_add_to_stash(robotOverride := hostRobot):
@@ -154,8 +158,10 @@ func remove_and_add_to_stash(robotOverride := hostRobot):
 	if is_instance_valid(hostPiece):
 		hostPiece.remove_part(self, false, false, false, true);
 	else:
-		hostShopStall = null;
 		hostRobot.add_something_to_stash(self);
+
+func is_equipped():
+	return is_instance_valid(hostPiece) and is_instance_valid(hostPiece.get_host_robot());
 
 func _get_part_bounds() -> Vector2i:
 	var highestX = 1; 
@@ -202,6 +208,7 @@ func _process(delta):
 		textureBase.hide();
 		%Buttons.disable();
 
+## Acts to actually set [member selected].
 func _on_buttons_on_select(foo:bool):
 	if ! selected == foo and is_instance_valid(hostRobot):
 		selected = foo;
@@ -212,6 +219,7 @@ func _on_buttons_on_select(foo:bool):
 	pass # Replace with function body.
 
 func select(foo:bool):
+	print("Selecting: ", foo)
 	_on_buttons_on_select(foo);
 	%Buttons.set_pressed(foo);
 	move_mode(false);

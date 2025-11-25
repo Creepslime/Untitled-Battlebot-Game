@@ -183,8 +183,8 @@ func update_bars():
 		#print(currentHealth);
 		barHP.set_health(currentHealth, currentHealthMax);
 		barHP.set_alt_color(invincible);
-		
 		var currentEnergy = get_available_energy();
+		#print("BARS UPDATE, CURRENT ENERGY: ", currentEnergy)
 		var currentEnergyMax = get_maximum_energy();
 		barEnergy.set_health(currentEnergy, currentEnergyMax);
 

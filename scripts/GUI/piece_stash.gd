@@ -23,6 +23,18 @@ func _ready():
 	rotate_equipped_status(); ##Rotates off of NONE.
 	rotate_sort(); ##Rotates off of NONE.
 
+var refreshCounter := 0;
+var refreshRate := 4;
+func _process(delta):
+	if instantRefreshMode:
+		refreshCounter -= 1;
+	else:
+		refreshCounter = 0;
+	
+	if refreshCounter < 0:
+		refreshCounter = 15;
+		regenerate_list();
+
 func get_current_mode(): return currentMode;
 
 func get_current_robot(): 
@@ -57,7 +69,7 @@ func regenerate_list(robotToReference : Robot = get_current_robot(), mode : mode
 			modes.ALL:
 				stash.append_array(robotToReference.get_stash_all(get_current_equipped_status()));
 			#prints("Stash regen PRE", stash)
-		
+		stash= Utils.array_duplicates_removed(stash);
 		## Check if the stash item is inside of the buttons currently existing.
 		#prints("Stash regen", stash)
 		for item in stash:
@@ -93,12 +105,16 @@ func spawn_piece_button(tiedPiece : Piece):
 	var newButton = stashButtonScene.instantiate();
 	newButton.load_piece_data(tiedPiece, self);
 	buttonsHolder.add_child(newButton);
+	if ! newButton.is_connected("hover", hover_button):
+		newButton.connect("hover", hover_button);
 	return newButton;
 
 func spawn_part_button(tiedPart : Part):
 	var newButton = stashButtonScene.instantiate();
 	newButton.load_part_data(tiedPart, self);
 	buttonsHolder.add_child(newButton);
+	if ! newButton.is_connected("hover", hover_button):
+		newButton.connect("hover", hover_button);
 	return newButton;
 
 var allButtons : Array[StashButton]= [];
@@ -203,7 +219,9 @@ signal partButtonClicked(tiedPart : Part, button : StashButton);
 func _on_part_button_clicked(tiedPart:Part, button : StashButton):
 	deselect_all_buttons(button);
 	if is_instance_valid(currentRobot):
-		currentRobot.prepare_pipette(tiedPart);
+		currentRobot.select_part(tiedPart);
+		#currentRobot.prepare_pipette(tiedPart);
+		button.get_selected();
 	pass # Replace with function body.
 
 func _on_piece_button_clicked(tiedPiece:Piece, button : StashButton):
@@ -224,6 +242,15 @@ func _on_piece_button_clicked(tiedPiece:Piece, button : StashButton):
 	pass # Replace with function body.
 
 func deselect_all_buttons(ignoredButton : StashButton):
+	var ignoredButtonRef = ignoredButton.ref;
 	for button : StashButton in buttonsHolder.get_children():
+		var buttonRef = button.ref;
 		if button != ignoredButton:
-			button.select(false);
+			if (ignoredButtonRef is Piece and buttonRef is Piece) or (ignoredButtonRef is Part and buttonRef is Part):
+				button.select(false);
+
+var instantRefreshMode := true;
+func hover_button(hovering:bool):
+	instantRefreshMode = !hovering;
+	if ! hovering:
+		regenerate_list();

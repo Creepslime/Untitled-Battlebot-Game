@@ -12,7 +12,8 @@ var statCollection : Dictionary[String,StatTracker] = {};
 var statHolderID := -1:
 	get:
 		if statHolderID == -1:
-			statHolderID = set_stat_holder_id();
+			statHolderID = StatHolderManager.get_unique_stat_holder_id();
+			StatHolderManager.register_stat_holder(self);
 		return statHolderID;
 
 func _ready():

@@ -458,11 +458,14 @@ func process_state(delta : float, _state : gameState):
 			if wait_for_arena_to_build_and_respawn_to_happen():
 				change_state(gameState.LOAD_ROUND);
 			pass
+		gameState.LOAD_ROUND:
+			ping_screen_transition_result();
 		gameState.LEAVE_SHOP:
 			ping_screen_transition_result();
 	pass
 
 func ping_screen_transition_result():
+	
 	GameState.ping_screen_transition();
 
 var queuedRightTransitionState := gameState.QUEUE_EMPTY;

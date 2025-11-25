@@ -24,6 +24,7 @@ func _ready():
 		regen_namedActions(); ## Regenerates the actions list
 		super(); #Stat registry.
 		gather_colliders_and_meshes();
+		is_ready = true;
 
 func _physics_process(delta):
 	if temporaryPreview:
@@ -1318,7 +1319,7 @@ func select(foo : bool = not get_selected()):
 		else:
 			deselect_other_pieces(self);
 	if is_preview() and ! assignedToSocket:
-		return;
+		return false;
 	selected = foo;
 	var bot = get_host_robot()
 	if selected: 
@@ -1518,11 +1519,12 @@ func get_all_pieces_regenerate() -> Array[Piece]:
 
 func get_all_pieces_recursive() -> Array[Piece]:
 	var ret : Array[Piece] = [self];
-	
-	for socket in get_all_female_sockets():
-		if is_instance_valid(socket) and is_instance_valid(socket.get_occupant()):
-			var occupant = socket.get_occupant();
-			ret.append_array(occupant.get_all_pieces_recursive())
+	if is_ready:
+		for socket in get_all_female_sockets():
+			if is_instance_valid(socket):
+				var occupant = socket.get_occupant();
+				if is_instance_valid(occupant):
+					Utils.append_array_unique(ret, occupant.get_all_pieces_recursive())
 	
 	return ret;
 

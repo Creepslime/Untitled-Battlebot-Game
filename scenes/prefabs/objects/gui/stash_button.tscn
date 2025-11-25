@@ -58,4 +58,7 @@ texture = ExtResource("5_th2qg")
 stretch_mode = 1
 flip_v = true
 
+[connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]
 [connection signal="pressed" from="." to="." method="_on_pressed"]
+[connection signal="tree_exiting" from="." to="." method="_on_tree_exiting"]

@@ -142,6 +142,7 @@ func freeze(toggled_on:=true):
 			if GameState.get_in_state_of_play() and curState == ShopStall.doorState.FROZEN:
 				SND.play_sound_nondirectional("Part.Select", 0.60, 0.5);
 			changeState(ShopStall.doorState.OPEN);
+		#print("deseleccting from freeze?")
 		deselect(true);
 	elif curState == ShopStall.doorState.CLOSED:
 		btn_freeze.button_pressed = false;
@@ -235,8 +236,8 @@ func try_buy_part() -> bool:
 		return false;
 	if ref_is_part():
 		if ScrapManager.try_spend_scrap(get_price(), "Part Purchase"):
-			partRef.start_buying(player);
 			buyQueued = true;
+			partRef.start_buying(player);
 			btn_buy.button_pressed = true;
 			return true;
 		else:
@@ -250,6 +251,7 @@ func deselect(deselectPart:=false):
 		if is_instance_valid(pieceRef):
 			pieceRef.select_via_robot(player, false);
 	if deselectPart && is_instance_valid(partRef):
+		#print("Deselecting fromm shop stall")
 		partRef.select(false);
 
 

@@ -13,6 +13,8 @@ var iconPiece := preload("res://graphics/images/HUD/statIcons/pieceIconStriped.p
 @export var img_selectedBG : TextureRect;
 @export var img_unequippedSelectedBG : TextureRect;
 
+signal hover(hovering:bool)
+
 func load_piece_data(inPiece : Piece, hud : PieceStash):
 	name = inPiece.pieceName;
 	text = inPiece.get_stash_button_name();
@@ -52,11 +54,14 @@ func get_robot() -> Robot:
 var selected := false;
 func get_selected() -> bool:
 	selected = false;
-	if is_instance_valid(pieceReferenced) and pieceReferenced.get_selected(): 
-		selected = true;
-	if get_robot() != null:
-		if is_instance_valid(pieceReferenced) and robot.get_current_pipette() == pieceReferenced:
+	if ref_is_piece():
+		if is_instance_valid(pieceReferenced) and pieceReferenced.get_selected(): 
 			selected = true;
+		if get_robot() != null:
+			if is_instance_valid(pieceReferenced) and robot.get_current_pipette() == pieceReferenced:
+				selected = true;
+	elif ref_is_part():
+		selected = partReferenced.selected;
 	return selected;
 
 var ref;
@@ -74,20 +79,37 @@ func get_reference():
 	ref = null;
 	return null;
 
+func ref_is_piece():
+	return is_instance_valid(get_reference()) and ref is Piece;
+func ref_is_part():
+	return is_instance_valid(get_reference()) and ref is Part;
+
+func get_equipped():
+	if ref_is_part():
+		return is_instance_valid(partReferenced) and partReferenced.is_equipped();
+	elif ref_is_piece():
+		return is_instance_valid(pieceReferenced) and pieceReferenced.is_equipped();
+	return false;
+
 func select(foo := not get_selected()):
 	selected = foo;
-	if !foo:
-		if get_reference() != null:
-			if ref is Piece:
-				ref.deselect();
+	if get_reference() != null:
+		if !foo:
+			if ref_is_piece():
 				ref.select(false);
 				if get_robot() != null:
 					robot.deselect_piece(ref);
+			if ref_is_part():
+				ref.select(false);
+				if get_robot() != null:
+					robot.deselect_all_parts();
+		else:
+			if ref_is_part():
+				if get_robot() != null:
+					robot.select_part(ref);
+				ref.select(true);
 	
 	update_bg();
-
-func get_equipped():
-	return is_instance_valid(pieceReferenced) and pieceReferenced.is_equipped();
 
 enum modes {
 	NotSelectedNotEquipped,
@@ -99,6 +121,7 @@ enum modes {
 func update_bg():
 	var mode : modes;
 	if get_selected():
+		#print("BUTTON SELECTED. REF:", ref)
 		if get_equipped():
 			mode = modes.SelectedEquipped;
 		else:
@@ -116,3 +139,18 @@ func _process(delta):
 	if !is_instance_valid(robot) or !is_instance_valid(get_reference()):
 		queue_free();
 	update_bg();
+
+
+func _on_mouse_entered():
+	hover.emit(true)
+	pass # Replace with function body.
+
+
+func _on_mouse_exited():
+	hover.emit(false)
+	pass # Replace with function body.
+
+
+func _on_tree_exiting():
+	hover.emit(false)
+	pass # Replace with function body.

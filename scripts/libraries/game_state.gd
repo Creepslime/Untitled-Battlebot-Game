@@ -198,6 +198,33 @@ func get_player_selected_or_pipette():
 		return ply.get_selected_or_pipette();
 	return null
 
+func get_player_selected_piece():
+	var ply = get_player()
+	
+	if is_instance_valid(ply):
+		return ply.get_selected_piece();
+	return null
+
+func get_player_selected_part():
+	var ply = get_player()
+	
+	if is_instance_valid(ply):
+		return ply.get_selected_part();
+	return null
+
+func get_player_pipette():
+	var ply = get_player()
+	
+	if is_instance_valid(ply):
+		return ply.get_current_pipette();
+	return null
+func get_player_ability_pipette():
+	var ply = get_player()
+	
+	if is_instance_valid(ply):
+		return ply.get_ability_pipette();
+	return null
+
 func get_camera_pointer() -> Node3D:
 	var board = get_game_board();
 	
@@ -622,6 +649,7 @@ func make_screen_transition_arrive(layer := 3):
 	screenTransition.primeASignal;
 	screenTransition.comeIn();
 func ping_screen_transition():
+	profiler_ping_create("Waiting on Screen Transition")
 	if screenTransition.is_on_center():
 		hit_center();
 	if screenTransition.is_on_right():
@@ -656,7 +684,14 @@ func get_profiler_string() -> String:
 	return s;
 
 func get_profiler_label():
-	return str("TOTAL PLAY TIME: ", TextFunc.format_time(totalPlayTime, 0, -1), "\nPROFILER UPDATE TIME: ",TextFunc.format_stat(timeCounter),"\nFPS: ",profilerFPS,"\nCURRENTLY SELECTED: ",str(get_player_selected_or_pipette()),"\nSTATE: ",get_game_board_state_string(),"\nPAUSED: ",is_paused(),get_profiler_string());
+	
+	var currentlySelected := str("\nCURRENTLY SELECTED: ",str(get_player_selected_or_pipette()))
+	currentlySelected += str("\n - PIECE: ",str(get_player_selected_piece()))
+	currentlySelected += str("\n - PART: ",str(get_player_selected_part()))
+	currentlySelected += str("\n - PIPETTE: ",str(get_player_pipette()))
+	currentlySelected += str("\n - ABILITY PIPETTE: ",str(get_player_ability_pipette()))
+	
+	return str("TOTAL PLAY TIME: ", TextFunc.format_time(totalPlayTime, 0, -1), "\nPROFILER UPDATE TIME: ",TextFunc.format_stat(timeCounter),"\nFPS: ",profilerFPS,currentlySelected,"\nSTATE: ",get_game_board_state_string(),"\nPAUSED: ",is_paused(),get_profiler_string());
 	
 
 func profiler(delta):

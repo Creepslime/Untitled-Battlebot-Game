@@ -58,9 +58,9 @@ func append_array_unique(hostArray : Array, inputArray):
 		append_unique(hostArray, item);
 	return hostArray;
 
-##Appends an item to a given [Array] only if the array does not already contain that item.[br]
-##If the input is an [Array], it runs this function again on each item within it.[br]
-##This essentially unfurls every array and creates one massive one.
+## Appends an item to a given [Array] only if the array does not already contain that item.[br]
+## If the input is an [Array], it runs this function again on each item within it.[br]
+## This essentially unfurls every array and creates one massive one.
 func append_recursive_unique(hostArray : Array, input : Variant):
 	if input is Array:
 		for item in input:
@@ -68,6 +68,15 @@ func append_recursive_unique(hostArray : Array, input : Variant):
 	else:
 		append_unique(hostArray, input);
 	return hostArray;
+
+## Returns the [param hostArray] but removes any duplicate entries.
+func array_duplicates_removed(inputArray : Array):
+	var ret := inputArray.duplicate();
+	ret.clear();
+	for item in inputArray:
+		append_unique(ret, item);
+	inputArray = ret;
+	return inputArray;
 
 ##Takes an angle in Degrees and then returns a Radian equivalent between -360 and 360 degrees.
 func fix_angle_deg_to_rad(inAngle : float) -> float:

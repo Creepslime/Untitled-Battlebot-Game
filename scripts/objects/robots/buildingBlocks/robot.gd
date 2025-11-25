@@ -130,7 +130,18 @@ func stat_registry():
 		return newValFixed;
 		);
 	register_stat("EnergyMax", maxEnergy, StatHolderManager.statIconEnergy, StatHolderManager.statTags.Battery);
-	register_stat("Energy", maxEnergy, StatHolderManager.statIconEnergy, StatHolderManager.statTags.Battery, StatHolderManager.displayModes.ALWAYS, StatHolderManager.roundingModes.None, null, (func(newValue): self.health_or_energy_changed.emit(); return clampf(newValue, 0.0, self.get_stat("EnergyMax"))));
+	register_stat(
+		"Energy", 
+		maxEnergy, 
+		StatHolderManager.statIconEnergy, 
+		StatHolderManager.statTags.Battery, 
+		StatHolderManager.displayModes.ALWAYS, 
+		StatHolderManager.roundingModes.None, 
+		null, 
+		func(newValue): 
+		health_or_energy_changed.emit(); 
+		return clampf(newValue, 0.0, self.get_maximum_energy())
+		);
 	register_stat("InvincibilityTime", maxInvincibleTimer, StatHolderManager.statIconCooldown, StatHolderManager.statTags.Clock);
 	register_stat("MovementSpeedAcceleration", acceleration, StatHolderManager.statIconCooldown, StatHolderManager.statTags.Function);
 	register_stat("MovementSpeedMax", maxSpeed, StatHolderManager.statIconCooldown, StatHolderManager.statTags.Function);
@@ -409,7 +420,11 @@ var pipettePieceScene : PackedScene;
 var pipettePieceInstance : Piece;
 var pipettePartInstance : Part;
 
-func get_current_pipette():
+func get_current_pipette(init := true):
+	#if ! GameState.get_in_state_of_building():
+		#unreference_pipette()
+		#return null;
+	
 	if is_instance_valid(pipettePartInstance):
 		return pipettePartInstance;
 	if is_instance_valid(pipettePieceInstance):
@@ -418,6 +433,16 @@ func get_current_pipette():
 		return pipettePieceScene;
 	if is_instance_valid(pipettePiecePath):
 		return pipettePiecePath;
+	
+	if init:
+		var selectedPotential = get_selected();
+		if is_instance_valid(selectedPotential) and ! selectedPotential.is_inside_tree():
+			if get_stash_all(PieceStash.equippedStatus.NOT_EQUIPPED).has(selectedPotential):
+				prepare_pipette(selectedPotential);
+				
+				return get_current_pipette(false);
+	
+	return null;
 
 func prepare_pipette_from_path(scenePath : String = pipettePiecePath):
 	#print("Preparing pipette")
@@ -451,6 +476,7 @@ func prepare_pipette(override : Variant = get_current_pipette()):
 	
 	queue_update_hud();
 
+## Clears out the current pipette.
 func unreference_pipette():
 	pipettePiecePath = "";
 	pipettePieceScene = null;
@@ -460,6 +486,7 @@ func unreference_pipette():
 	pipettePartInstance = null;
 	queue_update_hud();
 
+## Clears out the current pipette, after removinng it from its [Socket] (if it is a [Piece]).
 func detach_pipette():
 	if is_instance_valid(pipettePieceInstance):
 		pipettePieceInstance.remove_from_socket();
@@ -615,6 +642,7 @@ func try_sap_energy(amount):
 		var energy = get_available_energy();
 		if amount <= energy:
 			#energy -= amount;
+			#print(amount)
 			set_stat("Energy", energy - amount);
 			return true;
 		else:
@@ -932,7 +960,7 @@ func on_add_piece(piece:Piece):
 				assign_ability_to_next_active_slot(AD);
 	regen_piece_tree_stats()
 	get_all_pieces_regenerate();
-	update_hud();
+	queue_update_hud();
 	pass;
 
 ## Fired by a Piece when it is removed from the Robot.
@@ -1168,7 +1196,7 @@ func get_selected_piece(mustBeInTree := false)->Piece:
 	return null;
 
 ## Deselects based on a predetermined hierarchy.[br]
-## Pipette > Part > Piece;
+## Ability > Pipette > Part > Piece;
 func deselect_in_hierarchy():
 	if abilityPipette != null:
 		clear_ability_pipette();
@@ -1256,6 +1284,8 @@ func select_part(part : Part, foo:=true):
 ## Gets [member selectedPart] or null.
 func get_selected_part():
 	if is_instance_valid(selectedPart):
+		if !selectedPart.selected:
+			selectedPart.select(true);
 		return selectedPart;
 	return null;
 
