@@ -48,7 +48,7 @@ func get_required_height() -> int:
 var requiredHeight := 272.0;
 func calculate_required_height():
 	update_ability_height();
-	requiredHeight = calculatedHeight;
+	requiredHeight = min(infoBoxMaxSize, calculatedHeight);
 	return requiredHeight;
 
 func populate_info_part(part:Part):
@@ -105,6 +105,7 @@ func populate_info_piece(piece:Piece):
 	else:
 		iconBase.texture = icon_piece_unequipped;
 	
+	populate_stats(piece);
 	populate_abilities(piece);
 	pass;
 
@@ -132,6 +133,9 @@ func clear_info(thingToCheck = null):
 		print_rich("[color="+str(col.to_html())+"]test")
 		
 		clear_abilities();
+		clear_stats();
+		
+		queueAbilityPostUpdateCounter = -1;
 	sell_areYouSure = false;
 
 var ref : Node;
@@ -254,32 +258,50 @@ var queueAbilityPostUpdateCounter = -1;
 
 func set_queue_ability_post_update():
 	queueAbilityPostUpdateCounter = 4;
-@export var abilityBoxMaxSize := 300;
+@export var abilityBoxMaxSize := 200;
+@export var infoBoxMaxSize := 400;
+@export var almightyHolder : Control;
+@export var almightyScroller : ScrollContainer;
 var spaceBeforeDescription = 32;
 var spaceAfterDescription = 2;
-var spaceAfterAbilityContainer = 4;
+
+var spaceAfterAbilityContainer = 2;
+
+var spaceAfterStatContainer = 2;
 var spaceAfterButton = 4;
+
+var spaceAfterStats = 4;
+
+const maxButtonPosY = 366.0;
 
 var calculatedHeight = 0;
 func update_ability_height():
 	var v = 0;
 	for child in abilityHolder.get_children():
 		v += child.size.y;
-		#print(v)
-	abilityScrollContainer.custom_minimum_size.y = min(abilityBoxMaxSize, v + 10)
-	abilityScrollContainer.size.y = min(abilityBoxMaxSize, v)
 	
 	var descHeight = rlbl_desc.get_content_height();
+	
+	abilityScrollContainer.custom_minimum_size.y = min(abilityBoxMaxSize - descHeight, v + 10)
+	abilityScrollContainer.size.y = abilityScrollContainer.custom_minimum_size.y
+	
 	var abilityPosY = descHeight + spaceAfterDescription + spaceBeforeDescription;
 	abilityScrollContainer.position.y = abilityPosY;
 	var abilityH = abilityScrollContainer.custom_minimum_size.y;
 	if not abilityScrollContainer.visible:
 		abilityH = 0;
-	var buttonPosY = abilityH + abilityPosY + spaceAfterAbilityContainer
+	var statY = abilityH + abilityPosY + spaceAfterAbilityContainer;
+	statScrollContainer.position.y = statY;
+	statScrollContainer.size.y = min(fix_stat_array_holder_height(), statContainerHeight);
+	var buttonPosY = statY + statScrollContainer.size.y + spaceAfterStatContainer;
 	
-	btn_sellButton.position.y = buttonPosY;
-	btn_moveButton.position.y = buttonPosY;
-	btn_removeButton.position.y = buttonPosY;
+	var almightySize = btn_sellButton.size.y + buttonPosY + spaceAfterButton;
+	almightyHolder.size.y = almightySize
+	almightyScroller.size.y = min(almightySize, infoBoxMaxSize - btn_sellButton.size.y)
+	
+	btn_sellButton.position.y = min(maxButtonPosY, buttonPosY);
+	btn_moveButton.position.y = min(maxButtonPosY, buttonPosY);
+	btn_removeButton.position.y = min(maxButtonPosY, buttonPosY);
 	calculatedHeight = btn_sellButton.size.y + btn_sellButton.position.y + spaceAfterButton;
 	pass;
 
@@ -334,6 +356,63 @@ func clear_abilities():
 	for ability in abilityHolder.get_children():
 		ability.queue_free();
 
+## STATS
+@export var statScrollContainer : ScrollContainer;
+@export var statHolder : VBoxContainer;
+@export var statArrayTemplate = preload("res://scenes/prefabs/objects/gui/stat_array.tscn");
+
+var statContainerHeight = 0:
+	get:
+		return min(statHolder.size.y, 90) if statScrollContainer.visible else 0;
+const statContainerHeightWhenFull = 40.0;
+func populate_stats(thing):
+	clear_stats();
+	
+	if is_instance_valid(thing):
+		if thing is Piece:
+			for stat in thing.statCollection.values():
+				add_stat_icon(stat);
+		elif thing is Part:
+			for stat in thing.statCollection.values():
+				add_stat_icon(stat);
+	
+	var statTagArraysOrganized = statTagsCategorized.values();
+	statTagArraysOrganized.sort_custom(func(a : StatArrayDisplay, b : StatArrayDisplay):
+		return a.statTag < b.statTag;)
+	for statArray in statTagArraysOrganized:
+		statHolder.add_child(statArray);
+	
+	statTagsCategorized.clear();
+	statScrollContainer.visible = statHolder.get_child_count() > 0;
+	statScrollContainer.scroll_vertical = 0;
+	abilityScrollContainer.scroll_vertical = 0;
+
+var statTagsCategorized : Dictionary[StatHolderManager.statTags, StatArrayDisplay] = {}
+func add_stat_icon(stat:StatTracker):
+	if stat.should_be_displayed():
+		var tag = stat.statTag;
+		var statArray : StatArrayDisplay;
+		if !statTagsCategorized.has(tag):
+			statArray = statArrayTemplate.instantiate();
+			statTagsCategorized[tag] = statArray;
+		else:
+			statArray = statTagsCategorized[tag];
+		statArray.add_stat_icon(stat);
+
+func fix_stat_array_holder_height():
+	var totalHeight = 0;
+	var count = 0;
+	for statArray in statHolder.get_children():
+		## Add in the margin.
+		count += 1;
+		if count < statHolder.get_child_count():
+			totalHeight += statHolder.get("theme_override_constants/separation")
+		totalHeight += statArray.recalc_height();
+	var newSpacer = Control.new()
+	newSpacer.size.y = spaceAfterStats;
+	statHolder.add_child(newSpacer);
+	return totalHeight + spaceAfterStats;
+
 ## Removes the piece or part we're inspecting.
 func _on_remove_button_pressed():
 	if ref_is_piece():
@@ -350,3 +429,9 @@ func _on_move_button_toggled(toggled_on):
 		else:
 			pass;
 	pass # Replace with function body.
+
+##Clear out the stats.
+func clear_stats():
+	statTagsCategorized.clear();
+	for stat in statHolder.get_children():
+		stat.queue_free();

@@ -1012,8 +1012,6 @@ grow_vertical = 0
 script = ExtResource("20_7eoqv")
 iconBase = NodePath("InfoIconBase")
 lbl_partName = NodePath("Name")
-abilityInfoboxScene = null
-abilityBoxMaxSize = null
 
 [node name="InfoIconBase" type="TextureRect" parent="Inventory/InventoryControls/BackingTexture/InfoBox"]
 layout_mode = 1

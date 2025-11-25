@@ -49,11 +49,11 @@ func regenerate_stats():
 	stat_registry();
 
 ##Gets a named stat from the stat collection. Optional rounding mode override.
-func get_stat(statName : String, roundModeOverride := StatTracker.roundingModes.NoOverride):
+func get_stat(statName : String, roundModeOverride := StatHolderManager.roundingModes.NoOverride):
 	var stat = get_stat_resource(statName);
 	if stat != null:
 		#if stat.statFriendlyName.contains("Max"): print("Max health found?", stat.statFriendlyName)
-		if roundModeOverride != StatTracker.roundingModes.NoOverride:
+		if roundModeOverride != StatHolderManager.roundingModes.NoOverride:
 			return stat.get_stat(roundModeOverride);
 		else:
 			return stat.get_stat();
@@ -103,7 +103,7 @@ func stat_minus(statName : String, numToSubtract : float):
 	stat_plus(statName, - numToSubtract);
 
 ## Registers new stats. Only ever call this from stat_registry().[br]In the [param getFunction] field, you can define a new function that is called and returned when get_stat() is called.[br]In the setFunction field, you can define a new function that is called when set_stat() is called.[br]Both getFunction and setFunction can be set to null to have them use the default get or set.
-func register_stat(statName : String, baseStat : float, statIcon : Texture2D = StatHolderManager.get_stat_icon("Default"), getFunction : Variant = null, setFunction : Variant = null, roundingMode : StatTracker.roundingModes = StatTracker.roundingModes.None):
+func register_stat(statName : String, baseStat : float, statIcon : Texture2D = StatHolderManager.get_stat_icon("Default"), statTag := StatHolderManager.statTags.Miscellaneous, displayMode := StatHolderManager.displayModes.ALWAYS, roundingMode := StatHolderManager.roundingModes.None, getFunction : Variant = null, setFunction : Variant = null):
 	await ready;
 	#print_rich("[color=blue]Creating stat "+stat_name_with_id(statName)+" with value "+str(baseStat)+"[/color]")
 	if get_stat_resource(statName, true) == null: #Check if the stat already exists before adding it again.
@@ -117,6 +117,8 @@ func register_stat(statName : String, baseStat : float, statIcon : Texture2D = S
 		statTracked.baseStat = baseStat;
 		statTracked.currentValue = baseStat;
 		statTracked.roundingMode = roundingMode;
+		statTracked.displayMode = displayMode;
+		statTracked.statTag = statTag;
 		if statIcon != null and statIcon is Texture2D:
 			statTracked.statIcon = statIcon;
 		if getFunction != null and getFunction is Callable:

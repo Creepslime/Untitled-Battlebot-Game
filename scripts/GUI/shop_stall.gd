@@ -48,11 +48,10 @@ func changeState(newState:ShopStall.doorState):
 			doorsActuallyClosed = false;
 			pass;
 		if curState == ShopStall.doorState.CLOSED:
-			doorsActuallyClosed = false;
+			doorsActuallyClosed = doors_actually_closed();
 			#freezerBlinky.texture = load("res://graphics/images/HUD/blinkies/freezerblinky_off.png");
 			pass;
 		if curState == ShopStall.doorState.FROZEN:
-			btn_freeze.button_pressed = false;
 			doorsActuallyClosed = false;
 			#freezerBlinky.texture = load("res://graphics/images/HUD/blinkies/freezerblinky_on.png");
 		
@@ -89,6 +88,16 @@ func _ready():
 
 func _physics_process(delta):
 	updatePrice();
+	
+	if clopenQueue >= 0:
+		clopenQueue -= 1;
+	if clopenQueue <= 0 and queuedClopen != null:
+		if queuedClopen:
+			open_stall();
+			queuedClopen = null;
+		else:
+			close_stall();
+			queuedClopen = null;
 	
 	if curState == ShopStall.doorState.CLOSED:
 		freezerDoor.position.y = move_toward(freezerDoor.position.y, -144.0, delta * 200);
@@ -190,15 +199,13 @@ func is_affordable() -> bool:
 
 ## Called when the buy button is pressed.
 func _on_buy_button_toggled(toggled_on):
+	print("buy btn pressed")
 	if update_player():
 		if (curState == ShopStall.doorState.OPEN):
 			player.deselect_everything();
 			if ref_is_part():
-				partRef.select(toggled_on);
-				if is_affordable():
-					player.buy_mode_enable(toggled_on);
-				else:
-					btn_buy.button_pressed = false;
+				if toggled_on:
+					try_buy_part();
 			elif ref_is_piece():
 				if toggled_on:
 					try_buy_piece();
@@ -223,34 +230,49 @@ func try_buy_piece() -> bool:
 		else:
 			btn_buy.button_pressed = false;
 	return false;
+func try_buy_part() -> bool:
+	if buyQueued:
+		return false;
+	if ref_is_part():
+		if ScrapManager.try_spend_scrap(get_price(), "Part Purchase"):
+			partRef.start_buying(player);
+			buyQueued = true;
+			btn_buy.button_pressed = true;
+			return true;
+		else:
+			btn_buy.button_pressed = false;
+	return false;
 
 func deselect(deselectPart:=false):
 	btn_buy.button_pressed = false;
 	if update_player():
-		player.part_buy_mode_enable(false);
+		#player.part_buy_mode_enable(false);
 		if is_instance_valid(pieceRef):
 			pieceRef.select_via_robot(player, false);
 	if deselectPart && is_instance_valid(partRef):
 		partRef.select(false);
 
+
+var queuedClopen = null;
+var clopenQueue = -1;
+func queue_clopen(open : bool):
+	if ! is_frozen() and clopenQueue < 0:
+		clopenQueue = randi_range(0, 5);
+		queuedClopen = open;
 func open_stall():
 	if !(curState == ShopStall.doorState.FROZEN):
 		changeState(ShopStall.doorState.OPEN);
 		if GameState.get_in_state_of_play():
 			var pitchMod = randf_range(2.5,3.5)
 			SND.play_sound_nondirectional("Shop.Door.Open", 0.85, pitchMod)
-	btn_buy.disabled = false;
-	btn_freeze.disabled = false;
 
 func close_stall():
 	deselect()
 	if !(curState == ShopStall.doorState.FROZEN):
-		changeState(ShopStall.doorState.CLOSED);
-		if GameState.get_in_state_of_play():
+		if curState != ShopStall.doorState.CLOSED and GameState.get_in_state_of_play():
 			var pitchMod = randf_range(2.5,3.5)
 			SND.play_sound_nondirectional("Shop.Door.Open", 0.85, pitchMod)
-	btn_buy.disabled = true;
-	btn_freeze.disabled = true;
+		changeState(ShopStall.doorState.CLOSED);
 
 func doors_actually_closed() -> bool:
 	if (curState == ShopStall.doorState.FROZEN):
@@ -279,11 +301,6 @@ func destroy_contents(ignoreFrozen := false):
 ## Updates the background if there is something in the stall. If there is nothing in the stall, nothing happens, as to keep the illusion of an empty stall.
 func update_behavior_to_reflect_contents():
 	if has_ref():
-		if buyQueued:
-			btn_buy.disabled = true;
-			btn_buy.button_pressed = true;
-			btn_freeze.disabled = true;
-			btn_freeze.button_pressed = true;
 		if ref_is_piece():
 			bg_Piece.show();
 			bg_Part.hide();
@@ -300,6 +317,10 @@ func update_behavior_to_reflect_contents():
 		btn_PieceSelect.disabled = true;
 		lbl_name.text = "OUT OF STOCK";
 		TextFunc.set_text_color(lbl_name, "unaffordable");
+	
+	btn_buy.disabled = !(curState == doorState.OPEN and has_ref() and is_affordable() and !buyQueued and clopenQueue == -1)
+	
+	btn_freeze.disabled = !((curState == doorState.OPEN or curState == doorState.FROZEN) and has_ref() and !buyQueued and clopenQueue == -1)
 	
 	if (! has_ref()) or buyQueued:
 		freeze(false);
@@ -319,9 +340,7 @@ func get_shop_stall_id():
 
 signal thingSelected(stall : ShopStall)
 func _on_btn_piece_select_pressed():
-	print("huh")
 	if ref_is_piece() and update_player():
-		print("what")
 		thingSelected.emit(self);
 		pieceRef.select_via_robot(player);
 	pass # Replace with function body.

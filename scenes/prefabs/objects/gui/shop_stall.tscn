@@ -54,6 +54,7 @@ offset_bottom = 215.0
 texture = ExtResource("2_w7sgq")
 
 [node name="PartGFX" type="Control" parent="."]
+z_index = 1
 anchors_preset = 0
 
 [node name="Background" type="TileMapLayer" parent="PartGFX"]

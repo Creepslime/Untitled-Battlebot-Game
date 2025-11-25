@@ -15,7 +15,8 @@ enum textColorsEnum {
 	red,
 	unaffordable,
 	inaffordable,
-	outline
+	outline,
+	magenta,
 }
 const textColors = {
 	"white" : Color("ffffff"),
@@ -31,6 +32,7 @@ const textColors = {
 	"unaffordable" : Color("ff0000"),
 	"inaffordable" : Color("ff0000"),
 	"outline" : Color("240e0e"),
+	"magenta" : Color("bd2064"),
 }
 
 ## Recolors a Label or RichTextLabel or TextEdit or anythign else of the sort with [method Label.theme_override_colors/font_color].

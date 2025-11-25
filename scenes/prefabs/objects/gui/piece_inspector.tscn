@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=4 uid="uid://dpal3hy2d8lig"]
+[gd_scene load_steps=22 format=4 uid="uid://dpal3hy2d8lig"]
 
 [ext_resource type="Texture2D" uid="uid://dggphix4dl3qu" path="res://graphics/images/HUD/screenGFX/screenBG.png" id="1_kj7fi"]
 [ext_resource type="PackedScene" uid="uid://cwe7m6fguo8yh" path="res://scenes/prefabs/objects/gui/piece_stash.tscn" id="2_5kns5"]
@@ -20,6 +20,7 @@
 [ext_resource type="Texture2D" uid="uid://cxeur7wg8nvq7" path="res://graphics/images/HUD/move_selected.png" id="17_p4om5"]
 [ext_resource type="Texture2D" uid="uid://dnu6ivnxlduxo" path="res://graphics/images/HUD/move_hover.png" id="18_uwuke"]
 [ext_resource type="Texture2D" uid="uid://dyotls8fcbklx" path="res://graphics/images/HUD/move_disabled.png" id="19_10qlh"]
+[ext_resource type="PackedScene" uid="uid://b5cfu7yhf2lc1" path="res://scenes/prefabs/objects/gui/stat_array.tscn" id="19_cip4a"]
 
 [node name="PieceInspector" type="TextureRect" node_paths=PackedStringArray("stash", "infobox", "stashSeparator")]
 texture_filter = 1
@@ -42,7 +43,7 @@ tile_map_data = PackedByteArray("AAD/////AAAEAAIAAAD//wAAAAAEAAEAAAD//wEAAAAEAAE
 tile_set = ExtResource("3_5nxix")
 metadata/_edit_group_ = true
 
-[node name="InfoBox" type="Control" parent="." node_paths=PackedStringArray("iconBase", "lbl_partName", "rlbl_desc", "btn_sellButton", "lbl_sellButton", "btn_moveButton", "btn_removeButton", "abilityScrollContainer", "abilityHolder")]
+[node name="InfoBox" type="Control" parent="." node_paths=PackedStringArray("iconBase", "lbl_partName", "rlbl_desc", "btn_sellButton", "lbl_sellButton", "btn_moveButton", "btn_removeButton", "abilityScrollContainer", "abilityHolder", "almightyHolder", "almightyScroller", "statScrollContainer", "statHolder")]
 unique_name_in_owner = true
 clip_contents = true
 layout_mode = 1
@@ -54,44 +55,56 @@ anchor_bottom = 1.0
 offset_left = -128.0
 offset_top = -511.0
 offset_right = 128.0
-offset_bottom = -232.0
+offset_bottom = -111.0
 grow_horizontal = 2
 grow_vertical = 0
 theme = ExtResource("5_rirx1")
 script = ExtResource("8_o1n0x")
-iconBase = NodePath("InfoIconBase")
-lbl_partName = NodePath("Name")
-rlbl_desc = NodePath("Description")
+iconBase = NodePath("AlmightyScroll/AlmightyHolder/InfoIconBase")
+lbl_partName = NodePath("AlmightyScroll/AlmightyHolder/Name")
+rlbl_desc = NodePath("AlmightyScroll/AlmightyHolder/Description")
 btn_sellButton = NodePath("SellButton")
 lbl_sellButton = NodePath("SellButton/Label")
 btn_moveButton = NodePath("MoveButton")
 btn_removeButton = NodePath("RemoveButton")
-abilityScrollContainer = NodePath("AbilityScrollContainer")
-abilityHolder = NodePath("AbilityScrollContainer/AbilityHolder")
-abilityBoxMaxSize = null
+abilityScrollContainer = NodePath("AlmightyScroll/AlmightyHolder/AbilityScrollContainer")
+abilityHolder = NodePath("AlmightyScroll/AlmightyHolder/AbilityScrollContainer/AbilityHolder")
+almightyHolder = NodePath("AlmightyScroll/AlmightyHolder")
+almightyScroller = NodePath("AlmightyScroll")
+statScrollContainer = NodePath("AlmightyScroll/AlmightyHolder/StatsScroll")
+statHolder = NodePath("AlmightyScroll/AlmightyHolder/StatsScroll/StatArrayHolder")
 
-[node name="InfoIconBase" type="TextureRect" parent="InfoBox"]
+[node name="AlmightyScroll" type="ScrollContainer" parent="InfoBox"]
+layout_mode = 0
+offset_right = 256.0
+offset_bottom = 263.0
+
+[node name="AlmightyHolder" type="Control" parent="InfoBox/AlmightyScroll"]
+layout_mode = 2
+
+[node name="InfoIconBase" type="TextureRect" parent="InfoBox/AlmightyScroll/AlmightyHolder"]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -48.0
+offset_left = 204.0
 offset_top = 1.0
+offset_right = 252.0
 offset_bottom = 49.0
 grow_horizontal = 0
 texture = ExtResource("9_wpo43")
 
-[node name="Name" type="Label" parent="InfoBox"]
+[node name="Name" type="Label" parent="InfoBox/AlmightyScroll/AlmightyHolder"]
 layout_mode = 0
 offset_left = 2.0
 offset_top = 1.16602
-offset_right = 113.0
+offset_right = 130.0
 offset_bottom = 35.166
 theme = ExtResource("5_rirx1")
 theme_type_variation = &"HeaderLarge"
 text = "Nothing Selected"
 
-[node name="Description" type="RichTextLabel" parent="InfoBox"]
+[node name="Description" type="RichTextLabel" parent="InfoBox/AlmightyScroll/AlmightyHolder"]
 clip_contents = false
 layout_mode = 0
 offset_left = 2.0
@@ -103,15 +116,15 @@ bbcode_enabled = true
 text = "[color=e0dede]No [color=ffffff]description [color=e0dede]given."
 fit_content = true
 
-[node name="SellButtonOld" type="TextureButton" parent="InfoBox"]
+[node name="SellButtonOld" type="TextureButton" parent="InfoBox/AlmightyScroll/AlmightyHolder"]
 visible = false
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = 27.9999
+offset_left = 156.0
 offset_top = 229.0
-offset_right = 120.0
+offset_right = 248.0
 offset_bottom = 263.0
 grow_horizontal = 2
 disabled = true
@@ -120,7 +133,7 @@ texture_pressed = ExtResource("14_rr8so")
 texture_hover = ExtResource("14_rr8so")
 texture_disabled = ExtResource("15_ioju6")
 
-[node name="MoveButtonOld" type="TextureButton" parent="InfoBox"]
+[node name="MoveButtonOld" type="TextureButton" parent="InfoBox/AlmightyScroll/AlmightyHolder"]
 visible = false
 layout_mode = 0
 offset_left = 119.0
@@ -133,19 +146,18 @@ texture_pressed = ExtResource("17_p4om5")
 texture_hover = ExtResource("18_uwuke")
 texture_disabled = ExtResource("19_10qlh")
 
-[node name="separator2" parent="InfoBox" instance=ExtResource("3_gqx4l")]
+[node name="separator2" parent="InfoBox/AlmightyScroll/AlmightyHolder" instance=ExtResource("3_gqx4l")]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.0
-offset_left = -128.0
 offset_top = 24.0
-offset_right = 77.0
+offset_right = 205.0
 offset_bottom = 27.0
 grow_horizontal = 2
 
-[node name="AbilityScrollContainer" type="ScrollContainer" parent="InfoBox"]
+[node name="AbilityScrollContainer" type="ScrollContainer" parent="InfoBox/AlmightyScroll/AlmightyHolder"]
 z_index = 1
 layout_mode = 0
 offset_top = 50.0
@@ -154,28 +166,46 @@ offset_bottom = 227.0
 theme = ExtResource("5_rirx1")
 theme_type_variation = &"AbilityListHolder"
 
-[node name="AbilityHolder" type="VBoxContainer" parent="InfoBox/AbilityScrollContainer"]
+[node name="AbilityHolder" type="VBoxContainer" parent="InfoBox/AlmightyScroll/AlmightyHolder/AbilityScrollContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="ActiveAbilityInfobox" parent="InfoBox/AbilityScrollContainer/AbilityHolder" instance=ExtResource("16_ppwmp")]
+[node name="ActiveAbilityInfobox" parent="InfoBox/AlmightyScroll/AlmightyHolder/AbilityScrollContainer/AbilityHolder" instance=ExtResource("16_ppwmp")]
+layout_mode = 2
+
+[node name="StatsScroll" type="ScrollContainer" parent="InfoBox/AlmightyScroll/AlmightyHolder"]
+layout_mode = 1
+anchors_preset = -1
+offset_top = 229.0
+offset_right = 256.0
+offset_bottom = 269.0
+grow_horizontal = 2
+grow_vertical = 0
+theme = ExtResource("5_rirx1")
+theme_type_variation = &"AbilityListHolder"
+
+[node name="StatArrayHolder" type="VBoxContainer" parent="InfoBox/AlmightyScroll/AlmightyHolder/StatsScroll"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="StatArray" parent="InfoBox/AlmightyScroll/AlmightyHolder/StatsScroll/StatArrayHolder" instance=ExtResource("19_cip4a")]
 layout_mode = 2
 
 [node name="RemoveButton" type="Button" parent="InfoBox"]
 layout_mode = 0
 offset_left = 1.0
-offset_top = 229.0
+offset_top = 271.0
 offset_right = 87.0
-offset_bottom = 263.0
+offset_bottom = 305.0
 text = "Stash"
 icon = ExtResource("16_nprcp")
 
 [node name="MoveButton" type="Button" parent="InfoBox"]
 layout_mode = 0
 offset_left = 88.9999
-offset_top = 229.0
+offset_top = 366.0
 offset_right = 167.0
-offset_bottom = 263.0
+offset_bottom = 400.0
 toggle_mode = true
 text = "Move
 "
@@ -184,9 +214,9 @@ icon = ExtResource("16_58ce7")
 [node name="SellButton" type="Button" parent="InfoBox"]
 layout_mode = 0
 offset_left = 169.0
-offset_top = 229.0
+offset_top = 271.0
 offset_right = 255.0
-offset_bottom = 263.0
+offset_bottom = 305.0
 icon = ExtResource("17_nprcp")
 
 [node name="Label" type="Label" parent="InfoBox/SellButton"]
@@ -212,6 +242,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 metadata/_edit_use_anchors_ = true
+metadata/_edit_lock_ = true
 
 [node name="PieceStash" parent="StashViewer" node_paths=PackedStringArray("btn_sortPieces", "btn_Equipped") instance=ExtResource("2_5kns5")]
 layout_mode = 1
@@ -226,6 +257,7 @@ grow_vertical = 0
 btn_sortPieces = NodePath("../SortByParts")
 btn_Equipped = NodePath("../SortByEquipped")
 metadata/_edit_use_anchors_ = true
+metadata/_edit_lock_ = true
 
 [node name="separator2" parent="StashViewer/PieceStash" instance=ExtResource("3_gqx4l")]
 layout_mode = 1
@@ -289,7 +321,7 @@ theme = ExtResource("5_rirx1")
 text = "SORT BY"
 horizontal_alignment = 1
 
-[connection signal="pressed" from="InfoBox/SellButtonOld" to="InfoBox" method="_on_sell_button_pressed"]
+[connection signal="pressed" from="InfoBox/AlmightyScroll/AlmightyHolder/SellButtonOld" to="InfoBox" method="_on_sell_button_pressed"]
 [connection signal="pressed" from="InfoBox/RemoveButton" to="InfoBox" method="_on_remove_button_pressed"]
 [connection signal="toggled" from="InfoBox/MoveButton" to="InfoBox" method="_on_move_button_toggled"]
 [connection signal="pressed" from="InfoBox/SellButton" to="InfoBox" method="_on_sell_button_pressed"]

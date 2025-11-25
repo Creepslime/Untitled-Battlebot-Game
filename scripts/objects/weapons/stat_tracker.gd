@@ -15,18 +15,37 @@ var bonusAdd : float = 0.0; ##@experimental: Adds this value to baseStat.
 var bonusMult_Flat : float = 0.0; ##@experimental:Multiplies the total value after baseStat + bonusAdd.
 var bonusMult_Mult : float = 1.0; ##@experimental:Multiplies bonusMult_Flat by this number before multiplying.
 
-##[enum roundingMode.None] means no modifications to the number when getting it; it will remain an unrounded [float]. [br][enum roundingMode.Floor], [enum roundingMode.Round], and [enum roundingMode.Ceil] will perform those mathematic functions on the number, to the appropriate nearest [float].[br][enum roundingMode.Floori], [enum roundingMode.Roundi], and [enum roundingMode.Ceili] will perform those mathematic functions on the number, to the appropriate nearest [int]. [br][enum roundingMode.NoOverride] is used in [method StatHolder.register_stat] as a default value; should not be used as the rounding mode, but will behave the same as [enum roundingMode.None].
-enum roundingModes {
-	None,
-	Floor,
-	Round,
-	Ceil,
-	Floori,
-	Roundi,
-	Ceili,
-	NoOverride,
-}
-@export var roundingMode := roundingModes.None; ##Keeps track of the current [enum roundingModes] value.[br][br]
+@export var roundingMode := StatHolderManager.roundingModes.None; ##Keeps track of the current [enum roundingModes] value.[br][br]
+@export var displayMode := StatHolderManager.displayModes.ALWAYS; ## Determines when this stat should be displayed, if at all.
+@export var statTag := StatHolderManager.statTags.Miscellaneous; ## What group this stat is in on the inspector.
+## Returns true if the stat should be displayed on the base inspector. Not applied to stats called for by abilities.
+func should_be_displayed() -> bool:
+	match displayMode:
+		StatHolderManager.displayModes.ALWAYS:
+			return true;
+			pass;
+		StatHolderManager.displayModes.NEVER:
+			return false;
+			pass;
+		StatHolderManager.displayModes.NOT_ONE:
+			return ! is_equal_approx(get_stat(), 1.0);
+			pass;
+		StatHolderManager.displayModes.NOT_999:
+			return ! is_equal_approx(get_stat(), 999.0);
+			pass;
+		StatHolderManager.displayModes.NOT_ZERO:
+			return ! is_zero_approx(get_stat());
+			pass;
+		StatHolderManager.displayModes.ABOVE_ZERO:
+			return get_stat() > 0;
+			pass;
+		StatHolderManager.displayModes.ABOVE_ZERO_NOT_999:
+			return get_stat() > 0 and ! is_equal_approx(get_stat(), 999.0);
+			pass;
+		StatHolderManager.displayModes.IF_MODIFIED:
+			return ! is_equal_approx(get_stat(), baseStat);
+			pass;
+	return false;
 
 ## This [StatTracker]'s get function called by [method get_stat].
 var getFunc := func (): var stat : float = (currentValue + bonusAdd)  * (((1.0 + bonusMult_Flat) * bonusMult_Mult)); return stat;
@@ -37,11 +56,11 @@ var setFunc := func (newValue): return newValue;
 var additions = []
 
 ## Gets the current rounding mode from [enum roundingModes].
-func get_rounding_mode() -> roundingModes:
+func get_rounding_mode() -> StatHolderManager.roundingModes:
 	return roundingMode;
 
 ## Gets the stat by calling [member getFunc].
-func get_stat(roundingModeOverride : roundingModes = get_rounding_mode()):
+func get_stat(roundingModeOverride : StatHolderManager.roundingModes = get_rounding_mode()):
 	var stat = getFunc.call();
 	#currentValue = return_rounded_stat(stat, roundingModeOverride);
 	#return currentValue;
@@ -49,23 +68,23 @@ func get_stat(roundingModeOverride : roundingModes = get_rounding_mode()):
 	return stat;
 
 ## Rounds the stat according to the current rounding mode.
-func return_rounded_stat(stat, roundingModeOverride : roundingModes = roundingMode):
+func return_rounded_stat(stat, roundingModeOverride : StatHolderManager.roundingModes = roundingMode):
 	match roundingModeOverride:
-		roundingModes.Floor:
+		StatHolderManager.roundingModes.Floor:
 			return floorf(stat);
-		roundingModes.Round:
+		StatHolderManager.roundingModes.Round:
 			return roundf(stat);
-		roundingModes.Ceil:
+		StatHolderManager.roundingModes.Ceil:
 			return ceilf(stat);
-		roundingModes.Floori:
+		StatHolderManager.roundingModes.Floori:
 			return floori(stat);
-		roundingModes.Roundi:
+		StatHolderManager.roundingModes.Roundi:
 			return roundi(stat);
-		roundingModes.Ceili:
+		StatHolderManager.roundingModes.Ceili:
 			return ceili(stat);
-		roundingModes.None: ##Both None and NoOverride should return just the base value without any rounding.
+		StatHolderManager.roundingModes.None: ##Both None and NoOverride should return just the base value without any rounding.
 			return stat;
-		roundingModes.NoOverride: ##Both None and NoOverride should return just the base value without any rounding.
+		StatHolderManager.roundingModes.NoOverride: ##Both None and NoOverride should return just the base value without any rounding.
 			return stat;
 	return stat;
 

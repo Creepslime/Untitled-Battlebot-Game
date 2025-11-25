@@ -1,10 +1,11 @@
-[gd_scene load_steps=7 format=3 uid="uid://dy07swne0b8h0"]
+[gd_scene load_steps=8 format=3 uid="uid://dy07swne0b8h0"]
 
 [ext_resource type="Theme" uid="uid://tcelcj32ux4o" path="res://graphics/images/HUD/digital_button.tres" id="1_km24x"]
 [ext_resource type="Script" uid="uid://cs7564wakx0ln" path="res://scripts/GUI/active_ability_infobox.gd" id="1_mmcvq"]
 [ext_resource type="Texture2D" uid="uid://bwiv2trs8p6vk" path="res://graphics/images/HUD/buttonGFX/digitalOutline_normal.png" id="3_fgv2p"]
 [ext_resource type="PackedScene" uid="uid://c3xdylsv62lyp" path="res://scenes/prefabs/objects/gui/separator.tscn" id="5_mxt8i"]
 [ext_resource type="Texture2D" uid="uid://dpqcoxkidln0c" path="res://graphics/images/HUD/screenGFX/screenBG_grey.png" id="6_jowbw"]
+[ext_resource type="PackedScene" uid="uid://dqajmobt7ehra" path="res://scenes/prefabs/objects/gui/stat_icon.tscn" id="7_jowbw"]
 [ext_resource type="Texture2D" uid="uid://fra5o6cwa5nn" path="res://graphics/images/HUD/screenGFX/screenBG_darkGrey.png" id="7_pt6ty"]
 
 [node name="ActiveAbilityInfobox" type="MarginContainer" node_paths=PackedStringArray("lbl_name", "rlbl_desc", "outlineBox", "statHolder", "btn_assign", "separatorName", "scroll_separatorStats", "separatorStats")]
@@ -110,6 +111,9 @@ grow_horizontal = 2
 grow_vertical = 0
 
 [node name="Stats" type="HBoxContainer" parent="Box/StatsScroll"]
+layout_mode = 2
+
+[node name="StatIcon" parent="Box/StatsScroll/Stats" instance=ExtResource("7_jowbw")]
 layout_mode = 2
 
 [connection signal="focus_entered" from="." to="." method="_on_focus_entered"]

@@ -116,10 +116,10 @@ func open_up_shop():
 	turn_on_cam_feed();
 	if ! initialized:
 		initialized = true;
+	HUD_stations.reparent(HUD_stationsParent);
 	for shop in shops:
 		shop.open_up_shop();
 	
-	HUD_stations.reparent(HUD_stationsParent);
 	pass;
 
 func close_up_shop():

@@ -51,8 +51,10 @@ func get_stat_holder_by_id(id):
 @onready var statIconDefault = preload("res://graphics/images/HUD/statIcons/defaultIconStriped.png");
 @onready var statIconCooldown = preload("res://graphics/images/HUD/statIcons/cooldownIconStriped.png");
 @onready var statIconMagazine = preload("res://graphics/images/HUD/statIcons/magazineIconStriped.png");
+@onready var statIconHeart = preload("res://graphics/images/HUD/statIcons/heartIconStriped.png");
 @onready var statIconEnergy = preload("res://graphics/images/HUD/statIcons/energyIconStriped.png");
 @onready var statIconDamage = preload("res://graphics/images/HUD/statIcons/damageIconStriped.png");
+@onready var statIconShield = preload("res://graphics/images/HUD/statIcons/shieldIconStriped.png");
 @onready var statIconWeight = preload("res://graphics/images/HUD/statIcons/weightIconStriped.png");
 @onready var statIconScrap = preload("res://graphics/images/HUD/statIcons/scrapIconStriped.png");
 @onready var statIconMove = preload("res://graphics/images/HUD/statIcons/moveIconStriped.png");
@@ -64,14 +66,49 @@ func get_stat_holder_by_id(id):
 	"Default" : {"icon" = statIconDefault, "color" = "grey"},
 	"Cooldown" : {"icon" = statIconCooldown, "color" = "lightgreen"},
 	"Magazine" : {"icon" = statIconMagazine, "color" = "lightblue"},
+	"Heart" : {"icon" = statIconHeart, "color" = "red"},
 	"Energy" : {"icon" = statIconEnergy, "color" = "lightblue"},
 	"Damage" : {"icon" = statIconDamage, "color" = "lightred"},
+	"Shield" : {"icon" = statIconShield, "color" = "magenta"},
 	"Weight" : {"icon" = statIconWeight, "color" = "grey"},
 	"Move" : {"icon" = statIconMove, "color" = "lightgreen"},
 	"Scrap" : {"icon" = statIconScrap, "color" = "scrap"},
 	"Piece" : {"icon" = statIconPiece, "color" = "orange"},
 	"Part" : {"icon" = statIconPart, "color" = "lightgreen"},
 	"PiecePart" : {"icon" = statIconPiecePart, "color" = "scrap"},
+}
+
+enum roundingModes {
+	None, ## No modifications to the number when getting it; it will remain an unrounded [float].
+	Floor, ## Performs the [code]floor()[/code] function on the stat when getting it.
+	Round, ## Performs the [code]round()[/code] function on the stat when getting it.
+	Ceil, ## Performs the [code]ceil()[/code] function on the stat when getting it.
+	Floori, ## Performs the [code]floori()[/code] function on the stat when getting it.
+	Roundi, ## Performs the [code]roundi()[/code] function on the stat when getting it.
+	Ceili, ## Performs the [code]ceili()[/code] function on the stat when getting it.
+	NoOverride, ## Used in [method StatHolder.register_stat] as a default value; should not be used as the rounding mode, but will behave the same as [enum roundingMode.None].
+}
+## Controls how a [StatTracker] is displayed in the [InfoBox].
+enum displayModes {
+	ALWAYS, ## Always displayed.
+	NEVER, ## Never displayed.
+	NOT_ONE, ## Displayed if the stat does not currently equal 1.0.
+	NOT_ZERO, ## Displayed if the stat does not currently equal 0.0.
+	ABOVE_ZERO, ## Displayed if the stat is > 0.
+	IF_MODIFIED, ## Displayed if the stat is currently different from its [member baseStat].
+	NOT_999, ## Displayed if the stat is not the specific value of 999.
+	ABOVE_ZERO_NOT_999, ## Displayed if the stat is not the specific value of 999.
+}
+enum statTags {
+	Hull, ## Health and defense.
+	Battery, ## Energy draw and stuff.
+	Weaponry, ## Things regarding attack damage.
+	Clock, ## Things regarding... cooldowns.
+	Projectiles, ## Things regarding specifically projectiles.
+	Worth, ## Stuff regarding Scrap.
+	Function, ## Sort of a catch-all for specific functions the thing does.
+	Miscellaneous, ## Anything else.
+	INVALID, ## Don't use this one.
 }
 
 func get_stat_icon(statIconName : String = "Default") -> Texture2D:

@@ -40,28 +40,31 @@ func _process(delta):
 	process_draw(delta);
 
 func stat_registry():
-	if energyDrawPassiveMultiplier > 0:
-		register_stat("PassiveEnergyDraw", energyDrawPassiveMultiplier, StatHolderManager.statIconEnergy);
-	if energyDrawPassiveMultiplier < 0:
-		register_stat("PassiveEnergyRegeneration", energyDrawPassiveMultiplier, StatHolderManager.statIconEnergy);
-	register_stat("PassiveCooldown", passiveCooldownTimeMultiplier, StatHolderManager.statIconCooldown);
-	register_stat("ContactCooldown", contactCooldown, StatHolderManager.statIconCooldown);
+	## Stats regarding energy cost.
+	register_stat("PassiveEnergyDraw", energyDrawPassiveBaseOverride, StatHolderManager.statIconEnergy, StatHolderManager.statTags.Battery, StatHolderManager.displayModes.ABOVE_ZERO);
+	register_stat("PassiveEnergyRegeneration", 0.0, StatHolderManager.statIconEnergy, StatHolderManager.statTags.Battery, StatHolderManager.displayModes.ABOVE_ZERO);
+	register_stat("PassiveCooldown", passiveCooldownTimeMultiplier, StatHolderManager.statIconCooldown, StatHolderManager.statTags.Clock);
+	register_stat("ContactCooldown", contactCooldown, StatHolderManager.statIconCooldown, StatHolderManager.statTags.Clock);
 	
-	#Stats that only matter if the thing has abilities.
+	## Stats that only matter if the thing has abilities.
 	if activeAbilitiesDistributed.size() > 0:
-		register_stat("ActiveEnergyDraw", energyDrawActiveMultiplier, StatHolderManager.statIconEnergy);
-		register_stat("ActiveCooldown", activeCooldownTimeMultiplier, StatHolderManager.statIconCooldown);
+		register_stat("ActiveEnergyDraw", energyDrawActiveMultiplier, StatHolderManager.statIconEnergy, StatHolderManager.statTags.Battery);
+		register_stat("ActiveCooldown", activeCooldownTimeMultiplier, StatHolderManager.statIconCooldown, StatHolderManager.statTags.Clock);
 	
-	#Stats regardig Scrap Cost.
-	register_stat("ScrapCost", scrapCostBase, StatHolderManager.statIconMagazine, null, null, StatTracker.roundingModes.Ceili);
-	register_stat("ScrapSellModifier", scrapSellModifierBase, StatHolderManager.statIconMagazine);
-	register_stat("ScrapSalvageModifier", scrapSellModifierBase, StatHolderManager.statIconMagazine);
-	register_stat("Weight", weightBase, StatHolderManager.statIconWeight);
+	## Stats regarding Scrap Cost.
+	register_stat("ScrapCost", scrapCostBase, StatHolderManager.statIconScrap, StatHolderManager.statTags.Worth, StatHolderManager.displayModes.ALWAYS, StatHolderManager.roundingModes.Ceili);
+	register_stat("ScrapSellModifier", scrapSellModifierBase, StatHolderManager.statIconScrap, StatHolderManager.statTags.Worth, StatHolderManager.displayModes.ALWAYS);
+	register_stat("ScrapSalvageModifier", scrapSalvageModifierBase, StatHolderManager.statIconScrap, StatHolderManager.statTags.Worth, StatHolderManager.displayModes.NEVER);
+	register_stat("Weight", weightBase, StatHolderManager.statIconWeight, StatHolderManager.statTags.Hull);
+	register_stat("Integrity", 1.0, StatHolderManager.statIconHeart, StatHolderManager.statTags.Hull);
 	
-	#Stats regarding damage.
-	register_stat("Damage", damageBase, StatHolderManager.statIconDamage);
-	register_stat("Knockback", knockbackBase, StatHolderManager.statIconWeight);
-	register_stat("Kickback", kickbackBase, StatHolderManager.statIconWeight);
+	## Stats regarding damage.
+	register_stat("Damage", damageBase, StatHolderManager.statIconDamage, StatHolderManager.statTags.Weaponry, StatHolderManager.displayModes.ABOVE_ZERO);
+	register_stat("Knockback", knockbackBase, StatHolderManager.statIconWeight, StatHolderManager.statTags.Weaponry, StatHolderManager.displayModes.ABOVE_ZERO);
+	register_stat("Kickback", kickbackBase, StatHolderManager.statIconWeight, StatHolderManager.statTags.Function, StatHolderManager.displayModes.NOT_ZERO);
+	
+	## Stuff regarding materials and defense.
+	set_up_material_group_and_damage_immunities()
 
 ##This is here for when things get out of whack and some of the export variables disconnect themselves for no good reason.
 func assign_references():
@@ -232,13 +235,61 @@ func declare_names():
 		pieceDescription = TextFunc.parse_text_constructor_array(descriptionConstructor);
 	pass;
 @export_multiline var pieceDescription := "No Description Found.";
-@export var material := pieceMaterials.METAL;
+@export var pieceMaterial := pieceMaterials.METAL; ## Affects what noise this makes when hitting things. Could also be used for more special interactions.
+#### Damage resistances
+@export_range(0.0, 999.0) var defenseMultiplierGeneral := 1.0;  ## Generally affects the amount of damage you take when being struck on this piece generally. This is multiplied against incoming damage, so a [member defenseMultiplierGeneral] of 0.5 wil halve inoming damage, for example. 
+@export var defenseMultipliers : Dictionary[DamageData.damageTypes, float] = {} ## Multipliers to incoming damage types. If a damage type is left out of this, then there will be no change to that type of damage except for [member damageMultiplierGeneral], which is always applied in addition to specific type defense.
 enum pieceMaterials {
 	METAL,
 	WOOD,
+	GLASS,
 	PLASTIC,
-	STONE,
+	CONCRETE,
 }
+func set_up_material_group_and_damage_immunities():
+	add_to_group("Piece")
+	
+	## Reset all material groups.
+	remove_from_group("Metal")
+	remove_from_group("Wood")
+	remove_from_group("Glass")
+	remove_from_group("Plastic")
+	remove_from_group("Concrete")
+	## Add to a material group based on pieceMaterial.
+	match pieceMaterial:
+		pieceMaterials.METAL:
+			add_to_group("Metal")
+		pieceMaterials.WOOD:
+			add_to_group("Wood")
+		pieceMaterials.GLASS:
+			add_to_group("Glass")
+		pieceMaterials.PLASTIC:
+			add_to_group("Plastic")
+		pieceMaterials.CONCRETE:
+			add_to_group("Concrete")
+	
+	register_stat("General Defense", defenseMultiplierGeneral, StatHolderManager.statIconShield, StatHolderManager.statTags.Hull, StatHolderManager.displayModes.IF_MODIFIED);
+	for damageTypeID in DamageData.damageTypes.values():
+		var typeName = str(DamageData.damageTypes.keys()[damageTypeID]);
+		register_stat(str(typeName.capitalize(), " Defense"), defenseMultipliers[damageTypeID] if defenseMultipliers.has(damageTypeID) else 1.0, StatHolderManager.statIconShield, StatHolderManager.statTags.Hull, StatHolderManager.displayModes.IF_MODIFIED)
+
+func get_damage_type_resistance_stat_from_damageType(damageType : DamageData.damageTypes):
+	var typeName = str(DamageData.damageTypes.keys()[damageType]);
+	var statName = str(typeName.capitalize(), " Defense");
+	return max(0, get_stat(statName));
+func get_general_incoming_damage_multiplier():
+	return max(0, get_stat("General Defense"));
+##This function multiplies damage on an incoming 
+func modify_damage_based_on_immunities(damageData : DamageData):
+	var dmg = damageData.get_damage();
+	for type in damageData.tags:
+		var multiplier = get_damage_type_resistance_stat_from_damageType(type);
+		dmg *= multiplier;
+	dmg *= get_general_incoming_damage_multiplier();
+	damageData.damageAmount = dmg;
+	return damageData;
+
+#### Weight
 @export var weightBase := 1.0;
 
 ## How much weight this Piece is carrying, including itself.
@@ -1698,6 +1749,7 @@ func remove_part(part: Part, destroy:=false, beingSold := false, beingBought := 
 		listOfParts.remove_at(listOfParts.find(part));
 	
 	part.invHolderNode = null;
+	part.hostPiece = null;
 	
 	if destroy:
 		part.destroy();

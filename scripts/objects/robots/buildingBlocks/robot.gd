@@ -113,26 +113,27 @@ func grab_references():
 
 func stat_registry():
 	super();
-	register_stat("HealthMax", maxHealth, StatHolderManager.statIconDamage);
+	register_stat("HealthMax", maxHealth, StatHolderManager.statIconHeart, StatHolderManager.statTags.Hull);
 	register_stat(
 		"Health", 
 		maxHealth, 
-		StatHolderManager.statIconDamage, 
+		StatHolderManager.statIconHeart, 
+		StatHolderManager.statTags.Hull,
+		StatHolderManager.displayModes.ALWAYS,
+		StatHolderManager.roundingModes.None,
 		null, 
-		func(newValue): 
-			health_or_energy_changed.emit(); 
-			var newValFixed = clampf(newValue, 0.0, self.get_max_health()); 
-			if (is_alive() and not is_frozen()) and (newValFixed <= 0.0 or is_equal_approx(newValFixed, 0.0)): self.die();
-			#print("new health value", newValFixed); 
-			return newValFixed;
-			,
-		StatTracker.roundingModes.None
+		func(newValue):
+		health_or_energy_changed.emit(); 
+		var newValFixed = clampf(newValue, 0.0, self.get_max_health()); 
+		if (is_alive() and not is_frozen()) and (newValFixed <= 0.0 or is_equal_approx(newValFixed, 0.0)): 
+			self.die();
+		return newValFixed;
 		);
-	register_stat("EnergyMax", maxEnergy, StatHolderManager.statIconDamage);
-	register_stat("Energy", maxEnergy, StatHolderManager.statIconEnergy, null, (func(newValue): self.health_or_energy_changed.emit(); return clampf(newValue, 0.0, self.get_stat("EnergyMax"))));
-	register_stat("InvincibilityTime", maxInvincibleTimer, StatHolderManager.statIconCooldown);
-	register_stat("MovementSpeedAcceleration", acceleration, StatHolderManager.statIconCooldown);
-	register_stat("MovementSpeedMax", maxSpeed, StatHolderManager.statIconCooldown);
+	register_stat("EnergyMax", maxEnergy, StatHolderManager.statIconEnergy, StatHolderManager.statTags.Battery);
+	register_stat("Energy", maxEnergy, StatHolderManager.statIconEnergy, StatHolderManager.statTags.Battery, StatHolderManager.displayModes.ALWAYS, StatHolderManager.roundingModes.None, null, (func(newValue): self.health_or_energy_changed.emit(); return clampf(newValue, 0.0, self.get_stat("EnergyMax"))));
+	register_stat("InvincibilityTime", maxInvincibleTimer, StatHolderManager.statIconCooldown, StatHolderManager.statTags.Clock);
+	register_stat("MovementSpeedAcceleration", acceleration, StatHolderManager.statIconCooldown, StatHolderManager.statTags.Function);
+	register_stat("MovementSpeedMax", maxSpeed, StatHolderManager.statIconCooldown, StatHolderManager.statTags.Function);
 	pass;
 
 ################## SAVING/LOADING
@@ -1005,7 +1006,7 @@ func get_all_parts() -> Array[Part]:
 func get_all_parts_regenerate() -> Array[Part]:
 	var piecesGathered : Array[Part] = [];
 	for piece in get_all_pieces():
-		Utils.append_array_unique(piecesGathered, piece.get_all_parts());
+		Utils.append_array_unique(piecesGathered, piece.listOfParts);
 	return piecesGathered;
 
 var allHurtboxes = []

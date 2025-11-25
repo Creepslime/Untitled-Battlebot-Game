@@ -14,6 +14,7 @@ enum damageTypes {
 	HEATED,
 	CORROSIVE,
 	EXPLOSIVE,
+	ELECTRIC,
 }
 var tags : Array[damageTypes] = [];
 

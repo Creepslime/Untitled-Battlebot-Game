@@ -451,13 +451,27 @@ offset_top = -48.0
 offset_right = -263.999
 offset_bottom = -7.99995
 
-[node name="Shop_Construction" parent="ShopCanvas_SHOP/SHOP/ShopStationsStepParent/ShopStations" node_paths=PackedStringArray("manager") instance=ExtResource("19_rvmjo")]
+[node name="Shop_Construction" parent="ShopCanvas_SHOP/SHOP/ShopStationsStepParent/ShopStations" instance=ExtResource("19_rvmjo")]
 layout_mode = 1
-offset_left = 1095.0
-offset_top = 95.0
-offset_right = 1575.0
-offset_bottom = 412.0
-manager = NodePath("../../..")
+offset_left = 1091.0
+offset_top = 83.0
+offset_right = 1577.0
+offset_bottom = 361.0
+
+[node name="Shop_Construction2" parent="ShopCanvas_SHOP/SHOP/ShopStationsStepParent/ShopStations" instance=ExtResource("19_rvmjo")]
+layout_mode = 1
+offset_left = 1091.0
+offset_top = 365.0
+offset_right = 1577.0
+offset_bottom = 643.0
+
+[node name="Shop_Construction3" parent="ShopCanvas_SHOP/SHOP/ShopStationsStepParent/ShopStations" instance=ExtResource("19_rvmjo")]
+layout_mode = 1
+offset_left = 1091.0
+offset_top = 646.0
+offset_right = 1577.0
+offset_bottom = 924.0
+myPool = 0
 
 [node name="HUDCanvas" type="CanvasLayer" parent="."]
 layer = 4

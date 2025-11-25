@@ -24,8 +24,8 @@ var thisBot : Combatant;
 		if is_instance_valid(hostPiece):
 			var _bot = hostPiece.get_host_robot();
 			if is_instance_valid(_bot):
-				return _bot;
-		return null;
+				hostRobot = _bot;
+		return hostRobot;
 
 var selected := false;
 
@@ -36,8 +36,9 @@ var selected := false;
 @export_subgroup("Shop")
 var contactCooldown := 0.25; ## If this Part has an ability that applies when the Piece it's on deals contact damage, then this is how long that should run.
 @export var scrapCostBase : int;
-var scrapSellModifier := 1.0;
+var scrapSellModifier := 1.0; ## @deprecated
 var scrapSellModifierBase := (2.0/3.0);
+var scrapSalvageModifierBase := (2.0/3.0);
 @export var myPartType := partTypes.UNASSIGNED;
 @export var myPartRarity := partRarities.COMMON;
 @export var poolWeight := 1; ##This is multiplied by 5 when Rare, 10 when Uncommon, and 15 when Common.
@@ -87,13 +88,14 @@ func _ready():
 			myPartType = partTypes.PASSIVE;
 
 func stat_registry():
-	register_stat("ContactCooldown", contactCooldown, StatHolderManager.statIconCooldown);
+	register_stat("ContactCooldown", contactCooldown, StatHolderManager.statIconCooldown, StatHolderManager.statTags.Clock);
 	
 	#Stats regardig Scrap Cost.
-	register_stat("ScrapCost", scrapCostBase, StatHolderManager.statIconMagazine, null, null, StatTracker.roundingModes.Ceili);
-	register_stat("ScrapSellModifier", scrapSellModifierBase, StatHolderManager.statIconMagazine);
-	register_stat("ScrapSalvageModifier", scrapSellModifierBase, StatHolderManager.statIconMagazine);
-	register_stat("Weight", weightBase, StatHolderManager.statIconWeight);
+	register_stat("ScrapCost", scrapCostBase, StatHolderManager.statIconScrap, StatHolderManager.statTags.Worth, StatHolderManager.displayModes.ALWAYS, StatHolderManager.roundingModes.Ceili);
+	register_stat("ScrapSellModifier", scrapSellModifierBase, StatHolderManager.statIconScrap, StatHolderManager.statTags.Worth, StatHolderManager.displayModes.IF_MODIFIED);
+	register_stat("ScrapSalvageModifier", scrapSalvageModifierBase, StatHolderManager.statIconScrap, StatHolderManager.statTags.Worth, StatHolderManager.displayModes.IF_MODIFIED);
+	register_stat("Weight", weightBase, StatHolderManager.statIconWeight, StatHolderManager.statTags.Hull);
+	register_stat("Integrity", 1.0, StatHolderManager.statIconHeart, StatHolderManager.statTags.Hull);
 	pass;
 
 func set_age_and_name():
@@ -138,6 +140,23 @@ func _get_buy_price(_discount := 0.0, markup:=0.0, fixedDiscount := 0, fixedMark
 	
 	return roundi(max(1, (sellPrice + fixedDiscount + fixedMarkup + mod_scrapCost.add) * ((1 + mod_scrapCost.flat) * mod_scrapCost.mult)))
 
+func try_buy_from_shop() -> bool:
+	if is_instance_valid(hostShopStall):
+		return hostShopStall.try_buy_part();
+	return false;
+
+func start_buying(robot : Robot):
+	hostRobot = robot;
+	remove_and_add_to_stash(robot);
+
+func remove_and_add_to_stash(robotOverride := hostRobot):
+	hostRobot = robotOverride;
+	if is_instance_valid(hostPiece):
+		hostPiece.remove_part(self, false, false, false, true);
+	else:
+		hostShopStall = null;
+		hostRobot.add_something_to_stash(self);
+
 func _get_part_bounds() -> Vector2i:
 	var highestX = 1; 
 	var lowestX = 0;
@@ -178,6 +197,7 @@ func _process(delta):
 				#textureBase.global_position = invHolderNode.global_position + Vector2(invPosition * 48);
 			#else:
 		textureBase.global_position = invHolderNode.global_position;
+		reparent(hostShopStall.bg_Part)
 	else:
 		textureBase.hide();
 		%Buttons.disable();

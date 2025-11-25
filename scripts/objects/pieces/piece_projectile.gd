@@ -74,13 +74,13 @@ func assign_references():
 
 func stat_registry():
 	super();
-	register_stat("MagazineSize", magazineMaxBase, StatHolderManager.statIconMagazine, null, null, StatTracker.roundingModes.Floori);
-	register_stat("MagazineRefreshRate", magazineRefreshRate, StatHolderManager.statIconCooldown);
-	register_stat("ProjectileSpeed", launchSpeed, StatHolderManager.statIconCooldown);
-	register_stat("ProjectileLifetime", bulletLifetime, StatHolderManager.statIconCooldown);
-	register_stat("ProjectileGravity", bulletGravity, StatHolderManager.statIconWeight);
-	register_stat("ProjectileFireRate", fireRate, StatHolderManager.statIconCooldown);
-	register_stat("Inaccuracy", bulletLifetime, StatHolderManager.statIconWeight);
+	register_stat("MagazineSize", magazineMaxBase, StatHolderManager.statIconMagazine, StatHolderManager.statTags.Weaponry, StatHolderManager.displayModes.ALWAYS, StatHolderManager.roundingModes.Floori);
+	register_stat("MagazineRefreshRate", magazineRefreshRate, StatHolderManager.statIconCooldown, StatHolderManager.statTags.Weaponry);
+	register_stat("ProjectileSpeed", launchSpeed, StatHolderManager.statIconCooldown, StatHolderManager.statTags.Weaponry);
+	register_stat("ProjectileLifetime", bulletLifetime, StatHolderManager.statIconCooldown, StatHolderManager.statTags.Weaponry);
+	register_stat("ProjectileGravity", bulletGravity, StatHolderManager.statIconWeight, StatHolderManager.statTags.Weaponry);
+	register_stat("ProjectileFireRate", fireRate, StatHolderManager.statIconCooldown, StatHolderManager.statTags.Weaponry);
+	register_stat("Inaccuracy", bulletLifetime, StatHolderManager.statIconWeight, StatHolderManager.statTags.Weaponry);
 
 func get_magazine_max() -> int:
 	return get_stat("MagazineSize");

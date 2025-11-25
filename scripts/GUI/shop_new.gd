@@ -4,6 +4,7 @@ class_name ShopStation
 var player : Robot_Player; ## The player.
 @export var manager : ShopManager; ## The manager.
 @export var shopDoor : NinePatchRect; ## The big door.
+@export var shopDoorWindow : Control;
 var shopDoorVelocity := 0.0; ## The door's Y velocity for its fancy animation.
 var shopDoorPrevPosY := 0.0; ## THe door's previous Y position.
 var doorOpen := false; ## Set by [method clopen_door].
@@ -18,14 +19,17 @@ var awaiting_reroll := false; ## If this is true, the next time all shop stalls 
 @export var btn_reroll : Button;
 
 func _ready():
+	shopOpen = false;
 	reset_shop();
-	
+	shopDoor.show();
 	shopDoor.size.y = size.y;
+	if ! btn_reroll.is_connected("pressed", _on_reroll_button_pressed):
+		btn_reroll.connect("pressed", _on_reroll_button_pressed);
 
 var stallDoorActionSteppy := 0;
 
 func _physics_process(delta):
-	for stall in gather_stalls():
+	for stall in stalls:
 		if ! stall.is_connected("thingSelected", stall_thing_selected):
 			stall.connect("thingSelected", stall_thing_selected);
 	if is_node_ready():
@@ -57,13 +61,24 @@ func _physics_process(delta):
 		shopDoor.position.y = clamp(shopDoor.position.y + shopDoorVelocity, -shopDoor.size.y, 0);
 		
 		lbl_reroll.update_amt(manager.get_reroll_price());
-		
-		if awaiting_reroll:
-			if all_stalls_closed():
-				awaiting_reroll = false;
-				reroll_shop();
-				if shopOpen:
+		#print(stallClopenQueued)
+		match stallClopenQueued:
+			true:
+				if ! all_stalls_open():
 					clopen_stalls(true);
+				else:
+					stallClopenQueued = null;
+			false:
+				clopen_stalls(false);
+				if all_stalls_closed_or_frozen():
+					if awaiting_reroll and shopOpen:
+						awaiting_reroll = false;
+						reroll_shop();
+						stallClopenQueued = true;
+			null:
+				pass;
+		
+		
 
 
 ## Deselects all [ShopStall] children.
@@ -84,18 +99,19 @@ func open_up_shop():
 		reroll_shop();
 		clopen_door(true);
 		shopOpen = true;
-		clopen_stalls(true);
-
+		stallClopenQueued = true;
+## Queues a stall open/close the next time they are able to do so.
+var stallClopenQueued = null;
 ## Opens or closes all shop stalls that are able to be closed/opened.
 func clopen_stalls(open:bool):
 	if open:
-		for stall in get_children():
+		for stall in stalls:
 			if stall is ShopStall:
-				stall.open_stall();
+				stall.queue_clopen(true);
 	else:
-		for stall in get_children():
+		for stall in stalls:
 			if stall is ShopStall:
-				stall.close_stall();
+				stall.queue_clopen(false);
 
 ## Closes the shop, then sets the new wave of items.
 func new_round(roundNumber:int):
@@ -106,7 +122,7 @@ func new_round(roundNumber:int):
 func close_up_shop():
 	clopen_door(false);
 	shopOpen = false;
-	clopen_stalls(false);
+	stallClopenQueued = false;
 
 ## Opens or closes the big door.
 func clopen_door(open:=false):
@@ -122,7 +138,6 @@ func clopen_door(open:=false):
 
 ## Called when the door is decreed to be "actually closed", which is when its fancy animation is done playing as we leave the shop.
 func door_closed():
-	reroll_shop();
 	doorActuallyClosed = true;
 	door_closed_sound(0.9);
 
@@ -134,13 +149,14 @@ func door_closed_sound(volume := 1.0):
 
 ## Returns true if we're not paused, we have at least one unfrozen stall, we're not too broke to reroll, and we're not already anticipating a reroll.
 func can_reroll():
+	print(all_stalls_frozen())
 	return not GameState.is_paused() and not all_stalls_frozen() and ScrapManager.is_affordable(manager.get_reroll_price()) and not awaiting_reroll;
 
 ## Fires when the reroll button is pressed.[br]
 ## Checks if we can reroll, then closes the stalls and queues a reroll.
 func _on_reroll_button_pressed():
 	if can_reroll():
-		clopen_stalls(false);
+		stallClopenQueued = false;
 		awaiting_reroll = true;
 		Hooks.OnRerollShop();
 		SND.play_sound_2D("Shop.Chaching", btn_reroll.global_position);
@@ -148,26 +164,39 @@ func _on_reroll_button_pressed():
 
 ## Returns true if all [ShopStall] children are frozen, and false if not.
 func all_stalls_frozen() -> bool:
-	var count := 0;
-	var frozenCount := 0;
-	for stall in get_children():
+	for stall in stalls:
 		if stall is ShopStall:
-			count += 1;
-			if stall.is_frozen():
-				frozenCount += 1;
-	return frozenCount >= count;
+			if ! stall.is_frozen():
+				return false;
+	return true;
 
 ## Returns false if any [ShopStall] child is not closed.
 func all_stalls_closed() -> bool:
-	for stall in get_children():
+	for stall in stalls:
 		if stall is ShopStall:
 			if ! stall.doors_actually_closed():
 				return false;
 	return true;
 
+## Returns false if any [ShopStall] child is not closed or frozen.
+func all_stalls_closed_or_frozen() -> bool:
+	for stall in stalls:
+		if stall is ShopStall:
+			if ! (stall.doors_actually_closed() or stall.is_frozen()):
+				return false;
+	return true;
+
+## Returns false if any [ShopStall] child is closed.
+func all_stalls_open() -> bool:
+	for stall in stalls:
+		if stall is ShopStall:
+			if stall.doors_actually_closed():
+				return false;
+	return true;
+
 ## Clears out all [ShopStall] children.
 func clear_shop_stalls(ignoreFrozen := false):
-	for stall in get_children():
+	for stall in stalls:
 		if stall is ShopStall:
 			clear_shop_stall(stall, ignoreFrozen);
 
@@ -235,7 +264,7 @@ func calculate_part_pool():
 func translated_part_pool():
 	var poolDict = {}
 	var pool = partPoolCalculated.duplicate();
-	var lastPart;
+	var lastPart = null;
 	for part in pool:
 		var partInst = part.instantiate();
 		var partName = ""
@@ -353,17 +382,15 @@ func return_random_part() -> PackedScene:
 	var sceneReturn = pool.pick_random();
 	return sceneReturn;
 
-var stalls = []
-
-func gather_stalls():
-	stalls.clear();
-	for stall in get_children():
-		if stall is ShopStall:
-			stalls.append(stall);
-	return stalls;
+var stalls = []:
+	get:
+		var ret = []
+		for stall in shopDoorWindow.get_children():
+			if stall is ShopStall:
+				ret.append(stall);
+		return ret;
 
 func reroll_shop():
-	gather_stalls();
 	clear_shop(true);
 	var counter = 0;
 	while (next_empty_shop_stall() != null) and counter < stalls.size():
@@ -394,7 +421,7 @@ func add_part_to_shop(inPart : Part):
 		var part:Part = inPart;
 		print(stall.partRef)
 		inPart.hostShopStall = stall;
-		inPart.thisRobot = GameState.get_player();
+		inPart.hostRobot = GameState.get_player();
 		inPart.inPlayerInventory = true;
 		inPart.invHolderNode = stall;
 		if inPart is PartActive:
@@ -436,7 +463,6 @@ func next_empty_shop_stall() -> ShopStall:
 
 ## Clears all stalls, with the option to reroll afterwards.
 func clear_shop(ignoreFrozen := false, reroll := false):
-	gather_stalls();
 	
 	clear_shop_stalls(ignoreFrozen);
 	
@@ -444,6 +470,6 @@ func clear_shop(ignoreFrozen := false, reroll := false):
 		reroll_shop();
 
 func stall_thing_selected(selectedStall : ShopStall):
-	for stall in gather_stalls():
+	for stall in stalls:
 		if stall != selectedStall:
 			stall.deselect();

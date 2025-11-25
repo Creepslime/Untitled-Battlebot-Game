@@ -2,7 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://bdgkd60c8qtud" path="res://graphics/images/HUD/statIcons/energyIconStriped.png" id="1_mv2jr"]
 [ext_resource type="Script" uid="uid://jsudh63sh3gu" path="res://scripts/GUI/stat_icon.gd" id="2_rhoqc"]
-[ext_resource type="Theme" uid="uid://8f0fg65uxivb" path="res://graphics/images/HUD/digital_button.tres" id="3_x4c7b"]
+[ext_resource type="Theme" uid="uid://tcelcj32ux4o" path="res://graphics/images/HUD/digital_button.tres" id="3_x4c7b"]
 
 [node name="StatIcon" type="Control" node_paths=PackedStringArray("textureIcon", "lbl_amt")]
 custom_minimum_size = Vector2(22, 37)

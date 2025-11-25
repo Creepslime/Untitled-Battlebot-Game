@@ -64,6 +64,7 @@ Driveable=""
 Piece="This object is a Piece and will interfere with placement."
 Obstacle="Modular wall bits."
 Wood=""
+Glass=""
 
 [importer_defaults]
 
