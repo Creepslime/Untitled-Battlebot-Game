@@ -752,5 +752,6 @@ func profiler(delta):
 			profilerPingBanks[reason] = profilerPingCalls[reason];
 		for reason in profilerPingCalls:
 			profilerPingCalls[reason] = 0;
-		for reason in profilerPingTimers:
-			profilerPingTimers[reason] -= 1;
+		if ! is_paused():
+			for reason in profilerPingTimers:
+				profilerPingTimers[reason] -= 1;

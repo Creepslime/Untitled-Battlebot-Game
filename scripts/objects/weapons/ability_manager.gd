@@ -213,19 +213,27 @@ func get_energy_cost_string(id : int):
 	return s
 
 ## @deprecated: 1 is removed from this each frame, if above 0.
-var freezeFrames := 0;
-## Adds to [member freezeFrames].
-func add_freeze_frames(id : int, amt := 1):
+#var freezeFrames := 0;
+## Adds to [member AbilityData.freezeFrames] on the data with the given [param id].[br]
+## If [param topUp] is true, then the amount of freeze frames will only be raised to the input instead of set to.
+func add_freeze_frames(id : int, amt := 1, topUp := true):
 	var data = get_ability_data(id);
 	if is_instance_valid(data):
-		data.freezeFrames += amt;
+		if topUp:
+			data.freezeFrames = max(amt, data.freezeFrames);
+		else:
+			data.freezeFrames += amt;
 ## @deprecated: delta time is removed from this each frame, if above 0. 
-var freezeTime := 0.0;
-## Adds to [member freezeTime].
-func add_freeze_time(id : int, amt := 1.0):
+#var freezeTime := 0.0;
+## Adds to [member AbilityData.freezeTime] on the data with the given [param id].[br]
+## If [param topUp] is true, then the amount of freeze time will only be raised to the input instead of set to.
+func add_freeze_time(id : int, amt := 1.0, topUp := true):
 	var data = get_ability_data(id);
 	if is_instance_valid(data):
-		data.freezeTime += amt;
+		if topUp:
+			data.freezeTime = max(amt, data.freezeTime);
+		else:
+			data.freezeTime += amt;
 
 func tick_all_cooldowns(delta):
 	for data in statHolderUserData.values():
@@ -277,6 +285,8 @@ func on_cooldown(id : int)->bool:
 	var data = get_ability_data(id);
 	if is_instance_valid(data):
 		#print(id)
+		#if abilityName == "Bullet Factory":
+			#prints(data.cooldownTimer, data.freezeTime, data.freezeFrames)
 		return data.cooldownTimer > 0 or data.freezeTime > 0 or data.freezeFrames > 0;
 	return true;
 
