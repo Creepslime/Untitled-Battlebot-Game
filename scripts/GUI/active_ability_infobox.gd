@@ -197,7 +197,7 @@ func _process(delta):
 		doneWithSetup.emit();
 	## If the action assigned to this is not in a piece/part that's on the robot, disable the button.
 	if is_instance_valid(referencedThing) and is_instance_valid(referencedAbility) and referencedAbility is AbilityManager:
-		btn_assign.disabled = ! referencedAbility.is_on_assigned_piece(referencedThing.statHolderID);
+		btn_assign.disabled = ! (referencedAbility.is_on_assigned_piece(referencedThing.statHolderID) and GameState.get_in_state_of_building());
 		#prints(referencedThing.statHolderID,referencedAbility.get_ability_data(referencedThing.statHolderID),referencedAbility.is_on_assigned_piece(referencedThing.statHolderID))
 
 func showtime():

@@ -12,7 +12,7 @@ class_name TransitionCanvas
 var dbg_hidden := false;
 var dbg_prof := false;
 @export var debug_canvas : CanvasLayer;
-@export var lbl_profiler : Label;
+@export var lbl_profiler : RichTextLabel;
 @export var margin_profiler : MarginContainer;
 
 

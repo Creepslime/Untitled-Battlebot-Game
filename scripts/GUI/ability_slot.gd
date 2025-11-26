@@ -56,7 +56,7 @@ func set_index(in_index):
 func update_base_tooltips():
 	var tooltip = str(inputKeysString,"\n","\n"if !is_instance_valid(referencedAbility) or !is_instance_valid(referencedAbility.assignedPieceOrPart) else lbl_thingname.text + "\n","Ability Slot Empty" if referencedAbility == null else referencedAbility.manager.abilityName)
 	tooltip_text = tooltip;
-	for child in Utils.get_all_children(self, self):
+	for child in Utils.get_all_children("Ability slot tooltip update",self, self):
 		if child is Control:
 			child.tooltip_text = tooltip;
 

@@ -20,19 +20,18 @@ func _ready():
 
 func comeIn():
 	show();
-	bring_to_left(true, false);	
+	bring_to_left(true, false);
 	set_deferred("curMode", mode.CENTER);
-	primeASignal = true;
 
 func leave():
 	if !is_on_right():
 		set_deferred("curMode", mode.RIGHT);
-	primeASignal = true;
 
 signal hitCenter()
 signal hitRight()
 
 var leftTimer := -1.;
+var lerpedPosXValue := 0.0;
 func _process(delta):
 	match curMode:
 		mode.LEFT:
@@ -40,9 +39,7 @@ func _process(delta):
 			position.x = leftPos;
 		mode.CENTER:
 			visible = true;
-			if is_equal_approx(position.x, centerPos) and primeASignal:
-				hitCenter.emit();
-			position.x = ceil(lerp(position.x, centerPos, 14 * delta));
+			lerpedPosXValue = lerp(lerpedPosXValue, centerPos, 14 * delta);
 		mode.RIGHT:
 			visible = true;
 			if is_on_right():
@@ -53,9 +50,9 @@ func _process(delta):
 				if leftTimer < 0:
 					leftTimer = -1;
 					bring_to_left(false, true);
-				if primeASignal:
-					hitRight.emit();
-			position.x = ceil(lerp(position.x, rightPos, 14 * delta));
+			lerpedPosXValue = lerp(lerpedPosXValue, rightPos, 14 * delta);
+	position.x = roundi(lerpedPosXValue);
+
 
 
 func _on_hit_center():

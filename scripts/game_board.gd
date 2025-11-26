@@ -303,6 +303,7 @@ func enter_state(_newState:gameState, _oldState:gameState):
 			HUD_shopManager.reset_shop();
 			
 			GameState.start_death_timer(120.0,true)
+			
 			roundNum = 0;
 			roundEnemiesInit = 1;
 			clear_enemy_spawn_list();
@@ -310,11 +311,9 @@ func enter_state(_newState:gameState, _oldState:gameState):
 			enemiesKilled = 0;
 			player = null;
 			
-			call_screen_transition_in();
-			
+			queue_center_transition_state(gameState.INIT_ROUND, 3)
 			pass
 		gameState.INIT_ROUND:
-			
 			MUSIC.change_state(MusicHandler.musState.PREGAME);
 			destroy_all_enemies(false);
 			
@@ -375,9 +374,8 @@ func enter_state(_newState:gameState, _oldState:gameState):
 			pass
 		gameState.LEAVE_SHOP:
 			HUD_shopTabs.open = false;
-			queuedShopLeave = false;
 			player.exit_shop();
-			call_screen_transition_out();
+			queue_center_transition_state(gameState.INIT_ROUND, 3)
 
 
 func new_round_arena_sequence():
@@ -451,24 +449,18 @@ func process_state(delta : float, _state : gameState):
 				change_state(gameState.LOAD_SHOP);
 			pass
 		gameState.LOAD_SHOP:
-			#ping_screen_transition_result();
 			pass;
 		gameState.GOTO_SHOP:
-			#ping_screen_transition_result();
 			pass
 		gameState.SHOP:
 			pass
 		gameState.INIT_ROUND:
-			#ping_screen_transition_result();
-			
 			if wait_for_arena_to_build_and_respawn_to_happen():
 				change_state(gameState.LOAD_ROUND);
 			pass
 		gameState.LOAD_ROUND:
-			#ping_screen_transition_result();
 			pass;
 		gameState.LEAVE_SHOP:
-			#ping_screen_transition_result();
 			pass;
 	pass
 
@@ -523,6 +515,7 @@ func screen_transition(scr_state : ScreenTransition.mode):
 				if queuedCenterTransitionForceLeave:
 					call_screen_transition_out();
 			pass;
+
 ## Sets a state to be called when the screen transition shows up, then makes it show up.
 func queue_center_transition_state(state := gameState.QUEUE_EMPTY, layer := 3, instantLeave := false):
 	queuedCenterTransitionState = state;
@@ -1097,10 +1090,12 @@ func pause(foo : bool):
 ##Pauses all robots specifically.
 func pause_all_robots_and_projectiles(foo : bool):
 	print("Pausing all FreezableEntities: ", str(foo))
-	for robot in Utils.get_all_children_of_type(self, FreezableEntity):
-		print(robot)
-		if robot is FreezableEntity:
-			robot.pause(foo, true);
+	for thing in Utils.get_all_children("GameBoard pausing FreezableControl and FreezableEntity nodes",self):
+		print(thing)
+		if thing is FreezableControl:
+			thing.pause(foo, true);
+		if thing is FreezableEntity:
+			thing.pause(foo, true);
 
 ##Fired when the game is over.
 func game_over():

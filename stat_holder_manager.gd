@@ -87,6 +87,7 @@ enum roundingModes {
 	Roundi, ## Performs the [code]roundi()[/code] function on the stat when getting it.
 	Ceili, ## Performs the [code]ceili()[/code] function on the stat when getting it.
 	NoOverride, ## Used in [method StatHolder.register_stat] as a default value; should not be used as the rounding mode, but will behave the same as [enum roundingMode.None].
+	ClampToZeroAndMax, ## Does not round the float, but instead tries to clamp the stat to between 0 and a stat with the name set in [member StatTracker.statMaxName]
 }
 ## Controls how a [StatTracker] is displayed in the [InfoBox].
 enum displayModes {

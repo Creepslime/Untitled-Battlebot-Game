@@ -138,7 +138,8 @@ func clear_info(thingToCheck = null):
 		queueAbilityPostUpdateCounter = -1;
 	sell_areYouSure = false;
 
-var ref : Node;
+var ref : Node:
+	get: return get_ref();
 func get_ref():
 	if is_instance_valid(partRef): 
 		ref = partRef;
@@ -156,6 +157,10 @@ func ref_is_part() -> bool:
 	if is_instance_valid(get_ref()):
 		return ref is Part;
 	return false;
+func get_ref_stat_id():
+	if ref != null:
+		return ref.statHolderID;
+	return -1;
 
 @export var btn_sellButton : Button;
 @export var lbl_sellButton : Label;
@@ -389,7 +394,7 @@ func populate_stats(thing):
 
 var statTagsCategorized : Dictionary[StatHolderManager.statTags, StatArrayDisplay] = {}
 func add_stat_icon(stat:StatTracker):
-	if stat.should_be_displayed():
+	if stat.should_be_displayed(get_ref_stat_id()):
 		var tag = stat.statTag;
 		var statArray : StatArrayDisplay;
 		if !statTagsCategorized.has(tag):

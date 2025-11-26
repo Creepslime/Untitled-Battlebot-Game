@@ -112,7 +112,7 @@ func clear_spawning_locations():
 
 func reset_spawning_locations():
 	clear_spawning_locations();
-	for child in Utils.get_all_children(self):
+	for child in Utils.get_all_children("Arena resetting spawning locations", self):
 		if child is RobotSpawnLocation:
 			spawningLocations.append(child);
 	print("STATE: RESETTING ARENA SPAWNERS: ",spawningLocations.size())

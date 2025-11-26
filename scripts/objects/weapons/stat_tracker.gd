@@ -6,7 +6,11 @@ class_name StatTracker
 
 @export var statFriendlyName : String; ## This stat's name [i]without[/i] [member statID] appended.
 @export var statName : String; ## This stat's name [i]with[/i] [member statID] appended.
+var statMaxName : String; ## The stat friendly name to search for if [enum StatHolderManager.roundingModes.ClampToZeroAndMax] is your [member roundingMode].
 var statID : int = -1;  ## A unique identifier created so the Robots stop sharing custody.
+var host:
+	get:
+		return StatHolderManager.get_stat_holder_by_id(statID);
 @export var statIcon : Texture2D = preload("res://graphics/images/HUD/statIcons/magazineIconStriped.png"); ## The icon used when a [InspectorStatIcon] node displays this stat.
 var textColor := Color("789be9"); ## The text color used when a [InspectorStatIcon] node displays this stat.
 @export var baseStat : float; ## The base number defined before calculation.
@@ -19,32 +23,33 @@ var bonusMult_Mult : float = 1.0; ##@experimental:Multiplies bonusMult_Flat by t
 @export var displayMode := StatHolderManager.displayModes.ALWAYS; ## Determines when this stat should be displayed, if at all.
 @export var statTag := StatHolderManager.statTags.Miscellaneous; ## What group this stat is in on the inspector.
 ## Returns true if the stat should be displayed on the base inspector. Not applied to stats called for by abilities.
-func should_be_displayed() -> bool:
-	match displayMode:
-		StatHolderManager.displayModes.ALWAYS:
-			return true;
-			pass;
-		StatHolderManager.displayModes.NEVER:
-			return false;
-			pass;
-		StatHolderManager.displayModes.NOT_ONE:
-			return ! is_equal_approx(get_stat(), 1.0);
-			pass;
-		StatHolderManager.displayModes.NOT_999:
-			return ! is_equal_approx(get_stat(), 999.0);
-			pass;
-		StatHolderManager.displayModes.NOT_ZERO:
-			return ! is_zero_approx(get_stat());
-			pass;
-		StatHolderManager.displayModes.ABOVE_ZERO:
-			return get_stat() > 0;
-			pass;
-		StatHolderManager.displayModes.ABOVE_ZERO_NOT_999:
-			return get_stat() > 0 and ! is_equal_approx(get_stat(), 999.0);
-			pass;
-		StatHolderManager.displayModes.IF_MODIFIED:
-			return ! is_equal_approx(get_stat(), baseStat);
-			pass;
+func should_be_displayed(statIDCheck := statID) -> bool:
+	if statIDCheck == statID:
+		match displayMode:
+			StatHolderManager.displayModes.ALWAYS:
+				return true;
+				pass;
+			StatHolderManager.displayModes.NEVER:
+				return false;
+				pass;
+			StatHolderManager.displayModes.NOT_ONE:
+				return ! is_equal_approx(get_stat(), 1.0);
+				pass;
+			StatHolderManager.displayModes.NOT_999:
+				return ! is_equal_approx(get_stat(), 999.0);
+				pass;
+			StatHolderManager.displayModes.NOT_ZERO:
+				return ! is_zero_approx(get_stat());
+				pass;
+			StatHolderManager.displayModes.ABOVE_ZERO:
+				return get_stat() > 0;
+				pass;
+			StatHolderManager.displayModes.ABOVE_ZERO_NOT_999:
+				return get_stat() > 0 and ! is_equal_approx(get_stat(), 999.0);
+				pass;
+			StatHolderManager.displayModes.IF_MODIFIED:
+				return ! is_equal_approx(get_stat(), baseStat);
+				pass;
 	return false;
 
 ## This [StatTracker]'s get function called by [method get_stat].
@@ -62,7 +67,7 @@ func get_rounding_mode() -> StatHolderManager.roundingModes:
 ## Gets the stat by calling [member getFunc].
 func get_stat(roundingModeOverride : StatHolderManager.roundingModes = get_rounding_mode()):
 	var stat = getFunc.call();
-	#currentValue = return_rounded_stat(stat, roundingModeOverride);
+	currentValue = return_rounded_stat(stat, roundingModeOverride);
 	#return currentValue;
 	#print("getting ", statName, " ", stat)
 	return stat;
@@ -86,6 +91,8 @@ func return_rounded_stat(stat, roundingModeOverride : StatHolderManager.rounding
 			return stat;
 		StatHolderManager.roundingModes.NoOverride: ##Both None and NoOverride should return just the base value without any rounding.
 			return stat;
+		StatHolderManager.roundingModes.ClampToZeroAndMax: ## No rounding. Return this clamped between 0 and the host's stat.
+			return clampf(stat, 0, host.get_stat(statMaxName));
 	return stat;
 
 ## Sets the stat by calling [member setFunc].

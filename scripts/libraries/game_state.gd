@@ -428,9 +428,11 @@ static var settings := {
 	StringName("startingScrap") : 0,
 	StringName("godMode") : false,
 	StringName("killAllKey") : false,
+	StringName("RoundTimerRuns") : true,
 	
 	StringName("HiddenScreenTransitions") : false,
 	StringName("ProfilerLabelsVisible") : false,
+	
 	
 	StringName("renderShadows") : true,
 }
@@ -648,12 +650,14 @@ func make_screen_transition_arrive(layer := 3):
 		screenTransition.connect("hitCenter", hit_center);
 	screenTransition.primeASignal;
 	screenTransition.comeIn();
+var waitingOnTransitionString = ""
 func ping_screen_transition():
 	profiler_ping_create("Waiting on Screen Transition")
 	if screenTransition.is_on_center():
 		hit_center();
 	if screenTransition.is_on_right():
 		hit_right();
+	set("waitingOnTransitionString", "SCREEN TRANSITION: BEING WAITED ON...")
 
 var totalPlayTime := 0.0;
 var timeCounter = 0.;
@@ -661,37 +665,78 @@ var profilerFrames = 0;
 var profilerFPS := 0;
 var profilerPingCalls = {}
 var profilerPingBanks = {}
+var profilerPingTimers = {}
+var profilerPingRecords = {}
+const maxLoopsBeforeDeletionIfEmpty := 30;
 func profiler_ping_create(reason := "unknown"):
 	if ! profilerPingCalls.has(reason):
 		profilerPingCalls[reason] = 0;
 	if ! profilerPingBanks.has(reason):
 		profilerPingBanks[reason] = 0;
 	profilerPingCalls[reason] += 1;
+	profilerPingTimers[reason] = maxLoopsBeforeDeletionIfEmpty;
 
 func get_profiler_string() -> String:
 	var s = "\n\nPROFILER PINGS:"
 	for reason in profilerPingBanks:
-		s += "\n"
-		s += reason
-		s += ": "
-		s += str(profilerPingBanks[reason])
-		s += " | ~"
-		if profilerFPS > 0:
-			s += str(profilerPingBanks[reason] / profilerFPS)
-			s += "/frame"
+		var timeSinceLastIncident = profilerPingTimers[reason];
+		if timeSinceLastIncident > 0:
+			var timelinessFactor = float(timeSinceLastIncident) / float(maxLoopsBeforeDeletionIfEmpty);
+			var current = profilerPingBanks[reason];
+			
+			## Log the peak amount of calls while the entry has been alive for > 30 seconds.
+			if ! profilerPingRecords.has(reason):
+				profilerPingRecords[reason] = current;
+			var highest = profilerPingRecords[reason];
+			if current > highest:
+				profilerPingRecords[reason] = current;
+			highest = profilerPingRecords[reason];
+			
+			var colorHexString = TextFunc.get_grey_hex_string(timelinessFactor + 0.3);
+			s += "\n"
+			s += "[color=" + colorHexString + "]"
+			s += reason
+			s += ": "
+			s += str(current)
+			s += " | ~"
+			if profilerFPS > 0:
+				s += str(current / profilerFPS)
+				s += "/frame"
+			else:
+				s += "0/frame"
+			s += " | Peak: " + str(highest);
+		elif timeSinceLastIncident == 0:
+			var colorHexString = TextFunc.get_grey_hex_string(0.3);
+			s += "\n"
+			s += "[color=" + colorHexString + "]"
+			s += reason
+			s += ": Last ping too old, deleting..."
 		else:
-			s += "0/frame"
+			## Reset the high-score.
+			profilerPingRecords[reason] = 0;
+			pass;
 	return s;
 
 func get_profiler_label():
+	var selectionColor = "gray"
+	var selPipette = get_player_selected_or_pipette();
+	if is_instance_valid(selPipette):
+		if selPipette is Piece:
+			selectionColor = TextFunc.get_color_hex_string("lightred")
+		if selPipette is Part:
+			selectionColor = TextFunc.get_color_hex_string("lightgreen")
+		if selPipette is AbilityData:
+			selectionColor = TextFunc.get_color_hex_string("lightblue")
+	var currentlySelected := str("\n[color=",selectionColor,"]CURRENTLY SELECTED: ",str(selPipette))
+	currentlySelected += str("\n[color=white] - ", "" if is_instance_valid(get_player_selected_piece()) else "[color=gray]", "PIECE: ",str(get_player_selected_piece()))
+	currentlySelected += str("\n[color=white] - ", "" if is_instance_valid(get_player_selected_part()) else "[color=gray]", "PART: ",str(get_player_selected_part()))
+	currentlySelected += str("\n[color=white] - ", "" if is_instance_valid(get_player_pipette()) else "[color=gray]", "PIPETTE: ",str(get_player_pipette()))
+	currentlySelected += str("\n[color=white] - ", "" if is_instance_valid(get_player_ability_pipette()) else "[color=gray]", "ABILITY PIPETTE: ",str(get_player_ability_pipette()))
+	currentlySelected += "[color=white]"
+	var transitionString = waitingOnTransitionString;
+	waitingOnTransitionString = "\nSCREEN TRANSITION: Chilling"
 	
-	var currentlySelected := str("\nCURRENTLY SELECTED: ",str(get_player_selected_or_pipette()))
-	currentlySelected += str("\n - PIECE: ",str(get_player_selected_piece()))
-	currentlySelected += str("\n - PART: ",str(get_player_selected_part()))
-	currentlySelected += str("\n - PIPETTE: ",str(get_player_pipette()))
-	currentlySelected += str("\n - ABILITY PIPETTE: ",str(get_player_ability_pipette()))
-	
-	return str("TOTAL PLAY TIME: ", TextFunc.format_time(totalPlayTime, 0, -1), "\nPROFILER UPDATE TIME: ",TextFunc.format_stat(timeCounter),"\nFPS: ",profilerFPS,currentlySelected,"\nSTATE: ",get_game_board_state_string(),"\nPAUSED: ",is_paused(),get_profiler_string());
+	return str("TOTAL PLAY TIME: ", TextFunc.format_time(totalPlayTime, 0, -1), "\nPROFILER UPDATE TIME: ",TextFunc.format_stat(timeCounter),"\nFPS: ",profilerFPS,currentlySelected,"\nSTATE: ",get_game_board_state_string(),transitionString,"\nPAUSED: ",is_paused(),get_profiler_string());
 	
 
 func profiler(delta):
@@ -707,3 +752,5 @@ func profiler(delta):
 			profilerPingBanks[reason] = profilerPingCalls[reason];
 		for reason in profilerPingCalls:
 			profilerPingCalls[reason] = 0;
+		for reason in profilerPingTimers:
+			profilerPingTimers[reason] -= 1;

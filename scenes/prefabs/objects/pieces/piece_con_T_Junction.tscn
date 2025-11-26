@@ -1,18 +1,12 @@
-[gd_scene load_steps=39 format=3 uid="uid://chi2adlhly5pm"]
+[gd_scene load_steps=23 format=3 uid="uid://chi2adlhly5pm"]
 
 [ext_resource type="Script" uid="uid://sgpk4fry4yvo" path="res://scripts/objects/pieces/buildingBlocks/piece.gd" id="1_8tbom"]
 [ext_resource type="Script" uid="uid://cybmjhuctmfaw" path="res://scripts/libraries/richTextConstructor.gd" id="2_uwv47"]
-[ext_resource type="Script" uid="uid://clcmggkeaqnyx" path="res://scripts/objects/weapons/stat_tracker.gd" id="3_u5pnx"]
 [ext_resource type="Texture2D" uid="uid://c3ddwskowvvoi" path="res://graphics/images/models/sockets/socketM.png" id="3_uq2w3"]
-[ext_resource type="Texture2D" uid="uid://bdgkd60c8qtud" path="res://graphics/images/HUD/statIcons/energyIconStriped.png" id="4_bub1r"]
 [ext_resource type="Texture2D" uid="uid://cobiyocwh7d3p" path="res://graphics/images/models/sockets/prong.png" id="4_nl45e"]
 [ext_resource type="PackedScene" uid="uid://dosh155duu70e" path="res://scenes/prefabs/objects/pieces/buildingBlocks/socket.tscn" id="5_o6g7c"]
-[ext_resource type="Texture2D" uid="uid://uflissj08i1o" path="res://graphics/images/HUD/statIcons/cooldownIconStriped.png" id="5_y1frp"]
-[ext_resource type="Texture2D" uid="uid://s6s6ugfdhqhy" path="res://graphics/images/HUD/statIcons/magazineIconStriped.png" id="6_e60i5"]
 [ext_resource type="Script" uid="uid://dikbphvd0xff7" path="res://scripts/objects/pieces/buildingBlocks/hitbox_shapes.gd" id="6_ssuhc"]
-[ext_resource type="Texture2D" uid="uid://b775d1fn78gcv" path="res://graphics/images/HUD/statIcons/weightIconStriped.png" id="7_650nr"]
 [ext_resource type="Script" uid="uid://bkwxna02gqgqu" path="res://scripts/objects/pieces/buildingBlocks/hurtbox_shapes.gd" id="7_xtkwn"]
-[ext_resource type="Texture2D" uid="uid://cnfat2kqvmdcd" path="res://graphics/images/HUD/statIcons/damageIconStriped.png" id="8_u1ssf"]
 [ext_resource type="Script" uid="uid://rbm6p8ggs13f" path="res://scripts/objects/pieces/buildingBlocks/placement_shapes.gd" id="8_ysdpo"]
 [ext_resource type="PackedScene" uid="uid://dckvl43g2kjvx" path="res://scenes/prefabs/objects/pieces/buildingBlocks/piece_collision_box.tscn" id="9_u5pnx"]
 [ext_resource type="ArrayMesh" uid="uid://c5ex7keixe1ff" path="res://graphics/models/obj/botparts/Bot_TPipe.obj" id="15_ysdpo"]
@@ -43,96 +37,6 @@ newline = false
 endingSpace = false
 startingSpace = true
 metadata/_custom_type_script = "uid://cybmjhuctmfaw"
-
-[sub_resource type="Resource" id="Resource_y1frp"]
-resource_name = "ContactCooldown17"
-script = ExtResource("3_u5pnx")
-statFriendlyName = "Contact Cooldown"
-statName = "ContactCooldown17"
-statIcon = ExtResource("5_y1frp")
-baseStat = 0.0
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_3v416"]
-resource_name = "Damage17"
-script = ExtResource("3_u5pnx")
-statFriendlyName = "Damage"
-statName = "Damage17"
-statIcon = ExtResource("8_u1ssf")
-baseStat = 0.0
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_3u35h"]
-resource_name = "Kickback17"
-script = ExtResource("3_u5pnx")
-statFriendlyName = "Kickback"
-statName = "Kickback17"
-statIcon = ExtResource("7_650nr")
-baseStat = 0.0
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_atyn5"]
-resource_name = "Knockback17"
-script = ExtResource("3_u5pnx")
-statFriendlyName = "Knockback"
-statName = "Knockback17"
-statIcon = ExtResource("7_650nr")
-baseStat = 0.0
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_bub1r"]
-resource_name = "PassiveCooldown17"
-script = ExtResource("3_u5pnx")
-statFriendlyName = "Passive Cooldown"
-statName = "PassiveCooldown17"
-statIcon = ExtResource("5_y1frp")
-baseStat = 1.0
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_u5pnx"]
-resource_name = "PassiveEnergyDraw17"
-script = ExtResource("3_u5pnx")
-statFriendlyName = "Passive Energy Draw"
-statName = "PassiveEnergyDraw17"
-statIcon = ExtResource("4_bub1r")
-baseStat = 1.0
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_e60i5"]
-resource_name = "ScrapCost17"
-script = ExtResource("3_u5pnx")
-statFriendlyName = "Scrap Cost"
-statName = "ScrapCost17"
-statIcon = ExtResource("6_e60i5")
-baseStat = 0.0
-roundingMode = 6
-
-[sub_resource type="Resource" id="Resource_u1ssf"]
-resource_name = "ScrapSalvageModifier17"
-script = ExtResource("3_u5pnx")
-statFriendlyName = "Scrap Salvage Modifier"
-statName = "ScrapSalvageModifier17"
-statIcon = ExtResource("6_e60i5")
-baseStat = 0.666667
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_650nr"]
-resource_name = "ScrapSellModifier17"
-script = ExtResource("3_u5pnx")
-statFriendlyName = "Scrap Sell Modifier"
-statName = "ScrapSellModifier17"
-statIcon = ExtResource("6_e60i5")
-baseStat = 0.666667
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_i4bcq"]
-resource_name = "Weight17"
-script = ExtResource("3_u5pnx")
-statFriendlyName = "Weight"
-statName = "Weight17"
-statIcon = ExtResource("7_650nr")
-baseStat = 3.0
-roundingMode = 0
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_g4w8c"]
 size = Vector2(0.25, 0.25)
@@ -189,18 +93,6 @@ Vector2i(2, 2): null,
 Vector2i(2, 3): null,
 Vector2i(3, 2): null
 }
-statCollection = Dictionary[String, ExtResource("3_u5pnx")]({
-"ContactCooldown17": SubResource("Resource_y1frp"),
-"Damage17": SubResource("Resource_3v416"),
-"Kickback17": SubResource("Resource_3u35h"),
-"Knockback17": SubResource("Resource_atyn5"),
-"PassiveCooldown17": SubResource("Resource_bub1r"),
-"PassiveEnergyDraw17": SubResource("Resource_u5pnx"),
-"ScrapCost17": SubResource("Resource_e60i5"),
-"ScrapSalvageModifier17": SubResource("Resource_u1ssf"),
-"ScrapSellModifier17": SubResource("Resource_650nr"),
-"Weight17": SubResource("Resource_i4bcq")
-})
 filepathForThisEntity = "res://scenes/prefabs/objects/pieces/piece_bumper_T.tscn"
 
 [node name="MaleSocket" type="Node3D" parent="."]

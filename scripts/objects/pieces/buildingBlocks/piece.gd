@@ -42,14 +42,14 @@ func _process(delta):
 
 func stat_registry():
 	## Stats regarding energy cost.
-	register_stat("PassiveEnergyDraw", energyDrawPassiveBaseOverride, StatHolderManager.statIconEnergy, StatHolderManager.statTags.Battery, StatHolderManager.displayModes.ABOVE_ZERO);
-	register_stat("PassiveEnergyRegeneration", 0.0, StatHolderManager.statIconEnergy, StatHolderManager.statTags.Battery, StatHolderManager.displayModes.ABOVE_ZERO);
+	register_stat("PassiveEnergyDrawMultiplier", energyDrawPassiveMultiplier, StatHolderManager.statIconEnergy, StatHolderManager.statTags.Battery, StatHolderManager.displayModes.ABOVE_ZERO_NOT_999);
+	register_stat("PassiveEnergyRegeneration", 0.0, StatHolderManager.statIconEnergy, StatHolderManager.statTags.Battery, StatHolderManager.displayModes.ABOVE_ZERO_NOT_999);
 	register_stat("PassiveCooldown", passiveCooldownTimeMultiplier, StatHolderManager.statIconCooldown, StatHolderManager.statTags.Clock);
 	register_stat("ContactCooldown", contactCooldown, StatHolderManager.statIconCooldown, StatHolderManager.statTags.Clock);
 	
 	## Stats that only matter if the thing has abilities.
 	if activeAbilitiesDistributed.size() > 0:
-		register_stat("ActiveEnergyDraw", energyDrawActiveMultiplier, StatHolderManager.statIconEnergy, StatHolderManager.statTags.Battery);
+		register_stat("ActiveEnergyDrawMultiplier", energyDrawActiveMultiplier, StatHolderManager.statIconEnergy, StatHolderManager.statTags.Battery);
 		register_stat("ActiveCooldown", activeCooldownTimeMultiplier, StatHolderManager.statIconCooldown, StatHolderManager.statTags.Clock);
 	
 	## Stats regarding Scrap Cost.
@@ -583,17 +583,16 @@ func get_current_energy_draw():
 func get_active_energy_cost(ability : AbilityManager):
 	##TODO: Bonuses
 	var override = null;
-	if energyDrawActiveBaseOverride != 999:
+	if ! is_equal_approx(energyDrawActiveBaseOverride, 999):
 		override = energyDrawActiveBaseOverride;
-	return ( ability.get_energy_cost_base(override) * get_stat("ActiveEnergyDraw") );
+	return ( ability.get_energy_cost_base(override) * get_stat("ActiveEnergyDrawMultiplier") );
 
 func get_passive_energy_cost(passiveAbility : AbilityManager):
-	var stat = get_stat("PassiveEnergyDraw");
-	if is_instance_valid(passiveAbility):
-		var override = null;
-		if energyDrawPassiveBaseOverride != 999:
-			override = energyDrawPassiveBaseOverride;
-		stat *= passiveAbility.get_energy_cost_base(override);
+	var stat = get_stat("PassiveEnergyDrawMultiplier");
+	var override = null;
+	if ! is_equal_approx(energyDrawPassiveBaseOverride, 999):
+		override = energyDrawPassiveBaseOverride;
+	stat *= passiveAbility.get_energy_cost_base(override);
 	##TODO: Bonuses
 	return ( stat * get_physics_process_delta_time() );
 
@@ -920,7 +919,7 @@ func get_all_mesh_init_materials():
 	for mesh in get_all_meshes():
 		meshMaterials[mesh] = mesh.get_active_material(0);
 func get_all_meshes() -> Array:
-	var meshes = Utils.get_all_children_of_type(self, MeshInstance3D, self);
+	var meshes = Utils.get_all_children_of_type("Piece getting all meshes",self, MeshInstance3D, self);
 	return meshes;
 
 
@@ -1375,7 +1374,7 @@ func get_socket_at_index(socketIndex : int) -> Socket:
 	return null;
 
 func autograb_sockets():
-	var sockets = Utils.get_all_children_of_type(self, Socket, self);
+	var sockets = Utils.get_all_children_of_type("Piece getting all sockets",self, Socket, self);
 	#print(sockets);
 	allSockets = [];
 	for socket : Socket in sockets:

@@ -165,6 +165,7 @@ width = 46.0
 height = 65.0
 paddingStart = 13.0
 paddingEnd = -2.0
+currentAmt = 4.3
 maskTexture = ExtResource("11_g6gak")
 fullTexture = ExtResource("12_rf4fe")
 emptyTexture = ExtResource("13_x17s8")
@@ -183,9 +184,9 @@ texture = ExtResource("12_rf4fe")
 
 [node name="EmptyHealth" parent="EnergyBar_Case/EnergyBar/SubViewport/BarHolder" index="1"]
 offset_left = 0.0
-offset_top = -30.94
+offset_top = -0.223198
 offset_right = 0.0
-offset_bottom = -30.94
+offset_bottom = -0.223198
 texture = ExtResource("13_x17s8")
 
 [node name="Lbl_Health" parent="EnergyBar_Case/EnergyBar/SubViewport/BarHolder" index="2"]

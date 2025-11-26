@@ -3,10 +3,10 @@ extends Node
 var nodesChecked = []
 var loopCounter := 0;
 ##Returns an array of every single child and grandchild of a Node.
-func get_all_children(node, ownerToCheck : Node = null, init := true) -> Array:
+func get_all_children(reason:String, node, ownerToCheck : Node = null, init := true) -> Array:
 	if init:
-		GameState.profiler_ping_create("get_all_children init");
-	GameState.profiler_ping_create("get_all_children loop");
+		GameState.profiler_ping_create("get_all_children init: "+reason);
+	GameState.profiler_ping_create("get_all_children loop: "+reason);
 	if init: 
 		nodesChecked = []; 
 		loopCounter = 0;
@@ -28,16 +28,16 @@ func get_all_children(node, ownerToCheck : Node = null, init := true) -> Array:
 		
 		if N.get_child_count() > 0:
 			append_unique(nodes, N);
-			append_array_unique(nodes, get_all_children(N, ownerToCheck, false));
+			append_array_unique(nodes, get_all_children(reason, N, ownerToCheck, false));
 		else:
 			append_unique(nodes, N);
 	return nodes;
 
 ##Returns an array of every single child of a certain type.[br]
 ##If you just want to iterate over children of a certain type, this is probably less efficent than just running over get_all_children() and then checking if the node is the Class you want to check for.
-func get_all_children_of_type(node, type : Object = Node, ownerToCheck : Node = null) -> Array:
+func get_all_children_of_type(reason:String, node, type : Object = Node, ownerToCheck : Node = null) -> Array:
 	var nodes : Array = [];
-	var all = get_all_children(node, ownerToCheck);
+	var all = get_all_children(reason, node, ownerToCheck);
 	
 	for child in all:
 		if is_instance_of(child, type):
@@ -180,3 +180,9 @@ func rotate_using_gridmap_orientation(object : Node3D, orientation : int):
 					axisStorage = "";
 		
 		gridMapRotations[orientation] = object.rotation;
+
+func convert_num_to_rgba_int(num):
+	if num is int:
+		return clampi(num, 0, 255);
+	if num is float:
+		return clampi(roundi(num * 255.0), 0, 255);

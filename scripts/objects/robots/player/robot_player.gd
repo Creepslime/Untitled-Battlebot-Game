@@ -135,9 +135,9 @@ func die():
 		ParticleFX.play("NutsBolts", GameState.get_game_board(), get_global_body_position());
 		ParticleFX.play("BigBoom", GameState.get_game_board(), get_global_body_position());
 		
-	#print("Searching for Sockets ", Utils.get_all_children(self).size())
-	#print("Searching for Sockets, checking ownership ", Utils.get_all_children(self, self).size())
-	#print(Utils.get_all_children(self, self))
+	#print("Searching for Sockets ", Utils.get_all_children("Piece getting all sockets on death",self).size())
+	#print("Searching for Sockets, checking ownership ", Utils.get_all_children("Piece getting all sockets on death, checking ownership",self, self).size())
+	#print(Utils.get_all_children("Piece getting all children on death",self, self))
 
 ##Fired by the gameboard when the round starts.
 func start_round():
@@ -185,7 +185,7 @@ func update_bars():
 		barHP.set_alt_color(invincible);
 		var currentEnergy = get_available_energy();
 		#print("BARS UPDATE, CURRENT ENERGY: ", currentEnergy)
-		var currentEnergyMax = get_maximum_energy();
+		var currentEnergyMax = get_max_energy();
 		barEnergy.set_health(currentEnergy, currentEnergyMax);
 
 func _on_health_or_energy_changed():

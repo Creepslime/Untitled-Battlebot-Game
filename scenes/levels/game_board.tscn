@@ -174,7 +174,7 @@ currentBiome = ExtResource("2_k23rv")
 inspectorHUD = NodePath("HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/LeftSide/PieceInspector")
 stashHUD = NodePath("HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/LeftSide/PieceInspector/StashViewer/PieceStash")
 abilityHUD = NodePath("HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/RightSide/AbilitySlotManager")
-deathTimer = NodePath("HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/RightSide/Lbl_Timer")
+deathTimer = NodePath("HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/RightSide/Lbl_RoundTimer")
 
 [node name="BackupCamPointer" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 20, 30)
@@ -627,7 +627,7 @@ mouse_filter = 2
 texture = SubResource("AtlasTexture_p8hek")
 metadata/_edit_lock_ = true
 
-[node name="Lbl_Timer" type="Label" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/RightSide" node_paths=PackedStringArray("TimerBlinky")]
+[node name="Lbl_RoundTimer" type="Label" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/RightSide" node_paths=PackedStringArray("TimerBlinky")]
 z_index = 1
 layout_mode = 1
 anchors_preset = -1
@@ -647,7 +647,7 @@ vertical_alignment = 1
 script = ExtResource("14_ei0j6")
 TimerBlinky = NodePath("TimerBlinkyOff/TimerBlinky")
 
-[node name="AbilityIconBG" type="NinePatchRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/RightSide/Lbl_Timer"]
+[node name="AbilityIconBG" type="NinePatchRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/RightSide/Lbl_RoundTimer"]
 z_index = -1
 layout_mode = 0
 offset_left = -3.0
@@ -662,7 +662,7 @@ patch_margin_bottom = 1
 axis_stretch_horizontal = 1
 axis_stretch_vertical = 1
 
-[node name="Label" type="Label" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/RightSide/Lbl_Timer/AbilityIconBG"]
+[node name="Label" type="Label" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/RightSide/Lbl_RoundTimer/AbilityIconBG"]
 layout_mode = 0
 offset_left = -14.0
 offset_top = -18.0
@@ -673,7 +673,7 @@ theme_type_variation = &"HeaderLarge"
 theme_override_constants/shadow_outline_size = 0
 text = "ROUND TIME"
 
-[node name="TimerBlinkyOff" type="TextureRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/RightSide/Lbl_Timer"]
+[node name="TimerBlinkyOff" type="TextureRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/RightSide/Lbl_RoundTimer"]
 layout_mode = 0
 offset_left = -28.0
 offset_top = -4.0
@@ -682,7 +682,7 @@ offset_bottom = 24.0
 texture = ExtResource("18_u76c3")
 flip_h = true
 
-[node name="TimerBlinky" type="TextureRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/RightSide/Lbl_Timer/TimerBlinkyOff"]
+[node name="TimerBlinky" type="TextureRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/RightSide/Lbl_RoundTimer/TimerBlinkyOff"]
 layout_mode = 0
 offset_left = 12.0
 offset_top = 6.0
@@ -1015,7 +1015,7 @@ width = 329.0
 height = 117.0
 paddingStart = 0.0
 paddingEnd = 36.0
-currentAmt = 17.35
+currentAmt = 70.4
 maskTexture = ExtResource("47_fmmmj")
 fullTexture = ExtResource("48_ed2oa")
 emptyTexture = ExtResource("49_4hhnj")
@@ -1496,7 +1496,6 @@ patch_margin_bottom = 12
 metadata/_edit_use_anchors_ = true
 
 [node name="Options" type="Control" parent="HUDCanvas/HUD Viewport/SubViewport/HUD" node_paths=PackedStringArray("box_music", "box_UI", "box_world", "box_master", "invShooting", "sawbladeDrone", "devCheats", "moneyCheat", "invincibleCheat", "killAllCheat", "cheatsControl", "btn_scoreReset", "lbl_highScores", "renderShadows")]
-visible = false
 z_index = 1
 layout_mode = 1
 anchor_left = -0.333333
@@ -1781,6 +1780,20 @@ text = "Hidden transitions"
 alignment = 2
 script = ExtResource("60_f85oj")
 settingName = &"HiddenScreenTransitions"
+metadata/_edit_use_anchors_ = true
+
+[node name="roundTimer" type="CheckButton" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/Options/DevCheats/Cheats"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.139912
+anchor_top = 4.63503
+anchor_right = 1.00044
+anchor_bottom = 5.35201
+tooltip_text = "The round timer will not count down if this is false."
+text = "Round Timer Enabled"
+alignment = 2
+script = ExtResource("60_f85oj")
+settingName = &"RoundTimerRuns"
 metadata/_edit_use_anchors_ = true
 
 [node name="sawbladeDrone" type="CheckButton" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/Options"]

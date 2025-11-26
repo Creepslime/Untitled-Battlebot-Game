@@ -120,14 +120,12 @@ func stat_registry():
 		StatHolderManager.statIconHeart, 
 		StatHolderManager.statTags.Hull,
 		StatHolderManager.displayModes.ALWAYS,
-		StatHolderManager.roundingModes.None,
+		StatHolderManager.roundingModes.ClampToZeroAndMax,
+		"HealthMax",
 		null, 
 		func(newValue):
 		health_or_energy_changed.emit(); 
-		var newValFixed = clampf(newValue, 0.0, self.get_max_health()); 
-		if (is_alive() and not is_frozen()) and (newValFixed <= 0.0 or is_equal_approx(newValFixed, 0.0)): 
-			self.die();
-		return newValFixed;
+		return newValue;
 		);
 	register_stat("EnergyMax", maxEnergy, StatHolderManager.statIconEnergy, StatHolderManager.statTags.Battery);
 	register_stat(
@@ -136,11 +134,12 @@ func stat_registry():
 		StatHolderManager.statIconEnergy, 
 		StatHolderManager.statTags.Battery, 
 		StatHolderManager.displayModes.ALWAYS, 
-		StatHolderManager.roundingModes.None, 
+		StatHolderManager.roundingModes.ClampToZeroAndMax,
+		"EnergyMax",
 		null, 
 		func(newValue): 
-		health_or_energy_changed.emit(); 
-		return clampf(newValue, 0.0, self.get_maximum_energy())
+		health_or_energy_changed.emit();
+		return newValue;
 		);
 	register_stat("InvincibilityTime", maxInvincibleTimer, StatHolderManager.statIconCooldown, StatHolderManager.statTags.Clock);
 	register_stat("MovementSpeedAcceleration", acceleration, StatHolderManager.statIconCooldown, StatHolderManager.statTags.Function);
@@ -295,7 +294,7 @@ func live():
 	var healthMax = get_max_health();
 	#print_rich("[color=pink]Max health is ", healthMax, ". Does stat exist: ", stat_exists("HealthMax"), ". Checking from: ", robotName);
 	set_stat("Health", healthMax);
-	var energyMax = get_maximum_energy();
+	var energyMax = get_max_energy();
 	set_stat("Energy", energyMax);
 	
 	update_hud();
@@ -633,7 +632,7 @@ func get_available_energy() -> float:
 		#print(stat.statName, stat.get_stat())
 	return get_stat("Energy");
 
-func get_maximum_energy() -> float:
+func get_max_energy() -> float:
 	return get_stat("EnergyMax");
 
 ##Returns true or false depending on whether the sap would work or not.
@@ -659,10 +658,10 @@ func drain_all_energy():
 func generate_energy(amount, capAtMax := true):
 	var energy = get_available_energy();
 	if capAtMax: 
-		if energy < get_maximum_energy():
-			energy = clamp(energy + amount, 0, get_maximum_energy());
+		energy = clamp(energy + amount, 0, get_max_energy());
 	else:
 		energy += amount;
+	
 	set_stat("Energy", energy);
 
 ################################# MOTION HANDLER STUFF
@@ -1001,7 +1000,7 @@ func get_all_pieces_regenerate() -> Array[Piece]:
 	var piecesGathered : Array[Piece] = [];
 	if bodySocket.get_occupant() != null:
 		piecesGathered = bodySocket.occupant.get_all_pieces_recursive();
-	#for child:Piece in Utils.get_all_children_of_type(body, Piece):
+	#for child:Piece in Utils.get_all_children_of_type("Robot getting all Pieces",body, Piece):
 		#if child.hostRobot == self and child.assignedToSocket:
 			#piecesGathered.append(child);
 	allPieces = piecesGathered;

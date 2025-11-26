@@ -1,14 +1,8 @@
-[gd_scene load_steps=39 format=3 uid="uid://vau6eftfdnr8"]
+[gd_scene load_steps=20 format=3 uid="uid://vau6eftfdnr8"]
 
 [ext_resource type="Script" uid="uid://cuqib5fp5hdjp" path="res://scripts/objects/pieces/piece_swivel_manual.gd" id="2_jbgvx"]
 [ext_resource type="Script" uid="uid://crpa3dbgxwyeg" path="res://scripts/objects/weapons/ability_manager.gd" id="2_kyd6e"]
 [ext_resource type="Script" uid="uid://cybmjhuctmfaw" path="res://scripts/libraries/richTextConstructor.gd" id="3_d7opd"]
-[ext_resource type="Script" uid="uid://clcmggkeaqnyx" path="res://scripts/objects/weapons/stat_tracker.gd" id="4_evj1b"]
-[ext_resource type="Texture2D" uid="uid://bdgkd60c8qtud" path="res://graphics/images/HUD/statIcons/energyIconStriped.png" id="5_5l6dw"]
-[ext_resource type="Texture2D" uid="uid://uflissj08i1o" path="res://graphics/images/HUD/statIcons/cooldownIconStriped.png" id="6_j7dkm"]
-[ext_resource type="Texture2D" uid="uid://s6s6ugfdhqhy" path="res://graphics/images/HUD/statIcons/magazineIconStriped.png" id="7_leul2"]
-[ext_resource type="Texture2D" uid="uid://b775d1fn78gcv" path="res://graphics/images/HUD/statIcons/weightIconStriped.png" id="8_5rcmk"]
-[ext_resource type="Texture2D" uid="uid://cnfat2kqvmdcd" path="res://graphics/images/HUD/statIcons/damageIconStriped.png" id="9_1scw1"]
 [ext_resource type="Script" uid="uid://dikbphvd0xff7" path="res://scripts/objects/pieces/buildingBlocks/hitbox_shapes.gd" id="10_vudbv"]
 [ext_resource type="Script" uid="uid://bkwxna02gqgqu" path="res://scripts/objects/pieces/buildingBlocks/hurtbox_shapes.gd" id="11_l684p"]
 [ext_resource type="Script" uid="uid://rbm6p8ggs13f" path="res://scripts/objects/pieces/buildingBlocks/placement_shapes.gd" id="12_ow8wb"]
@@ -30,6 +24,7 @@ cooldownStatName = ""
 runType = 0
 functionNameWhenUsed = &""
 statsUsed = Array[String]([])
+hookName = ""
 initialized = true
 disabled = false
 functionWhenUsed = Callable()
@@ -45,126 +40,10 @@ cooldownStatName = ""
 runType = 0
 functionNameWhenUsed = &""
 statsUsed = Array[String]([])
+hookName = ""
 initialized = true
 disabled = false
 functionWhenUsed = Callable()
-
-[sub_resource type="Resource" id="Resource_5rcmk"]
-resource_name = "ActiveCooldown31"
-script = ExtResource("4_evj1b")
-statFriendlyName = "Active Cooldown"
-statName = "ActiveCooldown31"
-statIcon = ExtResource("6_j7dkm")
-baseStat = 1.0
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_leul2"]
-resource_name = "ActiveEnergyDraw31"
-script = ExtResource("4_evj1b")
-statFriendlyName = "Active Energy Draw"
-statName = "ActiveEnergyDraw31"
-statIcon = ExtResource("5_5l6dw")
-baseStat = 1.0
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_j7dkm"]
-resource_name = "ContactCooldown31"
-script = ExtResource("4_evj1b")
-statFriendlyName = "Contact Cooldown"
-statName = "ContactCooldown31"
-statIcon = ExtResource("6_j7dkm")
-baseStat = 0.0
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_c1rva"]
-resource_name = "Damage31"
-script = ExtResource("4_evj1b")
-statFriendlyName = "Damage"
-statName = "Damage31"
-statIcon = ExtResource("9_1scw1")
-baseStat = 0.0
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_uutc4"]
-resource_name = "Kickback31"
-script = ExtResource("4_evj1b")
-statFriendlyName = "Kickback"
-statName = "Kickback31"
-statIcon = ExtResource("8_5rcmk")
-baseStat = 0.0
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_4vbwg"]
-resource_name = "Knockback31"
-script = ExtResource("4_evj1b")
-statFriendlyName = "Knockback"
-statName = "Knockback31"
-statIcon = ExtResource("8_5rcmk")
-baseStat = 0.0
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_5l6dw"]
-resource_name = "PassiveCooldown31"
-script = ExtResource("4_evj1b")
-statFriendlyName = "Passive Cooldown"
-statName = "PassiveCooldown31"
-statIcon = ExtResource("6_j7dkm")
-baseStat = 1.0
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_evj1b"]
-resource_name = "PassiveEnergyDraw31"
-script = ExtResource("4_evj1b")
-statFriendlyName = "Passive Energy Draw"
-statName = "PassiveEnergyDraw31"
-statIcon = ExtResource("5_5l6dw")
-baseStat = 1.0
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_0qgoj"]
-resource_name = "RotationSpeed31"
-script = ExtResource("4_evj1b")
-statFriendlyName = "Rotation Speed"
-statName = "RotationSpeed31"
-statIcon = ExtResource("6_j7dkm")
-baseStat = 0.9
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_1scw1"]
-resource_name = "ScrapCost31"
-script = ExtResource("4_evj1b")
-statFriendlyName = "Scrap Cost"
-statName = "ScrapCost31"
-statIcon = ExtResource("7_leul2")
-baseStat = 0.0
-roundingMode = 6
-
-[sub_resource type="Resource" id="Resource_l684p"]
-resource_name = "ScrapSalvageModifier31"
-script = ExtResource("4_evj1b")
-statFriendlyName = "Scrap Salvage Modifier"
-statName = "ScrapSalvageModifier31"
-statIcon = ExtResource("7_leul2")
-baseStat = 0.666667
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_vudbv"]
-resource_name = "ScrapSellModifier31"
-script = ExtResource("4_evj1b")
-statFriendlyName = "Scrap Sell Modifier"
-statName = "ScrapSellModifier31"
-statIcon = ExtResource("7_leul2")
-baseStat = 0.666667
-roundingMode = 0
-
-[sub_resource type="Resource" id="Resource_ow8wb"]
-resource_name = "Weight31"
-script = ExtResource("4_evj1b")
-statFriendlyName = "Weight"
-statName = "Weight31"
-statIcon = ExtResource("8_5rcmk")
-baseStat = 1.0
-roundingMode = 0
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_l000f"]
 size = Vector3(0.5, 0.5, 0.5)
@@ -192,9 +71,9 @@ swivelNode = NodePath("SwivelTop")
 movingSockets = [NodePath("SwivelTop/Socket")]
 pieceName = &"Manual Swivel"
 weightBase = 1.25
+force_visibility = true
 scrapCostBase = 13
 activeAbilities = Array[ExtResource("2_kyd6e")]([SubResource("Resource_kyd6e"), SubResource("Resource_d7opd")])
-force_visibility = true
 meshesHolder = NodePath("Meshes")
 hitboxCollisionHolder = NodePath("HitboxShapes [Leave empty]")
 hurtboxCollisionHolder = NodePath("HurtboxShapes [Leave empty]")
@@ -205,21 +84,6 @@ Vector2i(2, 1): null,
 Vector2i(2, 2): null,
 Vector2i(2, 3): null
 }
-statCollection = Dictionary[String, ExtResource("4_evj1b")]({
-"ActiveCooldown31": SubResource("Resource_5rcmk"),
-"ActiveEnergyDraw31": SubResource("Resource_leul2"),
-"ContactCooldown31": SubResource("Resource_j7dkm"),
-"Damage31": SubResource("Resource_c1rva"),
-"Kickback31": SubResource("Resource_uutc4"),
-"Knockback31": SubResource("Resource_4vbwg"),
-"PassiveCooldown31": SubResource("Resource_5l6dw"),
-"PassiveEnergyDraw31": SubResource("Resource_evj1b"),
-"RotationSpeed31": SubResource("Resource_0qgoj"),
-"ScrapCost31": SubResource("Resource_1scw1"),
-"ScrapSalvageModifier31": SubResource("Resource_l684p"),
-"ScrapSellModifier31": SubResource("Resource_vudbv"),
-"Weight31": SubResource("Resource_ow8wb")
-})
 filepathForThisEntity = "res://scenes/prefabs/objects/pieces/piece_swivel_manual.tscn"
 
 [node name="FemaleSockets" type="Node3D" parent="."]

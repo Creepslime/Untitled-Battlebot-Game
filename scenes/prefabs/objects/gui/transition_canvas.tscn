@@ -69,15 +69,36 @@ theme_override_constants/margin_top = 16
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 16
 script = ExtResource("4_omfy2")
-thingsToMove = [NodePath("DbgLabel")]
+thingsToMove = [NodePath("DbgLabel"), NodePath("DbgLabel/Button")]
 
-[node name="DbgLabel" type="Label" parent="Debug/MarginContainer"]
+[node name="DbgLabel" type="RichTextLabel" parent="Debug/MarginContainer"]
+texture_filter = 1
+clip_contents = false
+custom_minimum_size = Vector2(500, 0)
 layout_mode = 2
 size_flags_horizontal = 0
+size_flags_vertical = 0
 mouse_filter = 1
 theme = ExtResource("4_igr6p")
+theme_override_constants/line_separation = 3
+theme_override_fonts/normal_font = ExtResource("3_nploq")
+theme_override_font_sizes/normal_font_size = 5
+bbcode_enabled = true
 text = "TIME: timeCounter
 FPS: profilerFPS
 BANK A: profilerBankA
 BANK B: profilerBankB
 BANK C: profilerBankC"
+fit_content = true
+
+[node name="Button" type="Button" parent="Debug/MarginContainer/DbgLabel"]
+z_index = -1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+tooltip_text = "Press me to make me move to the other corner."
+
+[connection signal="pressed" from="Debug/MarginContainer/DbgLabel/Button" to="Debug/MarginContainer" method="switch_sides"]

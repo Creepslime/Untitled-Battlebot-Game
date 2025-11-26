@@ -59,6 +59,31 @@ func get_color(_color) -> Color:
 		return newCol;
 	return Color.WHITE;
 
+## Runs [method TextFunc.get_color] to get a [Color] value, then gets the hex string from that via [method TextFunc.get_color_hex_string_from_rgba].
+func get_color_hex_string(_color):
+	var calculatedColor = get_color(_color);
+	return get_color_hex_string_from_rgba(calculatedColor.r, calculatedColor.g, calculatedColor.b, calculatedColor.a);
+
+## Runs [method TextFunc.get_color_hex_string_from_rgba] on a float or integer val=ue for the R,G, and B.
+func get_grey_hex_string(rgb, a=255):
+	return get_color_hex_string_from_rgba(rgb, rgb, rgb, a);
+
+## Converts [param r], [param g], [param b], and [param a] into color numbers using [method Utils.convert_num_to_rgba_int], then gives the hex code string from that.
+func get_color_hex_string_from_rgba(r, g, b, a) -> String:
+	var red_value = Utils.convert_num_to_rgba_int(r);
+	var green_value = Utils.convert_num_to_rgba_int(g);
+	var blue_value = Utils.convert_num_to_rgba_int(b);
+	var alpha_value = Utils.convert_num_to_rgba_int(a);
+	
+	var hex_r = "%02x" % red_value
+	var hex_g = "%02x" % green_value
+	var hex_b = "%02x" % blue_value
+	var hex_a = "%02x" % alpha_value
+
+	var hex_color_code = "#" + hex_r + hex_g + hex_b + hex_a
+	
+	return hex_color_code;
+
 ## Returns a string to be used for stats. Shortens decimal places down to the desired amount. If there is a decimal, adds spaces or zeroes to the end while the resulting string is lower than the desired length. If no decimals, the number is truncated to an int before being converted to a string via [method round_to_dec].
 func format_stat(num:float, decimal_places:int=2, addSpaces := true, addZeroes := false) -> String:
 	var s = str(int(num))

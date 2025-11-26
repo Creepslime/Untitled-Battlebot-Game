@@ -11,7 +11,7 @@ var paused := true;
 @export var TimerBlinky : TextureRect;
 
 func _process(delta):
-	var isPaused = GameState.is_paused() or paused or !(GameState.get_game_board_state() == GameBoard.gameState.PLAY);
+	var isPaused = GameState.is_paused() or paused or !(GameState.get_game_board_state() == GameBoard.gameState.PLAY) or ! GameState.get_setting("RoundTimerRuns");
 	
 	
 	if GameState.get_in_state_of_play():
