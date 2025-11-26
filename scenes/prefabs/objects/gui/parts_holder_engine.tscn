@@ -8,6 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://b3qophrjs0l6u" path="res://graphics/images/HUD/engine/engineDoor.png" id="6_tsx4u"]
 
 [node name="PartsHolder_Engine" type="TextureRect" node_paths=PackedStringArray("door", "bgTiles")]
+z_index = 1
 texture_filter = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -35,6 +36,26 @@ tile_set = ExtResource("3_1v65i")
 position = Vector2(24, 24)
 tile_map_data = PackedByteArray("AAD/////AAAEAAAAAAD//wAAAAAEAAEAAAD//wEAAAAEAAEAAAD//wIAAAAEAAEAAAD//wMAAAAEAAEAAAD//wQAAAAEAAEAAAD//wUAAAAEAAEAAAD//wYAAAAEAAEAAAD//wcAAAAEAAEAAAD//wgAAAAEAAEAAAD//wkAAAAEAAEAAAD//woAAAAEAAMAAAAAAP//AAAFAAAAAAAAAAoAAAAGAAMAAAABAP//AAAFAAAAAAABAAoAAAAGAAMAAAACAP//AAAFAAAAAAACAAoAAAAGAAMAAAADAP//AAAFAAAAAAADAAoAAAAGAAMAAAAEAP//AAAFAAAAAAAEAAoAAAAGAAMAAAAFAP//AAAFAAAAAAAFAAoAAAAGAAMAAAAGAP//AAAFAAAAAAAGAAoAAAAGAAMAAAAHAP//AAAFAAAAAAAHAAoAAAAGAAMAAAAIAP//AAAFAAAAAAAIAAoAAAAGAAMAAAAJAP//AAAFAAAAAAAJAAoAAAAGAAMAAAAKAP//AAAHAAAAAAAKAAAAAAAHAAIAAAAKAAEAAAAHAAIAAAAKAAIAAAAHAAIAAAAKAAMAAAAHAAIAAAAKAAQAAAAHAAIAAAAKAAUAAAAHAAIAAAAKAAYAAAAHAAIAAAAKAAcAAAAHAAIAAAAKAAgAAAAHAAIAAAAKAAkAAAAHAAIAAAAKAAoAAAAHAAMAAAA=")
 tile_set = ExtResource("3_1v65i")
+
+[node name="DoorCropper" type="Control" parent="."]
+z_index = 1
+clip_contents = true
+anchors_preset = 0
+anchor_left = 0.0486111
+anchor_top = 0.0451389
+anchor_right = 0.951389
+anchor_bottom = 0.947917
+mouse_filter = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="Door" type="TextureRect" parent="DoorCropper"]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.04615
+offset_bottom = -12.0
+mouse_filter = 0
+texture = ExtResource("6_tsx4u")
+metadata/_edit_use_anchors_ = true
 
 [node name="PartHolderButton" type="TextureButton" parent="."]
 layout_mode = 0
@@ -376,27 +397,11 @@ script = ExtResource("5_v6y6v")
 coordX = 4
 coordY = 4
 
-[node name="DoorCropper" type="Control" parent="."]
-clip_contents = true
-anchors_preset = 0
-anchor_left = 0.0486111
-anchor_top = 0.0451389
-anchor_right = 0.951389
-anchor_bottom = 0.947917
-metadata/_edit_use_anchors_ = true
-
-[node name="Door" type="TextureRect" parent="DoorCropper"]
-layout_mode = 0
-anchor_right = 1.0
-anchor_bottom = 1.04615
-offset_bottom = -12.0
-texture = ExtResource("6_tsx4u")
-metadata/_edit_use_anchors_ = true
-
 [node name="PatternChange" type="Timer" parent="."]
 wait_time = 0.1
 one_shot = true
 
+[connection signal="buttonPressed" from="." to="." method="_on_engine_button_pressed"]
 [connection signal="pressed" from="PartHolderButton" to="PartHolderButton" method="_on_pressed"]
 [connection signal="pressed" from="PartHolderButton2" to="PartHolderButton2" method="_on_pressed"]
 [connection signal="pressed" from="PartHolderButton3" to="PartHolderButton3" method="_on_pressed"]

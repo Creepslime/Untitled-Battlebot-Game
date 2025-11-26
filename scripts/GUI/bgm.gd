@@ -10,6 +10,8 @@ enum musState {
 	PREGAME,
 	BATTLING,
 	SHOP,
+	SHOP_BUILD,
+	SHOP_TEST,
 	GAME_OVER,
 	CREDITS,
 	OPTIONS,
@@ -75,7 +77,25 @@ func change_state(inState:musState):
 			melody = 0.0;
 			perc1 = 1.0;
 			perc2 = 0.0;
-			piano = 0.5;
+			piano = 0.65;
+			swell = 0.5;
+		elif curState == musState.SHOP_BUILD:
+			base = 0.5;
+			guitar = 0.0;
+			slapBass = 1.0;
+			melody = 0.0;
+			perc1 = 1.0;
+			perc2 = 0.6;
+			piano = 0.65;
+			swell = 0.25;
+		elif curState == musState.SHOP_TEST:
+			base = 0.5;
+			guitar = 1.0;
+			slapBass = 1.0;
+			melody = 0.0;
+			perc1 = 1.0;
+			perc2 = 0.8;
+			piano = 0.65;
 			swell = 0.25;
 		elif curState == musState.GAME_OVER:
 			base = 1.0;

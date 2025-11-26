@@ -23,6 +23,7 @@ func add_stat_icon(stat:StatTracker):
 const labelSpace := 5;
 const spaceAfterList := 2;
 const vMargin := 3;
+var calculatedHeight = 0.;
 func recalc_height():
 	lbl_tag.text = str(StatHolderManager.statTags.keys()[statTag]);
 	var statNum = 0;
@@ -37,4 +38,8 @@ func recalc_height():
 	custom_minimum_size.y = labelSpace + spaceAfterList + statsHeight;
 	size.y = labelSpace + spaceAfterList + statsHeight;
 	
-	return size.y;
+	calculatedHeight = size.y;
+	
+	#print(size.y)
+	
+	return calculatedHeight;

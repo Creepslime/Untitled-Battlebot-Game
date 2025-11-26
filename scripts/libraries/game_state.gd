@@ -224,6 +224,12 @@ func get_player_ability_pipette():
 	if is_instance_valid(ply):
 		return ply.get_ability_pipette();
 	return null
+func get_player_part_movement_pipette():
+	var ply = get_player()
+	
+	if is_instance_valid(ply):
+		return ply.partMovementPipette;
+	return null
 
 func get_camera_pointer() -> Node3D:
 	var board = get_game_board();
@@ -730,7 +736,8 @@ func get_profiler_label():
 	var currentlySelected := str("\n[color=",selectionColor,"]CURRENTLY SELECTED: ",str(selPipette))
 	currentlySelected += str("\n[color=white] - ", "" if is_instance_valid(get_player_selected_piece()) else "[color=gray]", "PIECE: ",str(get_player_selected_piece()))
 	currentlySelected += str("\n[color=white] - ", "" if is_instance_valid(get_player_selected_part()) else "[color=gray]", "PART: ",str(get_player_selected_part()))
-	currentlySelected += str("\n[color=white] - ", "" if is_instance_valid(get_player_pipette()) else "[color=gray]", "PIPETTE: ",str(get_player_pipette()))
+	currentlySelected += str("\n[color=white] - ", "" if is_instance_valid(get_player_pipette()) else "[color=gray]", "PIECE PIPETTE: ",str(get_player_pipette()))
+	currentlySelected += str("\n[color=white] - ", "" if is_instance_valid(get_player_part_movement_pipette()) else "[color=gray]", "PART MOVEMENT PIPETTE: ",str(get_player_part_movement_pipette()))
 	currentlySelected += str("\n[color=white] - ", "" if is_instance_valid(get_player_ability_pipette()) else "[color=gray]", "ABILITY PIPETTE: ",str(get_player_ability_pipette()))
 	currentlySelected += "[color=white]"
 	var transitionString = waitingOnTransitionString;

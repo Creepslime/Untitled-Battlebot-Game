@@ -43,7 +43,7 @@ tile_map_data = PackedByteArray("AAD/////AAAEAAIAAAD//wAAAAAEAAEAAAD//wEAAAAEAAE
 tile_set = ExtResource("3_5nxix")
 metadata/_edit_group_ = true
 
-[node name="InfoBox" type="Control" parent="." node_paths=PackedStringArray("iconBase", "lbl_partName", "rlbl_desc", "btn_sellButton", "lbl_sellButton", "btn_moveButton", "btn_removeButton", "abilityScrollContainer", "abilityHolder", "almightyHolder", "almightyScroller", "statScrollContainer", "statHolder")]
+[node name="InfoBox" type="Control" parent="." node_paths=PackedStringArray("iconBase", "lbl_partName", "rlbl_desc", "btn_sellButton", "lbl_sellButton", "btn_moveButton", "btn_removeButton", "abilityScrollContainer", "abilityHolder", "almightyHolder", "almightyScroller", "statScrollContainer", "statArrayHolder")]
 unique_name_in_owner = true
 clip_contents = true
 layout_mode = 1
@@ -72,7 +72,7 @@ abilityHolder = NodePath("AlmightyScroll/AlmightyHolder/AbilityScrollContainer/A
 almightyHolder = NodePath("AlmightyScroll/AlmightyHolder")
 almightyScroller = NodePath("AlmightyScroll")
 statScrollContainer = NodePath("AlmightyScroll/AlmightyHolder/StatsScroll")
-statHolder = NodePath("AlmightyScroll/AlmightyHolder/StatsScroll/StatArrayHolder")
+statArrayHolder = NodePath("AlmightyScroll/AlmightyHolder/StatsScroll/StatArrayHolder")
 
 [node name="AlmightyScroll" type="ScrollContainer" parent="InfoBox"]
 layout_mode = 0

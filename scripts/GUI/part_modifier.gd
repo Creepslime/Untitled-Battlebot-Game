@@ -91,7 +91,10 @@ func get_owner_index():
 ##Returns Inventory.is_slot_free_and_in_bounds() witht he setting to make it a dictionary {"free":bool, "inBounds":bool} turned on.
 func is_slot_free_and_in_bounds():
 	var invPos = get_inventory_position();
-	return inventoryNode.is_slot_free_and_in_bounds(invPos.x, invPos.y, null, true)
+	if owner is Part:
+		if owner.is_equipped():
+			return owner.hostPiece.engine_is_slot_free_and_in_bounds(invPos.x, invPos.y, null, true)
+	return {"free":false,"inBounds":false};
 
 ## Gets the position of the host if it is a Part.
 func get_inventory_position():
@@ -104,7 +107,8 @@ func get_inventory_position():
 ##Tries to add itself to the target.
 func distribute_modifier():
 	if is_applicable():
-		target.mods_recieve(self);
+		if target is Part:
+			target.mods_recieve(self);
 
 ##Tries to apply itself to the target, if able.
 func apply_modifier():
@@ -146,7 +150,11 @@ func try_get_target():
 ## Tries to get the [Part] at the engine square this modifier is targeting. Might be null.
 func try_get_part_at_offset():
 	var invPosition = get_inventory_position();
-	var slot = inventoryNode.get_slot_at(invPosition.x, invPosition.y);
+	var slot;
+	if is_instance_valid(inventoryNode):
+		slot = inventoryNode.get_slot_at(invPosition.x, invPosition.y);
+	if get_owner() is Part and is_instance_valid(owner.hostPiece):
+		slot = owner.hostPiece.engine_get_slot_at(invPosition.x, invPosition.y);
 	if is_instance_valid(slot):
 		if slot is Part:
 			print("inventory slot grabbed: ", slot.partName);

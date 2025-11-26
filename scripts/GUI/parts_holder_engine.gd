@@ -18,8 +18,9 @@ enum doorStates {
 }
 var curState := doorStates.CLOSED;
 
-var referenceQueued : Piece;
-var referenceCurrent : Piece;
+var referenceQueued : Piece; ## The reference that will be switched into when this closes.
+var referenceCurrent : Piece; ## The reference currently being looked at. 
+var referenceVisual : Piece; ## The reference being displayed, even if referenceCurrent is null.
 var patternQueued : Array[Vector2i];
 var patternIsQueued := false;
 var currentPattern : Array[Vector2i];
@@ -71,6 +72,7 @@ func _process(delta):
 	match curState:
 		doorStates.OPEN:
 			set_pattern_from_queue();
+			update_button_gfx();
 			pass;
 		doorStates.OPENING:
 			set_pattern_from_queue();
@@ -97,6 +99,10 @@ func _process(delta):
 				set_reference_from_queue();
 				open_slow();
 			pass;
+
+func update_button_gfx():
+	for button in get_buttons():
+		button.update_gfx();
 
 func open():
 	change_state(doorStates.OPENING, [doorStates.CLOSED, doorStates.CLOSING]);
@@ -203,7 +209,24 @@ func set_pattern_from_queue():
 
 func set_reference_from_queue():
 	referenceCurrent = referenceQueued;
+	if is_instance_valid(referenceVisual):
+		referenceVisual.engine_update_part_visibility(false);
+	referenceVisual = referenceQueued;
+	referenceCurrent.engine_update_part_visibility(true);
 	referenceQueued = null;
 
 func clear_current_reference():
 	referenceCurrent = null;
+
+
+func _on_engine_button_pressed(x, y):
+	if is_instance_valid(referenceCurrent):
+		if is_instance_valid(referenceCurrent.get_host_robot()):
+			var robot = referenceCurrent.get_host_robot();
+			if is_instance_valid(robot.partMovementPipette):
+				var part = robot.partMovementPipette;
+				robot.part_move_mode_enable(part, false);
+				## After we've ensured all the bullshit is correct... disable move mode on the robot, and add the Part to the Piece.
+				referenceCurrent.engine_add_part(part, Vector2i(x, y), true);
+				part.show();
+	pass # Replace with function body.

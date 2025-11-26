@@ -1548,6 +1548,9 @@ func remove_and_add_to_robot_stash(botOverride : Robot = get_host_robot(true), f
 	##Stash everything below this.
 	for subPiece in get_all_pieces_regenerate():
 		subPiece.remove_and_add_to_robot_stash(botOverride, fancy, true);
+	engine_update_part_visibility(false);
+	for part in engine_get_all_parts():
+		part.remove_and_add_to_stash(botOverride);
 	
 	remove_from_socket();
 	var bot = botOverride;
@@ -1702,14 +1705,14 @@ func engine_check_coordinate_table_is_free(coords:Array, filterPart:Part):
 			return false
 	return true
 
-func is_there_space_for_part(part:Part, invPosition : Vector2i) -> bool:
+func engine_is_there_space_for_part(part:Part, invPosition : Vector2i) -> bool:
 	if is_instance_valid(part):
 		var partCoords = engine_get_modified_part_dimensions(part, invPosition)
 		if engine_check_coordinate_table_is_free(partCoords, part):
 			return true;
 	return false;
 
-func add_part(part: Part, invPosition : Vector2i, noisy := false):
+func engine_add_part(part: Part, invPosition : Vector2i, noisy := false):
 	var coordsToCheck = engine_get_modified_part_dimensions(part, invPosition);
 	
 	if engine_check_coordinate_table_is_free(coordsToCheck, part):
@@ -1740,8 +1743,8 @@ func remove_part(part: Part, destroy:=false, beingSold := false, beingBought := 
 		part.positionNode = null;
 		part.meshNode.reparent(part);
 	
-	if is_equipped_by_player():
-		part.inPlayerInventory = false;
+	#if is_equipped_by_player():
+		#part.inPlayerInventory = false;
 	
 	for coord : Vector2i in coordsToRemove:
 		engine_clear_slot_at(coord.x, coord.y);
@@ -1768,12 +1771,12 @@ func engine_remove_part_post(part:Part, beingSold := false, beingBought := false
 
 ## Removes and then moves a Part.
 func engine_move_part(part:Part, invPosition : Vector2i):
-	if is_there_space_for_part(part, invPosition):
+	if engine_is_there_space_for_part(part, invPosition):
 		var beingBought = false;
 		if part.invHolderNode is ShopStall:
 			beingBought = true;
 		remove_part(part, TYPE_NIL,TYPE_NIL, beingBought);
-		add_part(part, invPosition);
+		engine_add_part(part, invPosition);
 		#deselect_part();
 		select_part(part);
 	pass
@@ -1789,13 +1792,13 @@ func add_part_from_scene(x: int, y:int, _partScene:String, activeSlot = null):
 		var part = partScene.instantiate();
 		if part is PartActive && activeSlot is int && activeSlot != null:
 			add_child(part);
-			add_part(part, Vector2i(x,y), false);
+			engine_add_part(part, Vector2i(x,y), false);
 			part.set_equipped(true);
 			return
 		else:
 			print("Adding ", part.name)
 			add_child(part);
-			add_part(part, Vector2i(x,y), false);
+			engine_add_part(part, Vector2i(x,y), false);
 			return
 		part.queue_free();
 
@@ -1840,6 +1843,10 @@ func engine_clear(destroy := true, stash := true):
 		for part in listOfParts:
 			remove_part(part, destroy, TYPE_NIL, TYPE_NIL, stash);
 	regeneratePartList = true;
+
+func engine_update_part_visibility(_visible := true):
+	for part in listOfParts:
+		part.visible = _visible;
 
 @export_category("Modifier Management")
 

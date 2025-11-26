@@ -54,43 +54,57 @@ func calculate_required_height():
 func populate_info_part(part:Part):
 	partRef = part;
 	lbl_partName.text = part.partName;
-	btn_moveButton.show();
-	if part.ownedByPlayer:
-		lbl_sellButton.text = get_sell_string();
-		lbl_sellButton.show();
 	rlbl_desc.text = part.partDescription;
 	
-	if part._get_part_type() == Part.partTypes.UTILITY:
-		$EnergyIcon/Label.text = TextFunc.format_stat(part.get_energy_cost(true));
-		$EnergyIcon.show();
-		$CooldownIcon/Label.text = TextFunc.format_stat(part.get_fire_rate(true));
-		$CooldownIcon.show();
-		iconBase.texture = icon_utility;
-		
-	elif part._get_part_type() == Part.partTypes.MELEE:
-		$EnergyIcon/Label.text = TextFunc.format_stat(part.get_energy_cost(true));
-		$EnergyIcon.show();
-		$CooldownIcon/Label.text = TextFunc.format_stat(part.get_fire_rate(true));
-		$CooldownIcon.show();
-		
-		iconBase.texture = icon_melee;
-		$DamageIcon/Label.text = TextFunc.format_stat(part.get_damage(true));
-		$DamageIcon.show();
-		
-	elif part._get_part_type() == Part.partTypes.RANGED:
-		$EnergyIcon/Label.text = TextFunc.format_stat(part.get_energy_cost(true));
-		$EnergyIcon.show();
-		$CooldownIcon/Label.text = TextFunc.format_stat(part.get_fire_rate(true));
-		$CooldownIcon.show();
-		
-		iconBase.texture = icon_ranged;
-		$DamageIcon/Label.text = TextFunc.format_stat(part.get_damage(true));
-		$DamageIcon.show();
-		$MagazineIcon/Label.text = TextFunc.format_stat(part.get_magazine_size(true), 0);
-		$MagazineIcon.show();
-		
-	elif part._get_part_type() == Part.partTypes.PASSIVE:
+	btn_moveButton.show();
+	
+	if part.is_equipped():
 		iconBase.texture = icon_part;
+	else:
+		iconBase.texture = icon_part_unequipped;
+	
+	populate_stats(part);
+	populate_abilities(part);
+	
+	#partRef = part;
+	#lbl_partName.text = part.partName;
+	#btn_moveButton.show();
+	#if part.ownedByPlayer:
+		#lbl_sellButton.text = get_sell_string();
+		#lbl_sellButton.show();
+	#rlbl_desc.text = part.partDescription;
+	#
+	#if part._get_part_type() == Part.partTypes.UTILITY:
+		#$EnergyIcon/Label.text = TextFunc.format_stat(part.get_energy_cost(true));
+		#$EnergyIcon.show();
+		#$CooldownIcon/Label.text = TextFunc.format_stat(part.get_fire_rate(true));
+		#$CooldownIcon.show();
+		#iconBase.texture = icon_utility;
+		#
+	#elif part._get_part_type() == Part.partTypes.MELEE:
+		#$EnergyIcon/Label.text = TextFunc.format_stat(part.get_energy_cost(true));
+		#$EnergyIcon.show();
+		#$CooldownIcon/Label.text = TextFunc.format_stat(part.get_fire_rate(true));
+		#$CooldownIcon.show();
+		#
+		#iconBase.texture = icon_melee;
+		#$DamageIcon/Label.text = TextFunc.format_stat(part.get_damage(true));
+		#$DamageIcon.show();
+		#
+	#elif part._get_part_type() == Part.partTypes.RANGED:
+		#$EnergyIcon/Label.text = TextFunc.format_stat(part.get_energy_cost(true));
+		#$EnergyIcon.show();
+		#$CooldownIcon/Label.text = TextFunc.format_stat(part.get_fire_rate(true));
+		#$CooldownIcon.show();
+		#
+		#iconBase.texture = icon_ranged;
+		#$DamageIcon/Label.text = TextFunc.format_stat(part.get_damage(true));
+		#$DamageIcon.show();
+		#$MagazineIcon/Label.text = TextFunc.format_stat(part.get_magazine_size(true), 0);
+		#$MagazineIcon.show();
+		#
+	#elif part._get_part_type() == Part.partTypes.PASSIVE:
+		#iconBase.texture = icon_part;
 
 func populate_info_piece(piece:Piece):
 	pieceRef = piece;
@@ -101,7 +115,6 @@ func populate_info_piece(piece:Piece):
 	
 	if piece.is_equipped():
 		iconBase.texture = icon_piece;
-		#btn_removeButton
 	else:
 		iconBase.texture = icon_piece_unequipped;
 	
@@ -262,7 +275,7 @@ func populate_abilities(thing):
 var queueAbilityPostUpdateCounter = -1;
 
 func set_queue_ability_post_update():
-	queueAbilityPostUpdateCounter = 4;
+	queueAbilityPostUpdateCounter = 5;
 @export var abilityBoxMaxSize := 200;
 @export var infoBoxMaxSize := 400;
 @export var almightyHolder : Control;
@@ -297,7 +310,7 @@ func update_ability_height():
 		abilityH = 0;
 	var statY = abilityH + abilityPosY + spaceAfterAbilityContainer;
 	statScrollContainer.position.y = statY;
-	statScrollContainer.size.y = min(fix_stat_array_holder_height(), statContainerHeight);
+	statScrollContainer.size.y = min(calculatedStatArrayHeight, statContainerHeight);
 	var buttonPosY = statY + statScrollContainer.size.y + spaceAfterStatContainer;
 	
 	var almightySize = btn_sellButton.size.y + buttonPosY + spaceAfterButton;
@@ -324,34 +337,39 @@ func _physics_process(delta):
 			if pieceRef.is_buyable():
 				sellDisabled = false;
 		elif ref_is_part():
-			moveDisabled = false;
-			removeDisabled = false;
+			if partRef.is_moveable():
+				moveDisabled = false;
+			if partRef.is_equipped():
+				removeDisabled = false;
 			sellDisabled = false;
 	
 	if is_instance_valid(btn_removeButton):
 		btn_removeButton.disabled = removeDisabled;
 	if is_instance_valid(btn_moveButton):
 		btn_moveButton.disabled = moveDisabled;
+		if ref_is_part():
+			if btn_moveButton.button_pressed != partRef.robot_is_in_move_mode_with_me():
+				btn_moveButton.set_pressed_no_signal(partRef.robot_is_in_move_mode_with_me());
 	if is_instance_valid(btn_sellButton):
 		## Sell but
 		btn_sellButton.disabled = sellDisabled;
 		update_sell_string();
 	
 	
-	if queueAbilityPostUpdateCounter == 1:
-		data_ready = true;
+	if queueAbilityPostUpdateCounter == 5:
+		pass;
+	if queueAbilityPostUpdateCounter == 4:
+		recalc_stat_array_heights()
+		pass;
+	if queueAbilityPostUpdateCounter == 3:
+		fix_stat_array_holder_height();
 		pass;
 	if queueAbilityPostUpdateCounter == 2:
 		calculate_required_height();
 		pass;
-	if queueAbilityPostUpdateCounter == 3:
-		#queueAbilityPostUpdate2 = false;
-		#queueAbilityPostUpdate3 = true;
+	if queueAbilityPostUpdateCounter == 1:
+		data_ready = true;
 		pass;
-	if queueAbilityPostUpdateCounter == 4:
-		#queueAbilityPostUpdate1 = false;
-		pass;
-	
 	if queueAbilityPostUpdateCounter >= 0:
 		queueAbilityPostUpdateCounter -= 1;
 	pass;
@@ -363,12 +381,12 @@ func clear_abilities():
 
 ## STATS
 @export var statScrollContainer : ScrollContainer;
-@export var statHolder : VBoxContainer;
+@export var statArrayHolder : VBoxContainer;
 @export var statArrayTemplate = preload("res://scenes/prefabs/objects/gui/stat_array.tscn");
 
 var statContainerHeight = 0:
 	get:
-		return min(statHolder.size.y, 90) if statScrollContainer.visible else 0;
+		return min(statArrayHolder.size.y, 90) if statScrollContainer.visible else 0;
 const statContainerHeightWhenFull = 40.0;
 func populate_stats(thing):
 	clear_stats();
@@ -385,10 +403,11 @@ func populate_stats(thing):
 	statTagArraysOrganized.sort_custom(func(a : StatArrayDisplay, b : StatArrayDisplay):
 		return a.statTag < b.statTag;)
 	for statArray in statTagArraysOrganized:
-		statHolder.add_child(statArray);
+		statArrayHolder.add_child(statArray);
 	
 	statTagsCategorized.clear();
-	statScrollContainer.visible = statHolder.get_child_count() > 0;
+	statScrollContainer.visible = statArrayHolder.get_child_count() > 0;
+	
 	statScrollContainer.scroll_vertical = 0;
 	abilityScrollContainer.scroll_vertical = 0;
 
@@ -404,25 +423,41 @@ func add_stat_icon(stat:StatTracker):
 			statArray = statTagsCategorized[tag];
 		statArray.add_stat_icon(stat);
 
+## Runs [method StatArrayDisplay.recalc_height] on all children of [member statArrayHolder].
+func recalc_stat_array_heights():
+	for statArray in statArrayHolder.get_children():
+		if statArray is StatArrayDisplay:
+			statArray.recalc_height();
+
+var calculatedStatArrayHeight := 0.0;
 func fix_stat_array_holder_height():
+	recalc_stat_array_heights();
 	var totalHeight = 0;
 	var count = 0;
-	for statArray in statHolder.get_children():
+	for statArray in statArrayHolder.get_children():
+		#print("Stat array child ",count)
 		## Add in the margin.
 		count += 1;
-		if count < statHolder.get_child_count():
-			totalHeight += statHolder.get("theme_override_constants/separation")
-		totalHeight += statArray.recalc_height();
+		if count < statArrayHolder.get_child_count():
+			totalHeight += statArrayHolder.get("theme_override_constants/separation")
+		
+		totalHeight += statArray.calculatedHeight;
+		#print(totalHeight);
 	var newSpacer = Control.new()
 	newSpacer.size.y = spaceAfterStats;
-	statHolder.add_child(newSpacer);
-	return totalHeight + spaceAfterStats;
+	statArrayHolder.add_child(newSpacer);
+	
+	calculatedStatArrayHeight = totalHeight + spaceAfterStats;
+	statArrayHolder.size.y = calculatedStatArrayHeight;
+	#prints(calculatedStatArrayHeight, queueAbilityPostUpdateCounter)
+	return calculatedStatArrayHeight;
 
 ## Removes the piece or part we're inspecting.
 func _on_remove_button_pressed():
 	if ref_is_piece():
 		pieceRef.remove_and_add_to_robot_stash(pieceRef.get_host_robot(), true);
 	elif ref_is_part():
+		partRef.remove_and_add_to_stash(partRef.hostRobot);
 		pass;
 	pass # Replace with function body.
 
@@ -430,13 +465,17 @@ func _on_remove_button_pressed():
 func _on_move_button_toggled(toggled_on):
 	if ref_is_part():
 		if toggled_on:
+			print("MOVE MODE BUTTON PRESSED DOWN")
+			partRef.robot_move_mode(true);
 			pass;
 		else:
+			print("MOVE MODE BUTTON PRESSED UP")
+			partRef.robot_move_mode(false);
 			pass;
 	pass # Replace with function body.
 
 ##Clear out the stats.
 func clear_stats():
 	statTagsCategorized.clear();
-	for stat in statHolder.get_children():
+	for stat in statArrayHolder.get_children():
 		stat.queue_free();

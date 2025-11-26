@@ -353,6 +353,7 @@ func enter_state(_newState:gameState, _oldState:gameState):
 			call_screen_transition_out();
 			pass;
 		gameState.SHOP:
+			MUSIC.change_state(MusicHandler.musState.SHOP);
 			CANVAS_SHOP.show();
 			HUD_shopManager.open_up_shop();
 			player.enter_shop();
@@ -360,6 +361,7 @@ func enter_state(_newState:gameState, _oldState:gameState):
 			##TODO: BUILD MODE / TEST MODE SWITCHING LOGIC
 			pass
 		gameState.SHOP_BUILD:
+			MUSIC.change_state(MusicHandler.musState.SHOP_BUILD);
 			CANVAS_SHOP.hide();
 			player.enter_shop_build();
 			respawn_player();
@@ -367,6 +369,7 @@ func enter_state(_newState:gameState, _oldState:gameState):
 			##TODO: BUILD MODE / TEST MODE SWITCHING LOGIC
 			pass
 		gameState.SHOP_TEST:
+			MUSIC.change_state(MusicHandler.musState.SHOP_TEST);
 			CANVAS_SHOP.hide();
 			player.enter_shop_test();
 			##TODO: SHOP UI LOGIC

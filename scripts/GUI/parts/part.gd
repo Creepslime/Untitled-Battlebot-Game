@@ -25,6 +25,10 @@ var thisBot : Combatant;
 			var _bot = hostPiece.get_host_robot();
 			if is_instance_valid(_bot):
 				hostRobot = _bot;
+		elif is_instance_valid(hostShopStall):
+			var _bot = hostShopStall.player;
+			if is_instance_valid(_bot):
+				hostRobot = _bot;
 		return hostRobot;
 
 var selected := false;
@@ -161,7 +165,18 @@ func remove_and_add_to_stash(robotOverride := hostRobot):
 		hostRobot.add_something_to_stash(self);
 
 func is_equipped():
-	return is_instance_valid(hostPiece) and is_instance_valid(hostPiece.get_host_robot());
+	return is_instance_valid(get_engine()) and is_instance_valid(hostPiece.get_host_robot());
+
+## Returns [member hostPiece], as that is its engine.
+func get_engine() -> Piece:
+	return hostPiece;
+
+
+## Returns [member hostPiece], as that is its engine.
+func get_engine_hud() -> PartsHolder_Engine:
+	if is_equipped():
+		return hostPiece.get_host_robot().engineViewer;
+	return null;
 
 func _get_part_bounds() -> Vector2i:
 	var highestX = 1; 
@@ -204,28 +219,65 @@ func _process(delta):
 			#else:
 		textureBase.global_position = invHolderNode.global_position;
 		reparent(hostShopStall.bg_Part)
+	elif is_instance_valid(hostRobot):
+		if hostRobot is Robot_Player:
+			reparent(hostRobot.engineViewer);
+			invHolderNode = hostRobot.engineViewer;
+			textureBase.global_position = invHolderNode.global_position + Vector2(invPosition * 48) + Vector2(24, 24);
+			if is_instance_valid(get_engine_hud()):
+				disable(! (hostPiece.get_selected() and get_engine_hud().curState == PartsHolder_Engine.doorStates.OPEN))
+			else:
+				disable()
+			if ! is_instance_valid(hostPiece):
+				visible = false;
+			
 	else:
+		if is_instance_valid(get_parent()):
+			get_parent().remove_child(self);
 		textureBase.hide();
 		%Buttons.disable();
 
 ## Acts to actually set [member selected].
 func _on_buttons_on_select(foo:bool):
-	if ! selected == foo and is_instance_valid(hostRobot):
-		selected = foo;
-		if foo:
-			hostRobot.select_part(self);
-		else:
-			hostRobot.deselect_all_parts();
+	#print("Part button being selected with foo ",foo)
+	select(foo);
 	pass # Replace with function body.
 
 func select(foo:bool):
-	print("Selecting: ", foo)
-	_on_buttons_on_select(foo);
-	%Buttons.set_pressed(foo);
-	move_mode(false);
+	#prints(partName,"selecting: ", foo)
+	%Buttons.set_pressed(foo, false);
+	robot_move_mode(false)
+	
+	if ! selected == foo: 
+		selected = foo;
+		if is_instance_valid(hostRobot):
+			if foo:
+				if hostRobot.selectedPart != self:
+					#print("Selecting part from hostRobot in Part.select")
+					hostRobot.select_part(self, foo);
+			else:
+				#print("Deselecting all parts from hostRobot in Part.select")
+				hostRobot.deselect_all_parts();
+		if is_equipped():
+			if foo:
+				if !hostPiece.get_selected():
+					hostPiece.select();
+					hostPiece.select_part(self);
 
 func move_mode(enable:bool):
 	%Buttons.move_mode_enable(enable);
+
+func robot_move_mode(enable:bool):
+	if is_instance_valid(hostRobot):
+		hostRobot.part_move_mode_enable(self, enable);
+
+func robot_is_in_move_mode_with_me() -> bool:
+	if is_instance_valid(hostRobot):
+		return is_instance_valid(hostRobot.partMovementPipette) and hostRobot.partMovementPipette == self;
+	return false;
+
+func is_moveable() -> bool:
+	return inPlayerInventory and !is_instance_valid(hostShopStall);
 
 func destroy():
 	select(false);

@@ -45,13 +45,19 @@ func disable(_disabled:bool):
 
 func update_gfx():
 	var hideme := false;
-	if (! disabled) and available:
-		inventory = GameState.get_inventory(); #gets the inventory
+	if available:
+		disabled = false;
+		#inventory = GameState.get_inventory(); #gets the inventory
+		
 		var space = true;
 		var free = true;
-		if is_instance_valid(inventory): ##TODO: Set this up to work with Pieces instead.
-			space = inventory.is_there_space_for_part(inventory.selectedPart, Vector2i(coordX,coordY));
-			free = inventory.is_slot_free(coordX, coordY, inventory.selectedPart);
+		var piece = parent.referenceCurrent if parent.referenceCurrent is Piece else null;
+		if is_instance_valid(piece):
+			var hostRobot = piece.get_host_robot();
+			if is_instance_valid(hostRobot): 
+				if is_instance_valid(hostRobot.partMovementPipette):
+					space = piece.engine_is_there_space_for_part(hostRobot.partMovementPipette, Vector2i(coordX,coordY));
+					free = piece.engine_is_slot_free(coordX, coordY, hostRobot.partMovementPipette);
 		
 		##Always visible if there's space. If there's no space, it 
 		if space:
@@ -78,7 +84,7 @@ func update_gfx():
 
 func _process(delta):
 	if is_instance_valid(parent):
-		if parent.check_in_state([PartsHolder_Engine.doorStates.OPEN]):
+		if parent.check_in_state([PartsHolder_Engine.doorStates.OPEN]) and is_instance_valid(GameState.get_player_part_movement_pipette()):
 			if ! visible:
 				show();
 		else:

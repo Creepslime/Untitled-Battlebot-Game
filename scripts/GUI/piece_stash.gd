@@ -219,9 +219,12 @@ signal partButtonClicked(tiedPart : Part, button : StashButton);
 func _on_part_button_clicked(tiedPart:Part, button : StashButton):
 	deselect_all_buttons(button);
 	if is_instance_valid(currentRobot):
-		currentRobot.select_part(tiedPart);
+		if tiedPart.selected:
+			currentRobot.call_deferred("select_part",tiedPart, false);
+		else:
+			currentRobot.call_deferred("select_part",tiedPart, true);
 		#currentRobot.prepare_pipette(tiedPart);
-		button.get_selected();
+		button.call_deferred("get_selected");
 	pass # Replace with function body.
 
 func _on_piece_button_clicked(tiedPiece:Piece, button : StashButton):

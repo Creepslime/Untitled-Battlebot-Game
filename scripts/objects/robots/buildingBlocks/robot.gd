@@ -235,6 +235,9 @@ func update_stash_hud():
 func queue_update_engine_hud():
 	if is_instance_valid(engineViewer):
 		queue_update_engine_with_selected_or_pipette();
+func queue_update_engine_button_gfx():
+	if is_instance_valid(engineViewer):
+		engineViewer.update_button_gfx();
 
 func update_inspector_hud(input = null):
 	if is_instance_valid(inspectorHUD):
@@ -1026,15 +1029,20 @@ var allParts : Array[Part]=[];
 ## Saves it to [member allParts].
 func get_all_parts() -> Array[Part]:
 	if allParts.is_empty():
-		get_all_parts_regenerate();
+		return get_all_parts_regenerate();
+	for part in allParts:
+		if !is_instance_valid(part) or part.is_queued_for_deletion():
+			return get_all_parts_regenerate();
 	return allParts;
 
 ##Returns a freshly gathered array of all Parts attached to this Robot and whih have it set as their host.
 func get_all_parts_regenerate() -> Array[Part]:
-	var piecesGathered : Array[Part] = [];
+	var partsGathered : Array[Part] = [];
 	for piece in get_all_pieces():
-		Utils.append_array_unique(piecesGathered, piece.listOfParts);
-	return piecesGathered;
+		Utils.append_array_unique(partsGathered, piece.listOfParts);
+	Utils.append_array_unique(partsGathered, stashParts);
+	allParts = partsGathered;
+	return partsGathered;
 
 var allHurtboxes = []
 func get_all_gathered_hurtboxes_regenerate():
@@ -1150,8 +1158,6 @@ func is_pipette_loaded() -> bool:
 	return is_instance_valid(pipettePieceInstance) or is_instance_valid(pipettePartInstance);
 ## Returns what's selected, or what's in the pipette. Returns [code]null[/code] elsewise.[br]Priority is [member pipettePartPath] > [member pipettePiecePath] > [member selectedPart] > [member selectedPiece] > [code]null[/code].
 func get_selected_or_pipette(ignoreParts := false):
-	#if is_instance_valid(pipettePartPath): ##TODO: Part pipette logic.
-		#return pipettePartPath;
 	var pipette = get_current_pipette();
 	if is_instance_valid(pipette):
 		return pipette;
@@ -1197,6 +1203,10 @@ func get_selected_piece(mustBeInTree := false)->Piece:
 ## Deselects based on a predetermined hierarchy.[br]
 ## Ability > Pipette > Part > Piece;
 func deselect_in_hierarchy():
+	queue_update_hud();
+	if partMovementPipette != null:
+		clear_move_mode_pipette();
+		return;
 	if abilityPipette != null:
 		clear_ability_pipette();
 		return;
@@ -1206,6 +1216,7 @@ func deselect_in_hierarchy():
 	var selectionResult = get_selected();
 	if selectionResult != null:
 		if selectionResult is Part:
+			print("Deselecti in hierarchy is deselecting part")
 			deselect_all_parts();
 			return;
 		if selectionResult is Piece:
@@ -1262,22 +1273,36 @@ func select_piece(piece : Piece, forcedValue = null):
 
 ## Deselects all [Part]s in all [Pieces] on this bot, as well as [member selectedPart]. If [param ignoredPart] is set to a [Part], then it will try not to deselect it.
 func deselect_all_parts(ignoredPart : Part = null):
-	if ignoredPart != selectedPart:
+	#print("Deselecting all parts except ", ignoredPart)
+	
+	if ignoredPart == null or ignoredPart != selectedPart:
 		if is_instance_valid(selectedPart):
-			selectedPart.select(false);
+			#print("Selected Part deselected: ", selectedPart)
+			select_part(selectedPart, false, false);
 	for part in get_all_parts():
 		if ignoredPart == null or part != ignoredPart:
+			#print("Part deselected: ", part)
 			part.select(false);
-	if ignoredPart == null or selectedPart != ignoredPart:
-		selectedPart = null;
+	
+	queue_update_hud();
 
 ## Sets the given [Part] as "selected," even if it is not inside the player's ecosystem.
-func select_part(part : Part, foo:=true):
+func select_part(part : Part, foo: bool= true, deselectAllElse := true):
 	if is_instance_valid(part):
-		deselect_all_parts(part)
+		if deselectAllElse:
+			#print("Calling deselect_all_parts from select_part")
+			deselect_all_parts(part)
+		#print("Calling part.select on ", part, " with foo ", foo)
 		part.select(foo);
-		selectedPart = part;
-		return part;
+		if foo:
+			#print("Setting selected part: ", part)
+			selectedPart = part;
+			update_hud();
+			return part;
+		else:
+			#print("Setting selected part to null")
+			selectedPart = null;
+			update_hud();
 	return null;
 
 ## Gets [member selectedPart] or null.
@@ -1295,8 +1320,22 @@ func part_buy_mode_enable(foo:bool):
 	pass;
 
 var moveMode := false; ## If in "move" mode (enabled/dsiabled with [method part_move_mode_enable] ), then the player can move Parts between different bits of their bot, throughout the different Pieces.
-func part_move_mode_enable(foo:bool):
+var partMovementPipette : Part = null;
+func part_move_mode_enable(part:Part, foo:bool):
+	moveMode = foo;
+	clear_move_mode_pipette();
+	if foo:
+		part.move_mode(true);
+		partMovementPipette = part;
+	else:
+		pass;
+	queue_update_engine_button_gfx();
 	pass;
+
+func clear_move_mode_pipette():
+	if is_instance_valid(partMovementPipette):
+		partMovementPipette.move_mode(false);
+		partMovementPipette = null;
 
 
 ######################## STASH

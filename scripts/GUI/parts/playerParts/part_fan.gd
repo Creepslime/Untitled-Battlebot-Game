@@ -5,7 +5,7 @@ class_name PartFan
 func mods_conditional():
 	var spotsFree = 1;
 	for mod in mods_get_all_with_tag("Fan"):
-		var PAO =  mod.get_part_at_offset()
+		var PAO =  mod.try_get_part_at_offset()
 		if PAO == null:
 			spotsFree += 1;
 		else:
