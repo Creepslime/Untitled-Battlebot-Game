@@ -42,11 +42,11 @@ func _integrate_forces(state):
 			#print(global_position.y);
 			if global_position.y > 3:
 				var force = -(global_position.y) + 3
-				constant_force.y = move_toward(constant_force.y, force, 0.05 * force);
+				constant_force.y = min(force, move_toward(constant_force.y, global_position.y, 0.08 * force));
 				Utils.print_if_true(str("force: ",constant_force.y),get_robot() is Robot_Player)
 			else:
 				if global_position.y < 1:
-					constant_force.y = move_toward(constant_force.y, -0.09, 1);
+					constant_force.y = 0;
 			#print(constant_force.y)
 		_:
 			pass;

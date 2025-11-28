@@ -41,7 +41,7 @@ func set_volume(inVol := 1.0):
 
 func change_state(inState:musState):
 	if curState != inState:
-		print(musState.keys()[curState])
+		#print(musState.keys()[curState])
 		curState = inState;
 		if curState == musState.MENU:
 			base = 1.0;

@@ -40,6 +40,8 @@ func pause(foo: bool, force := false):
 	#print("Pause attempt for ",name,", foo:", str(foo));
 	if not force: if paused == foo: return;
 	#print("Pause attempt for ",name," successful.")
+	paused = foo;
+	
 	if foo: ##If pausing:
 		## Mark down whether the bot was frozen before pausing.
 		if frozenBeforePaused == null:
@@ -50,7 +52,6 @@ func pause(foo: bool, force := false):
 		if frozenBeforePaused != null:
 			freeze(frozenBeforePaused, true);
 			frozenBeforePaused = null;
-	paused = foo;
 ##Checks for game state pause, attempts to re-pause or re-unpause, then returns the result.
 func is_paused():
 	var isPaused = GameState.is_paused();
@@ -59,6 +60,7 @@ func is_paused():
 	return paused;
 
 var linearVelocityBeforeFreeze = null;
+## Freezes this entity. Pauses the rigidbody and saves its velocity results.
 func freeze(doFreeze := (not is_frozen()), force := false):
 	#print("Freeze attempt for ",name,", doFreeze:", str(doFreeze), " force:", str(force), " frozen already:", str(frozen));
 	freezeQueued = false; ##Cancel the freeze queue.

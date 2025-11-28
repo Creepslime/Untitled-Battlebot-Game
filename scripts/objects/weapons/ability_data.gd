@@ -79,7 +79,7 @@ func is_on_piece() -> bool:
 	return is_instance_valid(assignedPieceOrPart) and assignedPieceOrPart is Piece;
 
 func is_on_assigned_piece() -> bool:
-	return is_on_piece() and is_instance_valid(assignedPieceOrPart) and assignedPieceOrPart.is_assigned();
+	return is_on_piece() and is_instance_valid(assignedPieceOrPart) and assignedPieceOrPart.assignedToSocket;
 
 func remove_stat_holder_id():
 	manager.remove_stat_holder_id(statHolderID);
@@ -97,7 +97,8 @@ func select(foo:= not get_selected()):
 	if is_instance_valid(currentAbilityInfobox):
 		currentAbilityInfobox.select(foo);
 	else:
-		print("Ability infobox? Yello?")
+		#print("Ability infobox? Yello?")
+		pass;
 	
 	if foo:
 		pass;

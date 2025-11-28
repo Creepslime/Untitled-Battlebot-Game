@@ -39,7 +39,7 @@ static var volumeLevelUI := 1.0;
 
 static func set_volume_UI(inVol:=1.0):
 	volumeLevelUI = inVol;
-	print_rich("[color=green][b]", volumeLevelUI);
+	#print_rich("[color=green][b]", volumeLevelUI);
 	
 	GameState.set_setting("volumeLevelUI", inVol);
 static func get_volume_UI():
@@ -331,7 +331,7 @@ static func get_proper_collision_sound_string(collider1: Node3D, collider2: Node
 		material = "Plastic"
 	
 	var result = "Collision." + str(soundMakerAudiosrc) + "." + str(material)
-	print(result);
+	#print(result);
 	return result;
 
 static func get_proper_collision_sound(collider1: Node3D, collider2: Node3D):
@@ -341,7 +341,7 @@ static func get_proper_collision_sound(collider1: Node3D, collider2: Node3D):
 	if is_instance_valid(snd):
 		return snd;
 	
-	print("Sound unavailable: ", sndString);
+	#print("Sound unavailable: ", sndString);
 	return;
 
 static var sound3DScene := preload("res://scenes/prefabs/utilities/sound3D.tscn");

@@ -200,7 +200,7 @@ func is_affordable() -> bool:
 
 ## Called when the buy button is pressed.
 func _on_buy_button_toggled(toggled_on):
-	print("buy btn pressed")
+	#print("buy btn pressed")
 	if update_player():
 		if (curState == ShopStall.doorState.OPEN):
 			player.deselect_everything();

@@ -8,7 +8,7 @@ var playerRay : RayCast3D;
 var directionRay : RayCast3D;
 
 var frontRayCollision = null;## Collider gathered in [method update_front_ray_result]. Set to null if invalid.
-var frontRayColType : rayColTypes = rayColTypes.NONE;## Collider type in [enum rayColTypes] gathered in [method update_front_ray_result] based on [member frontRayCollision]. 
+var frontRayColType : rayColTypes = rayColTypes.NONE; ## Collider type in [enum rayColTypes] gathered in [method update_front_ray_result] based on [member frontRayCollision]. 
 var frontRayNormal = Vector3(0,0,0).normalized();## Collision normal gathered in [method update_front_ray_result]. Set to null if invalid.
 var frontDirection := Vector2(0,1).normalized();## The front of the robot, determined by body rotation.
 @export var frontRayDistance = 5.0; ## How long the front collision ray should be.
@@ -23,8 +23,9 @@ var playerWallDodgeAngle : float;
 func _ready():
 	super();
 
-func grab_references():
-	super();
+func assign_references(forceTemp := false):
+	if referencesAssigned: return;
+	super(forceTemp);
 	if !is_instance_valid(frontRay):
 		var newRay = RayCast3D.new();
 		newRay.set_collision_mask_value(11, true);
@@ -57,6 +58,7 @@ func get_front_direction_vector3(inVector := frontDirection):
 	return Vector3(inVector.x, 0, inVector.y);
 
 func phys_process_pre(delta):
+	#return;
 	super(delta);
 	## Set the calculated 'front' direction this frame.
 	frontDirection = Vector2.from_angle(body.global_rotation.y - PI/2)
@@ -66,11 +68,13 @@ var randomizedVector : Vector2;
 var randomizedVectorTimer := 0.0;
 var randomizedFactor := 1.0; ## 1.0 or -1.0 based on the randomizedVectorTimer loop.
 func phys_process_timers(delta):
+	#return;
 	super(delta);
 	if not is_frozen():
 		## Subtract delta from rayCheckTimer.
 		## If the bot is asleep, set the timer to that instead.
 		rayCheckTimer = max(rayCheckTimer - delta, sleepTimer, 0);
+		
 		if rayCheckTimer <= 0:
 			frontRay.global_position = body.global_position
 			#frontRay.global_position += Vector3(0,4,0);
@@ -109,6 +113,7 @@ func phys_process_detection(delta):
 	playerWallDodgeAngle = rotation_to_dodge_walls_and_move_towards_player();
 
 func phys_process_motion(delta):
+	#return;
 	if not is_frozen():
 		if chasesPlayerInReverse:
 			if player_is_behind():
@@ -178,7 +183,6 @@ func update_if_ray_colliding_with_player(rotationalOffset := 0.0, isOriginal := 
 		
 		return playerInRaySight;
 	
-	grab_references();
 	playerRay.set_debug_shape_custom_color(Color(0.0,0.0,0.0));
 	playerInRaySight = false;
 	if isOriginal:

@@ -45,7 +45,7 @@ func assign_stat_holder(object):
 		statHolderUserData[statolderID] = newData;
 		if object is Piece:
 			object.regen_namedActions();
-		print("ABILITY REGISTRAR: Ability with name ",abilityName," and ID ",abilityID," being copied to piece ", object, "with ID ", statolderID,". Here's what it thinks it's assigned to: ", newData.assignedPieceOrPart, " ...Which is an assigned piece? ", newData.is_on_assigned_piece(), " Is it assigned to a socket? ", newData.assignedPieceOrPart.is_assigned());
+		#print("ABILITY REGISTRAR: Ability with name ",abilityName," and ID ",abilityID," being copied to piece ", object, "with ID ", statolderID,". Here's what it thinks it's assigned to: ", newData.assignedPieceOrPart, " ...Which is an assigned piece? ", newData.is_on_assigned_piece(), " Is it assigned to a socket? ", newData.assignedPieceOrPart.is_assigned());
 		pass;
 
 #var cooldownTimer := 0.0; ##@deprecated: Timers are run in individual [AbilityData] resources now.
@@ -139,8 +139,9 @@ func register(partOrPiece : Node, _abilityName : String = "Active Ability", _abi
 func assign_references(partOrPiece : Node):
 	if partOrPiece is Piece:
 		#assignedPieceOrPart = partOrPiece;
-		print("ABILITY REGISTRAR: Piece ", partOrPiece, " assigned to Ability ", abilityName,abilityID);
+		#print("ABILITY REGISTRAR: Piece ", partOrPiece, " assigned to Ability ", abilityName,abilityID);
 		#assignedPieceOrPart.regen_namedActions();
+		pass;
 
 ## Constructs [member abilityDescription] out of the [member abilityDescriptionConstructor] if there is anything in there.
 func construct_description():

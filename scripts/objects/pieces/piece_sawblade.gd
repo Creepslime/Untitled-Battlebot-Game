@@ -131,7 +131,7 @@ func deflect():
 func bullet_hit_hitbox(bullet:Bullet):
 	##TODO: Add enemies so this can actually be tested. Lol.
 	if bullet.get_attacker() != get_host_robot():
-		print_rich("[color=orange]Bullet hit the hitbox.")
+		#print_rich("[color=orange]Bullet hit the hitbox.")
 		pass;
 	if reflectingBullets:
 		if bullet.get_attacker() != get_host_robot():

@@ -57,8 +57,8 @@ func _physics_process(delta):
 func _on_collision(other:PhysicsBody3D, this:PhysicsBody3D=%Body):
 	super(%Body, other)
 	Hooks.OnPlayerCollision(other);
-	print("COLLISION HERE");
-	print(other, other.is_in_group("Combatant"), other.get_groups())
+	#print("COLLISION HERE");
+	#print(other, other.is_in_group("Combatant"), other.get_groups())
 	#if other.is_in_group("Combatant") && 
 	#if (other.is_in_group("Projectile") && other.get_attacker() != thisBot) || other.is_in_group("MeleeWeapon") || other.is_in_group("Combatant"):
 		##print(other.get_attacker())
@@ -76,7 +76,7 @@ func _on_radius_check_area_entered(newNode) -> void:
 			var playerPos = ply.get_global_body_position();
 			
 			for aiNode in nodesInRadius:
-				print_rich("[color=darkorange] ", newNode is AINode, " ", aiNode is AINode, " [/color]")
+				#print_rich("[color=darkorange] ", newNode is AINode, " ", aiNode is AINode, " [/color]")
 				if !closestNode:
 					closestNode = aiNode;
 					closestNodePos = closestNode.get_global_position();
@@ -89,7 +89,7 @@ func _on_radius_check_area_entered(newNode) -> void:
 						closestNodePos = newPos;
 						distanceSqr = newDist;
 						
-			print("CLOSEST NODE", closestNode.get_parent(), closestNode)
+			#print("CLOSEST NODE", closestNode.get_parent(), closestNode)
 			
 			ply.closestAiNode = closestNode as AINode;
 		else:

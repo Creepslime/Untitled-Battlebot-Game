@@ -74,7 +74,6 @@ size = Vector3(0.5, 0.5, 0.5)
 radius = 0.75
 
 [node name="Piece_BodyCube" type="Node3D" node_paths=PackedStringArray("swivelNode", "meshesHolder", "hitboxCollisionHolder", "hurtboxCollisionHolder", "placementCollisionHolder", "femaleSocketHolder") groups=["Piece"]]
-visible = false
 script = ExtResource("1_gm1wa")
 swivelNode = NodePath("Meshes/SwivelTop")
 pieceName = &"BodyCube"

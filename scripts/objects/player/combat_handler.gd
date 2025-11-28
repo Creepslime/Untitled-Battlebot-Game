@@ -86,7 +86,7 @@ func _on_collision(collider):
 ##Adds a part at the given index. Custom version for the player.
 func set_active_part(part:PartActive, index:int, override := true):
 	if override:
-		print(get_active_part(index));
+		#print(get_active_part(index));
 		remove_active_part(index);
 		activeParts[index] = part;
 		activeSlotTabs[index].partRef = part;
@@ -95,7 +95,7 @@ func set_active_part(part:PartActive, index:int, override := true):
 		return;
 	else:
 		if is_active_slot_empty(index):
-			print(get_active_part(index));
+			#print(get_active_part(index));
 			activeParts[index] = part;
 			activeSlotTabs[index].partRef = part;
 			#print("new part equipped: ", part.partName);
@@ -138,19 +138,19 @@ func check_active_slots_for_part(part:Part, ignoreIndex:int):
 
 func get_next_empty_active_slot():
 	if is_active_slot_empty(0): 
-		print("slot 0 is empty")
+		#print("slot 0 is empty")
 		return 0;
 	if is_active_slot_empty(2): 
-		print("slot 2 is empty")
+		#print("slot 2 is empty")
 		return 2;
 	if is_active_slot_empty(1): 
-		print("slot 1 is empty")
+		#print("slot 1 is empty")
 		return 1;
 	if is_active_slot_empty(3): 
-		print("slot 3 is empty")
+		#print("slot 3 is empty")
 		return 3;
 	#print(activeParts)
-	print("No slot is empty")
+	#print("No slot is empty")
 	return null;
 
 ##Reassigns the player's selected part to the slot specified.

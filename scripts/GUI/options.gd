@@ -101,7 +101,7 @@ func _on_music_volume_value_changed(value):
 	var vol = (value * 1.3) / 100.0
 	#print(vol)
 	if is_instance_valid(snd):
-		prints("[color=purple]Music volume being adjusted to "+str(value))
+		#prints("[color=purple]Music volume being adjusted to "+str(value))
 		snd.set_volume_music(vol);
 	pass # Replace with function body.
 

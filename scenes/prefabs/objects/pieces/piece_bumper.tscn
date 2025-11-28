@@ -69,7 +69,6 @@ pieceDescription = "Classic bumper car shenaniganery. Or maybe just regular car 
 force_visibility = true
 scrapCostBase = 10
 passiveAbilities = Array[ExtResource("2_qe5pu")]([SubResource("Resource_3c73f")])
-hurtboxAlwaysEnabled = true
 knockbackBase = 600.0
 kickbackBase = 300.0
 contactCooldown = 0.15

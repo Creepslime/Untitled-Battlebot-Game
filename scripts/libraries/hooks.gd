@@ -139,5 +139,5 @@ func getValidHooks(hookName:String):
 			else:
 				list[hookName].erase(hookKey);
 	#print_rich("[color=purple]",hookName," ",list)
-	print_rich("[color=purple]Hook called: ", hookName, "\nValid hooks: ",ret)
+	#print_rich("[color=purple]Hook called: ", hookName, "\nValid hooks: ",ret)
 	return ret;

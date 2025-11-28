@@ -15,8 +15,9 @@ func stat_registry():
 	super();
 	register_stat("RoundTimeRegen", roundTimeRegen, StatHolderManager.statIconCooldown, StatHolderManager.statTags.Clock);
 
-func grab_references():
-	super();
+func assign_references(forceTemp := false):
+	if referencesAssigned: return;
+	super(forceTemp);
 	if !is_instance_valid(gameHUD):
 		gameHUD = GameState.get_game_hud();
 	if is_instance_valid(gameHUD):

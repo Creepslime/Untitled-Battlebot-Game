@@ -129,7 +129,7 @@ func try_get_target():
 	match myTargetType:
 		modifierTargetType.PART:
 			var partAt = try_get_part_at_offset()
-			print(modName + " has a part at the target");
+			#print(modName + " has a part at the target");
 			if is_instance_valid(partAt):
 				target = partAt;
 			pass;
@@ -157,7 +157,7 @@ func try_get_part_at_offset():
 		slot = owner.hostPiece.engine_get_slot_at(invPosition.x, invPosition.y);
 	if is_instance_valid(slot):
 		if slot is Part:
-			print("inventory slot grabbed: ", slot.partName);
+			#print("inventory slot grabbed: ", slot.partName);
 			return slot;
 	return null;
 

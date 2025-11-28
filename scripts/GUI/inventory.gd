@@ -191,7 +191,7 @@ func add_part_from_scene(x: int, y:int, _partScene:String, activeSlot = null):
 				combatHandler.set_active_part(part, activeSlot, true);
 				return
 			else:
-				print("Adding ", part.name)
+				#print("Adding ", part.name)
 				add_child(part);
 				add_part(part, Vector2i(x,y), false);
 				return
@@ -203,13 +203,13 @@ func select_part(part:Part, foo:bool):
 			if is_instance_valid(selectedPart):
 				selectedPart.select(false);
 			selectedPart = part;
-			print("selected new part: ", part);
+			#print("selected new part: ", part);
 	else:
 		selectedPart = null;
 		if is_instance_valid(part):
 			if part.selected:
 				part.select(false);
-		print("Unselected part: ", part);
+		#print("Unselected part: ", part);
 
 func deselect_part():
 	if is_instance_valid(selectedPart):
@@ -298,11 +298,12 @@ func partMods_deploy():
 	##Prints the modifiers of the parts as a debug.
 	for part in listOfPieces:
 		if part is Part:
-			print_rich("[color=green]", part.partName, " ", part.incomingModifiers)
+			#print_rich("[color=green]", part.partName, " ", part.incomingModifiers)
 			if part is PartActive:
-				print_rich(part.mod_energyCost);
-				print_rich(part.energyCost);
-				print_rich(part.get_energy_cost());
+				#print_rich(part.mod_energyCost);
+				#print_rich(part.energyCost);
+				#print_rich(part.get_energy_cost());
+				pass;
 	pass
 
 ##Organizes a given list of parts (default [Inventory.listOfPieces]) by the order in which they should be prioritized.[br]
@@ -312,12 +313,12 @@ func prioritized_parts(partsArray : Array[Part] = listOfPieces) -> Array:
 	##Should end up as this dict: {part.get_effect_priority() : {part.get_inventory_slot_priority() : {part.get_age() : [mod, mod, ...]}}
 	for part in partsArray:
 		if is_instance_valid(part):
-			print(part.partName, " ", part.outgoingModifiers.size())
+			#print(part.partName, " ", part.outgoingModifiers.size())
 			if part.outgoingModifiers.size() > 0:
 				var prio = part.get_effect_priority();
 				var IDX = part.get_inventory_slot_priority();
 				var age = part.get_age();
-				print(prio, IDX, age)
+				#print(prio, IDX, age)
 				
 				if partPrio.has(prio):
 					if partPrio[prio].has(IDX):
@@ -330,7 +331,7 @@ func prioritized_parts(partsArray : Array[Part] = listOfPieces) -> Array:
 				else:
 					partPrio[prio] = {IDX : {age : [part]}}
 	
-	print(partPrio)
+	#print(partPrio)
 	
 	var returnArray = [];
 	
@@ -341,5 +342,5 @@ func prioritized_parts(partsArray : Array[Part] = listOfPieces) -> Array:
 			for lv3 in lv2Dict.keys(): ##looping thru age
 				var lv3Array = lv2Dict[lv3]
 				returnArray.append_array(lv3Array); ##Appends the 3rd level to the array
-	print(returnArray)
+	#print(returnArray)
 	return returnArray;

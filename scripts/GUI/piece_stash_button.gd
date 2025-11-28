@@ -36,11 +36,11 @@ func load_part_data(inPart : Part, hud : PieceStash):
 func _on_pressed():
 	if is_instance_valid(stashHUD):
 		if is_instance_valid(pieceReferenced):
-			print("buton pres ", pieceReferenced)
+			#print("buton pres ", pieceReferenced)
 			stashHUD.piece_button_pressed(pieceReferenced, self);
 			#select(true);
 		if is_instance_valid(partReferenced):
-			print("part buton pres ", partReferenced)
+			#print("part buton pres ", partReferenced)
 			stashHUD.part_button_pressed(partReferenced, self);
 			#select(true);
 	update_bg();

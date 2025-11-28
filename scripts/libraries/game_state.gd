@@ -395,7 +395,8 @@ func get_unique_part_age() -> int:
 var statLog = []
 func log_unique_stat(inStat : StatTracker):
 	if inStat in statLog:
-		print_rich("[color=red][b]Duplicate stat being created.")
+		#print_rich("[color=red][b]Duplicate stat being created.")
+		pass;
 	else:
 		statLog.append(inStat);
 var statID := 0;
@@ -438,7 +439,7 @@ static var settings := {
 	
 	StringName("HiddenScreenTransitions") : false,
 	StringName("ProfilerLabelsVisible") : false,
-	
+	StringName("EnemyGodMode") : false,
 	
 	StringName("renderShadows") : true,
 }
@@ -448,13 +449,13 @@ func set_setting(settingName : StringName, settinginput : Variant):
 	var setting = get_setting(settingName);
 	if setting != null:
 		if typeof(setting) == typeof(settinginput):
-			print (settings.has(StringName(settingName)))
+			#print (settings.has(StringName(settingName)))
 			settings[settingName] = settinginput;
 			pass
 		else:
 			push_warning("Attempt to set setting ", settingName, " to a value of the invalid type ", type_string(settinginput), ". Should be ", type_string(setting));
 	
-	print(get_setting(settingName));
+	#print(get_setting(settingName));
 	save_settings();
 
 func get_setting(settingName : StringName):
@@ -481,12 +482,12 @@ func load_settings():
 		for key in content.keys():
 			if key in settings:
 				settings[key] = content[key]
-				print("setting key found: ", key, " ", content[key])
+				#print("setting key found: ", key, " ", content[key])
 			pass
 	file.close()
 	
 	Hooks.OnLoadSettings();
-	prints("[b]Loading settings: ", settings)
+	#prints("[b]Loading settings: ", settings)
 	return settings
 
 static var saveData = {
@@ -561,7 +562,7 @@ func pause(foo : bool = not is_paused()):
 	#print("GameState.pause() attempt was successful.")
 	paused = foo;
 	var board = get_game_board();
-	print(board)
+	#print(board)
 	if board != null: board.pause(paused);
 
 func is_paused():
@@ -682,6 +683,15 @@ func profiler_ping_create(reason := "unknown"):
 	profilerPingCalls[reason] += 1;
 	profilerPingTimers[reason] = maxLoopsBeforeDeletionIfEmpty;
 
+func profiler_ping_time_create(reason, time:float):
+	if ! profilerPingCalls.has(reason):
+		profilerPingCalls[reason] = 0.;
+	if ! profilerPingBanks.has(reason):
+		profilerPingBanks[reason] = 0.;
+	profilerPingCalls[reason] += time;
+	profilerPingTimers[reason] = maxLoopsBeforeDeletionIfEmpty;
+
+
 func get_profiler_string() -> String:
 	var s = "\n\nPROFILER PINGS:"
 	for reason in profilerPingBanks:
@@ -762,3 +772,22 @@ func profiler(delta):
 		if ! is_paused():
 			for reason in profilerPingTimers:
 				profilerPingTimers[reason] -= 1;
+
+var pTimeStart := 0.0
+func profiler_time_usec_start():
+	pTimeStart = Time.get_ticks_usec()
+func profiler_time_usec_end(reason:String="[Unnamed call]", doPrint := false):
+	var end = Time.get_ticks_usec();
+	var time_taken = (end-pTimeStart)/1000000.0;
+	if doPrint:
+		print(reason," : ",time_taken);
+	profiler_ping_time_create(reason + " (Usecs)", time_taken);
+
+func profiler_time_msec_start():
+	pTimeStart = Time.get_ticks_msec()
+func profiler_time_msec_end(reason:String="[Unnamed call]", doPrint := false):
+	var end = Time.get_ticks_msec();
+	var time_taken = (end-pTimeStart)/1000.0;
+	if doPrint:
+		print(reason," : ",time_taken);
+	profiler_ping_time_create(reason + " (Msecs)", time_taken);

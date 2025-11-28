@@ -17,12 +17,12 @@ func _process(delta : float) -> void:
 	var raycasts = castContainer.get_children();
 	if raycasts.size() > 0:
 		for raycast in raycasts:
-			print("RAYCAST LOOP ", raycast.is_colliding(), " ", raycast.is_enabled())
+			#print("RAYCAST LOOP ", raycast.is_colliding(), " ", raycast.is_enabled())
 			if raycast.is_enabled() && raycast.is_colliding():
 				var newAinode = ainode.instantiate();
 				add_child(newAinode);
 				newAinode.reparent(self);
 				newAinode.set_position(raycast.get_collision_point())
-				print("we've made an instance!!sssa")
+				#print("we've made an instance!!sssa")
 				raycast.queue_free();
 				raycast.set_enabled(false);

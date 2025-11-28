@@ -36,7 +36,7 @@ func reset_shop():
 	close_up_shop();
 
 func set_item_pool_waves(inWave:int):
-	print_rich("[b]Setting item pool for wave ", inWave)
+	#print_rich("[b]Setting item pool for wave ", inWave)
 	var changed = false;
 	if inWave == -1:
 		clear_shop_spawn_list();
@@ -298,7 +298,7 @@ func calculate_part_pool():
 			pool.append(scene);
 			weight -= 1;
 	partPoolCalculated = pool;
-	print_rich("[color=yellow]",translated_part_pool());
+	#print_rich("[color=yellow]",translated_part_pool());
 
 func translated_part_pool():
 	var poolDict = {}

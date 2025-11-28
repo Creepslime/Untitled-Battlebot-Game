@@ -51,7 +51,7 @@ func distribute_all_abilities_to_piece(piece:Piece):
 	distribute_all_passives_to_piece(piece, passiveNames);
 	
 	#piece.ability
-	print("StatHolder Piece with id ", piece.statHolderID, )
+	#print("StatHolder Piece with id ", piece.statHolderID, )
 	pass;
 
 func has_passive_with_same_name(abilityName : String, piece:Piece):

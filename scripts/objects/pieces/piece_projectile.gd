@@ -208,8 +208,9 @@ func fireBullet():
 		initiate_kickback(firingAngle + global_position);
 	else:
 		for bullt in magazine:
-			print(bullt)
-		print("Invalid bullet")
+			#print(bullt)
+			pass;
+		#print("Invalid bullet")
 		#print(magazine)
 	leak_timer_start();
 	pass

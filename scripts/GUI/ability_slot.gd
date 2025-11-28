@@ -93,7 +93,7 @@ func assign_ability(ability : AbilityData):
 	if ! is_instance_valid(ability) or ! is_instance_valid(ability.assignedPieceOrPart):
 		return;
 	if is_instance_valid(ability) and ability is AbilityData:
-		print("Ability assigned!")
+		#print("Ability assigned!")
 		referencedAbility = ability;
 		set_deferred("referencedAbility", ability);
 		
@@ -115,7 +115,7 @@ func assign_ability(ability : AbilityData):
 		
 		update_ability(ability);
 	else:
-		print("Ability cleared.")
+		#print("Ability cleared.")
 		clear_assignment();
 	pass;
 

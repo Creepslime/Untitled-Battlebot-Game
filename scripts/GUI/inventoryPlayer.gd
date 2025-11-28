@@ -203,7 +203,7 @@ func _on_info_box_sell_part(part):
 
 var movingPart:=false;
 func _on_parts_holder_engine_button_pressed(x, y):
-	print("button pressed at ",x, ", ",y)
+	#print("button pressed at ",x, ", ",y)
 	if movingPart:
 		move_part(selectedPart, Vector2i(x,y));
 	pass # Replace with function body.
@@ -242,12 +242,12 @@ func add_part_to_shop(_partScene:String):
 	var stall = next_empty_shop_stall();
 	if is_instance_valid(stall):
 		if is_instance_valid(stall.partRef):
-			print("No part is to be placed here!!! (", stall.name,")")
+			#print("No part is to be placed here!!! (", stall.name,")")
 			slots[str(stall.name)] = stall.partRef;
 			return
 		var partScene = load(_partScene);
 		var part:Part = partScene.instantiate();
-		print(stall.partRef)
+		#print(stall.partRef)
 		part.inventoryNode = self;
 		part.inPlayerInventory = true;
 		part.invHolderNode = stall;
@@ -255,9 +255,9 @@ func add_part_to_shop(_partScene:String):
 			part.set_equipped(false);
 		stall.partRef = part;
 		slots[str(stall.name)] = part;
-		print(stall.partRef)
+		#print(stall.partRef)
 		#part.
-		print("Adding ", part.name, " to shop stall ", stall.name)
+		#print("Adding ", part.name, " to shop stall ", stall.name)
 		part.inventory_vanity_setup();
 		add_child(part);
 	pass
@@ -308,7 +308,7 @@ func remove_part_post(part:Part, beingSold := false, beingBought := false):
 		part.on_bought();
 		SND.play_sound_nondirectional("Shop.Chaching", 1, randf_range(0.90,1.1));;
 		if part is PartActive:
-			print("Adding to slot?")
+			#print("Adding to slot?")
 			combatHandler.set_active_part_to_next_empty_slot(part);
 	if part.invHolderNode is ShopStall:
 		part.invHolderNode.partRef = null;

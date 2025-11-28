@@ -22,7 +22,7 @@ func _process(delta):
 
 
 func _on_mouse_entered():
-	print(partRef)
+	#print(partRef)
 	pass # Replace with function body.
 
 func update_displays():

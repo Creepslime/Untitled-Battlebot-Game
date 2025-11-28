@@ -7,14 +7,14 @@ extends StatHolder3D;
 class_name Robot
 
 @export_category("General")
-@export var meshes : Node3D;
-@export var bodyPiece : Piece; ##The Piece this Robot is using as the 3D representation of its body.
-@export var bodySocket : Socket; ## The Socket the bodyPiece gets plugged into.
-var gameBoard : GameBoard;
-var camera : Camera;
-@export var robotNameInternal : String = "Base";
-@export var robotName : String = "Basic";
-@export var treads : UnderbellyContactPoints;
+@export var meshes : Node3D; ## The [Node3D] responsible for holding any extraneous meshes we may want to give this [Robot], but mainly just [member bodySocket].
+@export var bodyPiece : Piece; ## The [Piece] this [Robot] is using as the 3D representation of its body, directly connected to the [Socket] placed visually on the treads.
+@export var bodySocket : Socket; ## The [Socket] the [member bodyPiece] gets plugged into.
+var gameBoard : GameBoard; ## The root scene.
+var camera : Camera; ## The main game camera.
+@export var robotNameInternal : String = "Base"; ## The name this [Robot] uses in the codebase.
+@export var robotName : String = "Basic"; ## The name this [Robot] uses in-game.
+@export var treads : UnderbellyContactPoints; ## The wheels.
 
 
 ################################## GODOT PROCESSING FUNCTIONS
@@ -22,13 +22,14 @@ func _ready():
 	if ! Engine.is_editor_hint():
 		hide();
 		load_from_startup_generator();
-		grab_references();
+		assign_references(true);
 		super();
-		grab_references();
 		regen_piece_tree_stats();
+		assign_references(true);
 		detach_pipette();
 		freeze(true, true);
 		start_all_cooldowns(true);
+		assign_references();
 		update_stash_hud();
 
 func _process(delta):
@@ -42,7 +43,7 @@ func _physics_process(delta):
 	if ! Engine.is_editor_hint():
 		#motion_process()
 		super(delta);
-		if spawned and is_ready:
+		if spawned and is_ready and referencesAssigned:
 			phys_process_collision(delta);
 			phys_process_motion(delta);
 			phys_process_combat(delta);
@@ -57,16 +58,13 @@ func process_pre(delta):
 	## Make the bot come alive if it is queued to do so.
 	if is_ready and queuedLife:
 		live();
-	## Update any invalid references or nodes.
-	grab_references();
+	## Update any invalid references or nodes, if referencesAssigned is set to false.
+	assign_references();
 	pass;
 
 func phys_process_pre(delta):
 	super(delta);
-	grab_references();
-	for piece in get_all_pieces():
-		piece.freeze(is_frozen(), true);
-	body.set_deferred("mass", max(75, min(150, get_weight() * 2)));
+	assign_references();
 	pass;
 
 func process_timers(delta):
@@ -91,8 +89,14 @@ func phys_process_timers(delta):
 				invincible = false;
 				health_or_energy_changed.emit();
 
-##Grab all variable references to nodes that can't be declared with exports.
-func grab_references():
+## When false, [method assign_references] will run as usual. When true, it will return without doing anythinng, as nothing borked.
+var referencesAssigned := false;
+## Grab all variable references to nodes that can't be declared with exports, or that were but may have broken.[br]
+## If [param forceTemp] is [code]true[/code], it forces this to re-run (ignoring [member referencesAssigned]), and then not set [member referencesAssigned] to [code]true[/code]. This is only used during initial setup.
+func assign_references(forceTemp := false):
+	if ! forceTemp:
+		if referencesAssigned:
+			return;
 	if not is_instance_valid(body):
 		if is_instance_valid($Body):
 			body = $Body;
@@ -110,6 +114,18 @@ func grab_references():
 			set_deferred("bodyPiece",bodySocket.get_occupant());
 	if not is_instance_valid(treads):
 		treads = $Treads;
+	
+	if ! forceTemp:
+		referencesAssigned = true;
+
+func freeze(doFreeze := (not is_frozen()), force := false):
+	super(doFreeze, force)
+	reinforce_piece_freeze();
+
+## Loops thru all Pieces and force-freezes them based on the bot's current frozen status.
+func reinforce_piece_freeze():
+	for piece in allPieces:
+		piece.freeze(is_frozen(), true);
 
 func stat_registry():
 	super();
@@ -172,7 +188,7 @@ func create_startup_generator():
 
 ## Creates this robot from data saved to it. If there is none, it doesn't run.
 func load_from_startup_generator():
-	grab_references();
+	assign_references();
 	print("SAVE: Checking validation of startupGenerator: ", is_instance_valid(startupGenerator), startupGenerator is Dictionary)
 	if startupGenerator is Dictionary and not startupGenerator.is_empty():
 		#bodySocket.remove_occupant(true);
@@ -181,7 +197,12 @@ func load_from_startup_generator():
 		bodySocket.hostRobot = self;
 		print("SOCKET HOST BEFORE ADDING STARTUP DATA:", bodySocket, bodySocket.hostRobot)
 		bodySocket.load_startup_data(startupGenerator, self)
+		
 	pass;
+
+## Recursively sets all sockets and pieces with this as their hostRobot through the tree.
+func reinforce_robot_host():
+	bodySocket.set_host_robot(self);
 
 ########## HUD
 
@@ -293,7 +314,7 @@ func live():
 	body.show();
 	spawned = true;
 	alive = true;
-	start_all_cooldowns(true);
+	start_all_cooldowns(true); ## Semi-redundant.
 	var healthMax = get_max_health();
 	#print_rich("[color=pink]Max health is ", healthMax, ". Does stat exist: ", stat_exists("HealthMax"), ". Checking from: ", robotName);
 	set_stat("Health", healthMax);
@@ -510,7 +531,7 @@ func _on_health_or_energy_changed():
 @export var deathSound := "Combatant.Die";
 
 func start_all_cooldowns(immediate := false):
-	for piece in get_all_pieces():
+	for piece in allPieces:
 		piece.set_all_cooldowns();
 
 @export_category("Health Management")
@@ -593,7 +614,7 @@ func set_invincibility(amountOverride : float = maxInvincibleTimer):
 	health_or_energy_changed.emit();
 
 func is_invincible() -> bool:
-	invincible = invincibleTimer > 0 or (GameState.get_setting("godMode") == true && self is Robot_Player)
+	invincible = invincibleTimer > 0 or (GameState.get_setting("godMode") == true && self is Robot_Player) or (GameState.get_setting("EnemyGodMode") == true && self is Robot_Enemy);
 	return invincible or invincibleTimer > 0 or (GameState.get_setting("godMode") == true && self is Robot_Player);
 
 func take_knockback(inDir:Vector3, posDir:=Vector3.ZERO):
@@ -609,16 +630,62 @@ func apply_force(inDir:Vector3):
 	body.apply_force(inDir);
 	#print(inDir)
 
-var weightLoad = -1.0;
+## Regenerates [member weightLoad], and queues regeneration for [member movementSpeedAcceleration] and [member weightSpeedModifier], via [member regenMovementSpeedAcceleration] and [member regenWeightSpeedModifier] respectively.
+var regenWeightLoad := false;
+var weightLoad = -1.0:
+	get:
+		if regenWeightLoad or weightLoad < 0:
+			return get_weight_regenerate();
+		return weightLoad;
 func get_weight_regenerate():
 	weightLoad = bodySocket.get_weight_load(true);
+	regenWeightSpeedModifier = true;
+	regenMovementSpeedAcceleration = true;
+	regenWeightLoad = false;
 func get_weight(forceRegen := false):
-	if weightLoad < 0 or forceRegen:
+	if forceRegen or weightLoad < 0:
 		return get_weight_regenerate();
 	return weightLoad;
 
+
+var regenMovementSpeedAcceleration = true;
+var movementSpeedAcceleration := 1.0:
+	get:
+		if regenMovementSpeedAcceleration:
+			return get_movement_speed_acceleration();
+		return movementSpeedAcceleration;
+func get_movement_speed_acceleration() -> float:
+	if !regenMovementSpeedAcceleration:
+		return movementSpeedAcceleration;
+	var base = get_stat("MovementSpeedAcceleration");
+	var mod = weightSpeedModifier;
+	regenMovementSpeedAcceleration = false;
+	movementSpeedAcceleration = max(0, base * mod);
+	return movementSpeedAcceleration;
+
+var regenWeightSpeedModifier = true;
+var weightSpeedModifier := 1.0:
+	get:
+		if regenWeightSpeedModifier:
+			return get_weight_speed_modifier();
+		return weightSpeedModifier;
+func get_weight_speed_modifier(baseValue := 1.5) -> float:
+	if !regenWeightSpeedModifier:
+		return weightSpeedModifier;
+	var mod = 0.0;
+	mod += baseValue;
+	mod -= weightLoad * weightSpeedPenaltyMultiplier;
+	#print(mod);
+	weightSpeedModifier = max(0, mod);
+	regenWeightSpeedModifier = false;
+	return weightSpeedModifier;
+
+
+
 ##Physics process for combat. 
 func phys_process_combat(delta):
+	
+	#return;
 	if not is_frozen():
 		pass;
 
@@ -686,11 +753,14 @@ func on_hitbox_collision(body : PhysicsBody3D, pieceHit : Piece):
 
 ## Regenerates all the things that need to be regenerated when changing piece data around.
 func regen_piece_tree_stats():
-	reassign_body_collision();
-	get_all_pieces_regenerate();
-	get_weight(true);
-	has_body_piece(true);
-	
+	reassign_body_collision(); ## allPieces also gets regenerated within this function, for both this robot as well as each piece in its socket tree.
+	get_weight(true); ## Regenerates the amount of weight load on the robot, as well as for any piece on it.
+	body.set_deferred("mass", max(75, min(150, get_weight() * 2))); ## Sets the mass to a value reflective of the weight load.
+	has_body_piece(true); ## Checks over all the pieces to see if there's a body piece, then sets the appropriate flag.
+	reinforce_piece_freeze(); ## Freezes all pieces based on current frozen status, in case any were frozen/unfrozen when they should have been.
+	queue_update_hud(); ## Update the hud.
+	referencesAssigned = false; ## Make it so the next time [method phys_process_pre] gets called, it looks for references again.
+	assign_references(); ## ...the next time is now.
 
 ##Gives the Body new collision based on its Parts.
 func reassign_body_collision():
@@ -702,7 +772,8 @@ func reassign_body_collision():
 	
 	##Then, gather copies of every Hitbox collider from all pieces, and assign a copy of it to the Body.
 	var colliderIDsInUse = [];
-	for piece in get_all_pieces_regenerate():
+	regenAllPieces = true;
+	for piece in allPieces:
 		await piece.refresh_and_gather_collision_helpers();
 		for hurtbox in piece.get_all_hurtboxes():
 			if not ((hurtbox.copiedByBody) or (hurtbox.get_collider_id() in colliderIDsInUse) or !is_instance_valid(hurtbox.originalHost)):
@@ -715,6 +786,9 @@ func reassign_body_collision():
 				newHurtbox.owner = body;
 				hurtbox.copiedByBody = true;
 				newHurtbox.copiedByBody = true;
+	
+	regenAllHurtboxes = true; ## Make it so the next time hurtboxes are called, they regenerate.
+	call_deferred("reinforce_robot_host"); ## Make sure that each piece in the tree, and all of their sockets, register this as their host.
 
 ##TODO: Reimplement movement.
 #@export var topSpeed : 
@@ -735,35 +809,35 @@ var lastLinearVelocity : Vector3 = Vector3(0,0,0);
 
 ##Physics process step to adjust collision box positions according to the parts they're attached to.
 func phys_process_collision(delta):
-	for box in get_all_gathered_hurtboxes():
-		if is_instance_valid(box):
-			var boxOrigin = box.originalBox;
-			if is_instance_valid(boxOrigin):
-				if boxOrigin.is_inside_tree():
-					box.global_position = boxOrigin.global_position;
-					box.rotation = boxOrigin.global_rotation - get_global_body_rotation() + box.originalRotation;
-				else:
-					box.disabled = true;
+	#return;
+	for box in allHurtboxes:
+		var boxOrigin = box.originalBox;
+		if is_instance_valid(boxOrigin):
+			if boxOrigin.is_inside_tree():
+				box.global_position = boxOrigin.global_position;
+				box.rotation = boxOrigin.global_rotation - get_global_body_rotation() + box.originalRotation;
 			else:
-				box.queue_free();
+				box.disabled = true;
 		else:
-			var boxID = allHurtboxes.find(box)
-			allHurtboxes.remove_at(boxID);
+			box.queue_free();
 
+## If the robot was on the floor last frame.
 var wasOnFloorLastFrame := true;
-var coyoteTimer := 0;
+var coyoteTimer := 0.0;
 ## Steps the "coyote timer" ([member coyoteTimer])- if you're off the ground for less than five frames, the game lets you drive.
-func step_coyote_timer() -> bool:
+func step_coyote_timer(delta : float) -> bool:
 	if ! treads.is_on_driveable(): 
-		coyoteTimer = max(coyoteTimer - 1, 0);
+		coyoteTimer = max(coyoteTimer - delta, 0);
 	else:
-		coyoteTimer = 5;
+		coyoteTimer = 0.15;
 	
 	return coyoteTimer > 0;
 
 ##Physics process step for motion.
 # custom physics handling for player movement. regular movement feels flat and boring.
 func phys_process_motion(delta):
+	
+	#return;
 	if not is_frozen():
 		##Calc the last velocity. 
 		if !body.linear_velocity.is_equal_approx(Vector3.ZERO):
@@ -778,8 +852,12 @@ func phys_process_motion(delta):
 	
 		##Apply the current movement vector.
 		#print("MV",movementVector);
+		GameState.profiler_time_msec_start()
 		move_and_rotate_towards_movement_vector(delta);
+		GameState.profiler_time_msec_end("Rotating + moving robot")
+		GameState.profiler_time_msec_start()
 		update_treads_rotation(delta);
+		GameState.profiler_time_msec_end("Updating treads rotation")
 	if is_instance_valid(treads):
 		update_treads_position();
 	pass;
@@ -789,9 +867,8 @@ func move_and_rotate_towards_movement_vector(delta : float):
 	#print("MV2",movementVector);
 	##Rotating the body mesh towards the movement vector
 	var rotatedMV = movementVector.rotated(deg_to_rad(90.0));
-	#print("MV3",movementVector);
-
-	if is_inputting_movement() and step_coyote_timer():
+	
+	if is_inputting_movement() and step_coyote_timer(delta):
 		lastInputtedMV = movementVector;
 		var movementVectorRotated = movementVector.rotated(deg_to_rad(90.0 + randf()))
 		var vectorToRotTo = Vector2(movementVectorRotated.x, -movementVectorRotated.y)
@@ -811,21 +888,19 @@ func move_and_rotate_towards_movement_vector(delta : float):
 	##Get movement input.
 	if is_inputting_movement():
 		## Move the body.
-		var accel = get_movement_speed_acceleration();
+		var accel = movementSpeedAcceleration;
 		#print("HI")
 		var forceVector = Vector3.ZERO;
 		var bodBasis := body.global_basis;
 		forceVector += body.global_transform.basis.x * movementVector.x * -accel;
 		forceVector += body.global_transform.basis.z * movementVector.y * -accel;
-		#print(forceVector)
+		
 		var bodBasisRotationOrthonormalized := bodBasis.orthonormalized();
 		var bodBasisRotation = bodBasisRotationOrthonormalized.get_euler();
 
 		##Rotate the force vector so the body's rotation doesn't meddle with it.
 		forceVector = forceVector.rotated(Vector3(0.0,1.0,0.0), float(-bodBasisRotation.y));
-		#print(forceVector)
 		body.apply_central_force(forceVector);
-		#print(movementVector)
 	else:
 		body.linear_velocity *= speedReductionWhileNoInput;
 	
@@ -899,24 +974,11 @@ func put_in_reverse(): ##@experimental: Sets [member in_reverse] to true for the
 func get_current_movement_speed_length() -> float:
 	return body.linear_velocity.length();
 
-func get_movement_speed_acceleration() -> float:
-	var base = get_stat("MovementSpeedAcceleration");
-	var mod = get_weight_speed_modifier(1.5);
-	#print(max(0, base * mod))
-	#print("HI")
-	return max(0, base * mod);
-
 func get_rotation_speed() -> float:
 	var spd = get_current_movement_speed_length();
-	var mod = get_weight_speed_modifier(1.5);
+	var mod = weightSpeedModifier;
 	return min(bodyRotationSpeedBase * spd * mod, bodyRotationSpeedMaxBase);
 
-func get_weight_speed_modifier(baseValue := 1.5) -> float:
-	var mod = 0.0;
-	mod += baseValue;
-	mod -= get_weight() * weightSpeedPenaltyMultiplier;
-	#print(mod);
-	return max(0, mod);
 
 func _on_collision(collider: PhysicsBody3D, thisComponent: PhysicsBody3D = body):
 	SND.play_collision_sound(thisComponent, collider, Vector3.ZERO, 0.45)
@@ -956,12 +1018,10 @@ func on_add_piece(piece:Piece):
 	piece.owner = self;
 	if is_ready: ## Prevent the Piece from automatically adding abilities if we aren't fully initialized yet.
 		for ability in piece.activeAbilitiesDistributed:
-			if ability is AbilityManager:
-				var AD = ability.get_ability_data(piece.statHolderID)
-				print("Adding ability ", ability.abilityName)
-				assign_ability_to_next_active_slot(AD);
+			var AD = ability.get_ability_data(piece.statHolderID)
+			print("Adding ability ", ability.abilityName)
+			assign_ability_to_next_active_slot(AD);
 	regen_piece_tree_stats()
-	get_all_pieces_regenerate();
 	queue_update_hud();
 	pass;
 
@@ -986,31 +1046,35 @@ func remove_abilities_of_piece(piece:Piece):
 					unassign_ability_slot(abilityKey, str("piece ", piece.pieceName, " being removed"));
 
 ## A list of all Pieces attached to this Robot and which have it set as their host.
-var allPieces : Array[Piece]= []; 
-## Returns [member allPieces]. Calls [method get_all_pieces_regenerate()] before returning if [member allPieces] is empty.
-func get_all_pieces() -> Array[Piece]:
-	if allPieces.is_empty():
-		return get_all_pieces_regenerate();
-	for piece in allPieces:
-		if !is_instance_valid(piece) or piece.is_queued_for_deletion():
+var allPieces : Array[Piece]= []:
+	get:
+		if regenAllPieces: ## This bool doesn't get unset until get_all_pieces_regenerate() is called.
 			return get_all_pieces_regenerate();
+		return allPieces;
+## WHen set to [code]true[/code], [member allPieces] or [method get_all_pieces()] will call [method get_all_pieces_regenerate]
+var regenAllPieces := false;
+## Returns [member allPieces]. Calls [method get_all_pieces_regenerate] before returning if [member allPieces] is empty.
+func get_all_pieces() -> Array[Piece]:
+	if allPieces.is_empty() or regenAllPieces:
+		return get_all_pieces_regenerate();
 	return allPieces;
 
-##Returns a freshly gathered array of all Pieces attached to this Robot and which have it set as their host.[br]
-## Saves it to [member allPieces].
+## Returns a freshly gathered array of all Pieces attached to this Robot and which have it set as their host, and Saves it to [member allPieces]. Also regenerates their host data while we're looping through them.
 func get_all_pieces_regenerate() -> Array[Piece]:
-	print("regenerating piece list")
+	regenAllPieces = false;
+	#print("regenerating piece list")
 	var piecesGathered : Array[Piece] = [];
 	if bodySocket.get_occupant() != null:
-		piecesGathered = bodySocket.occupant.get_all_pieces_recursive();
-	#for child:Piece in Utils.get_all_children_of_type("Robot getting all Pieces",body, Piece):
-		#if child.hostRobot == self and child.assignedToSocket:
-			#piecesGathered.append(child);
+		var occupant := bodySocket.occupant;
+		occupant.regenAllSockets = true;
+		piecesGathered = occupant.get_all_pieces_recursive();
+	
 	allPieces = piecesGathered;
 	return piecesGathered;
 
 ## UNRELATED TO [member bodyPiece]. This is whether the bot has a piece that isBody.
 var hasBodyPiece := false;
+## Checks over all pieces to see if any have [member Piece.isBody] as true. 
 func has_body_piece(forceRecalculate := false) -> bool:
 	if forceRecalculate:
 		for piece in get_all_pieces():
@@ -1044,17 +1108,27 @@ func get_all_parts_regenerate() -> Array[Part]:
 	allParts = partsGathered;
 	return partsGathered;
 
-var allHurtboxes = []
+## When [code]true[/code], the next time [member allHurtboxes] is gotten, it returns [method get_all_gathered_hurtboxes_regenerate].
+var regenAllHurtboxes := true;
+## A list of all hurtboxes attached to the body.
+var allHurtboxes = []:
+	get:
+		if regenAllHurtboxes:
+			return get_all_gathered_hurtboxes_regenerate();
+		return allHurtboxes;
 func get_all_gathered_hurtboxes_regenerate():
 	var boxes = []
 	for child in body.get_children():
 		if child is PieceCollisionBox:
-			boxes.append(child)
+			var boxOrigin = child.originalBox;
+			if is_instance_valid(boxOrigin):
+				boxes.append(child)
 	allHurtboxes = boxes;
+	regenAllHurtboxes = false;
 	return boxes;
 ##Returns an array of all PieceCollisionBox nodes that are direct children of the body.
 func get_all_gathered_hurtboxes():
-	if allHurtboxes.is_empty():
+	if allHurtboxes.is_empty() or regenAllHurtboxes:
 		get_all_gathered_hurtboxes_regenerate();
 	return allHurtboxes;
 
@@ -1345,7 +1419,7 @@ func stash_selected_piece(fancy := false):
 		print("Attempting to stash ", selectedPiece)
 		if selectedPiece.removable:
 			selectedPiece.remove_and_add_to_robot_stash(self, fancy);
-	get_all_pieces_regenerate();
+	regenAllPieces = true;
 
 ##TODO: Parts and Engine bs.
 func stash_selected_part():

@@ -318,7 +318,7 @@ func shot_something(inbody):
 		
 	#Hooks.OnCollision(self, inbody);
 	#prints("Bullet hit a thing! If this doesn't show, then something borked...")
-	prints("BULLET INBODY: ", inbody)
+	#prints("BULLET INBODY: ", inbody)
 	#prints(self, inbody)
 	#prints(fired, lifeTimer, lifeDeltaTimer)
 	

@@ -9,7 +9,6 @@ var statHolderID := 0;
 var freeIDS : Array[int]; ## An array of IDs that are no longer being used.
 
 func get_unique_stat_holder_id() -> int:
-	clear_invalid_stat_holders();
 	if freeIDS.is_empty():
 		var ret = statHolderID;
 		statHolderID += 1;
@@ -19,15 +18,11 @@ func get_unique_stat_holder_id() -> int:
 		return ret;
 
 func register_stat_holder(object):
-	clear_invalid_stat_holders();
 	##Todo: Add StatHolder2D as a class for Parts to inherit from.
 	if object is StatHolder3D:
 		all_stat_holders[object.statHolderID] = object;
-		print("Added ",object," as a StatHolder with ID ", object.statHolderID)
-	#elif object is StatHolder2D:
-		#pass;
 
-## Clear out any invalid entries in the list and frees them up.
+## @deprecated: Clear out any invalid entries in the list and frees them up. *Technically* not deprecated, but its use shouold be sparse.
 func clear_invalid_stat_holders():
 	var idsToFree = []
 	for id in all_stat_holders.keys():
@@ -41,9 +36,11 @@ func clear_invalid_stat_holders():
 		freeIDS.append(id)
 
 func get_stat_holder_by_id(id):
-	clear_invalid_stat_holders();
 	if all_stat_holders.keys().has(id):
 		return all_stat_holders[id];
+	else:
+		all_stat_holders.erase(id);
+		freeIDS.append(id);
 	return null;
 
 ### Vanity stuff.

@@ -149,7 +149,7 @@ func door_closed_sound(volume := 1.0):
 
 ## Returns true if we're not paused, we have at least one unfrozen stall, we're not too broke to reroll, and we're not already anticipating a reroll.
 func can_reroll():
-	print(all_stalls_frozen())
+	#print(all_stalls_frozen())
 	return not GameState.is_paused() and not all_stalls_frozen() and ScrapManager.is_affordable(manager.get_reroll_price()) and not awaiting_reroll;
 
 ## Fires when the reroll button is pressed.[br]
@@ -268,7 +268,7 @@ func calculate_part_pool():
 			pool.append(scene);
 			weight -= 1;
 	partPoolCalculated = pool;
-	print_rich("[color=yellow]",translated_part_pool());
+	#print_rich("[color=yellow]",translated_part_pool());
 
 ## Returns a string representing the current pool.
 func translated_part_pool():
@@ -299,7 +299,7 @@ enum poolTypes {
 @export var myPool := poolTypes.TEST;
 
 func set_item_pool_waves(inWave:int):
-	print_rich("[b]Setting item pool for wave ", inWave)
+	#print_rich("[b]Setting item pool for wave ", inWave)
 	var changed = false;
 	
 	if inWave == -1:
@@ -426,10 +426,10 @@ func add_part_to_shop(inPart : Part):
 	var stall = next_empty_shop_stall();
 	if is_instance_valid(stall):
 		if stall.has_ref():
-			print("No part is to be placed here!!! (", stall.name,")")
+			#print("No part is to be placed here!!! (", stall.name,")")
 			return false
 		var part:Part = inPart;
-		print(stall.partRef)
+		#print(stall.partRef)
 		inPart.hostShopStall = stall;
 		inPart.hostRobot = GameState.get_player();
 		inPart.inPlayerInventory = true;
@@ -438,9 +438,9 @@ func add_part_to_shop(inPart : Part):
 			inPart.set_equipped(false);
 		stall.partRef = inPart;
 		
-		print(stall.partRef)
+		#print(stall.partRef)
 		#part.
-		print("Adding ", part.partName, " to shop stall ", stall.name)
+		#print("Adding ", part.partName, " to shop stall ", stall.name)
 		inPart.inventory_vanity_setup();
 		add_child(part);
 		return true;
@@ -451,11 +451,11 @@ func add_piece_to_shop(inPiece : Piece):
 	var stall = next_empty_shop_stall();
 	if is_instance_valid(stall):
 		if stall.has_ref():
-			print("No piece is to be placed here!!! (", stall.name,")")
+			#print("No piece is to be placed here!!! (", stall.name,")")
 			return false
 		stall.add_piece(inPiece);
 		
-		print("Adding ", inPiece.pieceName, " to shop stall ", stall.name)
+		#print("Adding ", inPiece.pieceName, " to shop stall ", stall.name)
 		return true;
 		pass;
 	return false;

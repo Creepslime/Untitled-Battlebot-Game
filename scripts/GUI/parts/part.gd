@@ -340,19 +340,19 @@ func mods_prepare_innate():
 		newMod.inventoryNode = inventoryNode;
 		var newModName = mod.modName + "_" + str(name);
 		newMod.modName = newModName;
-		print_rich("[color=blue]", partName, " adding ", newModName)
+		#print_rich("[color=blue]", partName, " adding ", newModName)
 		outgoingModifiersRef.append(newMod);
 	outgoingModifiers = outgoingModifiersRef.duplicate(true);
 
 ##Resets all modified values back to 0. Extend with mods that are added in later derivative classes.
 func mods_reset(resetArrays := false):
-	print_debug("Resetting Modifiers for ", partName)
+	#print_debug("Resetting Modifiers for ", partName)
 	if resetArrays:
 		distributedModsAlready = false;
 		incomingModifiers.clear();
 		outgoingModifiers.clear();
 		outgoingModifiers = outgoingModifiersRef.duplicate(true);
-		print_debug("Full Reset");
+		#print_debug("Full Reset");
 	appliedModsAlready = false;
 	appliedModsAlready_recursion = false;
 	mod_scrapCost = mod_resetValue.duplicate();
@@ -388,7 +388,7 @@ func mods_disable_outMod(modName : StringName, _enabled := false):
 
 ##Distributes all outgoing modifiers.
 func mods_distribute():
-	print_debug(partName, " Distributing mods")
+	#print_debug(partName, " Distributing mods")
 	mods_validate();
 	mods_conditional();
 	if not distributedModsAlready:
@@ -431,18 +431,19 @@ func mods_recieve(inMod : PartModifier):
 	#newMod.inventoryNode = inventoryNode;
 	#incomingModifiers.append(newMod);
 	if mods_check_inModifier_exists(inMod.modName):
-		print(partName, " already has ",  inMod.modName)
+		#print(partName, " already has ",  inMod.modName)
+		pass;
 	else:
 		incomingModifiers.append(inMod);
-		print_debug(partName, " Recieving mod ", inMod.modName)
+		#print_debug(partName, " Recieving mod ", inMod.modName)
 	pass
 
 ##Applies a given modifier to itself.
 func mods_apply(propertyName : String, add:= 0.0, flat := 0.0, mult := 0.0):
-	print_debug(partName, " applying mod for ", propertyName)
+	#print_debug(partName, " applying mod for ", propertyName)
 	var property = get(propertyName)
 	if property:
-		print(property)
+		#print(property)
 		if property.has("add"):
 			property["add"] += add;
 		else:
@@ -464,14 +465,14 @@ func mods_apply(propertyName : String, add:= 0.0, flat := 0.0, mult := 0.0):
 	return false;
 
 func mods_reset_and_apply_all():
-	print_debug(partName, " resetting all mods and applying them")
+	#print_debug(partName, " resetting all mods and applying them")
 	mods_reset();
 	mods_apply_all();
 
 ##Applies all of the modifiers in priority order gathered from [Part.prioritized_mods].
 func mods_apply_all():
 	mods_validate();
-	print(partName, " incoming modifiers: ",incomingModifiers)
+	#print(partName, " incoming modifiers: ",incomingModifiers)
 	var inMods = prioritized_mods(incomingModifiers);
 	for mod in incomingModifiers:
 		mod.apply_modifier();
@@ -481,7 +482,7 @@ func mods_apply_all():
 	mods_validate();
 
 func mods_validate():
-	print(partName, " validating mods")
+	#print(partName, " validating mods")
 	for mod in outgoingModifiers:
 		if mod is PartModifier:
 			if mod.inventoryNode == null:

@@ -77,14 +77,14 @@ func _on_scenetree_ready():
 			Utils.append_unique(enemiesDead, thisBot);
 			if is_instance_valid(killer) and killer is Robot_Player:
 				enemiesKilled += 1;
-				print_rich("[color=red][b]Enemies killed: ",enemiesKilled)
+				#print_rich("[color=red][b]Enemies killed: ",enemiesKilled)
 			)
 			
 	Hooks.add(self, "OnGainScrap", "LifetimeScrapCounter", 
 		func(source, amt):
 			if amt > 0:
 				scrapGained += amt;
-				print_rich("[color=yellow][b]Scrap gained: ",scrapGained)
+				#print_rich("[color=yellow][b]Scrap gained: ",scrapGained)
 			)
 	
 	arena_move_master("Workshop", "Base", "Base", cacheOpt.OVERWRITE_OLD_AND_SET_INPUT_CURRENT);
@@ -264,7 +264,7 @@ func exit_state(oldState:gameState):
 			pass
 
 func enter_state(_newState:gameState, _oldState:gameState):
-	print("ENTERING STATE ",var_to_str(gameState.keys()[_newState]));
+	#print("ENTERING STATE ",var_to_str(gameState.keys()[_newState]));
 	match _newState:
 		gameState.SPLASH:
 			GameState.init_screen_transition_vanity();
@@ -446,6 +446,9 @@ func process_state(delta : float, _state : gameState):
 				else:
 					spawnTimer=0.15;
 			
+			if Input.is_action_just_pressed("dbg_SpawnEnemy"):
+				spawn_single_random_enemy();
+			
 			pass
 		gameState.INIT_SHOP:
 			if wait_for_arena_to_build_and_respawn_to_happen():
@@ -540,10 +543,10 @@ func wait_for_arena_to_build_and_respawn_to_happen() -> bool:
 				initArenaFrameWait = max(initArenaFrameWait, currentArena.obstaclesNode.cells.size());
 	
 	if initArenaFrameWait >= 0:
-		print_rich("[color=grey]STATE: WAITING FOR ", initArenaFrameWait, " MORE FRAMES FOR ARENA TO LOAD");
+		#print_rich("[color=grey]STATE: WAITING FOR ", initArenaFrameWait, " MORE FRAMES FOR ARENA TO LOAD");
 		initArenaFrameWait -= 1;
 	else:
-		print_rich("[color=grey]STATE: WAITING ON PLAYER TO SPAWN.");
+		#print_rich("[color=grey]STATE: WAITING ON PLAYER TO SPAWN.");
 		respawnResult = spawn_or_respawn_player();
 	
 	return respawnResult;
@@ -707,7 +710,7 @@ func move_to_biome(newBiome : BiomeData) -> BiomeData:
 ## Note: Does not actually affect anything regarding the current arena.
 func move_to_biome_name(newBiomeName) -> BiomeData:
 	if biomes.has(newBiomeName):
-		prints("STATE: CHANGING BIOME NAMES TO ", newBiomeName, "FROM", currentBiomeName);
+		#prints("STATE: CHANGING BIOME NAMES TO ", newBiomeName, "FROM", currentBiomeName);
 		if newBiomeName != currentBiomeName:
 			move_to_biome(biomes[newBiomeName]);
 			currentBiomeName = newBiomeName;
@@ -750,8 +753,10 @@ func create_new_arena(arenaScene : PackedScene) -> Arena:
 func get_current_arena():
 	if is_instance_valid(currentArena):
 		print("CURRENT ARENA: ", currentArena.name);
+		pass;
 	else:
 		print("CURRENT ARENA IS INVALID.");
+		pass;
 	return currentArena;
 ## if [param newArenaOrScene] is an [Arena], then it sets it directly as the current arena.[br]
 ## If [param newArenaOrScene] is instead a [PackedScene], then it unpacks and instantiates it first using create_new_arena().[br]
@@ -763,7 +768,7 @@ func set_new_arena_as_current(newArenaOrScene):
 		newArenaOrScene = create_new_arena(newArenaOrScene);
 	if !is_instance_valid(newArenaOrScene): return; ## Check for if the unpack went bad.
 	if newArenaOrScene is Arena:
-		print("STATE: ENTERING NEW ARENA ",newArenaOrScene.name);
+		#print("STATE: ENTERING NEW ARENA ",newArenaOrScene.name);
 		currentArena = newArenaOrScene;
 		if !newArenaOrScene.is_inside_tree():
 			add_child(newArenaOrScene);
@@ -802,7 +807,7 @@ func get_biome_from_cache() -> BiomeData:
 	return null;
 ## Takes the arena out of the cache and returns it.
 func pop_arena_from_cache() -> Arena:
-	print("STATE: CACHED ARENA RESULT: ", is_instance_valid(cachedArena))
+	#print("STATE: CACHED ARENA RESULT: ", is_instance_valid(cachedArena))
 	if is_instance_valid(cachedArena):
 		var c = cachedArena;
 		cachedArena = null;
@@ -848,7 +853,7 @@ func load_random_current_arena_variant() -> int:
 ## Builds a new random variant of the given arena. Returns an amount of frames to hold for, as well as setting [member initArenaFrameWait] to that value.
 func load_random_arena_variant(inArena : Arena) -> int:
 	if is_instance_valid(inArena):
-		print("STATE: LOADING ARENA VARIANT")
+		#print("STATE: LOADING ARENA VARIANT")
 		initArenaFrameWait = inArena.load_new_random_variant();
 		return initArenaFrameWait;
 	initArenaFrameWait = max(1, initArenaFrameWait);
@@ -859,7 +864,7 @@ func load_current_arena_named_variant(namedVariant := "Base"):
 ## Builds a new random variant of the given arena. Returns an amount of frames to hold for.
 func load_arena_named_variant(inArena : Arena, namedVariant := "Base") -> int:
 	if is_instance_valid(inArena):
-		print("STATE: LOADING ARENA VARIANT");
+		#print("STATE: LOADING ARENA VARIANT");
 		initArenaFrameWait = inArena.load_variant(namedVariant);
 		return initArenaFrameWait;
 	initArenaFrameWait = max(1, initArenaFrameWait);
@@ -949,11 +954,11 @@ func spawn_player_new_game() -> Robot_Player:
 
 func teleport_player(_in_position := playerSpawnPosition):
 	var teleportResult = false;
-	print("STATE: TELEPORTING PLAYER")
+	#print("STATE: TELEPORTING PLAYER")
 	if player != null and is_instance_valid(player):
 		player.body.set_deferred("position", _in_position);
 		teleportResult = true;
-		print("STATE: TELEPORTING PLAYER DOES EXISTd")
+		#print("STATE: TELEPORTING PLAYER DOES EXISTd")
 	return teleportResult;
 
 func respawn_player():
@@ -963,7 +968,7 @@ func respawn_player():
 		if is_instance_valid(currentArena):
 			if is_instance_valid(currentArena.obstaclesNode):
 				currentArena.reset_spawning_locations();
-				print("STATE: RESPAWNING PLAYER ATTEMPT NOW; ", currentArena.obstaclesNode, currentArena.spawningLocations.size())
+				#print("STATE: RESPAWNING PLAYER ATTEMPT NOW; ", currentArena.obstaclesNode, currentArena.spawningLocations.size())
 				if currentArena.spawningLocations.size() > 0:
 					var location = return_random_unoccupied_spawn_location_position();
 					if currentArena.spawningLocations.size() > 1:
@@ -975,7 +980,7 @@ func respawn_player():
 					else:
 						respawnResult = teleport_player(currentArena.spawningLocations.front().global_position);
 						respawnError = "" if respawnResult else " || Error: Teleport to the ONLY LOCATION failed"
-	print("STATE: PLAYER RESPAWN RESULT: ",respawnResult,respawnError)
+	#print("STATE: PLAYER RESPAWN RESULT: ",respawnResult,respawnError)
 	return respawnResult;
 
 func spawn_or_respawn_player():
@@ -1009,6 +1014,18 @@ func spawn_wave(numOfEnemies := 0):
 		numOfEnemies -= 1;
 	if at_enemy_capacity():
 		waveSpawnList.clear();
+
+## Spawns an enemy indiscriminately.
+func spawn_single_random_enemy():
+	var newEnemySpawner = return_random_unoccupied_spawn_location();
+	if newEnemySpawner != null:
+		var enemyScene = return_random_enemy();
+		newEnemySpawner.assign_gameBoard(self);
+		newEnemySpawner.assign_enemy_type_from_resource(enemyScene);
+		newEnemySpawner.assign_enemy_type(enemyScene);
+		var enemy = newEnemySpawner.start_spawn();
+		enemiesSpawned.append(enemy);
+		enemiesAlive.append(enemy);
 
 func spawn_enemy_from_wave():
 	if waveSpawnList.size() > 0 and ! at_enemy_capacity():
@@ -1092,9 +1109,9 @@ func pause(foo : bool):
 
 ##Pauses all robots specifically.
 func pause_all_robots_and_projectiles(foo : bool):
-	print("Pausing all FreezableEntities: ", str(foo))
+	#print("Pausing all FreezableEntities: ", str(foo))
 	for thing in Utils.get_all_children("GameBoard pausing FreezableControl and FreezableEntity nodes",self):
-		print(thing)
+		#print(thing)
 		if thing is FreezableControl:
 			thing.pause(foo, true);
 		if thing is FreezableEntity:

@@ -19,9 +19,9 @@ func click_on_piece():
 		
 		#print(raycastHit)
 		if is_instance_valid(raycastHit): 
-			print("RAY HITQ", raycastHit)
+			#print("RAY HITQ", raycastHit)
 			if raycastHit is HurtboxHolder:
-				print("RAY HITQ2", raycastHit)
+				#print("RAY HITQ2", raycastHit)
 				raycastHit.select_piece();
 
 func hover_socket():

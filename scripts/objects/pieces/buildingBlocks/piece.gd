@@ -8,6 +8,7 @@ class_name Piece
 ## Can hold Stats (as per [StatHolder3D]) and [Part]s (TODO).
 
 ########## STANDARD GODOT PROCESSING FUNCTIONS
+
 func _ready():
 	if temporaryPreview:
 		queue_free();
@@ -24,14 +25,17 @@ func _ready():
 		regen_namedActions(); ## Regenerates the actions list
 		super(); #Stat registry.
 		gather_colliders_and_meshes();
+		referencesAssigned = false;
+		
 		is_ready = true;
 
 func _physics_process(delta):
 	if temporaryPreview:
 		queue_free();
-	
 	if ! Engine.is_editor_hint():
 		super(delta);
+		if ! referencesAssigned:
+			return;
 		if not is_paused():
 			fix_sockets(delta);
 			phys_process_collision(delta);
@@ -67,8 +71,14 @@ func stat_registry():
 	## Stuff regarding materials and defense.
 	set_up_material_group_and_damage_immunities()
 
+## When false, [method assign_references] will run as usual. When true, it will return without doing anythinng, as nothing borked.
+var referencesAssigned := false;
 ##This is here for when things get out of whack and some of the export variables disconnect themselves for no good reason.
 func assign_references():
+	if referencesAssigned: return;
+	referencesAssigned = true;
+	regenHostData = true;
+	
 	var allOK = true;
 	if !is_instance_valid(placementCollisionHolder):
 		if is_instance_valid($"PlacementShapes [Leave empty]"):
@@ -108,10 +118,13 @@ func assign_references():
 		else:
 			allOK = false;
 	
+	
 	if not allOK:
 		#print("References for piece ", name, " were invalid. ")
 		queue_free();
+		assert(allOK, "Piece " + pieceName + " didn't have its references assigned properly.")
 
+## Destroys this [Piece]; I.E, calls [method queue_free] after doing some cleanup.
 func destroy(removeFromSocket := true):
 	select(false);
 	clear_stats();
@@ -216,8 +229,11 @@ func phys_process_timers(delta):
 
 func phys_process_pre(delta):
 	super(delta);
-	##Re-assign references, if any are borked.
+	## Re-assign references, if any are borked.
 	assign_references();
+	## Do not proceed if references broke.
+	if ! referencesAssigned:
+		return;
 	## Reset current energy draw.
 	energyDrawCurrent = 0.0;
 	## Calculate weightLoad.
@@ -226,7 +242,6 @@ func phys_process_pre(delta):
 	queue_refresh_incoming_energy();
 
 ################ PIECE MANAGEMENT
-
 @export_category("Piece Data")
 @export var pieceName : StringName = "Piece";
 ##If you don't want to manually type all the bbcode, you can use this to construct the description.
@@ -247,6 +262,7 @@ enum pieceMaterials {
 	PLASTIC,
 	CONCRETE,
 }
+## Adds this to the proper groups based on its material, then adds stats revolving around damage immunities.
 func set_up_material_group_and_damage_immunities():
 	add_to_group("Piece")
 	
@@ -273,36 +289,42 @@ func set_up_material_group_and_damage_immunities():
 	for damageTypeID in DamageData.damageTypes.values():
 		var typeName = str(DamageData.damageTypes.keys()[damageTypeID]);
 		register_stat(str(typeName.capitalize(), " Defense"), defenseMultipliers[damageTypeID] if defenseMultipliers.has(damageTypeID) else 1.0, StatHolderManager.statIconShield, StatHolderManager.statTags.Hull, StatHolderManager.displayModes.IF_MODIFIED)
-
+## Gets the corresponding "x Defense" stat for the given [enum DamageData.damageTypes] in [param damageType],
 func get_damage_type_resistance_stat_from_damageType(damageType : DamageData.damageTypes):
 	var typeName = str(DamageData.damageTypes.keys()[damageType]);
 	var statName = str(typeName.capitalize(), " Defense");
 	return max(0, get_stat(statName));
-func get_general_incoming_damage_multiplier():
+## Gets the general defense num.
+func get_general_defense_multiplier():
 	return max(0, get_stat("General Defense"));
-##This function multiplies damage on an incoming 
+##This function multiplies damage on an incoming attack based on its immunities to that damage, if the damahge amount before running it thru this function is greater than 0.
 func modify_damage_based_on_immunities(damageData : DamageData):
 	var dmg = damageData.get_damage();
-	for type in damageData.tags:
-		var multiplier = get_damage_type_resistance_stat_from_damageType(type);
-		dmg *= multiplier;
-	dmg *= get_general_incoming_damage_multiplier();
-	damageData.damageAmount = dmg;
+	if dmg > 0:
+		for type in damageData.tags:
+			var multiplier = get_damage_type_resistance_stat_from_damageType(type);
+			dmg *= multiplier;
+		dmg *= get_general_defense_multiplier();
+		damageData.damageAmount = dmg;
 	return damageData;
 
 #### Weight
+## The base amount of weight this [Piece] has.
 @export var weightBase := 1.0;
 
-## How much weight this Piece is carrying, including itself.
-var weightLoad := 0.0;
+## How much weight this [Piece] is carrying, including itself and the rest of the tree extending from its [Socket]s.[br]
+var weightLoad := 0.0:
+	get:
+		if regenerateWeightLoad: return get_weight_load();
+		return weightLoad;
 ## If [member regenerateWeightLoad] is true, then [method get_weight_load()] is forced to regenerate [member weightLoad] the next time it is called.
 var regenerateWeightLoad := true;
 
-## Sets [member regenerateWeightLoad] to true. 
+## Sets [member regenerateWeightLoad] to true. See [method get_weight_load].
 func queue_regenerate_weight_load():
 	regenerateWeightLoad = true;
 
-## Gets the base weight stat for this piece.
+## Gets the base weight stat for this Piece alone.
 func get_weight():
 	return get_stat("Weight");
 
@@ -322,13 +344,14 @@ func get_weight_load():
 		regenerateWeightLoad = false;
 	return weightLoad;
 
+## Regenerates and returns an updated [member weightLoad] variable thru [method get_weight_load].
 func get_regenerated_weight_load():
 	queue_regenerate_weight_load();
 	return get_weight_load();
 
 
 @export_category("Technical Data")
-@export var force_visibility := false;  
+@export var force_visibility := false; ## When true, this [Piece] will always be visible in the scene, even if it doesn't have a host to enable its visibility.
 @export var temporaryPreview := false; ## When true, calls [method destroy] at the first possible opportunity.
 ## If this piece fulfills the requirements for being a bot's "body", this is true. You aren't allowed to exit the shop if you don't have a body piece equipped.
 @export var isBody := false;
@@ -341,14 +364,21 @@ func is_sellable() -> bool:
 	return removable and ! isBody;
 func is_buyable() -> bool:
 	return ScrapManager.is_affordable(get_buy_price()) and inShop;
+## The [RObot] that will eventually purchase this [Piece] once the buying animation wears off.[br]
+## See [method submit_queued_buy] and [member buyingAnimationTimer].
 var queuedBuyer : Robot = null;
+## Tries to buy this [Piece] from its [member shopStall] host, then returns the result.[br]
+## Calls [method ShopStall.try_buy_piece()] to gett hat result.
 func try_buy_from_shop() -> bool:
 	if is_instance_valid(shopStall):
 		return shopStall.try_buy_piece();
 	return false;
+## Starts the buying animation and sets [member queuedBuyer] to [param buyer]. Then calls [method start_buying_animation].
 func start_buying(buyer:Robot):
 	queuedBuyer = buyer;
 	start_buying_animation();
+## Ends the buying sequence after the buying animation wears off.[br]
+## If [member queuedBuyer] is still valid by the time this goes off, this calls [method remove_and_add_to_robot_stash] after clearing this [Piece] from its [member shopStall] host, and then sets both [member shopStall] and [member queuedBuyer] to null.
 func submit_queued_buy():
 	if is_instance_valid(queuedBuyer):
 		inShop = false;
@@ -412,7 +442,8 @@ var activeAbilitiesDistributed : Array[AbilityManager] = [];
 var passiveAbilitiesDistributed : Array[AbilityManager] = [];
 
 @export_subgroup("Ability Details")
-@export var hurtboxAlwaysEnabled := false;
+@export var hurtboxAlwaysEnabled := true; ## Determines whether hurtboxes (for taking damage) are always force-enabled.
+@export var hitboxAlwaysEnabled := false; ## Determines whether hitboxes (for dealing damage) are always force-enabled.
 
 @export var input : InputEvent;
 @export var energyDrawPassiveMultiplier := 1.0; ##power drawn each frame, multiplied by time delta. If this is negative, it is instead power being generated each frame.
@@ -494,19 +525,17 @@ func on_contact_cooldown():
 					return true;
 	return false;
 func is_running_cooldowns():
-	if is_equipped():
-		var bot = get_host_robot();
-		if is_instance_valid(bot):
-			return bot.is_running_cooldowns();
+	if equippedByRobot:
+		var bot = hostRobot;
+		return bot.is_running_cooldowns();
 	return false;
 	
 ##Physics process step for abilities.
 func phys_process_abilities(delta):
-	##Un-disable hurtboxes.
-	if hurtboxAlwaysEnabled:
-		disable_hurtbox(false);
 	##Run cooldown behaviors.
+	#GameState.profiler_time_usec_start()
 	cooldown_behavior();
+	#GameState.profiler_time_usec_end("phys_process_abilities cooldown_behavior check (ID %s)" % [statHolderID])
 	##Use the passive ability of this guy.
 	use_looping_passives();
 
@@ -518,7 +547,7 @@ func cooldown_behavior(cooldown : bool = on_cooldown()):
 	else:
 		if disableHitboxesWhileOnCooldown:
 			hitboxCollisionHolder.scale = Vector3.ONE;
-	
+		
 	pass;
 
 func try_sap_energy(amt:float):
@@ -556,6 +585,7 @@ func queue_refresh_incoming_energy():
 	refreshIncomingEnergy = true;
 
 func calc_incoming_energy():
+	if ! refreshIncomingEnergy: return incomingPower;
 	refreshIncomingEnergy = false;
 	if get_host_socket() != null:
 		#print(get_host_socket().get_energy_transmitted())
@@ -608,32 +638,36 @@ func test_energy_available(energyAmount) -> bool:
 
 ## Standard checks shared by [method can_use_active] and [method can_use_passive] that must be passed.
 func standard_ability_checks(action : AbilityManager):
-	## Check that the thing is the correct type.
-	if not (action is AbilityManager):
+	## Fix host data, if a fix is queued.
+	regen_host_data();
+	## Check if we are equipped.
+	if ! equippedByRobot:
+		#print("not equipped to a robot")
 		return false;
 	## Check if the Piece is paused.
 	if is_paused():
+		#print("paused")
 		return false;
 	## Check that the ability is owned by this piece.
 	if get_local_ability(action) == null:
+		#print("local ability is null")
 		return false;
 	## Check if it's disabled.
 	if action.is_disabled(statHolderID):
+		#print("ability is disabled")
 		return false;
 	## Check the bot, and also check aliveness.
-	var bot = get_host_robot();
-	if bot == null:
+	if !hostRobot.is_conscious():
+		#print("host robot is unconscious")
 		return false;
-	else:
-		if !bot.is_conscious():
-			return false;
 	## Check that it's not on cooldown.
 	if on_cooldown_action(action):
+		#print("action is on cooldown")
 		return false;
 	## Passed. Moving on...
 	return true;
 
-## Checks if you can use a given passive ability.
+## Checks if you can use a given ACTIVE ability.
 func can_use_active(action : AbilityManager): 
 	## Check that the thing is valid. If not, get the first ability in the relevant list.
 	if ! is_instance_valid(action):
@@ -643,6 +677,7 @@ func can_use_active(action : AbilityManager):
 			return false
 	## Check all the checks passives and actives share.
 	if not standard_ability_checks(action):
+		#print("Failed something standard")
 		return false;
 	## Check that there's enough energy to run this active.
 	if not test_energy_available(get_active_energy_cost(action)):
@@ -650,7 +685,7 @@ func can_use_active(action : AbilityManager):
 	## You passed!
 	return true;
 
-## Checks if you can use a given passive ability.
+## Checks if you can use a given PASSIVE ability.
 func can_use_passive(passiveAbility : AbilityManager):
 	GameState.profiler_ping_create("Can Use Passive");
 	## Check that the thing is valid. If not, get the first ability in the relevant list.
@@ -714,6 +749,7 @@ func can_use_ability(action):
 func use_looping_passives():
 	var passiveNamesUsed = [];
 	for passiveAbility in passiveAbilitiesDistributed:
+		#print(passiveAbility)
 		if ! passiveNamesUsed.has(passiveAbility.abilityName):
 			if passiveAbility.runType == AbilityManager.runTypes.Default or passiveAbility.runType == AbilityManager.runTypes.LoopingCooldown:
 				passiveNamesUsed.append(passiveAbility.abilityName);
@@ -772,6 +808,7 @@ func register_active_ability(abilityName : String = "Active Ability", abilityDes
 	newAbility.initialized = true;
 	pass;
 
+## Checks if the ability given is inside of this Piece.
 func get_local_ability(action : AbilityManager) -> AbilityManager:
 	if get_all_abilities().has(action):
 		return action;
@@ -916,11 +953,23 @@ func set_selection_mode(newMode : selectionModes = selectionModes.NOT_SELECTED):
 var meshMaterials = {};
 #var meshMaterials = Dictionary[MeshInstance3D, StandardMaterial3D] = {};
 func get_all_mesh_init_materials():
-	for mesh in get_all_meshes():
+	for mesh in allMeshes:
 		meshMaterials[mesh] = mesh.get_active_material(0);
-func get_all_meshes() -> Array:
+
+var regenAllMeshes := true;
+var allMeshes : Array[MeshInstance3D] = []:
+	get:
+		if regenAllMeshes: return get_all_meshes();
+		return allMeshes;
+func get_all_meshes() -> Array[MeshInstance3D]:
+	if ! regenAllMeshes: return allMeshes;
+	regenAllMeshes = false;
 	var meshes = Utils.get_all_children_of_type("Piece getting all meshes",self, MeshInstance3D, self);
-	return meshes;
+	var ret : Array[MeshInstance3D] = [];
+	for mesh in meshes:
+		ret.append(mesh);
+	allMeshes = ret;
+	return ret;
 
 
 
@@ -1002,10 +1051,10 @@ func get_kickback_damage_data(targetPosition := global_position, _damageAmount :
 	var DD = DamageData.new();
 	DD.create(_damageAmount, _knockbackForce, _direction, _damageTypes);
 	DD.attackerRobot = get_host_robot();
-	prints(targetPosition, global_position)
-	print(DD.calc_damage_direction_based_on_targets(global_position, targetPosition, true));
+	#prints(targetPosition, global_position)
+	#print(DD.calc_damage_direction_based_on_targets(global_position, targetPosition, true));
 	DD.calc_damage_direction_based_on_targets(global_position, targetPosition, true);
-	print(DD.damageDirection)
+	#print(DD.damageDirection)
 	return DD;
 
 
@@ -1033,7 +1082,7 @@ func contact_damage(otherPiece : Piece, otherPieceCollider : PieceCollisionBox, 
 
 func initiate_kickback(awayPos : Vector3):
 	var kb = get_kickback_damage_data(awayPos);
-	prints(awayPos, global_position)
+	#prints(awayPos, global_position)
 	hurtbox_collision_from_piece(self, kb);
 
 func move_robot_with_force(direction):
@@ -1110,6 +1159,7 @@ func bullet_hit_hitbox(bullet : Bullet):
 ##Frame timer that updates scale of hitboxes every 3 frames.
 var hitboxRescaleTimer := 1;
 func phys_process_collision(delta):
+	#return;
 	if hitboxRescaleTimer <= 0:
 		if has_host(true, true, true):
 			hitboxRescaleTimer = 3;
@@ -1124,6 +1174,7 @@ func autoassign_child_sockets_to_self():
 		child.hostPiece = self;
 
 func fix_sockets(delta):
+	#return;
 	if is_inside_tree():
 		#autoassign_child_sockets_to_self();
 		if get_selected():
@@ -1205,7 +1256,17 @@ func refresh_and_gather_collision_helpers():
 						dupe.isHurtbox = false;
 						dupe.isHitbox = true;
 						
-	#print(placementCollisionHolder)
+	
+	
+	regenAllHitboxes = true;
+	regenAllHurtboxes = true;
+	
+	##Un-disable hitboxes.
+	if hurtboxAlwaysEnabled:
+		disable_hitbox(false);
+	if hurtboxAlwaysEnabled:
+		disable_hitbox(false);
+	
 	pass;
 
 ##Runs the Reset function on all collision helpers.
@@ -1262,27 +1323,69 @@ func ping_placement_validation():
 		return collided;
 	return true;
 
+## Renegerates [member allHitboxes] if true.
+var regenAllHitboxes := true;
+## A list of all hitboxes - i.e, [PieceCollisionBox]es that are used for DEALING damage.
+var allHitboxes = []:
+	get:
+		if regenAllHitboxes: return get_all_hitboxes();
+		return allHitboxes;
+
+## Gets all hitboxes - i.e, [PieceCollisionBox]es that are used for DEALING damage.
 func get_all_hitboxes():
-	var ret = [];
-	for child in hitboxCollisionHolder.get_children():
-		child.originalHost = self;
-		ret.append(child);
-	return ret;
+	if regenAllHitboxes:
+		regenAllHitboxes = false;
+		var ret = [];
+		for child in hitboxCollisionHolder.get_children():
+			child.originalHost = self;
+			ret.append(child);
+		allHitboxes = ret;
+		regenAllHitboxes = false;
+	return allHitboxes;
 
+## Renegerates [member allHurtboxes] if true.
+var regenAllHurtboxes := true;
+## A list of all hurtboxes - i.e, [PieceCollisionBox]es that are used for TAKING damage.
+var allHurtboxes = []:
+	get:
+		if regenAllHurtboxes: return get_all_hurtboxes();
+		return allHurtboxes;
+
+## Gets all hurtboxes - i.e, [PieceCollisionBox]es that are used for TAKING damage.
 func get_all_hurtboxes():
-	var ret = [];
-	for child in hurtboxCollisionHolder.get_children():
-		child.originalHost = self;
-		ret.append(child);
-	return ret;
-
-var hitboxEnabled = null;
-func disable_hurtbox(foo:bool):
-	if hitboxEnabled != foo:
-		hitboxEnabled = foo;
+	if regenAllHurtboxes:
+		var ret = [];
+		regenAllHitboxes = false;
 		for child in hurtboxCollisionHolder.get_children():
-			if child is PieceCollisionBox:
-				child.disabled = foo;
+			child.originalHost = self;
+			ret.append(child);
+		allHurtboxes = ret;
+		regenAllHurtboxes = false;
+	return allHurtboxes;
+
+## Denotes whether the hitbox is currently enabled. Set to a boolean value via [method disable_hitbox].[br]Also see [member allHitboxes].
+var hitboxEnabled = null;
+
+## Denotes whether the hitbox is currently enabled. Set to a boolean value via [method disable_hurtbox].[br]Also see [member allHurtboxes].
+var hurtboxEnabled = null;
+
+## Disables hurtboxes.
+func disable_hurtbox(foo:bool):
+	if ! hurtboxAlwaysEnabled:
+		if hurtboxEnabled != foo:
+			hurtboxEnabled = foo;
+			for child in allHurtboxes:
+				if child is PieceCollisionBox:
+					child.disabled = foo;
+
+## Disables hitboxes.
+func disable_hitbox(foo:bool):
+	if ! hitboxAlwaysEnabled:
+		if hitboxEnabled != foo:
+			hitboxEnabled = foo;
+			for child in allHurtboxes:
+				if child is PieceCollisionBox:
+					child.disabled = foo;
 
 func get_facing_direction(front := Vector3(0,0,1), addPosition := false):
 	front = front.rotated(Vector3(1,0,0), global_rotation.x);
@@ -1294,21 +1397,18 @@ func get_facing_direction(front := Vector3(0,0,1), addPosition := false):
 	
 	return front;
 
-##Fired whent he camera finds this piece.
-##TODO: Fancy stuff. 
-var selected := false;
+## Set when the [GameCamera] clicks this piece or it is selected from the [PieceInspector]. 
+var selected := false:
+	set(value):
+		if value: set_selection_mode(selectionModes.SELECTED);
+		else:
+			if assignedToSocket:
+				set_selection_mode(selectionModes.NOT_SELECTED);
+		selected = value;
+## 
 func get_selected() -> bool:
-	if selected: set_selection_mode(selectionModes.SELECTED);
-	else:
-		if is_assigned():
-			set_selection_mode(selectionModes.NOT_SELECTED);
 	return selected;
 
-var isPreview := false;
-func is_preview():
-	if get_parent() == null: return false;
-	if assignedToSocket: return false;
-	return isPreview;
 func select(foo : bool = not get_selected()):
 	if foo == selected: return foo;
 	if foo: deselect_other_pieces(self);
@@ -1320,7 +1420,7 @@ func select(foo : bool = not get_selected()):
 	if is_preview() and ! assignedToSocket:
 		return false;
 	selected = foo;
-	var bot = get_host_robot()
+	var bot = hostRobot;
 	if selected: 
 		if bot: bot.selectedPiece = self;
 		if selectionMode == selectionModes.NOT_SELECTED:
@@ -1362,33 +1462,63 @@ func deselect_other_pieces(filterPiece := self):
 
 @export var femaleSocketHolder : Node3D;
 @export var hostSocket : Socket;
-@export var assignedToSocket := false;
-var allSockets : Array[Socket] = []
+@export var assignedToSocket := false; ## Set by [Robot]s when they add/remove this [Piece] to one of their [Socket]s.
+func is_assigned_to_socket():
+	if regenHostData:
+		regen_host_data();
+	return assignedToSocket;
+
+
+## When [code]true[/code], [member allSockets] or [method get_all_female_sockets] will run [method autograb_sockets].
+var regenAllSockets := true;
+var hasNoSockets := false;
+## A list of all [Socket] nodes assigned to this Piece.
+var allSockets : Array[Socket] = []:
+	get:
+		if (regenAllSockets or allSockets.is_empty()) and not hasNoSockets:
+			allSockets = autograb_sockets();
+			if allSockets.is_empty():
+				hasNoSockets = true;
+		return allSockets;
 
 func get_index_of_socket(inSocket : Socket) -> int:
-	return get_all_female_sockets().find(inSocket);
+	return allSockets.find(inSocket);
 func get_socket_at_index(socketIndex : int) -> Socket:
-	var all = get_all_female_sockets();
-	if socketIndex >= 0 and socketIndex < all.size():
-		return all[socketIndex];
+	if socketIndex >= 0 and socketIndex < allSockets.size():
+		return allSockets[socketIndex];
 	return null;
 
+## Using [method Utils.get_all_children], gets every [Socket] that was given to this [Piece] by us, and then sets [member allSockets]. Also sets all the sockets up with this [Piece] as their host.[br]
+## [color=red]Pretty expensive![/color] In theory, this should only ever need to be set a single time at [method _ready], and also whenever the robot changes its Piece stuff around.
 func autograb_sockets():
-	var sockets = Utils.get_all_children_of_type("Piece getting all sockets",self, Socket, self);
+	regenAllSockets = false;
+	var sockets = Utils.get_all_children_of_type("Piece getting all sockets", self, Socket, self);
 	#print(sockets);
-	allSockets = [];
+	var ret : Array[Socket] = [];
 	for socket : Socket in sockets:
-		Utils.append_unique(allSockets, socket);
+		Utils.append_unique(ret, socket);
 		socket.set_host_piece(self);
-		socket.set_host_robot(get_host_robot());
-	return allSockets;
+		if hasHostRobot:
+			socket.set_host_robot(get_host_robot());
+		else:
+			socket.set_host_robot(null);
+	
+	allSockets = ret;
+	return ret;
+
+func set_host_recursive(_robot:Robot, _piece:Piece):
+	hostRobot = _robot;
+	hostPiece = _piece;
+	for socket in allSockets:
+		socket.hostPiece = self;
+		socket.set_host_robot(_robot);
+	regenHostData = true;
 
 ##Returns a list of all sockets on this part.
 func get_all_female_sockets() -> Array[Socket]:
-	if allSockets.is_empty():
-		allSockets = autograb_sockets();
 	return allSockets;
 
+## Adds a [param socket] to [member allSockets]. Never used anywhere, hence the experimental tag.
 func register_socket(socket : Socket):
 	Utils.append_unique(allSockets, socket);
 
@@ -1405,17 +1535,16 @@ func assign_socket(socket:Socket):
 func assign_socket_post(socket:Socket):
 	isPreview = false;
 	assignedToSocket = true;
-	if has_robot_host():
+	regenHostData = true;
+	if hasHostRobot:
 		hostRobot.on_add_piece(self);
 	hurtboxCollisionHolder.set_collision_mask_value(8, false);
 	hostSocket = socket;
 	set_selection_mode(selectionModes.NOT_SELECTED);
 	print("ASSIGNED TO SOCKET? ")
 
-func is_assigned() -> bool:
-	return assignedToSocket;
 
-##Removes this piece from its assigned Socket. Essentially removes it from the [Robot], too.
+## Removes this piece from its assigned Socket. Essentially removes it from the [Robot], too.
 func remove_from_socket():
 	print("REMOVING FROM SOCKET.")
 	if assignedToSocket and is_instance_valid(hostRobot):
@@ -1426,61 +1555,183 @@ func remove_from_socket():
 	assignedToSocket = false;
 	if is_instance_valid(get_parent()):
 		get_parent().remove_child(self);
-	#ping the
 	pass;
 
+## @experimental: Gets the child from [member femaleSocketHolder] with the child index.
 func get_specific_female_socket(index):
 	return femaleSocketHolder.get_child(index);
 
-##Calls [method Socket.remove_occupant()] on this Piece's host [Socket], if it has one.
+## Calls [method Socket.remove_occupant()] on this Piece's host [Socket], if it has one.
 func disconnect_from_host_socket():
-	if is_instance_valid(hostSocket):
+	regen_host_data();
+	if hasHostSocket:
 		hostSocket.remove_occupant();
 	hostSocket = null;
 
-func get_host_socket() -> Socket: 
+
+## Whether [member hostRobot] is valid or not.[br]Regenerated when [member regenHostData] is true.
+var hasHostSocket := false:
+	get:
+		regen_host_data();
+		return hasHostSocket; 
+## @deprecated: Returns hasHostSocket.
+func has_socket_host():
+	regen_host_data();
+	return hasHostSocket;
+## @deprecated: Returns [method hostSocket].
+func get_host_socket() -> Socket:
+	regen_host_data();
+	if hasHostSocket:
+		return hostSocket;
 	if is_instance_valid(hostSocket):
 		return hostSocket;
 	else:
 		return null;
 
+## Whether [member hostPiece] is valid or not.[br]Regenerated when [member regenHostData] is true.
+var hasHostPiece := false: 
+	get:
+		regen_host_data();
+		return hasHostPiece; 
+## Gets [member hostSocket]'s [method Socket.get_host_piece] if [member hasHostSocket] is [code]true[/code].
 func get_host_piece() -> Piece:
-	if get_host_socket() == null:
-		return null;
-	else:
-		return get_host_socket().get_host_piece();
+	if regenHostData: regen_host_data();
+	if hasHostSocket:
+		return hostSocket.get_host_piece();
+	return null;
 
-func get_host_robot(forceReturnRobot := false) -> Robot:
-	if forceReturnRobot: return hostRobot;
+## Whether [member hostRobot] is valid or not.[br]Regenerated when [member regenHostData] is true.
+var hasHostRobot := false: 
+	get:
+		regen_host_data();
+		return hasHostRobot; 
+## @deprecated: Returns hasHostRobot.
+func has_robot_host():
+	regen_host_data();
+	return hasHostRobot;
+
+## Whether [member hostRobot] is a [Robot_PLayer] or not.[br]Regenerated when [member regenHostData] is true.
+var hostRobotIsPlayer := false:
+	get:
+		regen_host_data();
+		return hostRobotIsPlayer; 
+## @deprecated: Returns hostRobotIsPlayer.
+func host_is_player() -> bool:
+	regen_host_data();
+	return hostRobotIsPlayer;
+
+## Whether [member hostRobot] is a [Robot_Enemy] or not.[br]Regenerated when [member regenHostData] is true.
+var hostRobotIsEnemy := false:
+	get:
+		regen_host_data();
+		return hostRobotIsEnemy; 
+## @deprecated: Returns hostRobotIsEnemy.
+func host_is_enemy() -> bool:
+	regen_host_data();
+	return hostRobotIsEnemy;
+
+## Whether the piece is assigned to a socket on a [Robot].[br]Regenerated when [member regenHostData] is true.
+var equippedByRobot := false: 
+	get:
+		regen_host_data();
+		return equippedByRobot; 
+## @deprecated: Returns equippedByRobot.
+func is_equipped():
+	regen_host_data();
+	return equippedByRobot;
+
+## Whether the piece is assigned to a socket on a [Robot] and that robot is a [Robot_Player].[br]Regenerated when [member regenHostData] is true.
+var equippedByPlayer := false:
+	get:
+		regen_host_data();
+		return equippedByPlayer; 
+func is_equipped_by_player():
+	regen_host_data();
+	return equippedByPlayer;
+
+## Whether the piece is assigned to a socket on a [Robot] and that robot is a [Robot_Enemy].[br]Regenerated when [member regenHostData] is true.
+var equippedByEnemy := false: 
+	get:
+		regen_host_data();
+		return equippedByEnemy; 
+func is_equipped_by_enemy():
+	if regenHostData:
+		regen_host_data();
+	return equippedByEnemy;
+
+## Whether this [Piece] is a preview on a [Socket]. Set by a [Socket] when adding it as a preview.
+var isPreview := false;
+## Returns [member isPreview], unless it doesn't have a parent node or it is [member assignedToSocket], where it will return [code]false[/code].
+func is_preview():
+	if get_parent() == null: return false;
+	if assignedToSocket: return false;
+	return isPreview;
+
+## Regenerates a large number of "host" variables when [code]true[/code]. See [method regen_host_data].
+var regenHostData := true; 
+## Regenerates a large number of "host" variables.
+## Called whenever a "host" variable is called, but returns immediately if [member regenHostData] is [code]not true[/code], unless [param force] IS [code]true[/code].[br]
+## Regenerates:[br]- [member hasHostSocket][br]- [member hasHostPiece][br]- [member hostPiece][br]- [member hasHostRobot][br]- [member hostRobotIsPlayer][br]- [member hostRobotIsEnemy][br]- [member equippedByRobot][br]- [member equippedByPlayer][br]- [member equippedByEnemy][br]- (more to come, probably)
+func regen_host_data(force := false):
+	if force: regenHostData = true;
+	if ! regenHostData: return;
+	GameState.profiler_ping_create("Regenerating Host Data for Piece");
+	regenHostData = false;
+	
+	## Host socket is easy-ish.
+	hasHostSocket = is_instance_valid(get_host_socket());
+	
+	## Host piece requires us to be assigned to a socket, otherwise things like previews break.
+	hasHostPiece = false;
+	if hasHostSocket and assignedToSocket:
+		if ! is_instance_valid(hostPiece):
+			if is_instance_valid(hostSocket.get_host_piece()) or hostSocket.dontUsePieceForRobotHost:
+				hasHostPiece = true;
+				hostPiece = hostSocket.hostPiece;
+			else:
+				hostPiece = null;
+		else:
+			hasHostPiece = true;
+	
+	## Host robot data is almost guaranteed if we have a host piece and socket, but we need to check anyway.
+	hasHostRobot = false;
+	hostRobotIsPlayer = false;
+	hostRobotIsEnemy = false
+	if is_instance_valid(hostRobot):
+		hasHostRobot = true;
+		
+		if hostRobot is Robot_Enemy:
+			hostRobotIsEnemy = true;
+		elif hostRobot is Robot_Player:
+			hostRobotIsPlayer = true;
+	
+	equippedByRobot = hasHostRobot and assignedToSocket;
+	equippedByPlayer = equippedByRobot and hostRobotIsPlayer;
+	equippedByEnemy = equippedByRobot and hostRobotIsEnemy;
+
+
+## Returns whether this piece has a robot host.[br]
+## If [param forceReturnHostRobot] is true, then it directly returns [member hostRobot]; Otherwise, it returns whether [get_host_socket()] returns valid.
+func get_host_robot(forceReturnHostRobot := false) -> Robot:
+	regen_host_data();
+	
+	if forceReturnHostRobot: return hostRobot;
 	
 	if get_host_socket() == null:
 		return null;
 	else:
 		return hostRobot;
 
-
-func has_socket_host():
-	return is_instance_valid(get_host_socket());
-func is_assigned_to_socket():
-	return has_socket_host() and assignedToSocket;
-func has_robot_host():
-	return is_instance_valid(get_host_robot());
-func host_is_player() -> bool:
-	return has_robot_host() and (get_host_robot() is Robot_Player);
-func host_is_enemy() -> bool:
-	return has_robot_host() and (get_host_robot() is Robot_Enemy);
-func is_equipped():
-	return is_assigned_to_socket() and has_robot_host();
-func is_equipped_by_player():
-	return is_assigned_to_socket() and host_is_player();
-
 ##Returns true if the part has both a host socket and a host robot.
 func has_host(getSocket := true, getRobot := true, getSocketAssigned := true):
-	if getSocketAssigned and (not is_assigned_to_socket()):
+	if regenHostData:
+		regen_host_data();
+	
+	if getSocketAssigned and (not assignedToSocket):
 		return false;
-	if getSocket and (not has_socket_host()):
+	if getSocket and (not hasHostSocket):
 		return false;
-	if getRobot and (not has_robot_host()):
+	if getRobot and (not hasHostRobot):
 		return false;
 	return true;
 
@@ -1489,41 +1740,54 @@ func assign_selected_socket(socket):
 	deselect_all_sockets();
 	socket.select();
 	selectedSocket = socket;
-	##TODO: Hook this into giving that socket a new Piece.
 
 func deselect_all_sockets():
 	for socket in get_all_female_sockets():
 		socket.select(false);
 
-var allPieces : Array[Piece] = [];
+## A list of all Pieces attached to this Piece through the grand connection tree.
+var allPieces : Array[Piece] = []:
+	get:
+		if regenAllPieces or allPieces.is_empty():
+			allPieces = get_all_pieces_recursive();
+			allPieces.erase(self);
+		return allPieces;
+## WHen set to [code]true[/code], [member allPieces] or [method get_all_pieces()] will call [method get_all_pieces_recursive].
+var regenAllPieces := true;
 func get_all_pieces() -> Array[Piece]:
-	if allPieces.is_empty():
-		return get_all_pieces_regenerate();
 	return allPieces;
 
 var allPiecesLoops := 0;
+##@deprecated: Use [method get_all_pieces_recursive] instead.
 func get_all_pieces_regenerate() -> Array[Piece]:
 	var ret : Array[Piece] = []
 	prints("ALL FEMALE SOCKETS ON ",pieceName,": ", get_all_female_sockets())
 	for socket : Socket in get_all_female_sockets():
 		allPiecesLoops += 1;
-		#print("ALL PIECES LOOOPS: ", allPiecesLoops);
 		var occupant = socket.get_occupant();
 		if occupant != null:
-			#print("ALL PIECES OCCUPANT :", occupant, " SELF : ", self)
 			if occupant != self:
 				ret.append(occupant);
-	#print("ALL PIECES REGENRATED: ", ret)
 	return ret;
 
+## Gets a list of all pieces connected to this, and any pieces connected to them.[br]Also calls [method queue_regenerate_weight_load] and sets [member regenHostData] to [code]true[/code].
 func get_all_pieces_recursive() -> Array[Piece]:
 	var ret : Array[Piece] = [self];
+	regenHostData = true;
+	regenAllSockets = true;
+	
 	if is_ready:
-		for socket in get_all_female_sockets():
+		for socket in allSockets:
 			if is_instance_valid(socket):
 				var occupant = socket.get_occupant();
-				if is_instance_valid(occupant):
+				if is_instance_valid(occupant) and occupant != self:
 					Utils.append_array_unique(ret, occupant.get_all_pieces_recursive())
+	
+	allPieces = ret;
+	
+	regenHostData = true;
+	
+	queue_regenerate_weight_load();
 	
 	return ret;
 
@@ -1545,8 +1809,10 @@ func remove_and_add_to_robot_stash(botOverride : Robot = get_host_robot(true), f
 				SND.play_sound_nondirectional("Zap.Short", 0.7, randomSpeed_2);
 	
 	deselect();
+	
 	##Stash everything below this.
-	for subPiece in get_all_pieces_regenerate():
+	for subPiece in allPieces:
+		assert(subPiece != self, "Piece " + pieceName + " added itself to allPieces.")
 		subPiece.remove_and_add_to_robot_stash(botOverride, fancy, true);
 	engine_update_part_visibility(false);
 	for part in engine_get_all_parts():
@@ -1558,6 +1824,9 @@ func remove_and_add_to_robot_stash(botOverride : Robot = get_host_robot(true), f
 		bot.add_something_to_stash(self);
 		if bot is Robot_Player:
 			bot.queue_update_engine_with_selected_or_pipette();
+	
+	hostSocket = null;
+	hostRobot = null;
 
 func get_stash_button_name(showTree := false, prelude := "") -> String:
 	var ret = prelude + pieceName;
@@ -1837,11 +2106,11 @@ func get_selected_part():
 	return null;
 
 ## Deletes all [Part]s contained within [member engineSlots]. Optionally [param destroy]s or [param stash]es the [Part] to the host robot.
-func engine_clear(destroy := true, stash := true):
+func engine_clear(_destroy := true, stash := true):
 	regeneratePartList = true;
 	while listOfParts.size() > 0:
 		for part in listOfParts:
-			remove_part(part, destroy, TYPE_NIL, TYPE_NIL, stash);
+			remove_part(part, _destroy, TYPE_NIL, TYPE_NIL, stash);
 	regeneratePartList = true;
 
 func engine_update_part_visibility(_visible := true):

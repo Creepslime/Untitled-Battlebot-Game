@@ -61,7 +61,8 @@ func update_outline():
 	if FileAccess.file_exists(img):
 		outlineBox.texture = load(img);
 	else:
-		print(img, "does not exist dummy")
+		#print(img, "does not exist dummy")
+		pass;
 	
 	if isPassive:
 		if disabled:
@@ -235,21 +236,24 @@ func _on_assign_pressed():
 			pass;
 		else:
 			if is_instance_valid(bot):
-				print("ability yeees")
+				#print("ability yeees")
 				if selected:
 					bot.clear_ability_pipette();
 				else:
 					bot.set_ability_pipette(referencedAbility.get_ability_data(referencedThing.statHolderID));
 				pass;
 			else:
-				print("ability what")
+				#print("ability what")
+				pass;
 		update_outline();
 	pass # Replace with function body.
 
 func select(foo):
 	if foo:
-		print("ability selecting")
+		#print("ability selecting")
+		pass;
 	else:
-		print("ability unselecting")
+		#print("ability unselecting")
+		pass;
 	selected = foo;
 	update_outline();

@@ -92,7 +92,6 @@ pieceDescription = "Provides a small amount of protection."
 weightBase = 1.25
 force_visibility = true
 scrapCostBase = 9
-hurtboxAlwaysEnabled = true
 meshesHolder = NodePath("Meshes")
 hitboxCollisionHolder = NodePath("HitboxShapes [Leave empty]")
 hurtboxCollisionHolder = NodePath("HurtboxShapes [Leave empty]")

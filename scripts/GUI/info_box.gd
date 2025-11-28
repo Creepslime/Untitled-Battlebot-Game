@@ -143,7 +143,7 @@ func clear_info(thingToCheck = null):
 		#rlbl_desc.text = "[color=e0dede]No [color=ffffff]Description [color=e0dede]Found.";
 		rlbl_desc.text = "[color=e0dede]Closing...";
 		var col = TextFunc.get_color("lightred")
-		print_rich("[color="+str(col.to_html())+"]test")
+		#print_rich("[color="+str(col.to_html())+"]test")
 		
 		clear_abilities();
 		clear_stats();
@@ -465,11 +465,11 @@ func _on_remove_button_pressed():
 func _on_move_button_toggled(toggled_on):
 	if ref_is_part():
 		if toggled_on:
-			print("MOVE MODE BUTTON PRESSED DOWN")
+			#print("MOVE MODE BUTTON PRESSED DOWN")
 			partRef.robot_move_mode(true);
 			pass;
 		else:
-			print("MOVE MODE BUTTON PRESSED UP")
+			#print("MOVE MODE BUTTON PRESSED UP")
 			partRef.robot_move_mode(false);
 			pass;
 	pass # Replace with function body.

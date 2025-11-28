@@ -33,11 +33,10 @@ func _ready():
 	if ! Engine.is_editor_hint():
 		if invisibleInGame:
 			$FemaleConnector.hide();
-		if is_instance_valid(hostPiece):
-			hostPiece.register_socket(self);
-		else:
-			#queue_free();
-			pass;
+		#if is_instance_valid(hostPiece):
+			#hostPiece.register_socket(self);
+		#else:
+			#pass;
 		collisionSphere.shape = collisionSphere.shape.duplicate();
 		collisionSphere.shape.radius = collisionScale;
 		initialRotation = rotation;
@@ -53,14 +52,14 @@ func load_startup_data(data, robot : Robot):
 		rotation = rot;
 	var occupantData = data["occupant"];
 	if occupantData != null and not occupantData is String:
-		print("OCCUPANT DATA: ", occupantData)
+		#print("OCCUPANT DATA: ", occupantData)
 		var occupantPath = occupantData.keys()[0]
 		#print("OCCUPANT PATH: ", occupantPath)
 		var occupantDataForwarded = occupantData[occupantPath];
 		#print("OCCUPANT DATA TO FORWARD: ", occupantDataForwarded)
 		var result = add_occupant_from_scene_path(occupantPath);
 		if result != null:
-			print(result);
+			#print(result);
 			result.load_startup_data(occupantDataForwarded, robot);
 	if get_occupant() == null:
 		reset_rotation();
@@ -68,6 +67,7 @@ func load_startup_data(data, robot : Robot):
 
 ########################
 
+## Adds an [member occupant] from a filepath. 
 func add_occupant_from_scene_path(scenePath : String):
 	if FileAccess.file_exists(scenePath):
 		var newPieceScene = load(scenePath);
@@ -80,9 +80,12 @@ func add_occupant_from_scene_path(scenePath : String):
 				return newPiece;
 	return null;
 
+## Removes the current [member occupant]. Optionally [param delete]s it.
 func remove_occupant(delete := false):
-	if is_instance_valid(occupant): remove_child(occupant);
-	if delete and is_instance_valid(occupant): occupant.destroy(false);
+	if is_instance_valid(occupant): 
+		remove_child(occupant);
+		if delete: 
+			occupant.destroy(false);
 	occupant = null;
 	pass
 
@@ -109,6 +112,7 @@ func add_occupant(newPiece : Piece, manual := false):
 		newPiece.assignedToSocket = true;
 		$Selector.hide();
 
+## Gets the amount of energy flowing through this socket from its host into its occupant.
 func get_energy_transmitted():
 	if hostPiece != null:
 		return hostPiece.get_outgoing_energy();
@@ -123,7 +127,7 @@ func is_available():
 	if dontUsePieceForRobotHost:
 		available = occupant == null and is_valid() and get_preview_placeable();
 	else:
-		available = occupant == null and is_valid() and get_preview_placeable() and (get_host_piece() != null) and (get_host_piece().is_assigned());
+		available = occupant == null and is_valid() and get_preview_placeable() and (get_host_piece() != null) and (get_host_piece().assignedToSocket);
 	#print(available)
 	return available;
 
@@ -133,7 +137,7 @@ func is_valid():
 	if dontUsePieceForRobotHost:
 		valid = is_instance_valid(get_robot());
 	else:
-		valid = is_instance_valid(get_robot()) and get_host_piece() != null and get_host_piece().is_assigned();
+		valid = is_instance_valid(get_robot()) and get_host_piece() != null and hostPiece.assignedToSocket;
 	#print(valid)
 	return valid;
 
@@ -142,8 +146,10 @@ func set_host_piece(piece : Piece):
 func get_host_piece() -> Piece:
 	return hostPiece;
 
-func set_host_robot(robot: Robot):
-	hostRobot = robot;
+func set_host_robot(_robot: Robot):
+	hostRobot = _robot;
+	if occupant != null:
+		occupant.set_host_recursive(_robot, hostPiece);
 
 func get_robot(forcePieceToGiveHostRobot := false) -> Robot:
 	if (!dontUsePieceForRobotHost) and (get_host_piece() == null): return null;

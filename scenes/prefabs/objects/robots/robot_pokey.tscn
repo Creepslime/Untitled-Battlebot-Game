@@ -12,10 +12,9 @@ bounce = 0.3
 [sub_resource type="SphereShape3D" id="SphereShape3D_wy0j3"]
 
 [node name="Robot_Pokey" type="Node3D" node_paths=PackedStringArray("meshes", "bodySocket", "treads", "body")]
-visible = false
 script = ExtResource("1_gpm28")
 frontRayDistance = 1.5
-rayCheckFrequency = 0.25
+rayCheckFrequency = 2.0
 meshes = NodePath("Body/Meshes")
 bodySocket = NodePath("Body/Meshes/Socket")
 robotNameInternal = "Pokey"

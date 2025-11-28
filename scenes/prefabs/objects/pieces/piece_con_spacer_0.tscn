@@ -83,7 +83,6 @@ pieceDescription = "[color=ffffffff]Serves no purpose other than to provide [col
 weightBase = 0.5
 force_visibility = true
 scrapCostBase = 4
-hurtboxAlwaysEnabled = true
 meshesHolder = NodePath("Meshes")
 hitboxCollisionHolder = NodePath("HitboxShapes [Leave empty]")
 hurtboxCollisionHolder = NodePath("HurtboxShapes [Leave empty]")
