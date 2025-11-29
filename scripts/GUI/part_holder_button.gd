@@ -51,7 +51,7 @@ func update_gfx():
 		
 		var space = true;
 		var free = true;
-		var piece = parent.referenceCurrent if parent.referenceCurrent is Piece else null;
+		var piece = parent.referenceCurrent if parent.referenceCurrent != null else null;
 		if is_instance_valid(piece):
 			var hostRobot = piece.get_host_robot();
 			if is_instance_valid(hostRobot): 

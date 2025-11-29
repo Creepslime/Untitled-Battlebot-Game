@@ -183,9 +183,9 @@ texture = ExtResource("12_rf4fe")
 
 [node name="EmptyHealth" parent="EnergyBar_Case/EnergyBar/SubViewport/BarHolder" index="1"]
 offset_left = 0.0
-offset_top = -0.223198
+offset_top = -2.16361
 offset_right = 0.0
-offset_bottom = -0.223198
+offset_bottom = -2.16361
 texture = ExtResource("13_x17s8")
 
 [node name="Lbl_Health" parent="EnergyBar_Case/EnergyBar/SubViewport/BarHolder" index="2"]

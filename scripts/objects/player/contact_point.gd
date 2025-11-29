@@ -3,6 +3,10 @@ extends RayCast3D
 
 class_name ContactPoint
 
+func _ready():
+	set_collision_mask_value(1, true);
+	set_collision_mask_value(11, true);
+
 func is_on_floor():
 	if is_colliding():
 		var col = get_collider();

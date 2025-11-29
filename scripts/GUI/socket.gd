@@ -370,7 +370,7 @@ func set_occupant_as_preview(): ##TODO: This.
 	pass
 
 func get_occupant() -> Piece:
-	if is_instance_valid(occupant):
+	if is_instance_valid(occupant) and ! occupant.is_queued_for_deletion():
 		if ! occupant.assignedToSocket:
 			add_occupant(occupant, true)
 		return occupant;

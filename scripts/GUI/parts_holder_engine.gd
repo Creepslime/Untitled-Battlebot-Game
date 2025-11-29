@@ -227,6 +227,6 @@ func _on_engine_button_pressed(x, y):
 				var part = robot.partMovementPipette;
 				robot.part_move_mode_enable(part, false);
 				## After we've ensured all the bullshit is correct... disable move mode on the robot, and add the Part to the Piece.
-				referenceCurrent.engine_add_part(part, Vector2i(x, y), true);
+				referenceCurrent.engine_add_or_import_part(part, Vector2i(x, y), true);
 				part.show();
 	pass # Replace with function body.

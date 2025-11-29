@@ -243,8 +243,11 @@ func update_selection(thing):
 	else:
 		#print("Valid thing to inspect. ", thing)
 		if thing == inspectedThing: return;
-		if ! get_current_mode() == inspectorModes.PART or get_current_mode() == inspectorModes.PIECE and thing == inspectedThing:
+		if ! (get_current_mode() == inspectorModes.PART or get_current_mode() == inspectorModes.PIECE) and thing == inspectedThing:
 			#prints("Attempting opening inspector with thing",thing)
+			open_inspector(thing);
+			return;
+		else:
 			open_inspector(thing);
 			return;
 

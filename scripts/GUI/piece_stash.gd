@@ -1,4 +1,4 @@
-@icon ("res://graphics/images/class_icons/inspector.png")
+@icon ("res://graphics/images/class_icons/stash.png")
 extends Control
 
 class_name PieceStash
@@ -58,6 +58,9 @@ func regenerate_list(robotToReference : Robot = get_current_robot(), mode : mode
 			var ref = button.get_reference();
 			if ref != null:
 				buttonReferences[ref] = button;
+				
+				if ! button.pressable:
+					button.revive();
 	if is_robot_being_referenced():
 		var stash = [];
 		## Get the stash based on the modes.
@@ -86,7 +89,7 @@ func regenerate_list(robotToReference : Robot = get_current_robot(), mode : mode
 		## Delete all of the buttons still in the buttonReferences table, as they were not removed earlier when checking if their contents were in the new stash.
 		for item in buttonReferences.keys():
 			var button = buttonReferences[item];
-			button.queue_free();
+			button.kill();
 		
 		## Spawn buttons that need represented now.
 		for item in newButtons:

@@ -19,7 +19,7 @@ variantsFromScene = {
 "Empty": NodePath("Ob_Empty")
 }
 
-[node name="StaticBody3D" type="StaticBody3D" parent="." groups=["World", "WorldWall"]]
+[node name="StaticBody3D" type="StaticBody3D" parent="." groups=["Concrete", "Driveable", "World", "WorldWall"]]
 collision_layer = 1288
 collision_mask = 1024
 

@@ -5,30 +5,35 @@ extends StatHolderControl
 class_name Part
 
 
-var invPosition := Vector2i(-9,-9);
-var partBounds : Vector2i;
-var inPlayerInventory := false;
-var ownedByPlayer := false;
-var invHolderNode : Control;
-var thisBot : Combatant;
+var invPosition := Vector2i(-9,-9); ## The position in the engine this Part is.
+var partBounds : Vector2i; ## The tiles this Part occupies in an Engine.
+var inPlayerInventory := false; ## Set when this Part gets added to the shop, or added to the player robot.
+var ownedByPlayer := false; ## Set when the player buys this Part and adds it to their pieces or stash.
+var invHolderNode : Control; ## The control this is reparented to.
+var thisBot : Combatant; ## @deprecated
 
-@export_group("References")
+@export_group("References (internal)")
 @export var textureBase : Control;
 @export var textureIcon : TextureRect;
 @export var tilemaps : PartTileset;
+@export var buttonsHolder : PartButtonHolder;
+@export_group("References (external)")
 @export var inventoryNode : Inventory; ##@deprecated
 @export var hostPiece : Piece;
 @export var hostShopStall : ShopStall;
 @export var hostRobot : Robot:
 	get:
-		if is_instance_valid(hostPiece):
-			var _bot = hostPiece.get_host_robot();
-			if is_instance_valid(_bot):
-				hostRobot = _bot;
-		elif is_instance_valid(hostShopStall):
-			var _bot = hostShopStall.player;
-			if is_instance_valid(_bot):
-				hostRobot = _bot;
+		#if hostRobot != null:
+			#return hostRobot;
+		#if is_instance_valid(hostPiece):
+			#var _bot = hostPiece.hostRobot;
+			#if is_instance_valid(_bot):
+				#hostRobot = _bot;
+		#elif is_instance_valid(hostShopStall):
+			#var _bot = hostShopStall.player;
+			#if is_instance_valid(_bot):
+				#hostRobot = _bot;
+		#hostRobot = null;
 		return hostRobot;
 
 var selected := false;
@@ -118,14 +123,19 @@ func inventory_vanity_setup():
 
 ##Adds the buttons that let you click the part and move it around and stuff. Should theoretically only ever run if placed into the inventory of the player.
 func _populate_buttons():
+	buttonsHolder.clear_buttons();
+	
 	for index in dimensions:
-		var button = %Buttons.buttonPrefab.instantiate();
-		%Buttons.add_child(button);
+		
+		var button = buttonsHolder.buttonPrefab.instantiate();
+		buttonsHolder.add_child(button);
 		
 		button.part = self;
-		button.buttonHolder = %Buttons;
+		button.buttonHolder = buttonsHolder;
 		
 		button.set_deferred("position", index * 48);
+	
+	buttonsHolder.regenButtons = true;
 
 func _get_part_type() -> partTypes:
 	return myPartType;
@@ -154,13 +164,24 @@ func start_buying(robot : Robot):
 	hostShopStall.partRef = null;
 	hostShopStall = null;
 	hostRobot = robot;
+	ownedByPlayer = true;
 	SND.play_purchase_sound();
 	remove_and_add_to_stash(robot);
+
+func is_sellable():
+	return inPlayerInventory and hostShopStall == null;
+
+func try_sell():
+	if is_sellable():
+		ScrapManager.add_scrap(_get_sell_price(), "Sell Piece");
+		destroy();
+		return true;
+	return false;
 
 func remove_and_add_to_stash(robotOverride := hostRobot):
 	hostRobot = robotOverride;
 	if is_instance_valid(hostPiece):
-		hostPiece.remove_part(self, false, false, false, true);
+		hostPiece.engine_remove_part(self, false, false, false, true);
 	else:
 		hostRobot.add_something_to_stash(self);
 
@@ -177,6 +198,10 @@ func get_engine_hud() -> PartsHolder_Engine:
 	if is_equipped():
 		return hostPiece.get_host_robot().engineViewer;
 	return null;
+
+func detatch_from_engine():
+	if is_equipped():
+		hostPiece.engine_remove_part(self);
 
 func _get_part_bounds() -> Vector2i:
 	var highestX = 1; 
@@ -235,37 +260,63 @@ func _process(delta):
 		if is_instance_valid(get_parent()):
 			get_parent().remove_child(self);
 		textureBase.hide();
-		%Buttons.disable();
+		buttonsHolder.disable();
+
+func phys_process_timers(delta):
+	if ! is_paused():
+		selectionCooldown -= 1;
+	pass;
 
 ## Acts to actually set [member selected].
 func _on_buttons_on_select(foo:bool):
-	#print("Part button being selected with foo ",foo)
 	select(foo);
 	pass # Replace with function body.
 
+var selectionCooldown := 5;
+
 func select(foo:bool):
 	#prints(partName,"selecting: ", foo)
-	%Buttons.set_pressed(foo, false);
-	robot_move_mode(false)
 	
 	if ! selected == foo: 
+		## Unset move mode.
+		robot_move_mode(false);
+		
+		## Check if we're on selection cooldown. TESTING: Only proceed if we're unselecting.
+		if foo:
+			if selectionCooldown > 0: return;
+		elif !foo:
+			if selectionCooldown > 0: pass;
+		
+		## Set the selection cooldown, and log the old one.
+		var selectionCooldownPre = selectionCooldown;
+		selectionCooldown = 3;
+		
+		## Set selected to the new value.
 		selected = foo;
+		
 		if is_instance_valid(hostRobot):
 			if foo:
 				if hostRobot.selectedPart != self:
 					#print("Selecting part from hostRobot in Part.select")
 					hostRobot.select_part(self, foo);
 			else:
-				#print("Deselecting all parts from hostRobot in Part.select")
 				hostRobot.deselect_all_parts();
+		## 
 		if is_equipped():
 			if foo:
 				if !hostPiece.get_selected():
 					hostPiece.select();
 					hostPiece.select_part(self);
+		
+		## Set the pressed state of the buttons after we are certain of our selected status.
+		call_deferred("buttons_gfx_update")
+
+func buttons_gfx_update():
+	#print("buttons_gfx_update with current selected status:", selected)
+	buttonsHolder.call_deferred("set_pressed", selected, false)
 
 func move_mode(enable:bool):
-	%Buttons.move_mode_enable(enable);
+	buttonsHolder.move_mode_enable(enable);
 
 func robot_move_mode(enable:bool):
 	if is_instance_valid(hostRobot):
@@ -284,7 +335,7 @@ func destroy():
 	queue_free();
 
 func disable(_disabled:=true):
-	%Buttons.disable(_disabled);
+	buttonsHolder.disable(_disabled);
 
 ####### Hooks-adjacent stuff.
 
@@ -464,12 +515,13 @@ func mods_apply(propertyName : String, add:= 0.0, flat := 0.0, mult := 0.0):
 		
 	return false;
 
+## Runs [method mods_reset], then [method mods_apply_all].
 func mods_reset_and_apply_all():
 	#print_debug(partName, " resetting all mods and applying them")
 	mods_reset();
 	mods_apply_all();
 
-##Applies all of the modifiers in priority order gathered from [Part.prioritized_mods].
+## Applies all of the modifiers in priority order gathered from [method Part.prioritized_mods].
 func mods_apply_all():
 	mods_validate();
 	#print(partName, " incoming modifiers: ",incomingModifiers)
@@ -532,7 +584,6 @@ func get_inventory_slot_priority():
 	if slotsDict.has(invPosition):
 		return slotsDict[invPosition];
 	return 0;
-
 
 ##A dictionary whose sole purpose is as reference for [Part.get_inventory_slot_priority].
 const slotsDict := {

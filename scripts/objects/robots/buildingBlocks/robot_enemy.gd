@@ -115,9 +115,11 @@ func phys_process_detection(delta):
 func phys_process_motion(delta):
 	#return;
 	if not is_frozen():
+		GameState.profiler_time_msec_start("Checking if player is behind")
 		if chasesPlayerInReverse:
 			if player_is_behind():
 				put_in_reverse();
+		GameState.profiler_time_msec_end("Checking if player is behind")
 	super(delta);
 
 var playerInRaySight := false; ## Updated in [method update_if_ray_colliding_with_player]. True if [member playerRay] was colliding with the player that frame.
@@ -253,72 +255,6 @@ func set_pointer_to_look_at_movement_vector(vectorIn := movementVector):
 ## [color=pink][i]This is probably pretty pricey since it deals with raycasts.
 func rotate_movement_vector_to_dodge_walls_and_move_towards_player(invector : Vector2 = get_basic_player_chase_vector(), maxRotation := PI * 2/3, degreeStep := 20.) -> Vector2:
 	return invector.rotated(rotation_to_dodge_walls_and_move_towards_player(invector, maxRotation, degreeStep));
-	var outvector = invector;
-	if !(wallInWayOfPlayer or enemyInWayOfPlayer): 
-		if playerInRaySight: return outvector; ## If the player's in sight, ignore this function.
-	
-	var amtOfRotation = 0.;
-	var angleToPlayer = get_angle_to_player_from_front();
-	var factor = 1;
-	
-	## Determine factor based on which angle to them would be closest.
-	if angleToPlayer < 0:
-		factor = -1;
-	## Loop over the rotation until it's reached its maximum.
-	while (
-		abs(amtOfRotation) < abs(maxRotation)
-		and 
-		(wallInWayOfPlayer or enemyInWayOfPlayer)
-	):
-		amtOfRotation += deg_to_rad(degreeStep * factor);
-		
-		## If this first check passed, we're done here.
-		if update_if_ray_colliding_with_player(amtOfRotation):
-			outvector = outvector.rotated(amtOfRotation);
-			return outvector;
-	
-	## If the player ray still isn't in sight, check the other way.
-	## Save the old result.
-	var firstAmt = amtOfRotation;
-	## Flip the factor, reset the amount, and try the while again.
-	factor *= -1;
-	amtOfRotation = 0.0;
-	
-	## Check the other way.
-	while (
-		abs(amtOfRotation) < abs(maxRotation)
-		and 
-		(wallInWayOfPlayer or enemyInWayOfPlayer)
-		and 
-		abs(amtOfRotation) < abs(firstAmt) ## Don't keep looping if the next loop would bring us over the original check.
-	):
-		amtOfRotation += deg_to_rad(degreeStep * factor);
-		
-		## If this second check passed, then we're done here.
-		if update_if_ray_colliding_with_player(amtOfRotation):
-			outvector = outvector.rotated(amtOfRotation);
-			return outvector;
-	
-	var secondAmt = amtOfRotation;
-	
-	#outvector = outvector.rotated(amtOfRotation);
-	## If the new amt is less than the first, rotate using it.
-	if abs(secondAmt) < abs(firstAmt):
-		outvector = outvector.rotated(secondAmt);
-		return outvector;
-	## If the first amt is less than the new, rotate using it.
-	elif abs(secondAmt) > abs(firstAmt):
-		outvector = outvector.rotated(firstAmt);
-		return outvector;
-	
-	## If neither of the checks passed, and both angles are equal, then it chooses either the second result or the input, at random (50%).
-	## The 2nd result is chosen because it will likely move the bot away from the player, and subsequently any walls in the way.
-	if randomizedFactor > 0:
-		outvector = outvector.rotated(secondAmt);
-		return outvector;
-	else: 
-		outvector = outvector.rotated(firstAmt);
-	return outvector;
 
 func rotation_to_dodge_walls_and_move_towards_player(invector : Vector2 = get_basic_player_chase_vector(), maxRotation := PI * 1/3, degreeStep := 20.) -> float:
 	var outvector = invector;

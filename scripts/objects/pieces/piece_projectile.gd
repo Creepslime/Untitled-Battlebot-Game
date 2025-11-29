@@ -180,6 +180,7 @@ func get_available_bullets():
 	return availableBullets;
 
 func fireBullet():
+	if ! hasHostRobot: return;
 	#print("pew");
 	
 	var bullet : Bullet;
@@ -192,10 +193,9 @@ func fireBullet():
 		## Calculates firingAngle.
 		firingAngle = get_firing_direction();
 		
-		var bot = get_host_robot();
 		var pos = get_firing_offset();
 		#prints("Firing offset",get_firing_offset())
-		bullet.fire_from_robot(bot, self, pos, get_damage_data(), firingAngle, launchSpeed, bulletLifetime, get_bullet_gravity());
+		bullet.fire_from_robot(hostRobot, self, pos, get_damage_data(), firingAngle, launchSpeed, bulletLifetime, get_bullet_gravity());
 		SND.play_sound_at(firingSoundString, pos, GameState.get_game_board(), firingSoundVolumeAdjust, randf_range(firingSoundPitchAdjust * 1.15, firingSoundPitchAdjust * 0.85))
 		availableBullets -= 1;
 		
@@ -265,7 +265,7 @@ func _exit_tree():
 
 ## RANGE RAY STUFF
 
-## Moves the range ray in accordance with 
+## Moves the range ray in accordance with the speed of the bullets being fired, the gun's angle, and the bullet lifetime.
 func calc_range():
 	if !is_instance_valid(rangeRay):
 		assign_references();

@@ -23,6 +23,7 @@ mesh = ExtResource("2_b5goa")
 [node name="FloorCheck" type="RayCast3D" parent="Axle"]
 transform = Transform3D(1.93785, 0, -2.69537e-08, 0, 1.93785, 0, 2.69537e-08, 0, 1.93785, 0, -0.016953, 0)
 target_position = Vector3(0, -0.3, 0)
+collision_mask = 1025
 script = ExtResource("3_csg4c")
 
 [node name="LeftTreadPivot" type="Node3D" parent="."]

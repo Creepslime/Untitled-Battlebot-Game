@@ -1,4 +1,4 @@
-@icon ("res://graphics/images/class_icons/inspector.png")
+@icon ("res://graphics/images/class_icons/infobox.png")
 extends Control
 
 class_name InfoBox
@@ -179,16 +179,19 @@ func get_ref_stat_id():
 @export var lbl_sellButton : Label;
 @export var btn_moveButton : Button;
 @export var btn_removeButton : Button;
+
 var sell_areYouSure := false; ## 
 func _on_sell_button_pressed():
 	if ref_is_part():
 		if is_instance_valid(partRef.hostShopStall):
-			var txt = "SURE? "
-			lbl_sellButton.text = txt + TextFunc.format_stat(partRef._get_sell_price(), 0);
+			partRef.try_buy_from_shop();
+			#var txt = "SURE? "
+			#lbl_sellButton.text = txt + TextFunc.format_stat(partRef._get_sell_price(), 0);
 		else:
 			if sell_areYouSure:
 				sellPart.emit(partRef);
-				clear_info();
+				if partRef.try_sell():
+					clear_info();
 			else:
 				sell_areYouSure = true;
 				var txt = "SURE? "

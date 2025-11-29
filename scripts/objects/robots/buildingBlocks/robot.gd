@@ -88,6 +88,10 @@ func phys_process_timers(delta):
 			if invincible:
 				invincible = false;
 				health_or_energy_changed.emit();
+		
+		## Floorness.
+		step_coyote_timer(delta);
+		body.isOnGround = isOnFloor;
 
 ## When false, [method assign_references] will run as usual. When true, it will return without doing anythinng, as nothing borked.
 var referencesAssigned := false;
@@ -345,7 +349,8 @@ func die():
 
 func destroy():
 	for thing in get_stash_all(PieceStash.equippedStatus.ALL):
-		thing.destroy();
+		if is_instance_valid(thing):
+			thing.destroy();
 	queue_free();
 	update_hud(true);
 
@@ -761,10 +766,14 @@ func regen_piece_tree_stats():
 	queue_update_hud(); ## Update the hud.
 	referencesAssigned = false; ## Make it so the next time [method phys_process_pre] gets called, it looks for references again.
 	assign_references(); ## ...the next time is now.
+	regenAllHurtboxes = true; ## For some stupid reason these variables are getting UNSET without actually properly regenerating the fucking list.
+	regenAllPieces = true;
 
 ##Gives the Body new collision based on its Parts.
 func reassign_body_collision():
-	allHurtboxes = [];
+	regenAllPieces = true; ## Update the list of pieces.
+	regenAllHurtboxes = true; ## Make it so the next time hurtboxes are called, they regenerate.
+	
 	##First, clear the Body of all collision shapes.
 	for child in body.get_children(false):
 		if child is PieceCollisionBox:
@@ -772,7 +781,6 @@ func reassign_body_collision():
 	
 	##Then, gather copies of every Hitbox collider from all pieces, and assign a copy of it to the Body.
 	var colliderIDsInUse = [];
-	regenAllPieces = true;
 	for piece in allPieces:
 		await piece.refresh_and_gather_collision_helpers();
 		for hurtbox in piece.get_all_hurtboxes():
@@ -787,7 +795,6 @@ func reassign_body_collision():
 				hurtbox.copiedByBody = true;
 				newHurtbox.copiedByBody = true;
 	
-	regenAllHurtboxes = true; ## Make it so the next time hurtboxes are called, they regenerate.
 	call_deferred("reinforce_robot_host"); ## Make sure that each piece in the tree, and all of their sockets, register this as their host.
 
 ##TODO: Reimplement movement.
@@ -811,27 +818,42 @@ var lastLinearVelocity : Vector3 = Vector3(0,0,0);
 func phys_process_collision(delta):
 	#return;
 	for box in allHurtboxes:
-		var boxOrigin = box.originalBox;
-		if is_instance_valid(boxOrigin):
-			if boxOrigin.is_inside_tree():
-				box.global_position = boxOrigin.global_position;
-				box.rotation = boxOrigin.global_rotation - get_global_body_rotation() + box.originalRotation;
+		if is_instance_valid(box):
+			var boxOrigin = box.originalBox;
+			if is_instance_valid(boxOrigin):
+				if boxOrigin.is_inside_tree():
+					box.global_position = boxOrigin.global_position;
+					box.rotation = boxOrigin.global_rotation - get_global_body_rotation() + box.originalRotation;
+				else:
+					box.disabled = true;
 			else:
-				box.disabled = true;
+				box.queue_free();
 		else:
-			box.queue_free();
+			regenAllHurtboxes = true;
 
 ## If the robot was on the floor last frame.
 var wasOnFloorLastFrame := true;
+## Whether we're on the floor this frame.
+var isOnFloor := false:
+	get:
+		return coyoteTimer > 0 or treads.onDriveable;
+
 var coyoteTimer := 0.0;
 ## Steps the "coyote timer" ([member coyoteTimer])- if you're off the ground for less than five frames, the game lets you drive.
 func step_coyote_timer(delta : float) -> bool:
-	if ! treads.is_on_driveable(): 
-		coyoteTimer = max(coyoteTimer - delta, 0);
+	if coyoteTimer > 0:
+		coyoteTimer -= delta;
 	else:
-		coyoteTimer = 0.15;
+		jolt_coyote_timer();
 	
-	return coyoteTimer > 0;
+	coyoteTimer = clamp(coyoteTimer, 0.0, 0.15);
+	
+	return isOnFloor;
+
+func jolt_coyote_timer(time := 0.15):
+	treads.full_status_report();
+	if treads.onDriveable:
+		coyoteTimer = 0.15;
 
 ##Physics process step for motion.
 # custom physics handling for player movement. regular movement feels flat and boring.
@@ -863,12 +885,12 @@ func phys_process_motion(delta):
 	pass;
 
 func move_and_rotate_towards_movement_vector(delta : float):
-	if is_paused(): return;
+	if is_frozen(): return;
 	#print("MV2",movementVector);
 	##Rotating the body mesh towards the movement vector
 	var rotatedMV = movementVector.rotated(deg_to_rad(90.0));
 	
-	if is_inputting_movement() and step_coyote_timer(delta):
+	if is_inputting_movement() and isOnFloor:
 		lastInputtedMV = movementVector;
 		var movementVectorRotated = movementVector.rotated(deg_to_rad(90.0 + randf()))
 		var vectorToRotTo = Vector2(movementVectorRotated.x, -movementVectorRotated.y)
@@ -877,19 +899,18 @@ func move_and_rotate_towards_movement_vector(delta : float):
 		if is_in_reverse():
 			bodyRotationAngle = bodyRotationAngle.rotated(deg_to_rad(180));
 	
-	
-	var rotateVector = Vector3(bodyRotationAngle.x, 0.0, bodyRotationAngle.y) + body.global_position
-	
 	bodyRotationSpeed = get_rotation_speed();
 	
+	GameState.profiler_time_msec_start("Body rotation")
 	body.update_target_rotation(bodyRotationAngle, delta * bodyRotationSpeed);
-	#Utils.look_at_safe(meshes, rotateVector);
+	GameState.profiler_time_msec_end("Body rotation")
 	
 	##Get movement input.
 	if is_inputting_movement():
 		## Move the body.
 		var accel = movementSpeedAcceleration;
 		#print("HI")
+		GameState.profiler_time_msec_start("Body rotation Euler stuff")
 		var forceVector = Vector3.ZERO;
 		var bodBasis := body.global_basis;
 		forceVector += body.global_transform.basis.x * movementVector.x * -accel;
@@ -897,6 +918,8 @@ func move_and_rotate_towards_movement_vector(delta : float):
 		
 		var bodBasisRotationOrthonormalized := bodBasis.orthonormalized();
 		var bodBasisRotation = bodBasisRotationOrthonormalized.get_euler();
+		
+		GameState.profiler_time_msec_end("Body rotation Euler stuff")
 
 		##Rotate the force vector so the body's rotation doesn't meddle with it.
 		forceVector = forceVector.rotated(Vector3(0.0,1.0,0.0), float(-bodBasisRotation.y));
@@ -910,6 +933,7 @@ func move_and_rotate_towards_movement_vector(delta : float):
 func update_treads_rotation(delta : float):
 	## Rotate the treads to look towards the movement vector.
 	var bodMV = body.linear_velocity.normalized();
+	
 	if bodMV.is_equal_approx(Vector3.ZERO):
 		if lastLinearVelocity.is_equal_approx(Vector3.ZERO):
 			bodMV = Vector3(0,0,1).normalized();
@@ -979,13 +1003,14 @@ func get_rotation_speed() -> float:
 	var mod = weightSpeedModifier;
 	return min(bodyRotationSpeedBase * spd * mod, bodyRotationSpeedMaxBase);
 
-
 func _on_collision(collider: PhysicsBody3D, thisComponent: PhysicsBody3D = body):
 	SND.play_collision_sound(thisComponent, collider, Vector3.ZERO, 0.45)
 	Hooks.OnCollision(thisComponent, collider);
 	if collider.is_in_group("WorldWall"):
 		print("HIT WALL")
 		Hooks.OnHitWall(thisComponent);
+	if collider.is_in_group("Driveable"):
+		jolt_coyote_timer();
 
 ## Makes sure the bot's speed doesn't go over its max speed.
 func clamp_speed():
@@ -1102,29 +1127,33 @@ func get_all_parts() -> Array[Part]:
 ##Returns a freshly gathered array of all Parts attached to this Robot and whih have it set as their host.
 func get_all_parts_regenerate() -> Array[Part]:
 	var partsGathered : Array[Part] = [];
-	for piece in get_all_pieces():
+	for piece in allPieces:
 		Utils.append_array_unique(partsGathered, piece.listOfParts);
 	Utils.append_array_unique(partsGathered, stashParts);
 	allParts = partsGathered;
 	return partsGathered;
 
 ## When [code]true[/code], the next time [member allHurtboxes] is gotten, it returns [method get_all_gathered_hurtboxes_regenerate].
-var regenAllHurtboxes := true;
+var regenAllHurtboxes := true:
+	set(newVal):
+		regenAllHurtboxes = newVal;
 ## A list of all hurtboxes attached to the body.
 var allHurtboxes = []:
 	get:
 		if regenAllHurtboxes:
-			return get_all_gathered_hurtboxes_regenerate();
+			allHurtboxes = get_all_gathered_hurtboxes_regenerate();
 		return allHurtboxes;
 func get_all_gathered_hurtboxes_regenerate():
+	regenAllHurtboxes = false;
 	var boxes = []
 	for child in body.get_children():
 		if child is PieceCollisionBox:
-			var boxOrigin = child.originalBox;
-			if is_instance_valid(boxOrigin):
-				boxes.append(child)
+			if is_instance_valid(child):
+				var boxOrigin = child.originalBox;
+				if is_instance_valid(boxOrigin):
+					if ! boxOrigin.is_queued_for_deletion():
+						boxes.append(child)
 	allHurtboxes = boxes;
-	regenAllHurtboxes = false;
 	return boxes;
 ##Returns an array of all PieceCollisionBox nodes that are direct children of the body.
 func get_all_gathered_hurtboxes():

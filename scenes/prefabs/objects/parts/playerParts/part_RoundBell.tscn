@@ -7,8 +7,8 @@
 [node name="PartRoundBell" instance=ExtResource("1_rp50b")]
 script = ExtResource("2_d2mvq")
 healAmount = 0.25
-scrapCostBase = 9
 dimensions = Array[Vector2i]([Vector2i(0, 0), Vector2i(1, 0)])
+scrapCostBase = 9
 partName = "Round Bell"
 partDescription = "[color=ffffff]Rings in when the [color=f2ec6b]round [color=ffffff]is called.
 

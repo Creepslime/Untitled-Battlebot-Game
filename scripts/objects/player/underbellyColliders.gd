@@ -11,9 +11,12 @@ class_name UnderbellyContactPoints
 @export var pivot_left : Node3D;
 @export var pivot_right : Node3D;
 
-func full_status_report():
-	var onFloor = is_on_floor();
-	var onDriveable = is_on_driveable();
+var onFloor := false;
+var onDriveable := false;
+
+func full_status_report(centerOnly:=false):
+	onFloor = is_on_floor(centerOnly);
+	onDriveable = is_on_driveable(centerOnly);
 	return {"right":rightTread.status_report(), "left":leftTread.status_report(), "center":underbellyCollider.status_report(), "onFloor":onFloor, "onDriveable":onDriveable};
 
 func is_on_floor(centerOnly:=false):
@@ -26,7 +29,7 @@ func is_on_driveable(centerOnly:=false):
 	if centerOnly:
 		return underbellyCollider.is_on_something_driveable();
 	else:
-		return rightTread.is_on_something_driveable() or leftTread.is_on_something_driveable();
+		return (rightTread.is_on_something_driveable() or leftTread.is_on_something_driveable()) and underbellyCollider.is_on_something_driveable();
 
 ##gets the vector that the contact of the treads is returning.
 func get_tread_contact_vector():

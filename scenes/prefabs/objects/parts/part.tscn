@@ -9,7 +9,7 @@
 [ext_resource type="Script" uid="uid://2tgdgw23cl4o" path="res://scripts/GUI/parts/tilemaps.gd" id="7_svhs2"]
 [ext_resource type="TileSet" uid="uid://8fx35csqjuda" path="res://graphics/images/HUD/parts/partTileSet.tres" id="7_ufa2f"]
 
-[node name="Part" type="Control" node_paths=PackedStringArray("textureBase", "textureIcon", "tilemaps")]
+[node name="Part" type="Control" node_paths=PackedStringArray("textureBase", "textureIcon", "tilemaps", "buttonsHolder")]
 texture_filter = 1
 layout_mode = 3
 anchors_preset = 0
@@ -19,6 +19,7 @@ script = ExtResource("1_aqhpi")
 textureBase = NodePath("TextureBase")
 textureIcon = NodePath("TextureBase/Icon")
 tilemaps = NodePath("TextureBase/Tilemaps")
+buttonsHolder = NodePath("TextureBase/Buttons")
 dimensions = Array[Vector2i]([Vector2i(0, 0)])
 scrapCostBase = 10
 partIcon = ExtResource("2_6haxk")
@@ -26,7 +27,6 @@ invSprite = ExtResource("2_7gik6")
 screwSprite = ExtResource("5_6haxk")
 
 [node name="TextureBase" type="Control" parent="."]
-visible = false
 texture_filter = 1
 anchors_preset = 0
 offset_right = 26.0
@@ -65,6 +65,16 @@ mouse_filter = 2
 mouse_default_cursor_shape = 2
 script = ExtResource("3_u3hhk")
 buttonPrefab = ExtResource("4_tfv4d")
+
+[node name="PartButton" parent="TextureBase/Buttons" instance=ExtResource("4_tfv4d")]
+layout_mode = 0
+anchors_preset = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+grow_horizontal = 1
+grow_vertical = 1
 
 [node name="Icon" type="TextureRect" parent="TextureBase"]
 layout_mode = 0

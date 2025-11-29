@@ -41,7 +41,7 @@ func phys_process_timers(delta):
 	super(delta);
 	if reflectingTime > 0:
 		reflectingTime -= 1;
-		get_host_robot().set_invincibility(0.1);
+		hostRobot.set_invincibility(0.1);
 	else:
 		hitboxScaleOffset = lerp(hitboxScaleOffset, 0.0, delta * 12) 
 		bladeScaleOffset = lerp(bladeScaleOffset, 1.0, delta * 12) 
@@ -125,25 +125,24 @@ func deflect():
 	damageModifier *= 2;
 	sawSoundPitch = 0.9;
 	sawSoundVolume = 1.0;
-	get_host_robot().set_invincibility(0.25);
+	hostRobot.set_invincibility(0.25);
 	pass;
 
 func bullet_hit_hitbox(bullet:Bullet):
 	##TODO: Add enemies so this can actually be tested. Lol.
-	if bullet.get_attacker() != get_host_robot():
+	if bullet.get_attacker() != get_host_robot(true):
 		#print_rich("[color=orange]Bullet hit the hitbox.")
 		pass;
-	if reflectingBullets:
-		if bullet.get_attacker() != get_host_robot():
+	if reflectingBullets and hasHostRobot:
+		if bullet.get_attacker() != get_host_robot(true):
 			#var posDif = global_position - bullet.global_position;
 			#bullet.flip_direction();
 			#bullet.set_attacker(get_host_robot())
 			reflectingTime += 5;
-			var thisBot = get_host_robot();
-			thisBot.call_deferred("take_knockback",(bullet.dir + Vector3(0,0.1,0)) * 1000);
+			hostRobot.call_deferred("take_knockback",(bullet.dir + Vector3(0,0.1,0)) * 1000);
 			var dir = bullet.dir * -1;
 			bullet.change_direction(dir);
-			bullet.set_attacker(thisBot);
+			bullet.set_attacker(hostRobot);
 			bullet.verticalVelocity /= 2.0;
 			bullet.speed *= 1.25;
 			

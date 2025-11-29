@@ -1,4 +1,4 @@
-@icon ("res://graphics/images/class_icons/inspector.png")
+@icon ("res://graphics/images/class_icons/infobox_ability.png")
 extends Control
 class_name AbilityInfobox
 
@@ -92,9 +92,9 @@ func update_ability_stats():
 	disabled = referencedAbility.disabled;
 	
 	if referencedThing is Piece:
-		var _bot = referencedThing.get_host_robot();
+		var _bot = referencedThing.get_host_robot(true);
 		if is_instance_valid(_bot):
-			bot = referencedThing.get_host_robot();
+			bot = _bot;
 	if referencedThing is Part:
 		bot = referencedThing.thisBot;
 	

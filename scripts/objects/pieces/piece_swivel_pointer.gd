@@ -37,17 +37,16 @@ func phys_process_pre(delta):
 
 func target():
 	var prevRotation = targetRotation;
-	var bot = get_host_robot();
-	if is_instance_valid(bot):
-		if bot is Robot_Player:
+	if hasHostRobot:
+		if hostRobotIsEnemy:
+			pointerLocation = hostRobot.pointerTarget;
+			targetRotation = Vector2(pointerLocation.x, pointerLocation.z).angle() - hostSocket.rotation.y - global_rotation.y;
+		elif hostRobotIsPlayer:
 			var rot = cam.get_rotation_to_fake_aiming(global_position);
 			
 			if rot != null:
-				targetRotation = rot - get_host_robot().get_global_body_rotation().y - get_host_socket().rotation.y;
+				targetRotation = rot - hostRobot.get_global_body_rotation().y - hostSocket.rotation.y;
 			else:
 				targetRotation = prevRotation;
-		elif bot is Robot_Enemy:
-			pointerLocation = bot.pointerTarget;
-			targetRotation = Vector2(pointerLocation.x, pointerLocation.z).angle() - get_host_socket().rotation.y - global_rotation.y;
 	else:
 		pass;

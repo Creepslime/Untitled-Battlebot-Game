@@ -52,6 +52,7 @@ func pause(foo: bool, force := false):
 		if frozenBeforePaused != null:
 			freeze(frozenBeforePaused, true);
 			frozenBeforePaused = null;
+
 ##Checks for game state pause, attempts to re-pause or re-unpause, then returns the result.
 func is_paused():
 	var isPaused = GameState.is_paused();

@@ -126,11 +126,14 @@ func assign_references():
 
 ## Destroys this [Piece]; I.E, calls [method queue_free] after doing some cleanup.
 func destroy(removeFromSocket := true):
-	select(false);
-	clear_stats();
+	if hasHostRobot:
+		select_via_robot(hostRobot, false)
+	else:
+		select(false);
 	if removeFromSocket:
-		if has_host(true, false, false):
-			get_host_socket().remove_occupant(true);
+		remove_from_socket();
+	
+	clear_stats();
 	queue_free();
 
 ######### SAVING/LOADING
@@ -526,8 +529,7 @@ func on_contact_cooldown():
 	return false;
 func is_running_cooldowns():
 	if equippedByRobot:
-		var bot = hostRobot;
-		return bot.is_running_cooldowns();
+		return hostRobot.is_running_cooldowns();
 	return false;
 	
 ##Physics process step for abilities.
@@ -551,7 +553,7 @@ func cooldown_behavior(cooldown : bool = on_cooldown()):
 	pass;
 
 func try_sap_energy(amt:float):
-	var bot = get_host_robot();
+	var bot = get_host_robot(true);
 	var result = false;
 	if bot != null:
 		result = bot.try_sap_energy(amt);
@@ -1007,8 +1009,8 @@ func get_knockback_force() -> float:
 
 func get_impact_direction(positionOfTarget : Vector3, factorBodyVelocity := true) -> Vector3:
 	var factor = (positionOfTarget - global_position).normalized();
-	if factorBodyVelocity:
-		var bodVel = get_host_robot().body.linear_velocity;
+	if factorBodyVelocity and hasHostRobot:
+		var bodVel = hostRobot.body.linear_velocity;
 		factor += bodVel;
 	return factor;
 
@@ -1026,8 +1028,8 @@ func get_kickback_direction(positionOfTarget : Vector3, factorBodyVelocity := tr
 	var factor = global_position - positionOfTarget;
 	print("FACTOR", factor)
 	factor = factor.normalized();
-	if factorBodyVelocity:
-		var bodVel = get_host_robot().body.linear_velocity;
+	if factorBodyVelocity and hasHostRobot:
+		var bodVel = hostRobot.body.linear_velocity;
 		factor += bodVel;
 	
 	#factor = factor.rotated(Vector3(0,1,0), deg_to_rad(180));
@@ -1041,7 +1043,7 @@ func get_damage_types() -> Array[DamageData.damageTypes]:
 ## Creates a brand new [DamageData] based on your current stats.
 func get_damage_data(targetPosition := global_position, _damageAmount := get_damage(), _knockbackForce := get_knockback_force(), _direction := Vector3(0,0,0), _damageTypes := get_damage_types()) -> DamageData:
 	var DD = DamageData.new();
-	DD.attackerRobot = get_host_robot();
+	DD.attackerRobot = hostRobot;
 	DD.create(_damageAmount, _knockbackForce, _direction, _damageTypes);
 	DD.calc_damage_direction_based_on_targets(global_position, targetPosition, false);
 	return DD;
@@ -1050,7 +1052,7 @@ func get_damage_data(targetPosition := global_position, _damageAmount := get_dam
 func get_kickback_damage_data(targetPosition := global_position, _damageAmount := 0.0, _knockbackForce := get_kickback_force(), _direction := Vector3(0,0,0), _damageTypes :Array[DamageData.damageTypes]= []):
 	var DD = DamageData.new();
 	DD.create(_damageAmount, _knockbackForce, _direction, _damageTypes);
-	DD.attackerRobot = get_host_robot();
+	DD.attackerRobot = hostRobot;
 	#prints(targetPosition, global_position)
 	#print(DD.calc_damage_direction_based_on_targets(global_position, targetPosition, true));
 	DD.calc_damage_direction_based_on_targets(global_position, targetPosition, true);
@@ -1086,9 +1088,8 @@ func initiate_kickback(awayPos : Vector3):
 	hurtbox_collision_from_piece(self, kb);
 
 func move_robot_with_force(direction):
-	var bot = get_host_robot();
-	if is_instance_valid(bot):
-		bot.apply_force(direction);
+	if hasHostRobot:
+		hostRobot.apply_force(direction);
 
 ## Fired when an enemy Piece hitbox hurts this.
 func hurtbox_collision_from_piece(otherPiece : Piece, damageData : DamageData):
@@ -1102,9 +1103,10 @@ func hurtbox_collision_from_projectile(projectile : Bullet, damageData : DamageD
 
 ## Gives DamageData to the player to chew through. Runs [method modify_incoming_damage_data] before actually sending it through.
 func take_damage_from_damageData(damageData : DamageData):
-	if get_host_robot() != null and is_instance_valid(damageData):
-		var resultingDamage = modify_incoming_damage_data(damageData);
-		get_host_robot().take_damage_from_damageData(resultingDamage);
+	if hasHostRobot:
+		if hostRobot != null and is_instance_valid(damageData):
+			var resultingDamage = modify_incoming_damage_data(damageData);
+			hostRobot.take_damage_from_damageData(resultingDamage);
 
 ## Extend this function with any modifications you want to do to the incoming DamageData when this Piece gets hit.[br]
 ## This is potentially useful for things like a Shield, for example, which might nullify most of the damage from incoming Piercing-tagged attacks.
@@ -1114,8 +1116,8 @@ func modify_incoming_damage_data(damageData : DamageData) -> DamageData:
 ## Fires when a Hitbox hits another robot. The prelude to [method contact_damage].
 func _on_hitbox_body_shape_entered(body_rid, body, body_shape_index, local_shape_index):
 	#print("please.")
-	if not on_contact_cooldown():
-		if body is RobotBody and body.get_parent() != get_host_robot():
+	if not on_contact_cooldown() and hasHostRobot:
+		if body is RobotBody and body.get_parent() != hostRobot:
 			#print("tis a robot. from ", pieceName)
 			var other_shape_owner = body.shape_find_owner(body_shape_index)
 			var other_shape_node = body.shape_owner_get_owner(other_shape_owner)
@@ -1170,7 +1172,7 @@ func phys_process_collision(delta):
 ##Assign all sockets with this as their host piece.
 func autoassign_child_sockets_to_self():
 	for child in get_all_female_sockets():
-		child.hostRobot = get_host_robot();
+		child.hostRobot = hostRobot;
 		child.hostPiece = self;
 
 func fix_sockets(delta):
@@ -1410,16 +1412,20 @@ func get_selected() -> bool:
 	return selected;
 
 func select(foo : bool = not get_selected()):
-	if foo == selected: return foo;
-	if foo: deselect_other_pieces(self);
+	if foo == selected: return foo; ## Don't continue if there would be no change to [selected].
+	
+	
+	if foo: deselect_other_pieces(self); ## if We're going from 
 	else: 
 		if selected:
-			deselect_other_pieces(); ##This hopefully prevents recursion.
+			deselect_other_pieces(null); ##This hopefully prevents recursion.
 		else:
 			deselect_other_pieces(self);
+	
+	selected = foo; ## Change it now.
+	
 	if is_preview() and ! assignedToSocket:
 		return false;
-	selected = foo;
 	var bot = hostRobot;
 	if selected: 
 		if bot: bot.selectedPiece = self;
@@ -1431,7 +1437,7 @@ func select(foo : bool = not get_selected()):
 	return selected;
 	pass;
 
-func select_via_robot(robotOverride := get_host_robot(), forcedValue = null):
+func select_via_robot(robotOverride := hostRobot, forcedValue = null):
 	var bot = null;
 	if is_instance_valid(robotOverride):
 		bot = robotOverride;
@@ -1442,10 +1448,15 @@ func deselect():
 		deselect_all_sockets();
 	select(false);
 
-func deselect_other_pieces(filterPiece := self):
-	if has_host(false, true, false):
-		var bot = get_host_robot();
-		bot.deselect_all_pieces(filterPiece);
+## Deselects all other [Piece]s on this [Piece]'s host [Robot].
+## If you set [param filterPiece] to [code]null[/code], then this function will manually adjust [member selected] to be false, and then deselect [b]all[/b] [Piece]s (including this one) on the 'bot to avoid recursion errors.
+func deselect_other_pieces(filterPiece :Piece= null):
+	if hasHostRobot:
+		if filterPiece != null and filterPiece is Piece:
+			hostRobot.deselect_all_pieces(filterPiece);
+		else:
+			selected = false;
+			hostRobot.deselect_all_pieces();
 
 ##Need to have support for a main 3D model. Sub-models will need to come later.
 ##Position should NEVER be changed from 0,0,0. 0,0,0 Origin is where this thing plugs in.
@@ -1457,11 +1468,23 @@ func deselect_other_pieces(filterPiece := self):
 ##TODO: Functions for assigning the host robot and host piece.
 ##When the piece is assigned to a socket or robot, it should reparent itself to it.
 @export_category("Chain Management")
-@export var hostPiece : Piece;
-@export var hostRobot : Robot;
+@export var hostSocket : Socket:
+	set(newHost):
+		if newHost != hostSocket:
+			regenHostData = true;
+		hostSocket = newHost;
+@export var hostPiece : Piece:
+	set(newHost):
+		if newHost != hostPiece:
+			regenHostData = true;
+		hostPiece = newHost;
+@export var hostRobot : Robot:
+	set(newHost):
+		if newHost != hostRobot:
+			regenHostData = true;
+		hostRobot = newHost;
 
 @export var femaleSocketHolder : Node3D;
-@export var hostSocket : Socket;
 @export var assignedToSocket := false; ## Set by [Robot]s when they add/remove this [Piece] to one of their [Socket]s.
 func is_assigned_to_socket():
 	if regenHostData:
@@ -1499,7 +1522,7 @@ func autograb_sockets():
 		Utils.append_unique(ret, socket);
 		socket.set_host_piece(self);
 		if hasHostRobot:
-			socket.set_host_robot(get_host_robot());
+			socket.set_host_robot(hostRobot);
 		else:
 			socket.set_host_robot(null);
 	
@@ -1578,15 +1601,20 @@ var hasHostSocket := false:
 func has_socket_host():
 	regen_host_data();
 	return hasHostSocket;
-## @deprecated: Returns [method hostSocket].
+## @deprecated: Returns [member hostSocket].
 func get_host_socket() -> Socket:
 	regen_host_data();
-	if hasHostSocket:
-		return hostSocket;
-	if is_instance_valid(hostSocket):
-		return hostSocket;
-	else:
-		return null;
+	
+	return hostSocket;
+	
+	#if hasHostSocket:
+		#return hostSocket;
+	#return null;
+	
+	#if is_instance_valid(hostSocket):
+		#return hostSocket;
+	#else:
+		#return null;
 
 ## Whether [member hostPiece] is valid or not.[br]Regenerated when [member regenHostData] is true.
 var hasHostPiece := false: 
@@ -1673,10 +1701,9 @@ var regenHostData := true;
 ## Called whenever a "host" variable is called, but returns immediately if [member regenHostData] is [code]not true[/code], unless [param force] IS [code]true[/code].[br]
 ## Regenerates:[br]- [member hasHostSocket][br]- [member hasHostPiece][br]- [member hostPiece][br]- [member hasHostRobot][br]- [member hostRobotIsPlayer][br]- [member hostRobotIsEnemy][br]- [member equippedByRobot][br]- [member equippedByPlayer][br]- [member equippedByEnemy][br]- (more to come, probably)
 func regen_host_data(force := false):
-	if force: regenHostData = true;
-	if ! regenHostData: return;
+	if ! regenHostData and ! force: return;
 	GameState.profiler_ping_create("Regenerating Host Data for Piece");
-	regenHostData = false;
+	regenHostData = false; ## Set this to false now so we don't get recursion funnies.
 	
 	## Host socket is easy-ish.
 	hasHostSocket = is_instance_valid(get_host_socket());
@@ -1710,8 +1737,9 @@ func regen_host_data(force := false):
 	equippedByEnemy = equippedByRobot and hostRobotIsEnemy;
 
 
-## Returns whether this piece has a robot host.[br]
-## If [param forceReturnHostRobot] is true, then it directly returns [member hostRobot]; Otherwise, it returns whether [get_host_socket()] returns valid.
+## @deprecated: Returns whether this piece has a robot host.[br]
+## If [param forceReturnHostRobot] is true, then it directly returns [member hostRobot]; Otherwise, it returns whether [get_host_socket()] returns valid.[br][br]
+## In [i]most[/i] cases, If you just want to get the host robot directly, use [member hasHostRobot] to check if there is one, and then just yoink [hostRobot] directly.
 func get_host_robot(forceReturnHostRobot := false) -> Robot:
 	regen_host_data();
 	
@@ -1724,14 +1752,13 @@ func get_host_robot(forceReturnHostRobot := false) -> Robot:
 
 ##Returns true if the part has both a host socket and a host robot.
 func has_host(getSocket := true, getRobot := true, getSocketAssigned := true):
-	if regenHostData:
-		regen_host_data();
+	regen_host_data();
 	
-	if getSocketAssigned and (not assignedToSocket):
-		return false;
 	if getSocket and (not hasHostSocket):
 		return false;
 	if getRobot and (not hasHostRobot):
+		return false;
+	if getSocketAssigned and (not assignedToSocket):
 		return false;
 	return true;
 
@@ -1780,7 +1807,7 @@ func get_all_pieces_recursive() -> Array[Piece]:
 		for socket in allSockets:
 			if is_instance_valid(socket):
 				var occupant = socket.get_occupant();
-				if is_instance_valid(occupant) and occupant != self:
+				if is_instance_valid(occupant) and occupant != self and ! occupant.is_queued_for_deletion():
 					Utils.append_array_unique(ret, occupant.get_all_pieces_recursive())
 	
 	allPieces = ret;
@@ -1981,7 +2008,17 @@ func engine_is_there_space_for_part(part:Part, invPosition : Vector2i) -> bool:
 			return true;
 	return false;
 
+func engine_add_or_import_part(part: Part, invPosition : Vector2i, noisy := false):
+	if part.hostPiece == self:
+		engine_move_part(part, invPosition);
+		return;
+	elif part.hostPiece != self:
+		part.detatch_from_engine();
+	
+	engine_add_part(part, invPosition, noisy)
+
 func engine_add_part(part: Part, invPosition : Vector2i, noisy := false):
+	
 	var coordsToCheck = engine_get_modified_part_dimensions(part, invPosition);
 	
 	if engine_check_coordinate_table_is_free(coordsToCheck, part):
@@ -1990,7 +2027,11 @@ func engine_add_part(part: Part, invPosition : Vector2i, noisy := false):
 			engine_set_slot_at(index.x, index.y, part);
 		listOfParts.append(part);
 		part.invPosition = invPosition;
+		
+		
 		part.hostPiece = self;
+		
+		
 		##TODO: Decide whether PartActive is gonna persist.
 		#if part is PartActive:
 			#part.positionNode = battleBotBody;
@@ -2005,7 +2046,7 @@ func engine_add_part_post(part:Part, noisy:=false):
 	partMods_deploy();
 	pass;
 
-func remove_part(part: Part, destroy:=false, beingSold := false, beingBought := false, stash := false):
+func engine_remove_part(part: Part, destroy:=false, beingSold := false, beingBought := false, stash := false):
 	var coordsToRemove = engine_get_modified_part_dimensions(part, part.invPosition);
 	part.invPosition = Vector2i(0,0);
 	if part is PartActive:
@@ -2044,7 +2085,7 @@ func engine_move_part(part:Part, invPosition : Vector2i):
 		var beingBought = false;
 		if part.invHolderNode is ShopStall:
 			beingBought = true;
-		remove_part(part, TYPE_NIL,TYPE_NIL, beingBought);
+		engine_remove_part(part, TYPE_NIL,TYPE_NIL, beingBought);
 		engine_add_part(part, invPosition);
 		#deselect_part();
 		select_part(part);
@@ -2082,7 +2123,7 @@ func get_heal_amount():
 ## Selects the given [Part] through this [Piece]'s [member hostRobot] (or the player if we're in the shop), then returns it.
 func select_part(part:Part, foo:bool = !part.selected if is_instance_valid(part) else TYPE_NIL):
 	if is_instance_valid(part):
-		if has_robot_host():
+		if hasHostRobot:
 			selectedPart = hostRobot.select_part(part, foo);
 		elif inShop:
 			var player = GameState.get_player();
@@ -2110,7 +2151,7 @@ func engine_clear(_destroy := true, stash := true):
 	regeneratePartList = true;
 	while listOfParts.size() > 0:
 		for part in listOfParts:
-			remove_part(part, _destroy, TYPE_NIL, TYPE_NIL, stash);
+			engine_remove_part(part, _destroy, TYPE_NIL, TYPE_NIL, stash);
 	regeneratePartList = true;
 
 func engine_update_part_visibility(_visible := true):

@@ -1,12 +1,13 @@
-[gd_scene load_steps=6 format=3 uid="uid://bbtx1gkk751ox"]
+[gd_scene load_steps=7 format=3 uid="uid://bbtx1gkk751ox"]
 
 [ext_resource type="Theme" uid="uid://tcelcj32ux4o" path="res://graphics/images/HUD/digital_button.tres" id="1_5urb3"]
 [ext_resource type="Script" uid="uid://d3i56aw738ps2" path="res://scripts/GUI/piece_stash_button.gd" id="1_ppkec"]
 [ext_resource type="Texture2D" uid="uid://c7utaiwnu0a0d" path="res://graphics/images/HUD/screenGFX/screenBG_darkBlue.png" id="3_tqv4f"]
 [ext_resource type="Texture2D" uid="uid://b4664fnwc57k4" path="res://graphics/images/HUD/screenGFX/screenBG_lightBlue.png" id="4_4325b"]
 [ext_resource type="Texture2D" uid="uid://fra5o6cwa5nn" path="res://graphics/images/HUD/screenGFX/screenBG_darkGrey.png" id="5_th2qg"]
+[ext_resource type="Texture2D" uid="uid://ddnx867cxkr8l" path="res://graphics/images/HUD/screenGFX/screenBG_green.png" id="6_ydxny"]
 
-[node name="StashButton" type="Button" node_paths=PackedStringArray("img_equippedBG", "img_selectedBG", "img_unequippedSelectedBG")]
+[node name="StashButton" type="Button" node_paths=PackedStringArray("img_equippedBG", "img_selectedBG", "img_unequippedSelectedBG", "img_moveBG")]
 z_index = 2
 texture_filter = 1
 offset_right = 104.0
@@ -18,6 +19,7 @@ script = ExtResource("1_ppkec")
 img_equippedBG = NodePath("EquippedState")
 img_selectedBG = NodePath("SelectedState")
 img_unequippedSelectedBG = NodePath("UnequippedState")
+img_moveBG = NodePath("MoveState")
 
 [node name="EquippedState" type="TextureRect" parent="."]
 visible = false
@@ -55,6 +57,19 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("5_th2qg")
+stretch_mode = 1
+flip_v = true
+
+[node name="MoveState" type="TextureRect" parent="."]
+visible = false
+z_index = -2
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("6_ydxny")
 stretch_mode = 1
 flip_v = true
 

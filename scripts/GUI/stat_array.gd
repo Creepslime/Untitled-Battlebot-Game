@@ -1,4 +1,4 @@
-@icon ("res://graphics/images/class_icons/statHolder2D.png")
+@icon ("res://graphics/images/class_icons/statArray.png")
 extends Control
 class_name StatArrayDisplay
 

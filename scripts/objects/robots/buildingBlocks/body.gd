@@ -6,10 +6,16 @@ class_name RobotBody
 var targetPoint := Vector2(0.0, 1.0);
 var targetRotation := 0.0;
 var currentRotation := 0.0;
+var isOnGround := false;
 
 func _ready():
 	targetRotation = global_rotation.y;
 	currentRotation = global_rotation.y;
+	
+	set_collision_layer_value(1, true);
+	set_collision_layer_value(11, false);
+	set_collision_mask_value(1, true);
+	set_collision_mask_value(11, true);
 
 func update_target_rotation(inRot, rotationSpeed):
 	rotationSpeed = clamp(rotationSpeed, 0.0, 1.0);
@@ -22,10 +28,6 @@ func clamp_speed():
 	_integrate_forces("Speed Clamp");
 
 func _integrate_forces(state):
-	set_collision_layer_value(1, true);
-	set_collision_layer_value(11, false);
-	set_collision_mask_value(1, true);
-	set_collision_mask_value(11, true);
 	match state:
 		"Rotation":
 			rotation.y = currentRotation;
@@ -40,13 +42,13 @@ func _integrate_forces(state):
 				linear_velocity.x = lerp(linear_velocity.x, cvFIxd.x, 0.85);
 				linear_velocity.z = lerp(linear_velocity.z, cvFIxd.y, 0.85);
 			#print(global_position.y);
-			if global_position.y > 3:
-				var force = -(global_position.y) + 3
-				constant_force.y = min(force, move_toward(constant_force.y, global_position.y, 0.08 * force));
-				Utils.print_if_true(str("force: ",constant_force.y),get_robot() is Robot_Player)
+			if ! isOnGround:
+				var force = max(1.0, (global_position.y / 2) + 0.5)	
+				gravity_scale = max(1.0, force);
+				Utils.print_if_true(str("force: ",gravity_scale),get_robot() is Robot_Player)
+				linear_velocity.y = min(linear_velocity.y - force, linear_velocity.y)
 			else:
-				if global_position.y < 1:
-					constant_force.y = 0;
+				gravity_scale = 1.0;
 			#print(constant_force.y)
 		_:
 			pass;

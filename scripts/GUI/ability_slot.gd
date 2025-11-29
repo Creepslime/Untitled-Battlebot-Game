@@ -34,6 +34,16 @@ var curMode : modes = modes.NONE;
 @export var btn_selectReference : Button;
 @export var bg_icon : NinePatchRect;
 const bgIconBaseY := 77.0;
+var regenControlChildren := true;
+var allControlChildren : Array[Control] = []:
+	get:
+		if allControlChildren.is_empty() or regenControlChildren:
+			var ret : Array[Control] = []
+			for child in Utils.get_all_children("Ability slot tooltip update",self, self):
+				if child is Control:
+					ret.append(child);
+			allControlChildren = ret;
+		return allControlChildren;
 
 var index : int;
 var referencedAbility : AbilityData;
@@ -56,9 +66,8 @@ func set_index(in_index):
 func update_base_tooltips():
 	var tooltip = str(inputKeysString,"\n","\n"if !is_instance_valid(referencedAbility) or !is_instance_valid(referencedAbility.assignedPieceOrPart) else lbl_thingname.text + "\n","Ability Slot Empty" if referencedAbility == null else referencedAbility.manager.abilityName)
 	tooltip_text = tooltip;
-	for child in Utils.get_all_children("Ability slot tooltip update",self, self):
-		if child is Control:
-			child.tooltip_text = tooltip;
+	for child in allControlChildren:
+		child.tooltip_text = tooltip;
 
 func _process(delta):
 	
@@ -208,6 +217,7 @@ func update_ability(ability : AbilityData):
 	#lbl_cooldownSlash.text = "/";
 
 func clear_assignment():
+	regenControlChildren = true;
 	referencedAbility = null;
 	lbl_name.text = "Ability Slot Empty";
 	lbl_thingname.text = "";

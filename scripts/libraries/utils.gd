@@ -186,3 +186,11 @@ func convert_num_to_rgba_int(num):
 		return clampi(num, 0, 255);
 	if num is float:
 		return clampi(roundi(num * 255.0), 0, 255);
+
+## Returns the given [Vector3] as a [Vector2], with in.x -> out.x and in.z -> out.y.
+func vec3_to_vec2(inVec : Vector3) -> Vector2:
+	return Vector2(inVec.x, inVec.z);
+
+## Returns the given [Vector2] as a [Vector3], with out.y = 0, in.x -> out.x, and in.y -> out.z.
+func vec2_to_vec3(inVec : Vector2) -> Vector3:
+	return Vector3(inVec.x, 0.0, inVec.y);

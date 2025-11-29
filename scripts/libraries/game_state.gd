@@ -773,21 +773,42 @@ func profiler(delta):
 			for reason in profilerPingTimers:
 				profilerPingTimers[reason] -= 1;
 
-var pTimeStart := 0.0
-func profiler_time_usec_start():
-	pTimeStart = Time.get_ticks_usec()
+var pTimeStart := 0
+var pTimeStartTable = {}
+func profiler_time_usec_start(reason := "[Unnamed call]"):
+	if reason == "[Unnamed call]":
+		pTimeStart = Time.get_ticks_usec()
+	else:
+		pTimeStartTable[reason] = Time.get_ticks_usec()
+
 func profiler_time_usec_end(reason:String="[Unnamed call]", doPrint := false):
 	var end = Time.get_ticks_usec();
-	var time_taken = (end-pTimeStart)/1000000.0;
+	var time_taken;
+	if reason == "[Unnamed call]" or ! pTimeStartTable.has(reason):
+		#time_taken = (end-pTimeStart)/1000000.0;
+		time_taken = (end-pTimeStart);
+	else:
+		#time_taken = (end-pTimeStartTable[reason])/1000000.0;
+		time_taken = (end-pTimeStartTable[reason]);
 	if doPrint:
 		print(reason," : ",time_taken);
 	profiler_ping_time_create(reason + " (Usecs)", time_taken);
 
-func profiler_time_msec_start():
-	pTimeStart = Time.get_ticks_msec()
-func profiler_time_msec_end(reason:String="[Unnamed call]", doPrint := false):
+func profiler_time_msec_start(reason := "[Unnamed call]"):
+	if reason == "[Unnamed call]":
+		pTimeStart = Time.get_ticks_msec()
+	else:
+		pTimeStartTable[reason] = Time.get_ticks_msec()
+
+func profiler_time_msec_end(reason:String= "[Unnamed call]", doPrint := false):
 	var end = Time.get_ticks_msec();
-	var time_taken = (end-pTimeStart)/1000.0;
+	var time_taken;
+	if reason == "[Unnamed call]" or ! pTimeStartTable.has(reason):
+		#time_taken = (end-pTimeStart)/1000000.0;
+		time_taken = (end-pTimeStart);
+	else:
+		#time_taken = (end-pTimeStartTable[reason])/1000000.0;
+		time_taken = (end-pTimeStartTable[reason]);
 	if doPrint:
 		print(reason," : ",time_taken);
 	profiler_ping_time_create(reason + " (Msecs)", time_taken);
