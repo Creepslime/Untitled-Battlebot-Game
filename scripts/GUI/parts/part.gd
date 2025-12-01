@@ -311,6 +311,10 @@ func select(foo:bool):
 		## Set the pressed state of the buttons after we are certain of our selected status.
 		call_deferred("buttons_gfx_update")
 
+## COnvenience function. Equivalent to [code]select(false)[/code].
+func deselect():
+	select(false);
+
 func buttons_gfx_update():
 	#print("buttons_gfx_update with current selected status:", selected)
 	buttonsHolder.call_deferred("set_pressed", selected, false)

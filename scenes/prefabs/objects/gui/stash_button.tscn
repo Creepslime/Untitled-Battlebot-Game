@@ -13,6 +13,7 @@ texture_filter = 1
 offset_right = 104.0
 offset_bottom = 34.0
 theme = ExtResource("1_5urb3")
+theme_type_variation = &"StashButton"
 text = "Piece button"
 alignment = 0
 script = ExtResource("1_ppkec")

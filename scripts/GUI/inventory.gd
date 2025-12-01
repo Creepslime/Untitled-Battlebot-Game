@@ -159,7 +159,6 @@ func remove_part(part: Part, destroy:=false, beingSold := false, beingBought := 
 	
 	if destroy:
 		part.destroy();
-	
 
 func remove_part_post(part:Part, beingSold := false, beingBought := false):
 	pass;

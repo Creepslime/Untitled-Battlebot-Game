@@ -12,8 +12,51 @@ func load_data_from_statTracker(_stat: StatTracker):
 	if is_instance_valid(_stat):
 		stat = _stat;
 		textureIcon.texture = stat.statIcon;
+		name = stat.statFriendlyName.capitalize();
+		update_stat_num();
+		TextFunc.set_text_color(lbl_amt, stat.textColor);
+
+var updateTimer := 30;
+func _process(delta):
+	if updateTimer > 0:
+		updateTimer -= 1;
+	if updateTimer == 0:
+		update_stat_num();
+		updateTimer += 30;
+
+func update_stat_num():
+	if is_instance_valid(stat):
 		var statText = TextFunc.format_stat(stat.get_stat(), 2, false)
 		tooltip_text = stat.statFriendlyName.capitalize() + str("\n",statText);
-		name = stat.statFriendlyName.capitalize();
 		lbl_amt.text = statText;
-		TextFunc.set_text_color(lbl_amt, stat.textColor);
+
+func mouse_entered():
+	updateTimer = -1;
+	update_stat_num();
+
+func mouse_exited():
+	updateTimer = 0;
+
+func _on_mouse_entered():
+	mouse_entered()
+	pass # Replace with function body.
+
+func _on_mouse_exited():
+	mouse_exited()
+	pass # Replace with function body.
+
+func _on_icon_mouse_entered():
+	mouse_entered()
+	pass # Replace with function body.
+
+func _on_icon_mouse_exited():
+	mouse_exited()
+	pass # Replace with function body.
+
+func _on_amt_mouse_entered():
+	mouse_entered()
+	pass # Replace with function body.
+
+func _on_amt_mouse_exited():
+	mouse_exited()
+	pass # Replace with function body.

@@ -4,8 +4,6 @@ extends MakesNoise
 ##This entity can be frozen and paused.
 class_name FreezableEntity
 
-@export var body : RigidBody3D;
-
 
 var is_ready := false;
 func _ready():
@@ -72,27 +70,29 @@ func freeze(doFreeze := (not is_frozen()), force := false):
 	#print("Freeze attempt for ",name," successful.")
 	
 	##If there's a valid body, do stuff to it.
-	if is_instance_valid(body):
-		##If freezing, save previous linear velocity.
-		if frozen:
-			#if not preFreezevalue: ##Only If becoming frozen this frame, save the velocity.
-			if linearVelocityBeforeFreeze == null:
-				linearVelocityBeforeFreeze = body.linear_velocity;
-			if is_instance_valid(body):
-				body.gravity_scale = 0;
-	
-		##Lock up linear velocities while frozen.
-		body.freeze_mode = RigidBody3D.FREEZE_MODE_STATIC;
-		body.set_freeze_enabled(frozen);
-	
-		##If unfreezing, add an impulse for the velocity we had before.
-		if not frozen:
-			if preFreezevalue: ##Only If becoming unfrozen this frame, apply the impulse.
-				print("Unpause velocity:", linearVelocityBeforeFreeze)
-				if get_physics_process_delta_time() > 0:
-					body.call("apply_impulse", linearVelocityBeforeFreeze * 1 / (get_physics_process_delta_time()));
-					linearVelocityBeforeFreeze = null;
-			body.gravity_scale = 1;
+	var _body = get("body");
+	if _body != null:
+		if is_instance_valid(_body):
+			if _body is RigidBody3D:
+				##If freezing, save previous linear velocity.
+				if frozen:
+					#if not preFreezevalue: ##Only If becoming frozen this frame, save the velocity.
+					if linearVelocityBeforeFreeze == null:
+						linearVelocityBeforeFreeze = _body.linear_velocity;
+					_body.gravity_scale = 0;
+			
+				##Lock up linear velocities while frozen.
+				_body.freeze_mode = RigidBody3D.FREEZE_MODE_STATIC;
+				_body.set_freeze_enabled(frozen);
+			
+				##If unfreezing, add an impulse for the velocity we had before.
+				if not frozen:
+					if preFreezevalue: ##Only If becoming unfrozen this frame, apply the impulse.
+						print("Unpause velocity:", linearVelocityBeforeFreeze)
+						if get_physics_process_delta_time() > 0:
+							_body.call("apply_impulse", linearVelocityBeforeFreeze * 1 / (get_physics_process_delta_time()));
+							linearVelocityBeforeFreeze = null;
+					_body.gravity_scale = 1;
 	pass;
 
 ## Convenience function to specifically unfreeze.

@@ -5,7 +5,7 @@
 [ext_resource type="Script" uid="uid://bfml2ah2jiuo4" path="res://scripts/GUI/health_bar.gd" id="3_tusgm"]
 [ext_resource type="Texture2D" uid="uid://2lfl5febi3py" path="res://graphics/images/HUD/Health_FullOverlay.png" id="4_tusgm"]
 [ext_resource type="Texture2D" uid="uid://dw41lyw5ke54n" path="res://graphics/images/HUD/Health_EmptyOverlay.png" id="5_64kj3"]
-[ext_resource type="FontFile" uid="uid://qklyfj282mg3" path="res://graphics/font/Scrap8x14.ttf" id="6_egq82"]
+[ext_resource type="FontFile" uid="uid://6r8bhxg8mft1" path="res://graphics/font/Scrap8x14.ttf" id="6_egq82"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_rvrkp"]
 resource_local_to_scene = true

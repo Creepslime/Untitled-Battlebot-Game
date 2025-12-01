@@ -286,7 +286,8 @@ offset_top = -1846.2
 offset_right = -9.93701
 offset_bottom = -1978.14
 theme = ExtResource("5_rirx1")
-text = "All"
+theme_type_variation = &"StashButton"
+text = "ALL"
 icon = ExtResource("6_gqx4l")
 
 [node name="SortByEquipped" type="Button" parent="StashViewer"]
@@ -301,7 +302,8 @@ offset_top = -1846.2
 offset_right = 186.095
 offset_bottom = -1978.14
 theme = ExtResource("5_rirx1")
-text = "EQUIPPED
+theme_type_variation = &"StashButton"
+text = "ANY
 "
 
 [node name="_SORT BY_" type="Label" parent="StashViewer"]
@@ -325,7 +327,5 @@ horizontal_alignment = 1
 [connection signal="pressed" from="InfoBox/RemoveButton" to="InfoBox" method="_on_remove_button_pressed"]
 [connection signal="toggled" from="InfoBox/MoveButton" to="InfoBox" method="_on_move_button_toggled"]
 [connection signal="pressed" from="InfoBox/SellButton" to="InfoBox" method="_on_sell_button_pressed"]
-[connection signal="partButtonClicked" from="StashViewer/PieceStash" to="StashViewer/PieceStash" method="_on_part_button_clicked"]
-[connection signal="pieceButtonClicked" from="StashViewer/PieceStash" to="StashViewer/PieceStash" method="_on_piece_button_clicked"]
 [connection signal="pressed" from="StashViewer/SortByParts" to="StashViewer/PieceStash" method="_on_sort_by_parts_pressed"]
 [connection signal="pressed" from="StashViewer/SortByEquipped" to="StashViewer/PieceStash" method="_on_sort_by_equipped_pressed"]

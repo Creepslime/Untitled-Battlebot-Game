@@ -42,6 +42,8 @@ func _process(delta: float) -> void:
 			push_warning("Transition canvas being DISABLED (Hit f3)")
 		else:
 			push_warning("Transition canvas being ENABLED (Hit f3)")
+	elif Input.is_action_just_pressed("dbg_ClearProfiler"):
+		clear_profiler_pings();
 	elif Input.is_action_just_pressed("dbg_ToggleProfiler"):
 		var dbg_hidden = get_setting("ProfilerLabelsVisible");
 		set_setting("ProfilerLabelsVisible", !dbg_hidden)
@@ -196,6 +198,12 @@ func get_player_selected_or_pipette():
 	
 	if is_instance_valid(ply):
 		return ply.get_selected_or_pipette();
+	return null
+func get_player_selected_for_inspector():
+	var ply = get_player()
+	
+	if is_instance_valid(ply):
+		return ply.get_selected_for_inspector();
 	return null
 
 func get_player_selected_piece():
@@ -676,6 +684,8 @@ var profilerPingTimers = {}
 var profilerPingRecords = {}
 const maxLoopsBeforeDeletionIfEmpty := 30;
 func profiler_ping_create(reason := "unknown"):
+	if !profilerRunning: return;
+	
 	if ! profilerPingCalls.has(reason):
 		profilerPingCalls[reason] = 0;
 	if ! profilerPingBanks.has(reason):
@@ -684,6 +694,8 @@ func profiler_ping_create(reason := "unknown"):
 	profilerPingTimers[reason] = maxLoopsBeforeDeletionIfEmpty;
 
 func profiler_ping_time_create(reason, time:float):
+	if !profilerRunning: return;
+	
 	if ! profilerPingCalls.has(reason):
 		profilerPingCalls[reason] = 0.;
 	if ! profilerPingBanks.has(reason):
@@ -691,47 +703,58 @@ func profiler_ping_time_create(reason, time:float):
 	profilerPingCalls[reason] += time;
 	profilerPingTimers[reason] = maxLoopsBeforeDeletionIfEmpty;
 
-
-func get_profiler_string() -> String:
-	var s = "\n\nPROFILER PINGS:"
-	for reason in profilerPingBanks:
-		var timeSinceLastIncident = profilerPingTimers[reason];
-		if timeSinceLastIncident > 0:
-			var timelinessFactor = float(timeSinceLastIncident) / float(maxLoopsBeforeDeletionIfEmpty);
-			var current = profilerPingBanks[reason];
-			
-			## Log the peak amount of calls while the entry has been alive for > 30 seconds.
-			if ! profilerPingRecords.has(reason):
-				profilerPingRecords[reason] = current;
-			var highest = profilerPingRecords[reason];
-			if current > highest:
-				profilerPingRecords[reason] = current;
-			highest = profilerPingRecords[reason];
-			
-			var colorHexString = TextFunc.get_grey_hex_string(timelinessFactor + 0.3);
-			s += "\n"
-			s += "[color=" + colorHexString + "]"
-			s += reason
-			s += ": "
-			s += str(current)
-			s += " | ~"
-			if profilerFPS > 0:
-				s += str(current / profilerFPS)
-				s += "/frame"
+var profilerPingString := ""
+## Gets a string representing all the profiler pings.
+func get_profiler_ping_string(expensive:= false) -> String:
+	if expensive:
+		var s = "\n\nPROFILER PINGS:"
+		var profilerPingBanksKeysSorted = profilerPingBanks.keys();
+		profilerPingBanksKeysSorted.sort() ;
+		
+		for reason in profilerPingBanksKeysSorted:
+			var timeSinceLastIncident = profilerPingTimers[reason];
+			if timeSinceLastIncident > 0:
+				var timelinessFactor = (float(timeSinceLastIncident) / float(maxLoopsBeforeDeletionIfEmpty)) + 0.3;
+				var current = profilerPingBanks[reason];
+				var r = 1.;
+				var g = 1.;
+				var b = 1.;
+				
+				## Log the peak amount of calls while the entry has been alive for > 30 seconds.
+				if ! profilerPingRecords.has(reason):
+					profilerPingRecords[reason] = current;
+				var highest = profilerPingRecords[reason];
+				if current > highest:
+					b = 0.;
+					profilerPingRecords[reason] = current;
+				highest = profilerPingRecords[reason];
+				
+				var colorHexString = TextFunc.get_color_hex_string_from_rgba(r * timelinessFactor, g * timelinessFactor, b * timelinessFactor, 1.);
+				s += "\n"
+				s += "[color=" + colorHexString + "]"
+				s += reason
+				s += ": "
+				s += str(current)
+				s += " | ~"
+				if profilerFPS > 0:
+					s += TextFunc.get_decimal_string(current / profilerFPS, 4, true)
+					s += "/frame"
+				else:
+					s += "0/frame"
+				s += " | Peak: " + str(highest);
+			elif timeSinceLastIncident == 0:
+				var colorHexString = TextFunc.get_grey_hex_string(0.3);
+				s += "\n"
+				s += "[color=" + colorHexString + "]"
+				s += reason
+				s += ": Last ping too old, deleting..."
 			else:
-				s += "0/frame"
-			s += " | Peak: " + str(highest);
-		elif timeSinceLastIncident == 0:
-			var colorHexString = TextFunc.get_grey_hex_string(0.3);
-			s += "\n"
-			s += "[color=" + colorHexString + "]"
-			s += reason
-			s += ": Last ping too old, deleting..."
-		else:
-			## Reset the high-score.
-			profilerPingRecords[reason] = 0;
-			pass;
-	return s;
+				## Reset the high-score.
+				profilerPingRecords[reason] = 0;
+				pass;
+		
+		profilerPingString = s;
+	return profilerPingString;
 
 func get_profiler_label():
 	var selectionColor = "gray"
@@ -743,7 +766,11 @@ func get_profiler_label():
 			selectionColor = TextFunc.get_color_hex_string("lightgreen")
 		if selPipette is AbilityData:
 			selectionColor = TextFunc.get_color_hex_string("lightblue")
-	var currentlySelected := str("\n[color=",selectionColor,"]CURRENTLY SELECTED: ",str(selPipette))
+	var selectionColor2 = "gray"
+	var selPipette2 = get_player_selected_for_inspector();
+	
+	var currentlySelected := str("\n[color=",selectionColor,"]CURRENTLY SELECTED (Robot excluded): ",str(selPipette))
+	currentlySelected += str("\n[color=white] - ", "[color="+(TextFunc.get_color_hex_string("scrap"))+"]" if selPipette2 is Robot else "[color=gray]", "ROBOT: ",str(get_player()) if selPipette2 is Robot else str(null))
 	currentlySelected += str("\n[color=white] - ", "" if is_instance_valid(get_player_selected_piece()) else "[color=gray]", "PIECE: ",str(get_player_selected_piece()))
 	currentlySelected += str("\n[color=white] - ", "" if is_instance_valid(get_player_selected_part()) else "[color=gray]", "PART: ",str(get_player_selected_part()))
 	currentlySelected += str("\n[color=white] - ", "" if is_instance_valid(get_player_pipette()) else "[color=gray]", "PIECE PIPETTE: ",str(get_player_pipette()))
@@ -753,14 +780,16 @@ func get_profiler_label():
 	var transitionString = waitingOnTransitionString;
 	waitingOnTransitionString = "\nSCREEN TRANSITION: Chilling"
 	
-	return str("TOTAL PLAY TIME: ", TextFunc.format_time(totalPlayTime, 0, -1), "\nPROFILER UPDATE TIME: ",TextFunc.format_stat(timeCounter),"\nFPS: ",profilerFPS,currentlySelected,"\nSTATE: ",get_game_board_state_string(),transitionString,"\nPAUSED: ",is_paused(),get_profiler_string());
+	var s = str("TOTAL PLAY TIME: ", TextFunc.format_time(totalPlayTime, 0, -1), "\nPROFILER UPDATE LOOP: ",TextFunc.format_stat(timeCounter),"\nFPS: ",profilerFPS,currentlySelected,"\nSTATE: ",get_game_board_state_string(),transitionString,"\nPAUSED: ", is_paused(), get_profiler_ping_string());
 	
+	return s;
 
 func profiler(delta):
 	timeCounter += delta;
 	totalPlayTime += delta;
 	profilerFrames += 1;
 	if timeCounter > 1:
+		
 		timeCounter -= 1;
 		profilerFPS = profilerFrames;
 		profilerFrames = 0;
@@ -772,16 +801,34 @@ func profiler(delta):
 		if ! is_paused():
 			for reason in profilerPingTimers:
 				profilerPingTimers[reason] -= 1;
+		
+		get_profiler_ping_string(true);
+		
+		profilerRunning = get_setting("ProfilerLabelsVisible");
+
+var profilerRunning := true;
+## Clears out the profiler until next frame.
+func clear_profiler_pings():
+	profilerPingBanks.clear();
+	profilerPingCalls.clear();
+	profilerPingRecords.clear();
+	profilerPingTimers.clear();
+	pTimeStartTable.clear();
+	profilerRunning = false;
 
 var pTimeStart := 0
 var pTimeStartTable = {}
 func profiler_time_usec_start(reason := "[Unnamed call]"):
+	if !profilerRunning: return;
+	
 	if reason == "[Unnamed call]":
 		pTimeStart = Time.get_ticks_usec()
 	else:
 		pTimeStartTable[reason] = Time.get_ticks_usec()
 
 func profiler_time_usec_end(reason:String="[Unnamed call]", doPrint := false):
+	if !profilerRunning: return;
+	
 	var end = Time.get_ticks_usec();
 	var time_taken;
 	if reason == "[Unnamed call]" or ! pTimeStartTable.has(reason):
@@ -795,12 +842,16 @@ func profiler_time_usec_end(reason:String="[Unnamed call]", doPrint := false):
 	profiler_ping_time_create(reason + " (Usecs)", time_taken);
 
 func profiler_time_msec_start(reason := "[Unnamed call]"):
+	if !profilerRunning: return;
+	
 	if reason == "[Unnamed call]":
 		pTimeStart = Time.get_ticks_msec()
 	else:
 		pTimeStartTable[reason] = Time.get_ticks_msec()
 
 func profiler_time_msec_end(reason:String= "[Unnamed call]", doPrint := false):
+	if !profilerRunning: return;
+	
 	var end = Time.get_ticks_msec();
 	var time_taken;
 	if reason == "[Unnamed call]" or ! pTimeStartTable.has(reason):

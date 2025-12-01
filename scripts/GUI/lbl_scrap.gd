@@ -14,7 +14,28 @@ func _ready():
 			queue_free();
 
 func _process(delta):
-	displayedAmount = lerp(displayedAmount, float(actualAmount), delta * 25);
+	var factor = 1;
+	var strLengthMax = max(str(actualAmount).length(), str(roundi(displayedAmount)).length())
+	match strLengthMax:
+		0:
+			factor = 1;
+		1:
+			factor = 1;
+		2:
+			factor = 2;
+		3:
+			factor = 10;
+		4:
+			factor = 100;
+		5:
+			factor = 1000;
+		6:
+			factor = 10000;
+	
+	#if self is ScrapLabel_Player:
+		#prints(factor, strLengthMax, actualAmount, str(actualAmount).length(), displayedAmount, str(displayedAmount).length())
+	
+	displayedAmount = move_toward(displayedAmount, float(actualAmount), factor);
 	update_label();
 
 func update_label():

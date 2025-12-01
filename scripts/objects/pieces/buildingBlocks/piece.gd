@@ -1535,6 +1535,9 @@ func set_host_recursive(_robot:Robot, _piece:Piece):
 	for socket in allSockets:
 		socket.hostPiece = self;
 		socket.set_host_robot(_robot);
+	for part in listOfParts:
+		part.hostPiece = self;
+		part.hostRobot = hostRobot;
 	regenHostData = true;
 
 ##Returns a list of all sockets on this part.
@@ -2042,6 +2045,8 @@ func engine_add_part(part: Part, invPosition : Vector2i, noisy := false):
 	pass
 
 func engine_add_part_post(part:Part, noisy:=false):
+	if has_robot_host():
+		hostRobot.remove_something_from_stash(part);
 	regeneratePartList = true; 
 	partMods_deploy();
 	pass;

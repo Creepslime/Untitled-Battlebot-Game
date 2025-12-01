@@ -1,3 +1,4 @@
+@icon ("res://graphics/images/class_icons/robot_player.png")
 extends Robot
 
 class_name Robot_Player

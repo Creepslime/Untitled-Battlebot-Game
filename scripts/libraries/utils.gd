@@ -1,4 +1,5 @@
 extends Node
+## Utility functions.
 
 var nodesChecked = []
 var loopCounter := 0;
@@ -181,6 +182,7 @@ func rotate_using_gridmap_orientation(object : Node3D, orientation : int):
 		
 		gridMapRotations[orientation] = object.rotation;
 
+## Turns the given number into a color-compatible [int] from 0-255.[br]If the input is an [int] already, it just clamps it.[br]If the input is a [float], its bounds are 0.0-1.0; it multiplies it by 255.0, then performs roundi on it.
 func convert_num_to_rgba_int(num):
 	if num is int:
 		return clampi(num, 0, 255);

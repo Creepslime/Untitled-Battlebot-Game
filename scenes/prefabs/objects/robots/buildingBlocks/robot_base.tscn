@@ -11,11 +11,10 @@ bounce = 0.3
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_kynhc"]
 
-[node name="Robot" type="Node3D" node_paths=PackedStringArray("meshes", "bodySocket", "body")]
+[node name="Robot" type="Node3D" node_paths=PackedStringArray("meshes", "bodySocket")]
 script = ExtResource("1_u0mtq")
 meshes = NodePath("Body/Meshes")
 bodySocket = NodePath("Body/Meshes/Socket")
-body = NodePath("Body")
 
 [node name="Body" type="RigidBody3D" parent="." groups=["Combatant", "Driveable", "Metal"]]
 axis_lock_angular_x = true

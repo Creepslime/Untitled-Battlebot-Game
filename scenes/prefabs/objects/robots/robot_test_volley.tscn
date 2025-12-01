@@ -11,7 +11,7 @@ bounce = 0.3
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_kynhc"]
 
-[node name="Robot_TestVolley" type="Node3D" node_paths=PackedStringArray("bodySocket", "treads", "body")]
+[node name="Robot_TestVolley" type="Node3D" node_paths=PackedStringArray("bodySocket", "treads")]
 visible = false
 script = ExtResource("1_fhm5l")
 bodySocket = NodePath("Body/Meshes/Socket")
@@ -97,7 +97,6 @@ startupGenerator = {
 &"rotation": Vector3(0, 0, 0)
 }
 filepathForThisEntity = "res://scenes/prefabs/objects/robots/robot_test_volley.tscn"
-body = NodePath("Body")
 
 [node name="Body" type="RigidBody3D" parent="." groups=["Combatant", "Driveable", "Metal"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.0103, 0)

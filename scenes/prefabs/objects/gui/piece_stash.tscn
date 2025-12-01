@@ -9,8 +9,8 @@ offset_right = 288.0
 offset_bottom = 288.0
 stretch_mode = 1
 script = ExtResource("1_186n4")
-buttonsHolder = NodePath("ScrollContainer/PieceStash")
 stashButtonScene = ExtResource("2_pkixk")
+buttonsHolder = NodePath("ScrollContainer/PieceStash")
 scrollContainer = NodePath("ScrollContainer")
 
 [node name="ScrollContainer" type="ScrollContainer" parent="."]
@@ -37,3 +37,7 @@ theme = ExtResource("4_js1gq")
 alignment = 1
 last_wrap_alignment = 2
 reverse_fill = true
+
+[connection signal="partButtonClicked" from="." to="." method="_on_part_button_clicked"]
+[connection signal="pieceButtonClicked" from="." to="." method="_on_piece_button_clicked"]
+[connection signal="robotButtonClicked" from="." to="." method="_on_robot_button_clicked"]

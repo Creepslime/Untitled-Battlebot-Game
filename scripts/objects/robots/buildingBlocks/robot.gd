@@ -1,5 +1,4 @@
-
-@icon ("res://graphics/images/class_icons/robot.png")
+@icon ("res://graphics/images/class_icons/robot_base.png")
 extends StatHolder3D;
 
 ##This entity can be frozen and paused, and can hold stats.[br]
@@ -15,6 +14,8 @@ var camera : Camera; ## The main game camera.
 @export var robotNameInternal : String = "Base"; ## The name this [Robot] uses in the codebase.
 @export var robotName : String = "Basic"; ## The name this [Robot] uses in-game.
 @export var treads : UnderbellyContactPoints; ## The wheels.
+var bodyBasis : Basis;
+var body : RobotBody;
 
 
 ################################## GODOT PROCESSING FUNCTIONS
@@ -45,7 +46,9 @@ func _physics_process(delta):
 		super(delta);
 		if spawned and is_ready and referencesAssigned:
 			phys_process_collision(delta);
+			GameState.profiler_time_msec_start("robot phys_process_motion 1: full call")
 			phys_process_motion(delta);
+			GameState.profiler_time_msec_end("robot phys_process_motion 1: full call")
 			phys_process_combat(delta);
 	pass
 
@@ -65,6 +68,8 @@ func process_pre(delta):
 func phys_process_pre(delta):
 	super(delta);
 	assign_references();
+	if referencesAssigned:
+		bodyBasis = body.global_basis;
 	pass;
 
 func process_timers(delta):
@@ -107,6 +112,8 @@ func assign_references(forceTemp := false):
 	if is_instance_valid(body):
 		body.set_collision_mask_value(1, false);
 		body.set_collision_mask_value(11, true);
+		bodyBasis = body.global_basis;
+		body.robot = self;
 	if not is_instance_valid(gameBoard):
 		gameBoard = GameState.get_game_board();
 	if not is_instance_valid(camera):
@@ -163,7 +170,8 @@ func stat_registry():
 		);
 	register_stat("InvincibilityTime", maxInvincibleTimer, StatHolderManager.statIconCooldown, StatHolderManager.statTags.Clock);
 	register_stat("MovementSpeedAcceleration", acceleration, StatHolderManager.statIconCooldown, StatHolderManager.statTags.Function);
-	register_stat("MovementSpeedMax", maxSpeed, StatHolderManager.statIconCooldown, StatHolderManager.statTags.Function);
+	register_stat("MovementSpeedMax", maxSpeed, StatHolderManager.statIconCooldown, StatHolderManager.statTags.Function, );
+	prints("MAX SPEED: ",get_stat("MovementSpeedMax"), maxSpeed)
 	pass;
 
 ################## SAVING/LOADING
@@ -221,6 +229,17 @@ var queueUpdateEngineWithSelectedOrPipette := false;
 func queue_update_engine_with_selected_or_pipette():
 	queueUpdateEngineWithSelectedOrPipette = true;
 
+var selected := false;
+func is_selected() -> bool:
+	return selected;
+func select(foo:bool= ! is_selected()):
+	print("ROBOT SELECT: ", foo)
+	if selected != foo:
+		selected = foo;
+	queue_update_hud();
+func deselect():
+	select(false);
+
 func process_hud(delta):
 	if Input.is_action_just_pressed("StashSelected") and GameState.get_in_state_of_building():
 		print("Stash button pressed")
@@ -236,7 +255,6 @@ func process_hud(delta):
 			if selectionResult != null:
 				if selectionResult is Piece:
 					engineViewer.open_with_new_piece(selectionResult);
-				
 			else:
 				queue_close_engine();
 			
@@ -249,7 +267,7 @@ func queue_update_hud():
 	call_deferred("update_hud");
 func update_hud(forced := false):
 	if is_ready or forced:
-		update_inspector_hud(get_selected_or_pipette());
+		update_inspector_hud(get_selected_for_inspector());
 		queue_update_engine_hud();
 		update_stash_hud();
 		return true;
@@ -377,17 +395,17 @@ func get_stash_parts(equippedStatus : PieceStash.equippedStatus = PieceStash.equ
 	match equippedStatus:
 		PieceStash.equippedStatus.ALL:
 			ret.append_array(stashParts);
-			ret.append_array(get_all_parts());
+			ret.append_array(get_all_parts(PieceStash.equippedStatus.ALL));
 		PieceStash.equippedStatus.EQUIPPED:
-			ret.append_array(get_all_parts());
+			ret.append_array(get_all_parts(PieceStash.equippedStatus.EQUIPPED));
 		PieceStash.equippedStatus.NOT_EQUIPPED:
 			ret.append_array(stashParts);
 	return ret;
 ## Gets everything currently in either [member stashParts] or [member stashPieces].
 func get_stash_all(equippedStatus : PieceStash.equippedStatus = PieceStash.equippedStatus.ALL):
 	var ret = [];
-	ret.append_array(get_stash_pieces());
-	ret.append_array(get_stash_parts());
+	ret.append_array(get_stash_pieces(equippedStatus));
+	ret.append_array(get_stash_parts(equippedStatus));
 	return ret;
 
 func remove_something_from_stash(inThing):
@@ -407,20 +425,16 @@ func remove_something_from_stash(inThing):
 	update_stash_hud();
 
 func add_something_to_stash(inThing):
+	call_deferred("update_stash_hud")
 	if inThing is Piece:
 		add_instantiated_piece_to_stash(inThing);
-		update_stash_hud();
 		return true;
 	if inThing is Part:
 		add_instantiated_part_to_stash(inThing);
-		update_stash_hud();
 		return true;
 	if inThing is PackedScene:
 		add_packed_piece_or_part_to_stash(inThing);
-		update_stash_hud();
 		return true;
-	#print(inThing, " failed to add to stash.")
-	update_stash_hud();
 	return false;
 
 func add_packed_piece_or_part_to_stash(inPieceScene : PackedScene):
@@ -436,11 +450,11 @@ func add_packed_piece_or_part_to_stash(inPieceScene : PackedScene):
 
 func add_instantiated_piece_to_stash(inPiece : Piece):
 	stashPieces = Utils.append_unique(stashPieces, inPiece);
-	update_stash_hud();
+	call_deferred("update_stash_hud");
 
 func add_instantiated_part_to_stash(inPiece : Part):
 	Utils.append_unique(stashParts, inPiece);
-	update_stash_hud();
+	call_deferred("update_stash_hud");
 
 ##The path to the scene the Piece placement pipette is using.
 var pipettePiecePath := "";
@@ -626,8 +640,8 @@ func take_knockback(inDir:Vector3, posDir:=Vector3.ZERO):
 	##TODO: Weight calculation.
 	#inDir *= 100;
 	inDir.y = 0;
-	if treads.is_on_driveable():
-		inDir.y = 200;
+	#if isOnFloor:
+		#inDir.y = 200;
 	body.call_deferred("apply_impulse", inDir, posDir);
 	pass
 
@@ -766,6 +780,10 @@ func regen_piece_tree_stats():
 	queue_update_hud(); ## Update the hud.
 	referencesAssigned = false; ## Make it so the next time [method phys_process_pre] gets called, it looks for references again.
 	assign_references(); ## ...the next time is now.
+	
+	## Update the body's stuff.
+	body.maxSpeed = get_stat("MovementSpeedMax");
+	
 	regenAllHurtboxes = true; ## For some stupid reason these variables are getting UNSET without actually properly regenerating the fucking list.
 	regenAllPieces = true;
 
@@ -874,12 +892,12 @@ func phys_process_motion(delta):
 	
 		##Apply the current movement vector.
 		#print("MV",movementVector);
-		GameState.profiler_time_msec_start()
+		GameState.profiler_time_msec_start("robot phys_process_motion 2: Rotating + moving robot")
 		move_and_rotate_towards_movement_vector(delta);
-		GameState.profiler_time_msec_end("Rotating + moving robot")
-		GameState.profiler_time_msec_start()
+		GameState.profiler_time_msec_end("robot phys_process_motion 2: Rotating + moving robot")
+		GameState.profiler_time_msec_start("robot phys_process_motion 6: Updating treads rotation")
 		update_treads_rotation(delta);
-		GameState.profiler_time_msec_end("Updating treads rotation")
+		GameState.profiler_time_msec_end("robot phys_process_motion 6: Updating treads rotation")
 	if is_instance_valid(treads):
 		update_treads_position();
 	pass;
@@ -888,46 +906,53 @@ func move_and_rotate_towards_movement_vector(delta : float):
 	if is_frozen(): return;
 	#print("MV2",movementVector);
 	##Rotating the body mesh towards the movement vector
-	var rotatedMV = movementVector.rotated(deg_to_rad(90.0));
+	var rotatedMV = movementVector.rotated(PI/2);
 	
 	if is_inputting_movement() and isOnFloor:
-		lastInputtedMV = movementVector;
-		var movementVectorRotated = movementVector.rotated(deg_to_rad(90.0 + randf()))
-		var vectorToRotTo = Vector2(movementVectorRotated.x, -movementVectorRotated.y)
-		bodyRotationAngle = vectorToRotTo;
-		
-		if is_in_reverse():
-			bodyRotationAngle = bodyRotationAngle.rotated(deg_to_rad(180));
+		if lastInputtedMV != movementVector: ## Only run the MV rotation if there was a change.
+			lastInputtedMV = movementVector;
+			var movementVectorRotated = movementVector.rotated(deg_to_rad(90.0))
+			var vectorToRotTo = Vector2(movementVectorRotated.x, -movementVectorRotated.y)
+			bodyRotationAngle = vectorToRotTo;
+	
+	## Mandatory.
+	if is_in_reverse():
+		bodyRotationAngle = bodyRotationAngle.rotated(deg_to_rad(180));
 	
 	bodyRotationSpeed = get_rotation_speed();
 	
-	GameState.profiler_time_msec_start("Body rotation")
+	GameState.profiler_time_msec_start("robot phys_process_motion 3: Body rotation")
 	body.update_target_rotation(bodyRotationAngle, delta * bodyRotationSpeed);
-	GameState.profiler_time_msec_end("Body rotation")
+	GameState.profiler_time_msec_end("robot phys_process_motion 3: Body rotation")
 	
 	##Get movement input.
 	if is_inputting_movement():
 		## Move the body.
 		var accel = movementSpeedAcceleration;
-		#print("HI")
-		GameState.profiler_time_msec_start("Body rotation Euler stuff")
+		
+		GameState.profiler_time_msec_start("robot phys_process_motion 4: Body rotation Euler stuff")
 		var forceVector = Vector3.ZERO;
-		var bodBasis := body.global_basis;
 		forceVector += body.global_transform.basis.x * movementVector.x * -accel;
 		forceVector += body.global_transform.basis.z * movementVector.y * -accel;
 		
-		var bodBasisRotationOrthonormalized := bodBasis.orthonormalized();
+		var bodBasisRotationOrthonormalized := bodyBasis.orthonormalized();
 		var bodBasisRotation = bodBasisRotationOrthonormalized.get_euler();
 		
-		GameState.profiler_time_msec_end("Body rotation Euler stuff")
+		GameState.profiler_time_msec_end("robot phys_process_motion 4: Body rotation Euler stuff")
 
 		##Rotate the force vector so the body's rotation doesn't meddle with it.
 		forceVector = forceVector.rotated(Vector3(0.0,1.0,0.0), float(-bodBasisRotation.y));
+		GameState.profiler_time_msec_start("robot phys_process_motion 5: Body central force")
 		body.apply_central_force(forceVector);
+		GameState.profiler_time_msec_end("robot phys_process_motion 5: Body central force")
 	else:
-		body.linear_velocity *= speedReductionWhileNoInput;
+		if not is_frozen():
+			body.linear_velocity.x *= speedReductionWhileNoInput;
+			body.linear_velocity.z *= speedReductionWhileNoInput;
 	
+	GameState.profiler_time_msec_start("robot phys_process_motion 7: Body speed clamp")
 	clamp_speed();
+	GameState.profiler_time_msec_end("robot phys_process_motion 7: Body speed clamp")
 
 
 func update_treads_rotation(delta : float):
@@ -987,7 +1012,7 @@ func get_movement_vector(rotatedByCamera : bool = false) -> Vector2:
 	movementVectorRotation = movementVector.angle();
 	return movementVector.normalized();
 
-var inputtingMovementThisFrame := false; ##This should be set by AI bots before phys_process_motion is called to notify whether to update their position or not this frame.
+var inputtingMovementThisFrame := false; ##This should be set by AI bots before [method phys_process_motion] is called to notify whether to update their position or not this frame.
 func is_inputting_movement() -> bool: ## Returns [member inputtingMovementThisFrame].
 	return inputtingMovementThisFrame;
 var in_reverse := false; ##@experimental: Whether the bot is 'reversing' or not. When true, [method move_and_rotate_towards_movement_vector] will rotate the target rotation 180* so the bot can move "backwards".[br][i]Note: Gets reset to false during [method phys_process_pre].[/i]
@@ -1116,13 +1141,34 @@ var allParts : Array[Part]=[];
 
 ##Returns a freshly gathered array of all Parts placed within the engines of every Piece attached to this Robot.[br]
 ## Saves it to [member allParts].
-func get_all_parts() -> Array[Part]:
+func get_all_parts(equippedStatus : PieceStash.equippedStatus = PieceStash.equippedStatus.ALL) -> Array[Part]:
 	if allParts.is_empty():
 		return get_all_parts_regenerate();
 	for part in allParts:
 		if !is_instance_valid(part) or part.is_queued_for_deletion():
 			return get_all_parts_regenerate();
-	return allParts;
+	var partsGathered = allParts;
+	match equippedStatus:
+		PieceStash.equippedStatus.NONE:
+			pass;
+		PieceStash.equippedStatus.ALL:
+			pass;
+		PieceStash.equippedStatus.EQUIPPED:
+			var partsOnlyEquipped : Array[Part] = []
+			for part in partsGathered:
+				if part.is_equipped():
+					partsOnlyEquipped.append(part);
+			partsGathered = partsOnlyEquipped;
+			pass;
+		PieceStash.equippedStatus.NOT_EQUIPPED:
+			var partsOnlyNotEquipped : Array[Part] = []
+			for part in partsGathered:
+				if !part.is_equipped():
+					partsOnlyNotEquipped.append(part);
+			partsGathered = partsOnlyNotEquipped;
+			pass;
+	
+	return partsGathered;
 
 ##Returns a freshly gathered array of all Parts attached to this Robot and whih have it set as their host.
 func get_all_parts_regenerate() -> Array[Part]:
@@ -1259,6 +1305,12 @@ func is_piece_selected() -> bool:
 	return is_instance_valid(selectedPiece);
 func is_pipette_loaded() -> bool:
 	return is_instance_valid(pipettePieceInstance) or is_instance_valid(pipettePartInstance);
+
+func get_selected_for_inspector():
+	if is_selected():
+		return self;
+	return get_selected_or_pipette();
+
 ## Returns what's selected, or what's in the pipette. Returns [code]null[/code] elsewise.[br]Priority is [member pipettePartPath] > [member pipettePiecePath] > [member selectedPart] > [member selectedPiece] > [code]null[/code].
 func get_selected_or_pipette(ignoreParts := false):
 	var pipette = get_current_pipette();
@@ -1307,6 +1359,9 @@ func get_selected_piece(mustBeInTree := false)->Piece:
 ## Ability > Pipette > Part > Piece;
 func deselect_in_hierarchy():
 	queue_update_hud();
+	if selected:
+		select(false);
+		return;
 	if partMovementPipette != null:
 		clear_move_mode_pipette();
 		return;
@@ -1330,6 +1385,7 @@ func deselect_in_hierarchy():
 func deselect_everything():
 	unreference_pipette();
 	deselect_all_pieces();
+	deselect();
 
 func deselect_all_pieces(ignoredPiece : Piece = null):
 	unreference_pipette();
@@ -1363,6 +1419,8 @@ func select_piece(piece : Piece, forcedValue = null):
 			result = piece.select();
 		
 		if result:
+			deselect();
+			
 			print("Selected Piece: ", selectedPiece)
 			deselect_all_pieces(piece);
 			
@@ -1407,6 +1465,13 @@ func select_part(part : Part, foo: bool= true, deselectAllElse := true):
 			selectedPart = null;
 			update_hud();
 	return null;
+
+## Force-deselects one specific piece.
+func deselect_part(part:Part):
+	if part == selectedPart:
+		deselect_all_parts();
+	else:
+		part.deselect();
 
 ## Gets [member selectedPart] or null.
 func get_selected_part():

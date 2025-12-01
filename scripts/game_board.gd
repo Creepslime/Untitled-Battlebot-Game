@@ -273,7 +273,7 @@ func enter_state(_newState:gameState, _oldState:gameState):
 			CANVAS_SHOP.hide();
 			HUD_shopManager.close_up_shop();
 			MUSIC.change_state(MusicHandler.musState.MENU);
-			
+			ScrapManager.remove_scrap(999999, "Game End");
 			destroy_all_enemies(true);
 			player = null;
 			HUD_mainMenu.show();

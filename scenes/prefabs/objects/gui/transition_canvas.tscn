@@ -74,7 +74,7 @@ thingsToMove = [NodePath("DbgLabel"), NodePath("DbgLabel/Button")]
 [node name="DbgLabel" type="RichTextLabel" parent="Debug/MarginContainer"]
 texture_filter = 1
 clip_contents = false
-custom_minimum_size = Vector2(500, 0)
+custom_minimum_size = Vector2(600, 0)
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0

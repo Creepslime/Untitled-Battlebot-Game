@@ -9,6 +9,7 @@ class_name InfoBox
 #@export var rlbl_desc : RichTextLabel;
 var partRef : Part;
 var pieceRef : Piece;
+var robotRef : Robot;
 var data_ready := false;
 signal sellPart(part:Part);
 signal sellPiece(piece:Piece);
@@ -21,6 +22,7 @@ var icon_passive := preload("res://graphics/images/HUD/infobox/typeIcons/info_pa
 var icon_scrap := preload("res://graphics/images/HUD/infobox/typeIcons/info_scrap.png");
 var icon_warning := preload("res://graphics/images/HUD/infobox/typeIcons/info_warning.png");
 var icon_error := preload("res://graphics/images/HUD/infobox/typeIcons/info_error.png");
+var icon_robot := preload("res://graphics/images/HUD/infobox/typeIcons/info_robot.png");
 var icon_piece := preload("res://graphics/images/HUD/infobox/typeIcons/info_piece.png");
 var icon_piece_unequipped := preload("res://graphics/images/HUD/infobox/typeIcons/info_piece_unequipped.png");
 var icon_part := preload("res://graphics/images/HUD/infobox/typeIcons/info_part.png");
@@ -39,6 +41,9 @@ func populate_info(thing):
 			good = true;
 		if thing is Piece:
 			populate_info_piece(thing);
+			good = true;
+		if thing is Robot:
+			populate_info_robot(thing);
 			good = true;
 	return good;
 
@@ -122,6 +127,21 @@ func populate_info_piece(piece:Piece):
 	populate_abilities(piece);
 	pass;
 
+func populate_info_robot(robot:Robot):
+	robotRef = robot;
+	lbl_partName.text = robot.robotName;
+	rlbl_desc.text = "Your own little work of remote controlled scrap-art. Yet untitled.";
+	
+	btn_sellButton.hide();
+	btn_moveButton.hide();
+	btn_removeButton.hide();
+	
+	iconBase.texture = icon_robot;
+	
+	populate_stats(robot);
+	populate_abilities(robot);
+	pass;
+
 func clear_info(thingToCheck = null):
 	if thingToCheck != get_ref():
 		data_ready = false;
@@ -160,6 +180,9 @@ func get_ref():
 	if is_instance_valid(pieceRef): 
 		ref = pieceRef;
 		return pieceRef;
+	if is_instance_valid(robotRef): 
+		ref = robotRef;
+		return robotRef;
 	ref = null;
 	return null;
 func ref_is_piece() -> bool:
@@ -169,6 +192,10 @@ func ref_is_piece() -> bool:
 func ref_is_part() -> bool:
 	if is_instance_valid(get_ref()):
 		return ref is Part;
+	return false;
+func ref_is_robot() -> bool:
+	if is_instance_valid(get_ref()):
+		return ref is Robot;
 	return false;
 func get_ref_stat_id():
 	if ref != null:
@@ -270,10 +297,10 @@ func populate_abilities(thing):
 					abilityHolder.add_child(newBox);
 					effectiveSize += 1;
 	abilityScrollContainer.visible = effectiveSize > 0;
-	set_queue_ability_post_update();
 	if abilityScrollContainer.visible:
 		for child in abilityHolder.get_children():
 			child.queue_show();
+	set_queue_ability_post_update();
 
 var queueAbilityPostUpdateCounter = -1;
 
@@ -294,6 +321,11 @@ var spaceAfterButton = 4;
 var spaceAfterStats = 4;
 
 const maxButtonPosY = 366.0;
+var buttonSizeY : float :
+	get:
+		if btn_moveButton.visible or btn_sellButton.visible or btn_removeButton.visible:
+			return btn_sellButton.size.y;
+		return 0;
 
 var calculatedHeight = 0;
 func update_ability_height():
@@ -323,7 +355,7 @@ func update_ability_height():
 	btn_sellButton.position.y = min(maxButtonPosY, buttonPosY);
 	btn_moveButton.position.y = min(maxButtonPosY, buttonPosY);
 	btn_removeButton.position.y = min(maxButtonPosY, buttonPosY);
-	calculatedHeight = btn_sellButton.size.y + btn_sellButton.position.y + spaceAfterButton;
+	calculatedHeight = buttonSizeY + btn_sellButton.position.y + spaceAfterButton;
 	pass;
 
 func _physics_process(delta):
@@ -345,6 +377,8 @@ func _physics_process(delta):
 			if partRef.is_equipped():
 				removeDisabled = false;
 			sellDisabled = false;
+		elif ref_is_robot():
+			pass;
 	
 	if is_instance_valid(btn_removeButton):
 		btn_removeButton.disabled = removeDisabled;
@@ -395,10 +429,8 @@ func populate_stats(thing):
 	clear_stats();
 	
 	if is_instance_valid(thing):
-		if thing is Piece:
-			for stat in thing.statCollection.values():
-				add_stat_icon(stat);
-		elif thing is Part:
+		if (thing is StatHolder3D or thing is StatHolderControl):
+			print(thing.statCollection, get_ref_stat_id())
 			for stat in thing.statCollection.values():
 				add_stat_icon(stat);
 	

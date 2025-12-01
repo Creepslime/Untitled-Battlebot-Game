@@ -14,6 +14,7 @@ enum inspectorModes {
 	CLOSING,
 	PART,
 	PIECE,
+	ROBOT,
 	CLOSED,
 	OPEN_QUEUED,
 	}
@@ -84,6 +85,10 @@ func enter_mode(newMode : inspectorModes):
 			inspectorOpen = true;
 			pass;
 		inspectorModes.PIECE:
+			set_deferred("queued_thing", null);
+			inspectorOpen = true;
+			pass;
+		inspectorModes.ROBOT:
 			set_deferred("queued_thing", null);
 			inspectorOpen = true;
 			pass;
@@ -174,6 +179,8 @@ func _process(delta : float):
 						change_mode(inspectorModes.PART);
 					if queued_thing is Piece:
 						change_mode(inspectorModes.PIECE);
+					if queued_thing is Robot:
+						change_mode(inspectorModes.ROBOT);
 			pass;
 		inspectorModes.CLOSING:
 			inspectorOpen = true;
@@ -190,6 +197,10 @@ func _process(delta : float):
 			calc_movefactor_for_opening(delta)
 			pass;
 		inspectorModes.PIECE:
+			inspectorOpen = true;
+			calc_movefactor_for_opening(delta)
+			pass;
+		inspectorModes.ROBOT:
 			inspectorOpen = true;
 			calc_movefactor_for_opening(delta)
 			pass;
@@ -229,7 +240,7 @@ func populate_inspector(thing):
 
 ## Changes modes to closing.
 func close_inspector():
-	change_mode(inspectorModes.CLOSING, [inspectorModes.OPENING, inspectorModes.PIECE, inspectorModes.PART, inspectorModes.OPEN_QUEUED]);
+	change_mode(inspectorModes.CLOSING, [inspectorModes.OPENING, inspectorModes.PIECE, inspectorModes.PART, inspectorModes.ROBOT, inspectorModes.OPEN_QUEUED]);
 
 ## Use this when updating the inspector with the currently selected Piece or Part.[br]
 ## If we're not inspecting something already, queue the opening of the inspector.[br]
@@ -243,7 +254,7 @@ func update_selection(thing):
 	else:
 		#print("Valid thing to inspect. ", thing)
 		if thing == inspectedThing: return;
-		if ! (get_current_mode() == inspectorModes.PART or get_current_mode() == inspectorModes.PIECE) and thing == inspectedThing:
+		if ! (get_current_mode() == inspectorModes.PART or get_current_mode() == inspectorModes.PIECE or get_current_mode() == inspectorModes.ROBOT) and thing == inspectedThing:
 			#prints("Attempting opening inspector with thing",thing)
 			open_inspector(thing);
 			return;
@@ -255,7 +266,7 @@ func update_selection(thing):
 func open_inspector(thing):
 	if queued_thing != thing:
 		queued_thing = thing;
-		change_mode(inspectorModes.OPEN_QUEUED, [inspectorModes.CLOSED, inspectorModes.CLOSING, inspectorModes.PIECE, inspectorModes.PART]);
+		change_mode(inspectorModes.OPEN_QUEUED, [inspectorModes.CLOSED, inspectorModes.CLOSING, inspectorModes.PIECE, inspectorModes.PART, inspectorModes.ROBOT]);
 	else:
 		#prints("Opening inspector failed. ", queued_thing != thing, inspectedThing != thing, inspectedThing, thing)
 		pass;

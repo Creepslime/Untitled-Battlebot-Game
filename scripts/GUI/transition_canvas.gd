@@ -46,7 +46,8 @@ func _process(delta):
 	if dbg_prof:
 		debug_canvas.visible = true;
 		if is_instance_valid(lbl_profiler):
-			lbl_profiler.text = GameState.get_profiler_label();
+			var profLabel = GameState.get_profiler_label();
+			lbl_profiler.text = str(profLabel);
 	else:
 		debug_canvas.hide();
 	

@@ -48,7 +48,7 @@
 [ext_resource type="Shader" uid="uid://egarbougi4ef" path="res://graphics/shaders/healthbar.gdshader" id="21_sb58i"]
 [ext_resource type="Script" uid="uid://56vk7o0gmt7p" path="res://scripts/GUI/shop_button.gd" id="24_gqxs8"]
 [ext_resource type="PackedScene" uid="uid://rwrbd0hg75ad" path="res://scenes/prefabs/utilities/health_bar.tscn" id="25_4upc1"]
-[ext_resource type="FontFile" uid="uid://qklyfj282mg3" path="res://graphics/font/Scrap8x14.ttf" id="25_k23rv"]
+[ext_resource type="FontFile" uid="uid://6r8bhxg8mft1" path="res://graphics/font/Scrap8x14.ttf" id="25_k23rv"]
 [ext_resource type="Texture2D" uid="uid://ccklnmdcymtig" path="res://graphics/images/HUD/shop/heal_unselected.png" id="25_mcp8b"]
 [ext_resource type="Texture2D" uid="uid://g2oapmprsygp" path="res://graphics/images/HUD/shop/heal_selected.png" id="26_kbpb2"]
 [ext_resource type="PackedScene" uid="uid://bvv3y50mckawn" path="res://scenes/prefabs/objects/gui/ability_slot_manager.tscn" id="31_o0v2b"]
@@ -826,6 +826,7 @@ width = 329.0
 height = 117.0
 paddingStart = 36.0
 paddingEnd = 0.0
+currentAmt = 3.0
 EDITOR_fillAmt = 3.0
 maskTexture = ExtResource("34_ndayd")
 fullTexture = ExtResource("35_ngcqk")
@@ -1014,6 +1015,7 @@ width = 329.0
 height = 117.0
 paddingStart = 0.0
 paddingEnd = 36.0
+currentAmt = 66.9
 maskTexture = ExtResource("47_fmmmj")
 fullTexture = ExtResource("48_ed2oa")
 emptyTexture = ExtResource("49_4hhnj")
@@ -1291,14 +1293,16 @@ bbcode_enabled = true
 text = "
 
 [i][b]CREDITS[/b]
-Alancin Wolfe:  Programming, UI design / GFX, Music
-Gabe Weidman:  Programming, 3D Texturing
+Alancin Wolfe:  Programming, UI design / GFX, music
+Gabe Weidman:  Programming, 3D texturing, arena models
 Sunny Turner: 3D assets, particles, sound gathering
+Scotch Washington: 3D assets, 3D texturing, character design, particles
 Jake Muilenburg:  3D assets, logo graphic
 
 [i][b]Additional Thanks:[/b]
 Prof. Drennen Dooms
-Tyler Kem"
+Tyler Kem
+Gregory Wolfe"
 horizontal_alignment = 1
 metadata/_edit_use_anchors_ = true
 
@@ -1307,7 +1311,7 @@ z_index = -1
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.00048
-anchor_bottom = 0.675889
+anchor_bottom = 0.728065
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("11_6fdki")
@@ -1363,7 +1367,7 @@ z_index = -1
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.00048
-anchor_bottom = 0.675889
+anchor_bottom = 0.728065
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("11_6fdki")
@@ -1494,6 +1498,7 @@ patch_margin_bottom = 12
 metadata/_edit_use_anchors_ = true
 
 [node name="Options" type="Control" parent="HUDCanvas/HUD Viewport/SubViewport/HUD" node_paths=PackedStringArray("box_music", "box_UI", "box_world", "box_master", "invShooting", "sawbladeDrone", "devCheats", "moneyCheat", "invincibleCheat", "killAllCheat", "cheatsControl", "btn_scoreReset", "lbl_highScores", "renderShadows")]
+visible = false
 z_index = 1
 layout_mode = 1
 anchor_left = -0.333333

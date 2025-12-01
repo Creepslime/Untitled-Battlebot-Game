@@ -11,7 +11,7 @@ bounce = 0.3
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_wy0j3"]
 
-[node name="Robot_Pokey" type="Node3D" node_paths=PackedStringArray("meshes", "bodySocket", "treads", "body")]
+[node name="Robot_Pokey" type="Node3D" node_paths=PackedStringArray("meshes", "bodySocket", "treads")]
 script = ExtResource("1_gpm28")
 frontRayDistance = 1.5
 rayCheckFrequency = 2.0
@@ -139,7 +139,6 @@ startupGenerator = {
 sleepTimerLength = 1.0
 maxSpeed = 10.0
 filepathForThisEntity = "res://scenes/prefabs/objects/robots/robot_pokey.tscn"
-body = NodePath("Body")
 metadata/_custom_type_script = "uid://cjbf8lwy20s0y"
 
 [node name="Body" type="RigidBody3D" parent="." groups=["Combatant", "Driveable", "Metal"]]

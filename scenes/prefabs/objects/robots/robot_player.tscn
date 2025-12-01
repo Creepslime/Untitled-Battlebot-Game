@@ -11,7 +11,7 @@ bounce = 0.3
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_wy0j3"]
 
-[node name="Robot_Player" type="Node3D" node_paths=PackedStringArray("meshes", "bodySocket", "treads", "body")]
+[node name="Robot_Player" type="Node3D" node_paths=PackedStringArray("meshes", "bodySocket", "treads")]
 visible = false
 script = ExtResource("2_gvkxh")
 meshes = NodePath("Body/Meshes")
@@ -114,7 +114,6 @@ startupGenerator = {
 &"rotation": Vector3(0, 0, 0)
 }
 filepathForThisEntity = "res://scenes/prefabs/objects/robots/robot_player.tscn"
-body = NodePath("Body")
 
 [node name="Body" type="RigidBody3D" parent="." groups=["Combatant", "Driveable", "Metal"]]
 axis_lock_angular_x = true
