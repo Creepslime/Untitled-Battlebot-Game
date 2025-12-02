@@ -20,13 +20,12 @@ func blastoff():
 
 func phys_process_timers(delta):
 	super(delta);
-	if not is_frozen():
-		blastTimer -= delta;
-		#print("WTF")
 
 func phys_process_abilities(delta):
 	super(delta);
-	if blastTimer > 0 and hasHostRobot:
+	if not is_frozen() and blastTimer > 0 and hasHostRobot:
+		blastTimer -= delta;
+		
 		var bot = hostRobot;
 		#var kb = get_kickback_damage_data(0.0, get_kickback_force(), ), get_damage_types());
 		

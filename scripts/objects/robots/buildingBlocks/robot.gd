@@ -25,13 +25,26 @@ func _ready():
 		load_from_startup_generator();
 		assign_references(true);
 		super();
-		regen_piece_tree_stats();
+		regen_piece_tree_stats(false);
 		assign_references(true);
 		detach_pipette();
 		freeze(true, true);
 		start_all_cooldowns(true);
 		assign_references();
 		update_stash_hud();
+	
+		Hooks.add_enum(self, Hooks.hookNames.OnChangeGameState, str(robotNameInternal, statHolderID), 
+		func(oldState : GameBoard.gameState, newState : GameBoard.gameState):
+			match newState:
+				GameBoard.gameState.INIT_ROUND:
+					regen_piece_tree_stats(false);
+				GameBoard.gameState.SHOP_BUILD:
+					regen_piece_tree_stats(true);
+				GameBoard.gameState.SHOP_TEST:
+					regen_piece_tree_stats(false);
+			print(str("TRANSITION CALL: ROBOT ",robotNameInternal, statHolderID),)
+			pass;
+		, 3)
 
 func _process(delta):
 	if ! Engine.is_editor_hint():
@@ -771,8 +784,8 @@ func on_hitbox_collision(body : PhysicsBody3D, pieceHit : Piece):
 	pass;
 
 ## Regenerates all the things that need to be regenerated when changing piece data around.
-func regen_piece_tree_stats():
-	reassign_body_collision(); ## allPieces also gets regenerated within this function, for both this robot as well as each piece in its socket tree.
+func regen_piece_tree_stats(needPlacementColliders := false):
+	reassign_body_collision(needPlacementColliders); ## allPieces also gets regenerated within this function, for both this robot as well as each piece in its socket tree.
 	get_weight(true); ## Regenerates the amount of weight load on the robot, as well as for any piece on it.
 	body.set_deferred("mass", max(75, min(150, get_weight() * 2))); ## Sets the mass to a value reflective of the weight load.
 	has_body_piece(true); ## Checks over all the pieces to see if there's a body piece, then sets the appropriate flag.
@@ -788,7 +801,7 @@ func regen_piece_tree_stats():
 	regenAllPieces = true;
 
 ##Gives the Body new collision based on its Parts.
-func reassign_body_collision():
+func reassign_body_collision(needPlacementColliders := false):
 	regenAllPieces = true; ## Update the list of pieces.
 	regenAllHurtboxes = true; ## Make it so the next time hurtboxes are called, they regenerate.
 	
@@ -800,7 +813,7 @@ func reassign_body_collision():
 	##Then, gather copies of every Hitbox collider from all pieces, and assign a copy of it to the Body.
 	var colliderIDsInUse = [];
 	for piece in allPieces:
-		await piece.refresh_and_gather_collision_helpers();
+		await piece.refresh_and_gather_collision_helpers(needPlacementColliders);
 		for hurtbox in piece.get_all_hurtboxes():
 			if not ((hurtbox.copiedByBody) or (hurtbox.get_collider_id() in colliderIDsInUse) or !is_instance_valid(hurtbox.originalHost)):
 				colliderIDsInUse.append(hurtbox.colliderID);
@@ -875,6 +888,7 @@ func jolt_coyote_timer(time := 0.15):
 
 ##Physics process step for motion.
 # custom physics handling for player movement. regular movement feels flat and boring.
+
 func phys_process_motion(delta):
 	
 	#return;
@@ -1375,9 +1389,11 @@ func deselect_in_hierarchy():
 	if selectionResult != null:
 		if selectionResult is Part:
 			print("Deselecti in hierarchy is deselecting part")
+			selectionResult.deselect();
 			deselect_all_parts();
 			return;
 		if selectionResult is Piece:
+			selectionResult.deselect();
 			deselect_all_pieces();
 			return;
 	deselect_everything();
@@ -1412,6 +1428,10 @@ func select_piece(piece : Piece, forcedValue = null):
 	if (is_instance_valid(piece) 
 	#)and (piece in allPieces
 	):
+		if piece != selectedPiece:
+			if is_instance_valid(selectedPiece):
+				selectedPiece.deselect();
+		
 		var result = false;
 		if forcedValue != null:
 			result = piece.select(forcedValue);

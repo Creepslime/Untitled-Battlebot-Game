@@ -143,12 +143,13 @@ func add_multiplier(statName : StringName):
 func stat_registry():
 	pass;
 
+## @deprecated
 func set_stat_holder_id():
 	statHolderID = StatHolderManager.get_unique_stat_holder_id();
 	StatHolderManager.register_stat_holder(self);
 	return statHolderID;
 
-func stat_name_with_id(statName):
+func stat_name_with_id(statName) -> String:
 	return str(statName, statHolderID);
 
 func stat_exists(statName):

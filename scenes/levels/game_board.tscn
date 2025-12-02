@@ -457,15 +457,17 @@ offset_left = 1091.0
 offset_top = 83.0
 offset_right = 1577.0
 offset_bottom = 361.0
+myPool = 1
 
-[node name="Shop_Construction2" parent="ShopCanvas_SHOP/SHOP/ShopStationsStepParent/ShopStations" instance=ExtResource("19_rvmjo")]
+[node name="Shop_Battle" parent="ShopCanvas_SHOP/SHOP/ShopStationsStepParent/ShopStations" instance=ExtResource("19_rvmjo")]
 layout_mode = 1
 offset_left = 1091.0
 offset_top = 365.0
 offset_right = 1577.0
 offset_bottom = 643.0
+myPool = 2
 
-[node name="Shop_Construction3" parent="ShopCanvas_SHOP/SHOP/ShopStationsStepParent/ShopStations" instance=ExtResource("19_rvmjo")]
+[node name="Shop_Parts" parent="ShopCanvas_SHOP/SHOP/ShopStationsStepParent/ShopStations" instance=ExtResource("19_rvmjo")]
 layout_mode = 1
 offset_left = 1091.0
 offset_top = 646.0
@@ -1015,7 +1017,7 @@ width = 329.0
 height = 117.0
 paddingStart = 0.0
 paddingEnd = 36.0
-currentAmt = 66.9
+currentAmt = 42.25
 maskTexture = ExtResource("47_fmmmj")
 fullTexture = ExtResource("48_ed2oa")
 emptyTexture = ExtResource("49_4hhnj")

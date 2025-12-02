@@ -28,6 +28,8 @@ radius = 0.25
 [node name="Socket" type="Area3D" node_paths=PackedStringArray("collisionSphere", "mesh_face", "mesh_selector")]
 collision_layer = 32
 collision_mask = 0
+monitorable = false
+priority = 1
 script = ExtResource("1_qwsax")
 collisionSphere = NodePath("CollisionShape3D")
 mesh_face = NodePath("FemaleConnector/ConnectorPlane")

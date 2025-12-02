@@ -1,6 +1,6 @@
 
 @icon ("res://graphics/images/class_icons/socket.png")
-extends Node3D
+extends Area3D
 
 class_name Socket
 ##This object hosts [Piece]s.
@@ -40,6 +40,19 @@ func _ready():
 		collisionSphere.shape = collisionSphere.shape.duplicate();
 		collisionSphere.shape.radius = collisionScale;
 		initialRotation = rotation;
+		
+		call_deferred("prep_monitoring");
+		
+		Hooks.add_enum(self, Hooks.hookNames.OnChangeGameState, "Socket", 
+		func(oldState : GameBoard.gameState, newState : GameBoard.gameState):
+			call_deferred("prep_monitoring")
+		, 4)
+
+func prep_monitoring():
+	var inCorrectState = GameState.get_in_state_of_building();
+	monitoring = inCorrectState;
+	input_ray_pickable = inCorrectState;
+	$CollisionShape3D.disabled = !inCorrectState;
 
 ####################### SETUP LOAD
 

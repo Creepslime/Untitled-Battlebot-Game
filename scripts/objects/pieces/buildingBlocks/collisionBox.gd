@@ -7,8 +7,8 @@ var originalHost : Piece;
 var originalBox : PieceCollisionBox = self;
 var originalOffset : Vector3;
 var originalRotation : Vector3;
-var copied : = false;
-var copiedShapecast : = false;
+var copied : = false; ## If false, this box is able to be copied.
+var copiedShapecast : = false; ## Set via [method make_shapecast].
 var copiedByBody : = false; ##Set by the Robot when it's copied for the body.
 @export var identifier : StringName;
 @export var isPlacementBox := true; ##This collider is for placement validation.
@@ -79,10 +79,12 @@ func erase_all_shapecasts():
 
 func reset():
 	erase_all_shapecasts();
-	erase_all_copies();
-	copied = false;
-	copiedByBody = false;
 	copiedShapecast = false;
+	
+	erase_all_copies();
+	copiedByBody = false;
+	
+	copied = false;
 
 func fix_positions_of_copies():
 	for copy in copies:

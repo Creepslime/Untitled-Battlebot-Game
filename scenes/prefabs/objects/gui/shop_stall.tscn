@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=4 uid="uid://c4yuir6uc8va3"]
+[gd_scene load_steps=21 format=4 uid="uid://c4yuir6uc8va3"]
 
 [ext_resource type="Script" uid="uid://f2utlpnj4kg4" path="res://scripts/GUI/shop_stall.gd" id="1_w7sps"]
 [ext_resource type="Texture2D" uid="uid://blmdrpsajj6f7" path="res://graphics/images/HUD/blinkies/freezerblinky_off.png" id="2_w7sgq"]
@@ -8,7 +8,6 @@
 [ext_resource type="Texture2D" uid="uid://ppmc64phinum" path="res://graphics/images/HUD/shop/stall_door_left.png" id="4_vafuu"]
 [ext_resource type="PackedScene" uid="uid://ynu1nnwpk1qi" path="res://scenes/prefabs/objects/pieces/piece_bodyCube.tscn" id="5_32cuk"]
 [ext_resource type="Texture2D" uid="uid://dx4xvvlp28d07" path="res://graphics/images/HUD/shop/stall_door_right.png" id="5_irvpd"]
-[ext_resource type="CylinderMesh" uid="uid://dsjspmrahha74" path="res://graphics/models/generated/shop_stall.tres" id="6_t8nqo"]
 [ext_resource type="PackedScene" uid="uid://cir0nj1a2lfic" path="res://scenes/prefabs/objects/gui/button_hole.tscn" id="12_8lyng"]
 [ext_resource type="Theme" uid="uid://bq0jig2pdkgtn" path="res://graphics/images/HUD/UI_theme.tres" id="12_krdxo"]
 [ext_resource type="Texture2D" uid="uid://c6ex2rok0qxqr" path="res://graphics/images/HUD/icon_freeze.png" id="13_7lfx4"]
@@ -96,15 +95,8 @@ spot_angle = 20.35
 shopRotisserie = true
 
 [node name="Piece_BodyCube" parent="PieceGFX/SubViewportContainer/SubViewport/Stall/Socket" instance=ExtResource("5_32cuk")]
-visible = true
 temporaryPreview = true
 inShop = true
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="PieceGFX/SubViewportContainer/SubViewport/Stall"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
-layers = 2
-mesh = ExtResource("6_t8nqo")
-skeleton = NodePath("../../root/@EditorNode@21269/@Panel@14/@VBoxContainer@15/DockHSplitLeftL/DockHSplitLeftR/DockHSplitMain/@VBoxContainer@26/DockVSplitCenter/@VSplitContainer@54/@VBoxContainer@55/@EditorMainScreen@102/MainScreen/@CanvasItemEditor@11479/@VSplitContainer@11131/@HSplitContainer@11133/@HSplitContainer@11135/@Control@11136/@SubViewportContainer@11137/@SubViewport@11138/StallA/PieceGFX/SubViewportContainer/SubViewport")
 
 [node name="Rim2" type="TileMapLayer" parent="PieceGFX"]
 z_index = 1

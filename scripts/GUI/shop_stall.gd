@@ -17,7 +17,11 @@ var shopIsOpen := true;
 
 var doorsActuallyClosed := false;
 
-var stallID := -1;
+var stallID := -1:
+	get:
+		if stallID == -1:
+			stallID = GameState.get_unique_shop_stall_id()
+		return stallID;
 
 @export var btn_buy : Button;
 @export var lbl_price : ScrapLabel;
@@ -80,11 +84,34 @@ func _ready():
 	#inventory = GameState.get_inventory();
 	changeState(ShopStall.doorState.CLOSED);
 	
-	node_PiecePreview.global_position.x = get_shop_stall_id() * 20;
-	node_PiecePreview.global_position.y = -20;
-	
+	## Set up the rotisserie socket. Can't be done later.
 	rotisserie_socket.remove_occupant(true);
 	rotisserie_socket.shopStall = self;
+
+
+var shopStallPillarMesh := preload("res://graphics/models/generated/shop_stall.tres");
+var piecePreviewSetupDone := false;
+## Clears the occupant of [member rotisserie_socket], then sets up the pillar beneath a [Piece] preview.[br]Returns after clearing the occupant if [member piecePreviewSetupDone] is [code]true[/code].
+func set_up_piece_preview_pillar():
+	## Remove the current occupant.
+	rotisserie_socket.remove_occupant(true);
+	
+	## Don't continue further if the setup is already done.
+	if piecePreviewSetupDone: return;
+	piecePreviewSetupDone = true;
+	
+	## Set up the stall peg thing.
+	var pillarMeshNode = MeshInstance3D.new();
+	pillarMeshNode.set_layer_mask_value(1, false);
+	pillarMeshNode.set_layer_mask_value(2, true);
+	pillarMeshNode.set_mesh(shopStallPillarMesh);
+	node_PiecePreview.add_child(pillarMeshNode);
+	pillarMeshNode.position = Vector3(0,-1,0);
+	pillarMeshNode.show();
+	
+	## Move the node into the proper position.
+	node_PiecePreview.global_position.x = stallID * 20;
+	node_PiecePreview.global_position.y = -20;
 
 func _physics_process(delta):
 	updatePrice();
@@ -329,16 +356,11 @@ func update_behavior_to_reflect_contents():
 
 @export var rotisserie_socket : Socket;
 func add_piece(piece):
-	rotisserie_socket.remove_occupant(true);
+	set_up_piece_preview_pillar();
 	pieceRef = piece;
 	rotisserie_socket.add_occupant(pieceRef);
 	pieceRef.inShop = true;
 	pieceRef.shopStall = self;
-
-func get_shop_stall_id():
-	if stallID == -1:
-		stallID = GameState.get_unique_shop_stall_id()
-	return stallID;
 
 signal thingSelected(stall : ShopStall)
 func _on_btn_piece_select_pressed():

@@ -1,3 +1,4 @@
+@icon("res://graphics/images/class_icons/hook.png")
 extends Node;
 
 # List of all hooks:
@@ -12,6 +13,25 @@ extends Node;
 # 	OnEnemyCollision
 # 	OnPlayerCollision
 #	OnCollision
+
+enum hookNames {
+	OnFireProjectile,
+	OnMeleeWeaponHit,
+	OnMeleeWeaponSwing,
+	OnActiveUse,
+	OnHitWall,
+	OnEnemyCollision,
+	OnPlayerCollision,
+	OnCollision,
+	OnDeath,
+	OnGainScrap,
+	OnLand,
+	OnChangeGameState,
+	OnRerollShop,
+	
+	OnScreenTransition,
+	OnLoadSettings
+}
 
 var list = {
 	"OnFireProjectile": {}, #
@@ -115,29 +135,51 @@ func OnLoadSettings():
 	for hookFunc in getValidHooks("OnLoadSettings"):
 		hookFunc.call();
 
-## Use to add a hook.[br]
-## To use, we go to any file and call[br]
-##[codeblock]
-## Hooks.add("OnActiveUse", "OurImplementation", func (part: ActivePart):
-## 	 print("We used an active item!")
-## )
-##[/codeblock]
-func add(nodeRef:Node, hookName: String, instanceName: String, hookFunc: Callable):
-	list[hookName][instanceName] = {"func":hookFunc, "source":nodeRef};
-	#list[hookName][instanceName] = null;
+var hookID := -1;
+func get_unique_hook_id() -> int:
+	hookID += 1;
+	return hookID;
 
-## Returns a valid list of functions to loop through.
-func getValidHooks(hookName:String):
-	var ret = [];
+## Use to add a hook.[br]
+## To use, we go to any file and call like this:[br]
+##[codeblock]
+## Hooks.add(self, "OnActiveUse", "OurImplementation", func (part: ActivePart):
+## 	 print("We used an active item!")
+## , -1)
+##
+## ## When hook "OnActiveUse" is called, this node will print "We used an active item!", at a priority of -1 (which means it is called before anything with EX. priority 0.)
+##[/codeblock]
+func add(nodeRef:Node, hookName:String, instanceName: String, hookFunc: Callable, priority := 0):
+	list[hookName] = list[hookName] if list.has(hookName) else {}
+	if list[hookName].has(instanceName):
+		instanceName += str(get_unique_hook_id());
+	list[hookName][instanceName] = {"func":hookFunc, "source":nodeRef, "priority":priority};
+
+## Identical to [method add], except [param _hookName] is a value from [enum hookNames] instead of a [String].
+func add_enum(nodeRef:Node, _hookName:hookNames, instanceName: String, hookFunc: Callable, priority := 0):
+	var hookName = hookNames.keys()[_hookName];
+	add(nodeRef, hookName, instanceName, hookFunc);
+
+## Returns a valid list of functions to loop through. Also sorts them by priority.
+func getValidHooks(hookName:String) -> Array[Callable]:
+	var ret : Array[Callable] = [];
+	var preSortRet = [];
 	if list.has(hookName):
 		for hookKey in list[hookName]:
 			var hookFunc = list[hookName][hookKey];
-			#print_rich("[color=blue]",hookKey)
+			
 			if is_instance_valid(hookFunc.source):
-				ret.append(hookFunc.func);
-				#print_rich("[color=blue]","Valid key");
+				preSortRet.append(hookFunc);
 			else:
 				list[hookName].erase(hookKey);
-	#print_rich("[color=purple]",hookName," ",list)
-	#print_rich("[color=purple]Hook called: ", hookName, "\nValid hooks: ",ret)
+	
+	preSortRet.sort_custom(sort_hooks_by_priority);
+	
+	for hookFunc in preSortRet:
+		ret.append(hookFunc.func);
+	
 	return ret;
+
+## Sort function; Sorts a given hook data list by priority. Negative priority means it will run first.
+func sort_hooks_by_priority(hookDataA, hookDataB):
+	return hookDataA.priority < hookDataB.priority;

@@ -351,30 +351,47 @@ func set_item_pool_waves(inWave:int):
 		poolTypes.CONSTRUCTION:
 			match inWave:
 				0:
+					## Construction pieces.
 					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_con_corner_small.tscn");
 					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_con_L_Block_2.tscn");
 					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_con_pipe_right_long.tscn");
 					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_con_pipe_right_short.tscn");
+					## Spacers.
 					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_con_spacer_0.tscn");
 					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_con_spacer_1.tscn");
 					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_con_spacer_2.tscn");
 					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_con_T_Junction.tscn");
-					
+					## Bats.
+					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_con_bat_metal.tscn");
+					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_con_bat_wooden.tscn");
+					## Cubes.
+					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_con_small_cube.tscn");
+					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_con_medium_cube.tscn");
+					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_con_large_cube.tscn");
+					## Swivels.
 					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_swivel_manual.tscn");
 					#add_part_to_spawn_list();
 					changed = true;
 		poolTypes.BATTLE:
 			match inWave:
 				0:
+					## Cannons.
 					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_cannon.tscn");
 					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_cannon_sniper.tscn");
+					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_cannon_peashooter.tscn");
 					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_dvd_launcher.tscn");
+					## Movement.
 					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_rocket.tscn");
+					## Shields.
 					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_shield_face.tscn");
+					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_shield_monitor.tscn");
+					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_shield_stopsign.tscn");
+					## Melee.
 					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_horn.tscn");
 					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_bumper.tscn");
 					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_sawblade.tscn");
-					
+					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_hammer.tscn");
+					## Swivels.
 					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_swivel_pointer.tscn");
 		poolTypes.TEST:
 			match inWave:

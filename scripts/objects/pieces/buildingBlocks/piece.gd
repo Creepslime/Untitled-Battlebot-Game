@@ -28,6 +28,13 @@ func _ready():
 		referencesAssigned = false;
 		
 		is_ready = true;
+	
+	#Hooks.add_enum(self, Hooks.hookNames.OnChangeGameState, str(pieceName, statHolderID), 
+	#func(oldState : GameBoard.gameState, newState : GameBoard.gameState):
+		#queuePlacementBoxGather = true;
+		#print(str("TRANSITION CALL: PIECE ",pieceName, statHolderID),)
+		#pass;
+	#, 2)
 
 func _physics_process(delta):
 	if temporaryPreview:
@@ -1161,7 +1168,6 @@ func bullet_hit_hitbox(bullet : Bullet):
 ##Frame timer that updates scale of hitboxes every 3 frames.
 var hitboxRescaleTimer := 1;
 func phys_process_collision(delta):
-	#return;
 	if hitboxRescaleTimer <= 0:
 		if has_host(true, true, true):
 			hitboxRescaleTimer = 3;
@@ -1195,22 +1201,23 @@ func gather_colliders_and_meshes():
 	get_all_female_sockets();
 	get_all_mesh_init_materials();
 	autoassign_child_sockets_to_self();
-	refresh_and_gather_collision_helpers();
+	refresh_and_gather_collision_helpers(GameState.get_in_state_of_building());
 	print_rich("[color=orange]GATHERING COLLIDERS AND MESHES ON PIECE ", self);
 
 ##This function regenerates all collision boxes. Should in theory only ever be run at [method _ready()], but the Piece Helper tool scene uses it also.
-func refresh_and_gather_collision_helpers():
+func refresh_and_gather_collision_helpers(alsoDoShapecasts := false):
 	#Clear out all copies.
-	reset_collision_helpers();
-	if ! is_inside_tree(): return;
+	reset_collision_helpers(); ## Reset only the collision boxes.
 	
 	#Clear all colliders from their respective areas, given that the resets didn't work.
-	for child in placementCollisionHolder.get_children():
-		child.queue_free();
 	for child in hurtboxCollisionHolder.get_children():
 		child.queue_free();
 	for child in hitboxCollisionHolder.get_children():
 		child.queue_free();
+	for child in placementCollisionHolder.get_children():
+		child.queue_free();
+	
+	if ! is_inside_tree(): return;
 	
 	#hurtboxCollisionHolder.scale = Vector3.ONE * 0.95;
 	#placementCollisionHolder.scale = Vector3.ONE * 0.95;
@@ -1227,14 +1234,6 @@ func refresh_and_gather_collision_helpers():
 					child.identifier = str(identifyingNum)
 					identifyingNum += 1;
 				if is_instance_valid(child.shape):
-					##if the PieceCollisionBox is of type PlACEMENT then it should spawn a shapecast proxy with an identical shape.
-					if child.isPlacementBox:
-						var shapeCastNew = child.make_shapecast();
-						shapeCastNew.reparent(placementCollisionHolder, true);
-						shapeCastNew.add_exception(hitboxCollisionHolder);
-						shapeCastNew.add_exception(hurtboxCollisionHolder);
-						
-						#shapeCastNew.rotation = child.originalRotation;
 					##if the PieceCollisionBox is of type HITBOX or HURTBOX then it should copy itself into those.
 					if child.isHurtbox:
 						var dupe = child.make_copy();
@@ -1257,7 +1256,15 @@ func refresh_and_gather_collision_helpers():
 						dupe.isPlacementBox = false;
 						dupe.isHurtbox = false;
 						dupe.isHitbox = true;
-						
+					
+					
+					if alsoDoShapecasts:
+						##if the PieceCollisionBox is of type PlACEMENT then it should spawn a shapecast proxy with an identical shape.
+						if child.isPlacementBox:
+							var shapeCastNew = child.make_shapecast();
+							shapeCastNew.reparent(placementCollisionHolder, true);
+							shapeCastNew.add_exception(hitboxCollisionHolder);
+							shapeCastNew.add_exception(hurtboxCollisionHolder);
 	
 	
 	regenAllHitboxes = true;
@@ -1271,12 +1278,12 @@ func refresh_and_gather_collision_helpers():
 	
 	pass;
 
+
 ##Runs the Reset function on all collision helpers.
 func reset_collision_helpers():
 	for child in get_children():
 		if child is PieceCollisionBox and child.isOriginal:
 			child.reset();
-	allSockets.clear();
 
 ##Should ping all of the placement hitboxes and return TRUE if it collides with a Piece, of FALSE if it doesn't.
 func ping_placement_validation():

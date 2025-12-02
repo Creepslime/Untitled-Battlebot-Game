@@ -25,7 +25,7 @@ func _ready():
 	super();
 
 func assign_references(forceTemp := false):
-	if referencesAssigned: return;
+	if !forceTemp and referencesAssigned: return;
 	super(forceTemp);
 	if !is_instance_valid(frontRay):
 		var newRay = RayCast3D.new();
