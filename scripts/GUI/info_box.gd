@@ -151,6 +151,8 @@ func clear_info(thingToCheck = null):
 		data_ready = false;
 		calculatedHeight = 0;
 		partRef = null;
+		pieceRef = null;
+		robotRef = null;
 		lbl_partName.text = "Nothing Selected";
 		iconBase.texture = icon_blank;
 		#$DamageIcon.hide();

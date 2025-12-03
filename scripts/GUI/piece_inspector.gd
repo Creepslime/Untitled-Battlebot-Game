@@ -240,6 +240,8 @@ func populate_inspector(thing):
 
 ## Changes modes to closing.
 func close_inspector():
+	inspectedThing = null;
+	queued_thing = null;
 	change_mode(inspectorModes.CLOSING, [inspectorModes.OPENING, inspectorModes.PIECE, inspectorModes.PART, inspectorModes.ROBOT, inspectorModes.OPEN_QUEUED]);
 
 ## Use this when updating the inspector with the currently selected Piece or Part.[br]

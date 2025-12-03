@@ -157,7 +157,7 @@ func get_ability_manager_with_id(id:int) -> AbilityManager:
 	return null;
 
 func tick_all_cooldowns(delta):
-	if not GameState.is_paused():
+	if not GameState.is_paused() and GameState.get_in_state_of_play(true):
 		for manager in allAbilities:
 			manager.tick_all_cooldowns(delta);
 

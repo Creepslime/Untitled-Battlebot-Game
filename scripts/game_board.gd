@@ -1017,9 +1017,11 @@ func return_random_unoccupied_spawn_location() -> RobotSpawnLocation:
 		return currentArena.return_random_unoccupied_spawn_location();
 	return null;
 
+@export var maxAliveEnemies := 7; ## The max amount of enemies alowed to be alive at once.
+
 func spawn_wave(numOfEnemies := 0):
 	#return
-	while numOfEnemies > 0 && roundEnemies > 0 && check_alive_enemies() <= 30 and ! at_enemy_capacity():
+	while numOfEnemies > 0 && roundEnemies > 0 && check_alive_enemies() <= maxAliveEnemies and ! at_enemy_capacity():
 		var enemyScene = return_random_enemy();
 		var pos = return_random_unoccupied_spawn_location();
 		waveSpawnList.append(enemyScene)
