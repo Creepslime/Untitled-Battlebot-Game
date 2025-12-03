@@ -18,7 +18,8 @@ var dbg_prof := false;
 
 func initialize():
 	initialize_logo();
-	transition.bring_to_center(true, true);	
+	transition.bring_to_center(true, true);
+	layer = 5;
 
 func initialize_logo():
 	logoTime = true;

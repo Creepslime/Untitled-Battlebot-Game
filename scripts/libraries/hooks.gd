@@ -176,7 +176,7 @@ func getValidHooks(hookName:String) -> Array[Callable]:
 			var hookFunc = list[hookName][hookKey];
 			
 			#if hookName == "OnChangeGameState":
-				#prints(hookKey, hookFunc);
+				#prints(hookKey, hookFunc);+
 			
 			if is_instance_valid(hookFunc.source):
 				preSortRet.append(hookFunc);

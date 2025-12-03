@@ -1017,7 +1017,7 @@ func return_random_unoccupied_spawn_location() -> RobotSpawnLocation:
 		return currentArena.return_random_unoccupied_spawn_location();
 	return null;
 
-@export var maxAliveEnemies := 7; ## The max amount of enemies alowed to be alive at once.
+@export var maxAliveEnemies := 5; ## The max amount of enemies alowed to be alive at once.
 
 func spawn_wave(numOfEnemies := 0):
 	#return
@@ -1217,4 +1217,5 @@ func get_death_timer() -> DeathTimer:
 
 func _on_btn_editor_pressed():
 	GameState.editor_mode_start();
+	awaitingScreenTransition = true;
 	pass # Replace with function body.

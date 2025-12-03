@@ -14,8 +14,8 @@ func _ready() -> void:
 	## Cursor stuff!
 	#Input.set_default_cursor_shape(Input.CURSOR_BUSY)
 	#Input.set_custom_mouse_cursor(load("res://graphics/images/HUD/statIcons/scrapIconStriped.png"),Input.CURSOR_BUSY,Vector2(9.5,11.5));
-	
-	DisplayServer.window_set_current_screen.call_deferred(1);
+	if DisplayServer.get_screen_count() > 1:
+		DisplayServer.window_set_current_screen.call_deferred(1);
 	#get_tree().current_scene.ready.connect(_on_scenetree_ready);
 	#pass;
 #func _on_scenetree_ready():
