@@ -28,11 +28,11 @@ grow_horizontal = 2
 grow_vertical = 0
 stretch = true
 script = ExtResource("3_tusgm")
-emptyBar = NodePath("SubViewport/BarHolder/EmptyHealth")
 height = 163.0
 paddingStart = -6.0
 paddingEnd = -3.0
 currentMax = 100.0
+emptyBar = NodePath("SubViewport/BarHolder/EmptyHealth")
 label = NodePath("SubViewport/BarHolder/Lbl_Health")
 
 [node name="SubViewport" type="SubViewport" parent="."]

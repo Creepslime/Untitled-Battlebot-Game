@@ -167,7 +167,7 @@ func is_disabled(id) -> bool:
 		return data.disabled;
 	return true;
 
-func disable(id:int,foo : bool = is_disabled(id)):
+func disable(id:int, foo : bool = !is_disabled(id)):
 	var data = get_ability_data(id);
 	if is_instance_valid(data):
 		data.disabled = foo;

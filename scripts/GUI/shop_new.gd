@@ -1,5 +1,7 @@
+@icon("res://graphics/images/class_icons/shopStation.png")
 extends Control
 class_name ShopStation
+## Hosts several [ShopStall]s, and has functions to reroll them. Also has a big door.
 
 var player : Robot_Player; ## The player.
 @export var manager : ShopManager; ## The manager.
@@ -393,6 +395,7 @@ func set_item_pool_waves(inWave:int):
 					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_hammer.tscn");
 					## Swivels.
 					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_swivel_pointer.tscn");
+					changed = true;
 		poolTypes.TEST:
 			match inWave:
 				0:

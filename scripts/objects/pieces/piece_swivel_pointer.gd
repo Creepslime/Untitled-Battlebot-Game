@@ -45,7 +45,9 @@ func target():
 			var rot = cam.get_rotation_to_fake_aiming(global_position);
 			
 			if rot != null:
-				targetRotation = rot - hostRobot.get_global_body_rotation().y - hostSocket.rotation.y;
+				#targetRotation = to_global(rot).y;
+				#targetRotation = rot - hostRobot.get_global_body_rotation().y - global_rotation.y;
+				targetRotation = rot - global_rotation.y;
 			else:
 				targetRotation = prevRotation;
 	else:

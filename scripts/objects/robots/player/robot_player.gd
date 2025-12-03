@@ -11,6 +11,19 @@ var barEnergy : HealthBar;
 
 func _ready():
 	super();
+	if ! Engine.is_editor_hint():
+		Hooks.add(self, "OnChangeGameState", str(robotNameInternal, statHolderID), 
+		func(oldState : GameBoard.gameState, newState : GameBoard.gameState):
+			match newState:
+				GameBoard.gameState.INIT_ROUND:
+					queue_piece_tree_regen(false);
+				GameBoard.gameState.SHOP_BUILD:
+					queue_piece_tree_regen(true);
+				GameBoard.gameState.SHOP_TEST:
+					queue_piece_tree_regen(false);
+			print(str("TRANSITION CALL: ROBOT ",robotNameInternal, statHolderID),)
+			pass;
+		, 3)
 
 func stat_registry():
 	super();

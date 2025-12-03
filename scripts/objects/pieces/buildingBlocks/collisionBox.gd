@@ -14,6 +14,7 @@ var copiedByBody : = false; ##Set by the Robot when it's copied for the body.
 @export var isPlacementBox := true; ##This collider is for placement validation.
 @export var isHurtbox:= true; ##This collider is for detecting incoming attacks and impacts.
 @export var isHitbox:= false;  ##This collider is for dishing out attacks.
+@export var shapecastPositionFix := true; ## When set to true, the game will move the position of shapecast children on spawn to "Vector2(0,0,0)". This fixes some boxes... but breaks others. Yippie.
 var isOriginal = true;
 var lastGlobalPosition : Vector3;
 
@@ -36,7 +37,7 @@ func make_copy() -> PieceCollisionBox:
 	copies.append(newBox);
 	return newBox;
 
-func make_shapecast():
+func make_shapecast(applyShapecastPositionFix := true):
 	if copiedShapecast == true: return shapecasts[0]
 	var shapeCastNew = ShapeCast3D.new();
 	shapecasts.append(shapeCastNew);
@@ -45,7 +46,8 @@ func make_shapecast():
 	add_child(shapeCastNew)
 	
 	var posNew = position;
-	posNew = Vector3(0,0,0);
+	if applyShapecastPositionFix:
+		posNew = Vector3(0,0,0);
 	shapeCastNew.set("position", posNew);
 	shapeCastNew.set("scale", scale * 0.95);
 	shapeCastNew.set("global_rotation", global_rotation);

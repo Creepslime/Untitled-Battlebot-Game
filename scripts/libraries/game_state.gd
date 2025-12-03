@@ -186,6 +186,14 @@ func get_player_body() -> RigidBody3D:
 		return ply.get_node_or_null("Body");
 	return null;
 
+## Gets whether the player has a "body piece" (like bodyCube)
+func get_player_has_body_piece() -> bool:
+	var ply = get_player()
+	
+	if is_instance_valid(ply):
+		return ply.has_body_piece();
+	return false;
+
 func get_player_position():
 	var bdy = get_player_body();
 	

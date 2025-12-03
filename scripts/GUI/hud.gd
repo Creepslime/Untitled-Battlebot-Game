@@ -16,6 +16,7 @@ var currentSize : Vector2;
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	$PauseBG.modulate.a = 0.0;
 	if OS.is_debug_build():
 		$MainMenu/Btn_Editor.show();
 		pass;
@@ -56,11 +57,13 @@ func _process(_delta: float) -> void:
 	
 	#if is_instance_valid($Pause) and is_instance_valid($Pause/Btn_EndRun) and is_instance_valid($Pause/Btn_Options):
 	if pauseMenuUp:
+		$PauseBG.modulate.a = move_toward($PauseBG.modulate.a, 1.0, _delta);
 		if pauseOptionsUp:
 			$Pause.global_position.y = move_toward($Pause.global_position.y, -30, _delta * 1300);
 		else:
 			$Pause.global_position.y = move_toward($Pause.global_position.y, 100, _delta * 1300);
 	else:
+		$PauseBG.modulate.a = move_toward($PauseBG.modulate.a, 0.0, _delta);
 		$Pause.global_position.y = move_toward($Pause.global_position.y, -400.0, _delta * 1300);
 	
 	if logoRotationSwitch > 0:

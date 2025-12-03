@@ -269,6 +269,7 @@ func enter_state(_newState:gameState, _oldState:gameState):
 		gameState.SPLASH:
 			GameState.init_screen_transition_vanity();
 		gameState.MAIN_MENU:
+			queuedShopLeave = false;
 			HUD_shopTabs.open = false;
 			CANVAS_SHOP.hide();
 			HUD_shopManager.close_up_shop();
@@ -317,6 +318,8 @@ func enter_state(_newState:gameState, _oldState:gameState):
 			MUSIC.change_state(MusicHandler.musState.PREGAME);
 			destroy_all_enemies(false);
 			
+			queuedShopLeave = false; ## Necessary setup.
+			
 			roundNum += 1;
 			set_enemy_spawn_waves(roundNum);
 			waveTimer = 3;
@@ -330,7 +333,7 @@ func enter_state(_newState:gameState, _oldState:gameState):
 			
 			pass
 		gameState.LOAD_ROUND:
-			call_screen_transition_out()
+			call_screen_transition_out();
 		gameState.PLAY:
 			player.start_round();
 			pass
@@ -353,6 +356,9 @@ func enter_state(_newState:gameState, _oldState:gameState):
 			call_screen_transition_out();
 			pass;
 		gameState.SHOP:
+			if GameState.screenTransition.is_on_center():
+				call_screen_transition_out();
+			
 			MUSIC.change_state(MusicHandler.musState.SHOP);
 			CANVAS_SHOP.show();
 			HUD_shopManager.open_up_shop();
@@ -361,6 +367,9 @@ func enter_state(_newState:gameState, _oldState:gameState):
 			##TODO: BUILD MODE / TEST MODE SWITCHING LOGIC
 			pass
 		gameState.SHOP_BUILD:
+			if GameState.screenTransition.is_on_center():
+				call_screen_transition_out();
+			
 			MUSIC.change_state(MusicHandler.musState.SHOP_BUILD);
 			CANVAS_SHOP.hide();
 			player.enter_shop_build();
@@ -369,6 +378,9 @@ func enter_state(_newState:gameState, _oldState:gameState):
 			##TODO: BUILD MODE / TEST MODE SWITCHING LOGIC
 			pass
 		gameState.SHOP_TEST:
+			if GameState.screenTransition.is_on_center():
+				call_screen_transition_out();
+			
 			MUSIC.change_state(MusicHandler.musState.SHOP_TEST);
 			CANVAS_SHOP.hide();
 			player.enter_shop_test();

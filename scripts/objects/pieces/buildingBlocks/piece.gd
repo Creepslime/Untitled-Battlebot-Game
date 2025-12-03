@@ -20,8 +20,8 @@ func _ready():
 		hide();
 		declare_names();
 		assign_references();
-		ability_validation();
 		ability_registry();
+		ability_validation();
 		regen_namedActions(); ## Regenerates the actions list
 		super(); #Stat registry.
 		gather_colliders_and_meshes();
@@ -713,6 +713,7 @@ func can_use_passive(passiveAbility : AbilityManager):
 	## You passed!
 	return true;
 func can_use_passive_any() -> bool:
+	if passiveAbilitiesDistributed.is_empty(): return true;
 	for passiveAbility in passiveAbilitiesDistributed:
 		if can_use_passive(passiveAbility) : return true;
 	return false;
@@ -994,7 +995,7 @@ func get_all_meshes() -> Array[MeshInstance3D]:
 ## When true, damage run through [method contact_damage] will be averaged with a compared-velocity multiplier provided by the [PieceCollisionBox]es.[br]
 ## In practice, this makes contact damage deal more damage depending on how fast this piece is going compared to the target.[br][br]For example, a charging [Robot_Pokey] will be dealing much less damage with its Horn pieces when you're both goig the same speed, but will absolutely skewer you if you're running towards it.
 @export var contactDamageBasedOnComparedVelocities := true; 
-## A [float] scale from 1 to 0. When 1, velocity will have bias. When 0, base damage will have bias. Does nothing if [member contactDamageBasedOnComparedVelocities] is true.
+## A [float] scale from 1 to 0.[br]When 1, velocity will have bias.[br]When 0, base damage will have bias.[br]Does nothing if [member contactDamageBasedOnComparedVelocities] is [code]false[/code].
 @export_range(0.0, 1.0, 0.05) var contactDamageComparedVelocitiesBias := 1.0; 
 var damageModifier := 1.0; ##This variable can be used to modify damage on the fly without needing to go thru set/get stat.
 
@@ -1201,8 +1202,24 @@ func gather_colliders_and_meshes():
 	get_all_female_sockets();
 	get_all_mesh_init_materials();
 	autoassign_child_sockets_to_self();
-	refresh_and_gather_collision_helpers(GameState.get_in_state_of_building());
+	refresh_and_gather_collision_helpers(need_placement_shapes());
 	print_rich("[color=orange]GATHERING COLLIDERS AND MESHES ON PIECE ", self);
+
+## Whether this [Piece] needs to have its placement shapes spawned in when [emthod gather_colliders_and_meshes] gets called.
+func need_placement_shapes() -> bool:
+	prints("NEEDS PLACEMENT SHAPES? In state of building: %s Is a preview: %s"%[GameState.get_in_state_of_building(), is_preview()])
+	return GameState.get_in_state_of_building() or is_preview();
+
+## Calls for the robot to regenerate all pieces with collision helpers.
+func request_placement_shapes(foo:= true):
+	if hasHostRobot:
+		hostRobot.propagate_placement_shapes(foo);
+
+## Refreshes all collision helpers.
+func propagate_placement_shapes(foo:= true):
+	call_deferred("refresh_and_gather_collision_helpers", foo);
+	for piece in allPieces:
+		piece.propagate_placement_shapes(foo);
 
 ##This function regenerates all collision boxes. Should in theory only ever be run at [method _ready()], but the Piece Helper tool scene uses it also.
 func refresh_and_gather_collision_helpers(alsoDoShapecasts := false):
@@ -1258,13 +1275,12 @@ func refresh_and_gather_collision_helpers(alsoDoShapecasts := false):
 						dupe.isHitbox = true;
 					
 					
-					if alsoDoShapecasts:
-						##if the PieceCollisionBox is of type PlACEMENT then it should spawn a shapecast proxy with an identical shape.
-						if child.isPlacementBox:
-							var shapeCastNew = child.make_shapecast();
-							shapeCastNew.reparent(placementCollisionHolder, true);
-							shapeCastNew.add_exception(hitboxCollisionHolder);
-							shapeCastNew.add_exception(hurtboxCollisionHolder);
+					##if the PieceCollisionBox is of type PlACEMENT then it should spawn a shapecast proxy with an identical shape.
+					if alsoDoShapecasts and child.isPlacementBox:
+						var shapeCastNew = child.make_shapecast(!is_preview());
+						shapeCastNew.reparent(placementCollisionHolder, true);
+						shapeCastNew.add_exception(hitboxCollisionHolder);
+						shapeCastNew.add_exception(hurtboxCollisionHolder);
 	
 	
 	regenAllHitboxes = true;
@@ -1416,6 +1432,8 @@ var selected := false:
 		selected = value;
 ## 
 func get_selected() -> bool:
+	if selected and hasHostRobot and hostRobot.selectedPiece != self:
+		select_via_robot(hostRobot, true)
 	return selected;
 
 func select(foo : bool = not get_selected()):
@@ -1566,7 +1584,7 @@ func assign_socket(socket:Socket):
 
 ##Assigns this [Piece] to a given [Socket]. This portion is separated so it can act as an entry point for manual assignment.
 func assign_socket_post(socket:Socket):
-	isPreview = false;
+	set_preview(false);
 	assignedToSocket = true;
 	regenHostData = true;
 	if hasHostRobot:
@@ -1574,7 +1592,7 @@ func assign_socket_post(socket:Socket):
 	hurtboxCollisionHolder.set_collision_mask_value(8, false);
 	hostSocket = socket;
 	set_selection_mode(selectionModes.NOT_SELECTED);
-	print("ASSIGNED TO SOCKET? ")
+	#print("ASSIGNED TO SOCKET? ")
 
 
 ## Removes this piece from its assigned Socket. Essentially removes it from the [Robot], too.
@@ -1701,9 +1719,20 @@ func is_equipped_by_enemy():
 var isPreview := false;
 ## Returns [member isPreview], unless it doesn't have a parent node or it is [member assignedToSocket], where it will return [code]false[/code].
 func is_preview():
-	if get_parent() == null: return false;
-	if assignedToSocket: return false;
+	if get_parent() == null: 
+		#print("PREVIEW FALSE bc NO PARENT")
+		return false;
+	if assignedToSocket: 
+		#print("PREVIEW FALSE bc assignedToSocket")
+		return false;
+	#print("Is a preview: %s"%[isPreview])
 	return isPreview;
+
+func set_preview(foo:=true):
+	isPreview = foo;
+	#request_placement_shapes(foo);
+	propagate_placement_shapes(true);
+	#call_deferred("refresh_and_gather_collision_helpers", foo);
 
 ## Regenerates a large number of "host" variables when [code]true[/code]. See [method regen_host_data].
 var regenHostData := true; 
@@ -1773,7 +1802,7 @@ func has_host(getSocket := true, getRobot := true, getSocketAssigned := true):
 	return true;
 
 var selectedSocket : Socket;
-func assign_selected_socket(socket):
+func assign_selected_socket(socket : Socket):
 	deselect_all_sockets();
 	socket.select();
 	selectedSocket = socket;
@@ -2133,7 +2162,7 @@ func get_heal_amount():
 	return 1;
 
 ## Selects the given [Part] through this [Piece]'s [member hostRobot] (or the player if we're in the shop), then returns it.
-func select_part(part:Part, foo:bool = !part.selected if is_instance_valid(part) else TYPE_NIL):
+func select_part(part:Part, foo:bool = !part.selected if is_instance_valid(part) else true):
 	if is_instance_valid(part):
 		if hasHostRobot:
 			selectedPart = hostRobot.select_part(part, foo);

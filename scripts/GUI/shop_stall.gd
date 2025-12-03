@@ -1,49 +1,53 @@
+@icon("res://graphics/images/class_icons/shopStall.png")
 extends Control
-
 class_name ShopStall
+## Holds the contents of the [ShopStation] this resides under, one [Piece] or [Part] at a time.
 
-@export var leftDoor : TextureRect;
-@export var rightDoor : TextureRect;
-@export var freezerDoor : TextureRect;
-@export var freezerBlinky : TextureRect;
+@export var leftDoor : TextureRect; ## The left-hand door node. 
+@export var rightDoor : TextureRect; ## The right-hand door node.
+@export var freezerDoor : TextureRect; ## The freezer door node.
+@export var freezerBlinky : TextureRect; ## The light that blinks when contents are currently frozen.
 
-var pieceRef : Piece;
-var partRef : Part;
-var inventory : InventoryPlayer;
-var player : Robot_Player
+var pieceRef : Piece; ## The currently referenced [Piece], if there is one in this stall.
+var partRef : Part; ## The currently referenced [Part], if there is one in this stall.
+var inventory : InventoryPlayer; ## @deprecated: The [Player]'s [Inventory].
+var player : Robot_Player; ## The [Robot_Player] currently shopping.
 
-var curState := ShopStall.doorState.NONE;
-var shopIsOpen := true;
+var curState := ShopStall.doorState.NONE; ## The current [enum ShopStall.doorState] this stall is in.
+var shopIsOpen := true; ## @experimental: Supposedly marks if the [ShopManager] this resides under is open; Doesn't do anything.
 
-var doorsActuallyClosed := false;
+var doorsActuallyClosed := false; ## Not to be confused with [enum ShopStall.doorState.CLOSED]; This denotes whether the door to this stall is ACTUALLY closed, and reroll stuff is allowed to happen.[br]Gets set to true when the positions of the two doors reaches their fully closed ones during [enum ShopStall.doorState.CLOSED].
 
+## The "ID" of this stall. Mainly used during [method set_up_piece_preview_pillar] to position [member node_PiecePreview], and by extension the titular pillar, in space correctly.
 var stallID := -1:
 	get:
 		if stallID == -1:
 			stallID = GameState.get_unique_shop_stall_id()
 		return stallID;
 
-@export var btn_buy : Button;
-@export var lbl_price : ScrapLabel;
-@export var btn_freeze : Button;
+@export var btn_buy : Button; ## The buy button.
+@export var lbl_price : ScrapLabel; ## The [ScrapLabel] responsible for showing the current price.
+@export var btn_freeze : Button; ## The button that freezes.
 
-@export var bg_Piece : Control;
+@export var bg_Piece : Control; ## Holds the background GFX for when a [Piece] is in the shop.
 @export var node_PiecePreview : Node3D;
 @export var btn_PieceSelect : Button;
-var mousingOverPreview := false;
-@export var lbl_name : Label;
+var mousingOverPreview := false; ## Set to true if you've got your mouse over the preview; Makes [member rotisserie_socket] spin faster if it's a [Piece] in stock.
+@export var lbl_name : Label; ## The label that displays the name of the object for sale.
 
-@export var bg_Part : Control;
+@export var bg_Part : Control; ## Holds the background GFX for when a [Part] is in the shop.
 
 enum doorState {
-	NONE,
-	OPEN,
-	CLOSED,
-	FROZEN,
+	NONE, ## Default value. Pretty much acts as [enum doorState.CLOSED].
+	OPEN, ## The stall is "open".
+	CLOSED, ## The stall is "closed". See [member doorsActuallyClosed].
+	FROZEN, ## The stall has its contents frozen, and cannot be rerolled during normal gameplay.
 }
 
+## @experimental: Controls whether this stall shows the [Part] background or [Piece] background on startup.
 @export var defaultPieceNotPart := false
 
+## Changes door states, given that [param newState] != [member curState].
 func changeState(newState:ShopStall.doorState):
 	if curState != newState:
 		##Before state change
@@ -89,8 +93,8 @@ func _ready():
 	rotisserie_socket.shopStall = self;
 
 
-var shopStallPillarMesh := preload("res://graphics/models/generated/shop_stall.tres");
-var piecePreviewSetupDone := false;
+var shopStallPillarMesh := preload("res://graphics/models/generated/shop_stall.tres"); ## The mesh which sits under a displayed Piece.
+var piecePreviewSetupDone := false; ## If true, [method set_up_piece_preview_pillar] will return after removing [member rotisserie_socket]'s occupant.
 ## Clears the occupant of [member rotisserie_socket], then sets up the pillar beneath a [Piece] preview.[br]Returns after clearing the occupant if [member piecePreviewSetupDone] is [code]true[/code].
 func set_up_piece_preview_pillar():
 	## Remove the current occupant.
@@ -152,12 +156,14 @@ func _physics_process(delta):
 	
 	update_behavior_to_reflect_contents();
 
+## Called when [member btn_freeze] gets toggled.
 func _on_freeze_button_toggled(toggled_on):
 	if ! has_ref() or buyQueued:
 		toggled_on = false;
 	freeze(toggled_on);
 	pass # Replace with function body.
 
+## Freezes the stall, making it immune to being rerolled under normal gameplay circumstances.
 func freeze(toggled_on:=true):
 	if (curState == ShopStall.doorState.OPEN) or (curState == ShopStall.doorState.FROZEN):
 		if toggled_on:
@@ -245,7 +251,9 @@ func _on_buy_button_toggled(toggled_on):
 		btn_buy.button_pressed = false;
 	pass # Replace with function body.
 
-var buyQueued = false
+
+var buyQueued = false ## Denotes whether a buy is queued.
+## Tries to buy the [Piece] on sale, then returns the result. See also [method Piece.start_buying].
 func try_buy_piece() -> bool:
 	if buyQueued:
 		return false;
@@ -258,6 +266,7 @@ func try_buy_piece() -> bool:
 		else:
 			btn_buy.button_pressed = false;
 	return false;
+## Tries to buy the [Part] on sale, then returns the result. See also [method Part.start_buying].
 func try_buy_part() -> bool:
 	if buyQueued:
 		return false;
@@ -271,6 +280,7 @@ func try_buy_part() -> bool:
 			btn_buy.button_pressed = false;
 	return false;
 
+## Deselects the contents of this stall.
 func deselect(deselectPart:=false):
 	btn_buy.button_pressed = false;
 	if update_player():
@@ -281,20 +291,25 @@ func deselect(deselectPart:=false):
 		#print("Deselecting fromm shop stall")
 		partRef.select(false);
 
-
+## The currently queued closed/open state.[br]
+## When set to [code]true[/code], an opening is queued.[br]
+## When set to [code]false[/code], a closing is queued.[br]
+## When set to [code]null[/code], nothing happens. This is what it gets set to after the queued action takes place.[br]
 var queuedClopen = null;
-var clopenQueue = -1;
+var clopenQueue = -1; ## A frame-timer that prevents too many [member queuedClopen] changes in quick succession and also staggers the stall openings a bit.
+## Changes [queuedClopen] to the input, and sets [member clopenQueue] to an [int] between 0-5.
 func queue_clopen(open : bool):
 	if ! is_frozen() and clopenQueue < 0:
 		clopenQueue = randi_range(0, 5);
 		queuedClopen = open;
+## Opens the stall, unless frozen.
 func open_stall():
 	if !(curState == ShopStall.doorState.FROZEN):
 		changeState(ShopStall.doorState.OPEN);
 		if GameState.get_in_state_of_play():
 			var pitchMod = randf_range(2.5,3.5)
 			SND.play_sound_nondirectional("Shop.Door.Open", 0.85, pitchMod)
-
+## Closes the stall, unless frozen.
 func close_stall():
 	deselect()
 	if !(curState == ShopStall.doorState.FROZEN):
@@ -302,7 +317,7 @@ func close_stall():
 			var pitchMod = randf_range(2.5,3.5)
 			SND.play_sound_nondirectional("Shop.Door.Open", 0.85, pitchMod)
 		changeState(ShopStall.doorState.CLOSED);
-
+## Gets whether the doors are actually closed; i.e, their position.x are both approximately 0.
 func doors_actually_closed() -> bool:
 	if (curState == ShopStall.doorState.FROZEN):
 		return true;
@@ -311,6 +326,7 @@ func doors_actually_closed() -> bool:
 			return true
 	return false;
 
+## Destroys whatever is being shown for sale.
 func destroy_contents(ignoreFrozen := false):
 	var destroyme = false;
 	if ! ignoreFrozen:
@@ -354,7 +370,9 @@ func update_behavior_to_reflect_contents():
 	if (! has_ref()) or buyQueued:
 		freeze(false);
 
+## The [Socket] which holds [Piece]s for sale.
 @export var rotisserie_socket : Socket;
+## Adds a piece to the sale window.
 func add_piece(piece):
 	set_up_piece_preview_pillar();
 	pieceRef = piece;
@@ -362,7 +380,9 @@ func add_piece(piece):
 	pieceRef.inShop = true;
 	pieceRef.shopStall = self;
 
+## Emitted when the thing that is for sale is selected.
 signal thingSelected(stall : ShopStall)
+## Emitted when the player clicks on the Piece preview window.
 func _on_btn_piece_select_pressed():
 	if ref_is_piece() and update_player():
 		thingSelected.emit(self);
@@ -374,11 +394,12 @@ func update_player() -> bool:
 	player = GameState.get_player();
 	return is_instance_valid(player);
 
-
+## Called when you mouse over the [Piece] preview window; Sets [member mousingOverPreview] to [code]true[/code].
 func _on_btn_piece_select_mouse_entered():
 	mousingOverPreview = true;
 	pass # Replace with function body.
 
+## Called when you stop mousing over the [Piece] preview window; Sets [member mousingOverPreview] to [code]false[/code].
 func _on_btn_piece_select_mouse_exited():
 	mousingOverPreview = false;
 	pass # Replace with function body.

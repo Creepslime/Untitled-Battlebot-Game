@@ -150,10 +150,15 @@ func get_unique_hook_id() -> int:
 ## ## When hook "OnActiveUse" is called, this node will print "We used an active item!", at a priority of -1 (which means it is called before anything with EX. priority 0.)
 ##[/codeblock]
 func add(nodeRef:Node, hookName:String, instanceName: String, hookFunc: Callable, priority := 0):
-	list[hookName] = list[hookName] if list.has(hookName) else {}
+	## Set up the dictionary for this hook.
+	if ! list.has(hookName):
+		list[hookName] = {};
+	## If we already have a hook by the given name, then make the name unique.
 	if list[hookName].has(instanceName):
 		instanceName += str(get_unique_hook_id());
+	## Put the hook into the sub-dict.
 	list[hookName][instanceName] = {"func":hookFunc, "source":nodeRef, "priority":priority};
+	pass;
 
 ## Identical to [method add], except [param _hookName] is a value from [enum hookNames] instead of a [String].
 func add_enum(nodeRef:Node, _hookName:hookNames, instanceName: String, hookFunc: Callable, priority := 0):
@@ -165,15 +170,29 @@ func getValidHooks(hookName:String) -> Array[Callable]:
 	var ret : Array[Callable] = [];
 	var preSortRet = [];
 	if list.has(hookName):
+		var badHooks = [];
+		## Add valid hooks.
 		for hookKey in list[hookName]:
 			var hookFunc = list[hookName][hookKey];
+			
+			if hookName == "OnChangeGameState":
+				prints(hookKey, hookFunc);
 			
 			if is_instance_valid(hookFunc.source):
 				preSortRet.append(hookFunc);
 			else:
-				list[hookName].erase(hookKey);
+				badHooks.append(hookKey);
+		
+		## Erase bad ones.
+		for hookKey in badHooks:
+			print("INVALID HOOK IN %s: "%[hookName], hookKey)
+			list[hookName].erase(hookKey);
 	
+	## Sort the hooks by priority.
 	preSortRet.sort_custom(sort_hooks_by_priority);
+	
+	if hookName == "OnChangeGameState":
+		print(preSortRet);
 	
 	for hookFunc in preSortRet:
 		ret.append(hookFunc.func);

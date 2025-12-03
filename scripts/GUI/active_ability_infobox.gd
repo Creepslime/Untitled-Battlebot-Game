@@ -89,7 +89,7 @@ func update_ability_stats():
 		queue_free();
 		return;
 	isPassive = referencedAbility.isPassive;
-	disabled = referencedAbility.disabled;
+	disabled = referencedAbility.is_disabled(referencedThing.statHolderID);
 	
 	if referencedThing is Piece:
 		var _bot = referencedThing.get_host_robot(true);
@@ -231,7 +231,9 @@ func _on_assign_pressed():
 	if is_instance_valid(referencedAbility):
 		referencedAbility.set_ability_infobox(referencedThing.statHolderID, self);
 		if isPassive:
-			referencedAbility.disable(referencedThing.statHolderID);
+			var isDisabled = referencedAbility.is_disabled(referencedThing.statHolderID);
+			referencedAbility.disable(referencedThing.statHolderID, !isDisabled);
+			
 			update_ability_stats();
 			pass;
 		else:

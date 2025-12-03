@@ -340,7 +340,8 @@ func show_preview_of_pipette():
 			preview.rotation = Vector3(0,0,0);
 			preview.hostSocket = self;
 			preview.hurtboxCollisionHolder.set_collision_mask_value(8, true);
-			preview.isPreview = true;
+			preview.set_preview(true);
+			request_placement_shapes();
 	return preview;
 
 func calc_preview_placeable():
@@ -358,6 +359,7 @@ func get_preview_placeable():
 
 func get_preview_or_null():
 	if is_instance_valid(preview) and preview is Piece:
+		preview.set_preview(true);
 		return preview;
 	return null;
 
@@ -404,6 +406,10 @@ func set_child_as_occupant():
 				add_occupant(child, true);
 				
 
+func request_placement_shapes():
+	if is_instance_valid(hostRobot):
+		hostRobot.propagate_placement_shapes(true);
+
 func hover_from_camera(cam) -> Piece:
 	selectionCheckLoop = 4;
 	##Add exceptions.
@@ -422,7 +428,7 @@ var weightLoad = -1.0;
 func get_weight_load(forceRegenerate := false):
 	if weightLoad < 0 or forceRegenerate:
 		return get_weight_starting_from_occupant();
-	return weightLoad;
+	return max(-1, weightLoad);
 
 ## Recalculates weightLoad.
 func get_weight_starting_from_occupant():

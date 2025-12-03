@@ -23,28 +23,12 @@ func _ready():
 	if ! Engine.is_editor_hint():
 		hide();
 		load_from_startup_generator();
-		assign_references(true);
 		super();
-		regen_piece_tree_stats(false);
-		assign_references(true);
 		detach_pipette();
 		freeze(true, true);
 		start_all_cooldowns(true);
 		assign_references();
-		update_stash_hud();
-	
-		Hooks.add_enum(self, Hooks.hookNames.OnChangeGameState, str(robotNameInternal, statHolderID), 
-		func(oldState : GameBoard.gameState, newState : GameBoard.gameState):
-			match newState:
-				GameBoard.gameState.INIT_ROUND:
-					regen_piece_tree_stats(false);
-				GameBoard.gameState.SHOP_BUILD:
-					regen_piece_tree_stats(true);
-				GameBoard.gameState.SHOP_TEST:
-					regen_piece_tree_stats(false);
-			print(str("TRANSITION CALL: ROBOT ",robotNameInternal, statHolderID),)
-			pass;
-		, 3)
+		queue_piece_tree_regen(false, true);
 
 func _process(delta):
 	if ! Engine.is_editor_hint():
@@ -116,6 +100,9 @@ var referencesAssigned := false;
 ## Grab all variable references to nodes that can't be declared with exports, or that were but may have broken.[br]
 ## If [param forceTemp] is [code]true[/code], it forces this to re-run (ignoring [member referencesAssigned]), and then not set [member referencesAssigned] to [code]true[/code]. This is only used during initial setup.
 func assign_references(forceTemp := false):
+	
+	regeneratedPieceTreeStatsThisFrame = false;
+	
 	if ! forceTemp:
 		if referencesAssigned:
 			return;
@@ -213,7 +200,7 @@ func create_startup_generator():
 
 ## Creates this robot from data saved to it. If there is none, it doesn't run.
 func load_from_startup_generator():
-	assign_references();
+	assign_references(true);
 	print("SAVE: Checking validation of startupGenerator: ", is_instance_valid(startupGenerator), startupGenerator is Dictionary)
 	if startupGenerator is Dictionary and not startupGenerator.is_empty():
 		#bodySocket.remove_occupant(true);
@@ -664,19 +651,20 @@ func apply_force(inDir:Vector3):
 
 ## Regenerates [member weightLoad], and queues regeneration for [member movementSpeedAcceleration] and [member weightSpeedModifier], via [member regenMovementSpeedAcceleration] and [member regenWeightSpeedModifier] respectively.
 var regenWeightLoad := false;
-var weightLoad = -1.0:
+var weightLoad : float = -1.0:
 	get:
 		if regenWeightLoad or weightLoad < 0:
-			return get_weight_regenerate();
+			get_weight_regenerate();
 		return weightLoad;
 func get_weight_regenerate():
-	weightLoad = bodySocket.get_weight_load(true);
 	regenWeightSpeedModifier = true;
 	regenMovementSpeedAcceleration = true;
 	regenWeightLoad = false;
+	weightLoad = bodySocket.get_weight_load(true);
+	return weightLoad;
 func get_weight(forceRegen := false):
-	if forceRegen or weightLoad < 0:
-		return get_weight_regenerate();
+	if forceRegen:
+		regenWeightLoad = true;
 	return weightLoad;
 
 
@@ -783,8 +771,25 @@ func get_global_body_rotation():
 func on_hitbox_collision(body : PhysicsBody3D, pieceHit : Piece):
 	pass;
 
-## Regenerates all the things that need to be regenerated when changing piece data around.
+## Sets up a deferred call to [method regen_piece_tree_stats], and then calls [method queue_update_hud].
+func queue_piece_tree_regen(needPlacementColliders := false, forceRegen := false):
+	if forceRegen:
+		regeneratedPieceTreeStatsThisFrame = false;
+	call_deferred("regen_piece_tree_stats", needPlacementColliders);
+	queue_update_hud();
+
+var regeneratedPieceTreeStatsThisFrame := false;
+var lastNeedForPlacementColliders := false;
+## Regenerates all the things that need to be regenerated when changing piece data around. Do not call directly, use [method queue_piece_tree_regen].
 func regen_piece_tree_stats(needPlacementColliders := false):
+	## If the last time this was called, and it needed the same placement collider requirements, return , because the work has already been done.
+	## If they were different, 
+	if regeneratedPieceTreeStatsThisFrame:
+		if lastNeedForPlacementColliders == needPlacementColliders:
+			return;
+	lastNeedForPlacementColliders = needPlacementColliders; ## Set the last placement collider call to the current one.
+	regeneratedPieceTreeStatsThisFrame = true; ## Set the variable to true so this won't run again.
+	
 	reassign_body_collision(needPlacementColliders); ## allPieces also gets regenerated within this function, for both this robot as well as each piece in its socket tree.
 	get_weight(true); ## Regenerates the amount of weight load on the robot, as well as for any piece on it.
 	body.set_deferred("mass", max(75, min(150, get_weight() * 2))); ## Sets the mass to a value reflective of the weight load.
@@ -799,6 +804,11 @@ func regen_piece_tree_stats(needPlacementColliders := false):
 	
 	regenAllHurtboxes = true; ## For some stupid reason these variables are getting UNSET without actually properly regenerating the fucking list.
 	regenAllPieces = true;
+
+## Sets up placement shapes among all pieces.
+func propagate_placement_shapes(foo := true):
+	for piece in allPieces:
+		piece.propagate_placement_shapes(foo);
 
 ##Gives the Body new collision based on its Parts.
 func reassign_body_collision(needPlacementColliders := false):
@@ -1085,8 +1095,8 @@ func on_add_piece(piece:Piece):
 			var AD = ability.get_ability_data(piece.statHolderID)
 			print("Adding ability ", ability.abilityName)
 			assign_ability_to_next_active_slot(AD);
-	regen_piece_tree_stats()
-	queue_update_hud();
+	
+	queue_piece_tree_regen(false);
 	pass;
 
 ## Fired by a Piece when it is removed from the Robot.
@@ -1094,7 +1104,7 @@ func on_remove_piece(piece:Piece):
 	piece.owner = null;
 	piece.hostRobot = null;
 	remove_abilities_of_piece(piece);
-	regen_piece_tree_stats()
+	queue_piece_tree_regen(false);
 	#deselect_everything();
 	pass;
 
@@ -1129,9 +1139,9 @@ func get_all_pieces_regenerate() -> Array[Piece]:
 	#print("regenerating piece list")
 	var piecesGathered : Array[Piece] = [];
 	if bodySocket.get_occupant() != null:
-		var occupant := bodySocket.occupant;
-		occupant.regenAllSockets = true;
-		piecesGathered = occupant.get_all_pieces_recursive();
+		bodyPiece = bodySocket.occupant;
+		bodyPiece.regenAllSockets = true;
+		piecesGathered = bodyPiece.get_all_pieces_recursive();
 	
 	allPieces = piecesGathered;
 	return piecesGathered;
@@ -1141,7 +1151,7 @@ var hasBodyPiece := false;
 ## Checks over all pieces to see if any have [member Piece.isBody] as true. 
 func has_body_piece(forceRecalculate := false) -> bool:
 	if forceRecalculate:
-		for piece in get_all_pieces():
+		for piece in allPieces:
 			if piece.isBody:
 				hasBodyPiece = true;
 				return true;
@@ -1312,7 +1322,7 @@ func set_ability_pipette(new : AbilityData):
 ########################## SELECTION
 
 var selectedPiece : Piece;
-var selectedPieceQueue : Piece;
+var selectedPieceQueue : Piece; ##@deprecated
 var selectedPart : Part;
 
 func is_piece_selected() -> bool:

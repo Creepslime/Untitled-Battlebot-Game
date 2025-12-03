@@ -1,8 +1,9 @@
-[gd_scene load_steps=20 format=3 uid="uid://vau6eftfdnr8"]
+[gd_scene load_steps=19 format=3 uid="uid://vau6eftfdnr8"]
 
 [ext_resource type="Script" uid="uid://cuqib5fp5hdjp" path="res://scripts/objects/pieces/piece_swivel_manual.gd" id="2_jbgvx"]
 [ext_resource type="Script" uid="uid://crpa3dbgxwyeg" path="res://scripts/objects/weapons/ability_manager.gd" id="2_kyd6e"]
-[ext_resource type="Script" uid="uid://cybmjhuctmfaw" path="res://scripts/libraries/richTextConstructor.gd" id="3_d7opd"]
+[ext_resource type="Resource" uid="uid://blff0t82qfd3q" path="res://scenes/prefabs/abilities/active/ability_swivel_manual_clockwise.tres" id="3_ndcln"]
+[ext_resource type="Resource" uid="uid://wdx6i11tkik6" path="res://scenes/prefabs/abilities/active/piece_swivel_manual_ccw.tres" id="4_hppq5"]
 [ext_resource type="Script" uid="uid://dikbphvd0xff7" path="res://scripts/objects/pieces/buildingBlocks/hitbox_shapes.gd" id="10_vudbv"]
 [ext_resource type="Script" uid="uid://bkwxna02gqgqu" path="res://scripts/objects/pieces/buildingBlocks/hurtbox_shapes.gd" id="11_l684p"]
 [ext_resource type="Script" uid="uid://rbm6p8ggs13f" path="res://scripts/objects/pieces/buildingBlocks/placement_shapes.gd" id="12_ow8wb"]
@@ -12,38 +13,6 @@
 [ext_resource type="ArrayMesh" uid="uid://cfvtjsean8sey" path="res://graphics/models/obj/botparts/SwivelBottom.obj" id="17_gxwol"]
 [ext_resource type="ArrayMesh" uid="uid://dddqhdde83f7e" path="res://graphics/models/obj/botparts/SwivelTop.obj" id="18_a8au6"]
 [ext_resource type="PackedScene" uid="uid://dosh155duu70e" path="res://scenes/prefabs/objects/pieces/buildingBlocks/socket.tscn" id="19_h722e"]
-
-[sub_resource type="Resource" id="Resource_kyd6e"]
-script = ExtResource("2_kyd6e")
-abilityName = "Rotate Clockwise"
-abilityDescriptionConstructor = Array[ExtResource("3_d7opd")]([])
-abilityDescription = "Rotates this swivel clockwise."
-energyCost = 0.0
-cooldownTimeBase = 0.0
-cooldownStatName = ""
-runType = 0
-functionNameWhenUsed = &""
-statsUsed = Array[String]([])
-hookName = ""
-initialized = true
-disabled = false
-functionWhenUsed = Callable()
-
-[sub_resource type="Resource" id="Resource_d7opd"]
-script = ExtResource("2_kyd6e")
-abilityName = "Rotate Counter-Clockwise"
-abilityDescriptionConstructor = Array[ExtResource("3_d7opd")]([])
-abilityDescription = "Rotates this swivel clockwise."
-energyCost = 0.0
-cooldownTimeBase = 0.0
-cooldownStatName = ""
-runType = 0
-functionNameWhenUsed = &""
-statsUsed = Array[String]([])
-hookName = ""
-initialized = true
-disabled = false
-functionWhenUsed = Callable()
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_l000f"]
 size = Vector3(0.5, 0.5, 0.5)
@@ -73,7 +42,7 @@ pieceName = &"Manual Swivel"
 weightBase = 1.25
 force_visibility = true
 scrapCostBase = 13
-activeAbilities = Array[ExtResource("2_kyd6e")]([SubResource("Resource_kyd6e"), SubResource("Resource_d7opd")])
+activeAbilities = Array[ExtResource("2_kyd6e")]([ExtResource("3_ndcln"), ExtResource("4_hppq5")])
 meshesHolder = NodePath("Meshes")
 hitboxCollisionHolder = NodePath("HitboxShapes [Leave empty]")
 hurtboxCollisionHolder = NodePath("HurtboxShapes [Leave empty]")

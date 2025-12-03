@@ -10,6 +10,7 @@ var stashHUD : PieceStash;
 
 var iconPart := preload("res://graphics/images/HUD/statIcons/partIconStriped.png");
 var iconPiece := preload("res://graphics/images/HUD/statIcons/pieceIconStriped.png");
+var iconPieceBody := preload("res://graphics/images/HUD/statIcons/pieceBodyIconStriped.png");
 var iconRobot := preload("res://graphics/images/HUD/statIcons/robotIconStriped.png");
 
 @export var img_equippedBG : TextureRect;
@@ -102,7 +103,7 @@ func load_piece_data(inPiece : Piece, hud : PieceStash):
 	text = inPiece.get_stash_button_name();
 	pieceReferenced = inPiece;
 	stashHUD = hud;
-	icon = iconPiece;
+	icon = iconPieceBody if inPiece.isBody else iconPiece;
 	pressable = true;
 	validRef = true;
 	update_bg();
