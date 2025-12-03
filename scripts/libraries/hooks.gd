@@ -175,8 +175,8 @@ func getValidHooks(hookName:String) -> Array[Callable]:
 		for hookKey in list[hookName]:
 			var hookFunc = list[hookName][hookKey];
 			
-			if hookName == "OnChangeGameState":
-				prints(hookKey, hookFunc);
+			#if hookName == "OnChangeGameState":
+				#prints(hookKey, hookFunc);
 			
 			if is_instance_valid(hookFunc.source):
 				preSortRet.append(hookFunc);
@@ -185,14 +185,14 @@ func getValidHooks(hookName:String) -> Array[Callable]:
 		
 		## Erase bad ones.
 		for hookKey in badHooks:
-			print("INVALID HOOK IN %s: "%[hookName], hookKey)
+			#print("INVALID HOOK IN %s: "%[hookName], hookKey)
 			list[hookName].erase(hookKey);
 	
 	## Sort the hooks by priority.
 	preSortRet.sort_custom(sort_hooks_by_priority);
 	
-	if hookName == "OnChangeGameState":
-		print(preSortRet);
+	#if hookName == "OnChangeGameState":
+		#print(preSortRet);
 	
 	for hookFunc in preSortRet:
 		ret.append(hookFunc.func);
