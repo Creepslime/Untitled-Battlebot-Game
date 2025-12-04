@@ -7,6 +7,7 @@ const MAX_SCRAP := 999999;
 enum priceTypes {
 	PIECE,
 	PART,
+	SALVAGE,
 	REROLL,
 	HEALING,
 	GENERAL,
@@ -15,18 +16,21 @@ var discountTypeEnumDict = {
 	priceTypes.PIECE : activeDiscounts_PIECE,
 	priceTypes.PART : activeDiscounts_PART,
 	priceTypes.REROLL : activeDiscounts_REROLL,
+	priceTypes.SALVAGE : activeDiscounts_SALVAGE,
 	priceTypes.HEALING : activeDiscounts_HEALING,
 	priceTypes.GENERAL : activeDiscounts_GENERAL,
 }
 var discountTypeCalculatedDiscounts = {
 	priceTypes.PIECE : 1.0,
 	priceTypes.PART : 1.0,
+	priceTypes.SALVAGE : 1.0,
 	priceTypes.REROLL : 1.0,
 	priceTypes.HEALING : 1.0,
 	priceTypes.GENERAL : 1.0,
 }
 var activeDiscounts_PIECE : Dictionary[String, float] = {}
 var activeDiscounts_PART : Dictionary[String, float] = {}
+var activeDiscounts_SALVAGE : Dictionary[String, float] = {}
 var activeDiscounts_REROLL : Dictionary[String, float] = {}
 var activeDiscounts_HEALING : Dictionary[String, float] = {}
 var activeDiscounts_GENERAL : Dictionary[String, float] = {}
@@ -43,7 +47,7 @@ func remove_scrap(amt : int, source:String):
 ## Sets the scrap amount to a specific number.
 func set_scrap(amt := 0, source := "Manual"):
 	Hooks.OnGainScrap(source, amt - scrap);
-	scrap = max(0, amt, MAX_SCRAP);
+	scrap = max(0, min(amt, MAX_SCRAP));
 
 func get_scrap():
 	return scrap;

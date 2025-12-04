@@ -63,6 +63,8 @@ func _physics_process(delta):
 		shopDoor.position.y = clamp(shopDoor.position.y + shopDoorVelocity, -shopDoor.size.y, 0);
 		
 		lbl_reroll.update_amt(manager.get_reroll_price());
+		TextFunc.set_text_color(lbl_reroll, "scrap" if (ScrapManager.is_affordable(manager.get_reroll_price()) and ! all_stalls_frozen()) else "inaffordable")
+		
 		#print(stallClopenQueued)
 		match stallClopenQueued:
 			true:

@@ -350,6 +350,8 @@ func queue_live():
 	queuedLife = true;
 	pass;
 
+
+
 func die():
 	#Hooks.OnDeath(self, GameState.get_player()); ##TODO: Fix hooks to use new systems before uncommenting this.
 	if ! aliveLastFrame: return false;

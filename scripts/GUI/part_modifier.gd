@@ -64,6 +64,7 @@ enum modifierTargetType {
 	PART, ## Affects other [Part]s (or itself if on a part.)
 	PIECE, ## Affects the host [Piece].
 	ROBOT, ## Affects the host [Robot].
+	SHOP, ## Affects the shop in some way.
 }
 
 ##Yoinks the owner. Might be null.

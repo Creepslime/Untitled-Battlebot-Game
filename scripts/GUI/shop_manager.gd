@@ -171,7 +171,7 @@ func reset_shop():
 	healPriceIncrement = 0;
 
 ## Reroll button stuff.
-var rerollPriceBase := 5.0;
+var rerollPriceBase := 1.0;
 var rerollPricePressIncrement := 1.0;
 var rerollPriceIncrement := 0.0;
 var rerollPriceIncrementPermanent := 0.0;

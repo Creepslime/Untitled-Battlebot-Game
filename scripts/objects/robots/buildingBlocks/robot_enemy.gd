@@ -20,9 +20,28 @@ var frontRayDistanceToPoint = 0.0; ## Calculated in [method update_front_ray_res
 var pointerTarget := Vector3(0,0,0);
 var playerWallDodgeVector : Vector2;
 var playerWallDodgeAngle : float;
+@export var salvagePrice := 1; ## How much money the player earns from killing this, ON TOP OF the salvage price of each piece.
+@export var salvagePriceMultiplier := 2./5.; ## Multiplied by the salvage value of each piece, plus [member salvagePrice].
+@export var salvagePricePieceChange := 2./3.; ## The rough chance that each piece gives its salvage value on death.
 
 func _ready():
 	super();
+
+func stat_registry():
+	super();
+
+func die():
+	if ! aliveLastFrame: return false;
+	if lastAttacker is Robot_Player:
+		ScrapManager.add_scrap(get_salvage_price(), "Kill");
+	super();
+
+func get_salvage_price():
+	var priceTally = salvagePrice;
+	for piece in allPieces:
+		if randf_range(0.0, 1.0) <= salvagePricePieceChange:
+			priceTally += piece.get_salvage_price_piece_only(ScrapManager.get_discount_for_type(ScrapManager.priceTypes.SALVAGE));
+	return ceili(priceTally * salvagePriceMultiplier);
 
 func assign_references(forceTemp := false):
 	if !forceTemp and referencesAssigned: return;

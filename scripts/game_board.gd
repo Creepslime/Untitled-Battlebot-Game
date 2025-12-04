@@ -24,7 +24,7 @@ var player : Robot_Player;
 var enemiesKilled := 0;
 var scrapGained := 0;
 
-var scrapCount := 0;
+var scrapCount := 0; ## @depreated: See [ScrapManager].
 
 
 @export_subgroup("HUD nodes")
@@ -299,8 +299,8 @@ func enter_state(_newState:gameState, _oldState:gameState):
 			pass
 		gameState.INIT_NEW_GAME:
 			MUSIC.change_state(MusicHandler.musState.PREGAME);
-			
-			ScrapManager.set_scrap(GameState.get_setting("startingScrap"));
+			var startingScrapAmount = GameState.get_setting("startingScrap")
+			ScrapManager.set_scrap(startingScrapAmount);
 			HUD_shopManager.reset_shop();
 			
 			GameState.start_death_timer(120.0,true)

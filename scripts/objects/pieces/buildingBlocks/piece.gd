@@ -411,7 +411,7 @@ func try_sell():
 @export var myPartRarity := Part.partRarities.COMMON;
 @export var scrapCostBase : int;
 @export var scrapSellModifierBase := (2.0/3.0);
-@export var scrapSalvageModifierBase := (1.0/6.0);
+@export var scrapSalvageModifierBase := (1.0/15.0);
 @export var inShop := false; ## Set by [ShopStall] when adding this piece to itself.
 var shopStall : ShopStall = null;
 ##TODO: Scrap sell/buy/salvage functions for when this has Parts inside of it.

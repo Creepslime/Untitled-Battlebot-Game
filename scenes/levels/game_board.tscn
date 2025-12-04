@@ -668,7 +668,7 @@ offset_right = 1232.0
 offset_bottom = 816.0
 mouse_filter = 1
 
-[node name="GameHud" type="Control" parent="HUDCanvas/HUD Viewport/SubViewport/HUD" node_paths=PackedStringArray("panelLeft", "panelRight")]
+[node name="GameHud" type="Control" parent="HUDCanvas/HUD Viewport/SubViewport/HUD" node_paths=PackedStringArray("panelLeft", "panelRight", "lbl_roundNum", "lbl_waveNum")]
 texture_filter = 1
 layout_mode = 1
 anchor_left = -0.333
@@ -683,6 +683,8 @@ mouse_filter = 2
 script = ExtResource("13_s0uw0")
 panelLeft = NodePath("LeftSide")
 panelRight = NodePath("RightSide")
+lbl_roundNum = NodePath("RightSide/Lbl_RoundNumber")
+lbl_waveNum = NodePath("RightSide/Lbl_KillNumber")
 metadata/_edit_lock_ = true
 
 [node name="RightSide" type="TextureRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud"]
@@ -701,6 +703,94 @@ mouse_filter = 2
 texture = SubResource("AtlasTexture_p8hek")
 metadata/_edit_lock_ = true
 
+[node name="Lbl_KillNumber" type="Label" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/RightSide"]
+z_index = 1
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = 414.0
+offset_top = -976.0
+offset_right = 444.0
+offset_bottom = -959.0
+theme_override_fonts/font = ExtResource("13_6c18d")
+theme_override_font_sizes/font_size = 15
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="AbilityIconBG" type="NinePatchRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/RightSide/Lbl_KillNumber"]
+z_index = -1
+layout_mode = 0
+offset_left = -3.0
+offset_top = -3.0
+offset_right = 33.0
+offset_bottom = 20.0
+texture = ExtResource("19_vehjn")
+patch_margin_left = 1
+patch_margin_top = 3
+patch_margin_right = 1
+patch_margin_bottom = 1
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1
+
+[node name="Label" type="Label" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/RightSide/Lbl_KillNumber/AbilityIconBG"]
+layout_mode = 0
+offset_left = -59.0
+offset_top = 4.0
+offset_right = 21.0
+offset_bottom = 24.4167
+theme = ExtResource("20_k23rv")
+theme_type_variation = &"HeaderLarge"
+theme_override_constants/shadow_outline_size = 0
+text = "KILLS #"
+
+[node name="Lbl_RoundNumber" type="Label" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/RightSide"]
+z_index = 1
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = 414.0
+offset_top = -1004.0
+offset_right = 444.0
+offset_bottom = -987.0
+theme_override_fonts/font = ExtResource("13_6c18d")
+theme_override_font_sizes/font_size = 15
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="AbilityIconBG" type="NinePatchRect" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/RightSide/Lbl_RoundNumber"]
+z_index = -1
+layout_mode = 0
+offset_left = -3.0
+offset_top = -3.0
+offset_right = 33.0
+offset_bottom = 20.0
+texture = ExtResource("19_vehjn")
+patch_margin_left = 1
+patch_margin_top = 3
+patch_margin_right = 1
+patch_margin_bottom = 1
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1
+
+[node name="Label" type="Label" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/RightSide/Lbl_RoundNumber/AbilityIconBG"]
+layout_mode = 0
+offset_left = -59.0
+offset_top = 4.0
+offset_right = 21.0
+offset_bottom = 24.4167
+theme = ExtResource("20_k23rv")
+theme_type_variation = &"HeaderLarge"
+theme_override_constants/shadow_outline_size = 0
+text = "ROUND #"
+
 [node name="Lbl_RoundTimer" type="Label" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/RightSide" node_paths=PackedStringArray("TimerBlinky")]
 z_index = 1
 layout_mode = 1
@@ -709,10 +799,10 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = 382.0
-offset_top = -995.0
-offset_right = 430.0
-offset_bottom = -978.0
+offset_left = 217.0
+offset_top = -976.0
+offset_right = 265.0
+offset_bottom = -959.0
 theme_override_fonts/font = ExtResource("13_6c18d")
 theme_override_font_sizes/font_size = 15
 text = "00:00"
@@ -1125,6 +1215,12 @@ offset_top = 0.0
 offset_right = 0.0
 offset_bottom = 0.0
 metadata/_edit_use_anchors_ = true
+
+[node name="RemoveButton" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/LeftSide/PieceInspector/InfoBox" index="1"]
+offset_left = 4.00025
+offset_top = 108.0
+offset_right = 90.0002
+offset_bottom = 142.0
 
 [node name="Lbl_Weight" type="Label" parent="HUDCanvas/HUD Viewport/SubViewport/HUD/GameHud/LeftSide"]
 z_index = 1

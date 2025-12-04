@@ -96,13 +96,26 @@ func get_round_number():
 func get_round_completion():
 	var board = get_game_board();
 	
+	if board == null:
+		return 0;
+	
 	return board.check_round_completion();
 
 func get_wave_enemies_left():
 	var board = get_game_board();
 	
+	if board == null:
+		return 0;
+	
 	return board.get_enemies_left_for_wave();
 
+func get_enemies_killed():
+	var board = get_game_board();
+	
+	if board == null:
+		return 0;
+	
+	return board.enemiesKilled;
 
 
 func get_in_one_of_given_states(states:Array[GameBoard.gameState])->bool:

@@ -6,6 +6,10 @@ class_name GameHUD
 @export var panelLeft : TextureRect;
 @export var panelRight : TextureRect;
 
+@export var lbl_roundNum : Label;
+@export var lbl_waveNum : Label;
+
+
 var panelsVisible := false;
 
 func _ready():
@@ -28,4 +32,6 @@ func _process(delta):
 		#panelRight.position.x = lerp(panelRight.position.x, 960.0 + 576, delta * 10);
 
 func slow_update():
+	lbl_roundNum.text = TextFunc.format_stat(GameState.get_round_number(), 0, false, false);
+	lbl_waveNum.text = TextFunc.format_stat(GameState.get_enemies_killed(), 0, false, false);
 	pass;
