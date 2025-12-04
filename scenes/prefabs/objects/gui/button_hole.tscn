@@ -1,11 +1,9 @@
 [gd_scene load_steps=3 format=3 uid="uid://cir0nj1a2lfic"]
 
+[ext_resource type="StyleBox" uid="uid://5bedkfvs7xjp" path="res://scenes/prefabs/objects/gui/button_hole_stylebox.stylebox" id="1_6clju"]
 [ext_resource type="Script" uid="uid://b2xygs0a3auwq" path="res://scripts/GUI/button_hole.gd" id="2_hlt2r"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nomx5"]
-shadow_size = 1
 
 [node name="_AspectRatioContainer_22483" type="PanelContainer"]
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_nomx5")
+theme_override_styles/panel = ExtResource("1_6clju")
 script = ExtResource("2_hlt2r")
