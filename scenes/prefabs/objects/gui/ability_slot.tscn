@@ -165,7 +165,6 @@ width = 46.0
 height = 65.0
 paddingStart = 13.0
 paddingEnd = -2.0
-currentAmt = 71.45
 maskTexture = ExtResource("11_g6gak")
 fullTexture = ExtResource("12_rf4fe")
 emptyTexture = ExtResource("13_x17s8")

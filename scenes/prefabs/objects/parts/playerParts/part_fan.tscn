@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://dqocjyivv13y3"]
+[gd_scene load_steps=10 format=3 uid="uid://dqocjyivv13y3"]
 
 [ext_resource type="PackedScene" uid="uid://1hqkn5f2wd4v" path="res://scenes/prefabs/objects/parts/part_passive.tscn" id="1_4lfvv"]
 [ext_resource type="Script" uid="uid://dd18vlcrmsx15" path="res://scripts/GUI/part_modifier.gd" id="2_eefed"]
@@ -12,9 +12,11 @@ valueAdd = 0.0
 valueFlatMult = 0.0
 valueTimesMult = 0.9
 modName = &"FanRight"
+statTargetName = &""
 modTags = Array[String](["Fan"])
 offset = Vector2i(1, 0)
 enabled = true
+myTargetType = 0
 myModType = 0
 metadata/_custom_type_script = "uid://dd18vlcrmsx15"
 
@@ -25,9 +27,11 @@ valueAdd = 0.0
 valueFlatMult = 0.0
 valueTimesMult = 0.9
 modName = &"FanLeft"
+statTargetName = &""
 modTags = Array[String](["Fan"])
 offset = Vector2i(-1, 0)
 enabled = true
+myTargetType = 0
 myModType = 0
 metadata/_custom_type_script = "uid://dd18vlcrmsx15"
 
@@ -38,9 +42,11 @@ valueAdd = 0.0
 valueFlatMult = 0.0
 valueTimesMult = 0.9
 modName = &"FanUp"
+statTargetName = &""
 modTags = Array[String](["Fan"])
 offset = Vector2i(0, -1)
 enabled = true
+myTargetType = 0
 myModType = 0
 metadata/_custom_type_script = "uid://dd18vlcrmsx15"
 
@@ -51,18 +57,40 @@ valueAdd = 0.0
 valueFlatMult = 0.0
 valueTimesMult = 0.9
 modName = &"FanDown"
+statTargetName = &""
 modTags = Array[String](["Fan"])
 offset = Vector2i(0, 1)
 enabled = true
+myTargetType = 0
+myModType = 0
+metadata/_custom_type_script = "uid://dd18vlcrmsx15"
+
+[sub_resource type="Resource" id="Resource_d8lu7"]
+script = ExtResource("2_eefed")
+priority = 0.0
+valueAdd = 0.0
+valueFlatMult = 0.0
+valueTimesMult = 1.0
+modName = &"FanPiece"
+statTargetName = &"ActiveCooldown"
+modTags = Array[String](["Fan"])
+offset = Vector2i(0, 0)
+enabled = true
+myTargetType = 1
 myModType = 0
 metadata/_custom_type_script = "uid://dd18vlcrmsx15"
 
 [node name="PartFan" groups=["Fan"] instance=ExtResource("1_4lfvv")]
 script = ExtResource("2_l244e")
+weightBase = null
+myPartRarity = null
+poolWeight = null
 partName = "Fan"
 partDescription = "Blasts some nice cool air around.
 
 [color=f2ec6b]Passive: Adjacent [b]Active[/b] parts have 5% reduced Energy cost for each space adjacent to this part that is empty or another Fan."
 partIcon = ExtResource("3_l244e")
+partIconOffset = null
 effectPriority = 1
-outgoingModifiers = Array[ExtResource("2_eefed")]([SubResource("Resource_l244e"), SubResource("Resource_4lfvv"), SubResource("Resource_eefed"), SubResource("Resource_reqvf")])
+outgoingModifiers = Array[ExtResource("2_eefed")]([SubResource("Resource_l244e"), SubResource("Resource_4lfvv"), SubResource("Resource_eefed"), SubResource("Resource_reqvf"), SubResource("Resource_d8lu7")])
+filepathForThisEntity = null

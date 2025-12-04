@@ -96,6 +96,7 @@ enum displayModes {
 	IF_MODIFIED, ## Displayed if the stat is currently different from its [member baseStat].
 	NOT_999, ## Displayed if the stat is not the specific value of 999.
 	ABOVE_ZERO_NOT_999, ## Displayed if the stat is not the specific value of 999.
+	ALWAYS_DIVIDE_BY_100, ## Displayed always, but divides the displayed amount by 100. 
 }
 enum statTags {
 	Hull, ## Health and defense.

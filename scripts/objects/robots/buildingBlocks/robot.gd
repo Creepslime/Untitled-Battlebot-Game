@@ -169,10 +169,30 @@ func stat_registry():
 		return newValue;
 		);
 	register_stat("InvincibilityTime", maxInvincibleTimer, StatHolderManager.statIconCooldown, StatHolderManager.statTags.Clock);
-	register_stat("MovementSpeedAcceleration", acceleration, StatHolderManager.statIconCooldown, StatHolderManager.statTags.Function);
+	register_stat("MovementSpeedAcceleration", acceleration, StatHolderManager.statIconCooldown, StatHolderManager.statTags.Function, StatHolderManager.displayModes.ALWAYS_DIVIDE_BY_100);
 	register_stat("MovementSpeedMax", maxSpeed, StatHolderManager.statIconCooldown, StatHolderManager.statTags.Function, );
 	prints("MAX SPEED: ",get_stat("MovementSpeedMax"), maxSpeed)
 	pass;
+
+## Resets all stat modifiers. Also resets it for all Pieces in the tree.
+func reset_modifiers():
+	super();
+	for piece in allPieces:
+		piece.reset_modifiers();
+
+## Resets then propagates all stat modifiers.
+func propagate_modifiers():
+	reset_modifiers();
+	var allPiecesSort = allPieces.duplicate();
+	allPiecesSort.sort_custom(sort_pieces_by_distance_from_core);
+	for piece in allPiecesSort:
+		piece.partMods_deploy();
+
+## Custom sort function. Returns true if [param pieceA] is closer (via [member Piece.depthFromCore]), or younger (via [member StatHolder3D.statHolderID) if they are the same distance.
+func sort_pieces_by_distance_from_core(pieceA : Piece, pieceB : Piece):
+	if pieceA.depthFromCore == pieceB.depthFromCore:
+		return pieceA.statHolderID < pieceB.statHolderID;
+	return pieceA.depthFromCore < pieceB.depthFromCore;
 
 ################## SAVING/LOADING
 
@@ -798,6 +818,7 @@ func regen_piece_tree_stats(needPlacementColliders := false):
 	regeneratedPieceTreeStatsThisFrame = true; ## Set the variable to true so this won't run again.
 	
 	reassign_body_collision(needPlacementColliders); ## allPieces also gets regenerated within this function, for both this robot as well as each piece in its socket tree.
+	propagate_modifiers(); ## Propagates all stat modifiers. Important to do this here before we get the weight.
 	get_weight(true); ## Regenerates the amount of weight load on the robot, as well as for any piece on it.
 	body.set_deferred("mass", max(75, min(150, get_weight() * 2))); ## Sets the mass to a value reflective of the weight load.
 	has_body_piece(true); ## Checks over all the pieces to see if there's a body piece, then sets the appropriate flag.

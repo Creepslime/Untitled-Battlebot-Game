@@ -838,8 +838,8 @@ offset_right = -302.0
 offset_bottom = -310.0
 stretch = true
 script = ExtResource("14_ticrt")
-emptyBar = NodePath("SubViewport/BarHolder/Empty")
 width = 164.0
+emptyBar = NodePath("SubViewport/BarHolder/Empty")
 
 [node name="SubViewport" type="SubViewport" parent="Inventory/InventoryControls/BackingTexture/HealthBar"]
 transparent_bg = true
@@ -925,8 +925,8 @@ offset_right = 506.0
 offset_bottom = -310.0
 stretch = true
 script = ExtResource("14_ticrt")
-emptyBar = NodePath("SubViewport/BarHolder/Empty")
 width = 164.0
+emptyBar = NodePath("SubViewport/BarHolder/Empty")
 
 [node name="SubViewport" type="SubViewport" parent="Inventory/InventoryControls/BackingTexture/EnergyBar"]
 transparent_bg = true

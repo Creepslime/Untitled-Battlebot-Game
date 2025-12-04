@@ -169,7 +169,6 @@ offset_right = -10.0
 grow_horizontal = 0
 
 [node name="ButtonHole" parent="ButtonFreeze" instance=ExtResource("12_8lyng")]
-z_index = -1
 layout_mode = 0
 offset_left = -1.0
 offset_top = 4.0
@@ -203,7 +202,6 @@ offset_right = -10.0
 grow_horizontal = 0
 
 [node name="ButtonHole2" parent="ButtonBuy" instance=ExtResource("12_8lyng")]
-z_index = -1
 layout_mode = 0
 offset_left = -1.0
 offset_top = 4.0

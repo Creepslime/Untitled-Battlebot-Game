@@ -6,11 +6,18 @@
 
 [node name="PartImpactGenerator" instance=ExtResource("1_nud80")]
 script = ExtResource("2_w4ulg")
-scrapCostBase = 6
+weightBase = null
 dimensions = Array[Vector2i]([Vector2i(0, 0), Vector2i(0, 1)])
+scrapCostBase = 6
+myPartRarity = null
+poolWeight = null
 partName = "Impact Generator"
 partDescription = "[color=f2ec6b]Passive: Gain 1.5 [color=789be9]Energy Recharge [color=f2ec6b]for a few seconds after taking damage."
 partIcon = ExtResource("3_w4ulg")
+partIconOffset = null
+effectPriority = null
+outgoingModifiers = null
+filepathForThisEntity = null
 
 [node name="Tilemaps" parent="TextureBase" index="0"]
 mouse_filter = 0

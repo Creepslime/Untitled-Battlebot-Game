@@ -159,10 +159,11 @@ func set_host_piece(piece : Piece):
 func get_host_piece() -> Piece:
 	return hostPiece;
 
-func set_host_robot(_robot: Robot):
+func set_host_robot(_robot: Robot, depth := -1):
+	depth += 1;
 	hostRobot = _robot;
 	if occupant != null:
-		occupant.set_host_recursive(_robot, hostPiece);
+		occupant.set_host_recursive(_robot, hostPiece, depth);
 
 func get_robot(forcePieceToGiveHostRobot := false) -> Robot:
 	if (!dontUsePieceForRobotHost) and (get_host_piece() == null): return null;

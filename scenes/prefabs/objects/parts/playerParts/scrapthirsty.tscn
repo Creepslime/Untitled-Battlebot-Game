@@ -1,12 +1,14 @@
-[gd_scene load_steps=4 format=3 uid="uid://bq3lmn4qya03q"]
+[gd_scene load_steps=5 format=3 uid="uid://bq3lmn4qya03q"]
 
 [ext_resource type="PackedScene" uid="uid://1hqkn5f2wd4v" path="res://scenes/prefabs/objects/parts/part_passive.tscn" id="1_ixwge"]
 [ext_resource type="Script" uid="uid://c1qlkdqvp0fxh" path="res://scripts/GUI/parts/playerParts/scrapthirsty.gd" id="2_yb2yt"]
 [ext_resource type="Texture2D" uid="uid://d0ha035m170v" path="res://graphics/images/HUD/parts/Icons/Sawblade.png" id="3_yb2yt"]
+[ext_resource type="Script" uid="uid://dd18vlcrmsx15" path="res://scripts/GUI/part_modifier.gd" id="4_iu2xq"]
 
 [node name="Scrapthirsty" instance=ExtResource("1_ixwge")]
 script = ExtResource("2_yb2yt")
 bonusHP = -0.5
+weightBase = 0
 dimensions = Array[Vector2i]([Vector2i(0, 0), Vector2i(1, 0), Vector2i(1, 1)])
 scrapCostBase = 19
 myPartRarity = 2
@@ -17,3 +19,6 @@ partIcon = ExtResource("3_yb2yt")
 partIconOffset = Vector2(1, 1)
 invSprite = null
 screwSprite = null
+effectPriority = 0
+outgoingModifiers = Array[ExtResource("4_iu2xq")]([])
+filepathForThisEntity = ""

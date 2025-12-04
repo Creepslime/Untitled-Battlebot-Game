@@ -135,9 +135,20 @@ func register_stat(statName : String, baseStat : float, statIcon : Texture2D = S
 		#print_rich("[color=red]stat"+statName+"already exists...")
 		pass
 
-func add_multiplier(statName : StringName):
-	var stat = get_stat_resource(statName);
-	pass;
+## Takes the given [PartModifier] and, if this has the correct stat listed in [member PartModifier.statTargetName], applies it. Returns the result.
+func register_modifier(inMod : PartModifier) -> bool:
+	var statName = inMod.statTargetName;
+	if has_stat(statName):
+		var stat = get_stat_resource(statName);
+		stat.register_modifier(inMod);
+		return true;
+	return false;
+
+## Resets the modifiers on all stats.
+func reset_modifiers():
+	for statName in statCollection:
+		var stat = statCollection[statName];
+		stat.reset_modifiers();
 
 ## Where any and all register_stat() or related calls should go. Runs at _ready().
 func stat_registry():

@@ -102,9 +102,6 @@ metadata/_edit_group_ = true
 
 [node name="ButtonHole" parent="ButtonReroll" instance=ExtResource("10_b0up4")]
 layout_mode = 0
-anchors_preset = 0
-anchor_right = 0.0
-anchor_bottom = 0.0
 offset_left = -1.0
 offset_top = 4.0
 offset_right = 139.0

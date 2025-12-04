@@ -298,7 +298,7 @@ func set_up_material_group_and_damage_immunities():
 	register_stat("General Defense", defenseMultiplierGeneral, StatHolderManager.statIconShield, StatHolderManager.statTags.Hull, StatHolderManager.displayModes.IF_MODIFIED);
 	for damageTypeID in DamageData.damageTypes.values():
 		var typeName = str(DamageData.damageTypes.keys()[damageTypeID]);
-		register_stat(str(typeName.capitalize(), " Defense"), defenseMultipliers[damageTypeID] if defenseMultipliers.has(damageTypeID) else 1.0, StatHolderManager.statIconShield, StatHolderManager.statTags.Hull, StatHolderManager.displayModes.IF_MODIFIED)
+		register_stat(str(typeName.capitalize(), " Defense"), defenseMultipliers[damageTypeID] if defenseMultipliers.has(damageTypeID) else 1.0, StatHolderManager.statIconShield, StatHolderManager.statTags.Hull, StatHolderManager.displayModes.NOT_ONE);
 ## Gets the corresponding "x Defense" stat for the given [enum DamageData.damageTypes] in [param damageType],
 func get_damage_type_resistance_stat_from_damageType(damageType : DamageData.damageTypes):
 	var typeName = str(DamageData.damageTypes.keys()[damageType]);
@@ -1554,12 +1554,15 @@ func autograb_sockets():
 	allSockets = ret;
 	return ret;
 
-func set_host_recursive(_robot:Robot, _piece:Piece):
+var depthFromCore := 0; ## Set by [method set_host_recursive]. How far away this Piece is from the host robot via the tree.
+## Sets all host-node variables, as well as [member depthFromCore].
+func set_host_recursive(_robot:Robot, _piece:Piece, inDepth := 0):
 	hostRobot = _robot;
 	hostPiece = _piece;
+	depthFromCore = inDepth;
 	for socket in allSockets:
 		socket.hostPiece = self;
-		socket.set_host_robot(_robot);
+		socket.set_host_robot(_robot, inDepth);
 	for part in listOfParts:
 		part.hostPiece = self;
 		part.hostRobot = hostRobot;
@@ -2200,6 +2203,10 @@ func engine_update_part_visibility(_visible := true):
 		part.visible = _visible;
 
 @export_category("Modifier Management")
+
+func reset_modifiers():
+	super();
+	partMods_clear_all();
 
 ## Clears all modifiers.
 func partMods_clear_all():

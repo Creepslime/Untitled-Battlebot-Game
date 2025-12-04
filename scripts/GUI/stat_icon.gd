@@ -1,4 +1,4 @@
-@icon ("res://graphics/images/class_icons/energy_green.png")
+@icon ("res://graphics/images/class_icons/heart_green.png")
 extends Control
 
 class_name InspectorStatIcon
@@ -26,7 +26,7 @@ func _process(delta):
 
 func update_stat_num():
 	if is_instance_valid(stat):
-		var statText = TextFunc.format_stat(stat.get_stat(), 2, false)
+		var statText = TextFunc.format_stat(stat.get_stat_for_display(), 2, false)
 		tooltip_text = stat.statFriendlyName.capitalize() + str("\n",statText);
 		lbl_amt.text = statText;
 

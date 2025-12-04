@@ -1,12 +1,14 @@
+@icon("res://graphics/images/class_icons/statModifier.png")
 extends Resource
-
 class_name PartModifier;
+## Affects [StatTracker] nodes by giving them effects.
 
 @export var priority := 0.0;
 @export var valueAdd : float = 0.0;
 @export var valueFlatMult : float = 0.0;
 @export var valueTimesMult : float = 1.0;
 @export var modName : StringName;
+@export var statTargetName : StringName; ## The [StatTracker] resource to target on the [member target] (via [member StatTracker.statName]).
 @export var modTags : Array[String] = [str(modName)]; ##A list of ID strings for parts to reference. Basically groups.
 @export var offset := Vector2i.ZERO;
 @export var enabled := true;
@@ -64,7 +66,7 @@ enum modifierTargetType {
 	PART, ## Affects other [Part]s (or itself if on a part.)
 	PIECE, ## Affects the host [Piece].
 	ROBOT, ## Affects the host [Robot].
-	SHOP, ## Affects the shop in some way.
+	SHOP, ## @experimental: Affects the shop in some way.
 }
 
 ##Yoinks the owner. Might be null.
@@ -145,6 +147,8 @@ func try_get_target():
 			if is_instance_valid(robot):
 				target = robot;
 			pass;
+		modifierTargetType.SHOP:
+			return true;
 	
 	return target;
 
@@ -183,13 +187,13 @@ func try_get_host_robot() -> Robot:
 		robot = potential if is_instance_valid(potential) else null;
 	return robot;
 
-##Tries to apply the modifier to the specified property on the part. If the part doesn't have it, then nothing happens.
+##Tries to apply the modifier to the specified stat on the target. If the target doesn't have it, then nothing happens.
 func try_apply_mod(propertyName : String):
 	## Deprecated variable-based modifyng.
 	if true == false:
 		if is_applicable():
-			if propertyName in target:
-				return target.mods_apply(propertyName, valueAdd, valueFlatMult, valueTimesMult);
+			if target is StatHolder3D or target is StatHolder3D:
+				return target.register_modifier(self);
 	return false;
 
 func is_applying():

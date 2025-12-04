@@ -412,6 +412,8 @@ func mods_reset(resetArrays := false):
 	appliedModsAlready_recursion = false;
 	mod_scrapCost = mod_resetValue.duplicate();
 	mod_sellPercent = mod_resetValue.duplicate();
+	
+	reset_modifiers();
 	pass;
 
 func mods_create_modifier(_name : StringName, _modType : PartModifier.modifierType, _offset : Vector2i, _priority, _valueAdd := 0.0, _valueMult := 1.0, _enabledAtStart := true, ):
