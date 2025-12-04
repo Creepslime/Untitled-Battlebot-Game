@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=4 uid="uid://c4yuir6uc8va3"]
+[gd_scene load_steps=19 format=4 uid="uid://c4yuir6uc8va3"]
 
 [ext_resource type="Script" uid="uid://f2utlpnj4kg4" path="res://scripts/GUI/shop_stall.gd" id="1_w7sps"]
 [ext_resource type="Texture2D" uid="uid://blmdrpsajj6f7" path="res://graphics/images/HUD/blinkies/freezerblinky_off.png" id="2_w7sgq"]
@@ -12,8 +12,6 @@
 [ext_resource type="Theme" uid="uid://bq0jig2pdkgtn" path="res://graphics/images/HUD/UI_theme.tres" id="12_krdxo"]
 [ext_resource type="Texture2D" uid="uid://c6ex2rok0qxqr" path="res://graphics/images/HUD/icon_freeze.png" id="13_7lfx4"]
 [ext_resource type="PackedScene" uid="uid://ci0jm27ysf4ww" path="res://scenes/prefabs/objects/gui/piston_arm_small.tscn" id="14_8lyng"]
-[ext_resource type="Texture2D" uid="uid://dwjsfotj64dr6" path="res://graphics/images/HUD/buttonGFX/buttonHole_metal.png" id="15_y0sp2"]
-[ext_resource type="Script" uid="uid://b2xygs0a3auwq" path="res://scripts/GUI/button_hole.gd" id="16_t8nqo"]
 [ext_resource type="Texture2D" uid="uid://cwmvdja6ssr4s" path="res://graphics/images/HUD/icon_scrapGear.png" id="17_courc"]
 [ext_resource type="Theme" uid="uid://tcelcj32ux4o" path="res://graphics/images/HUD/digital_button.tres" id="18_7lfx4"]
 [ext_resource type="FontFile" uid="uid://s3k2ji7jxshs" path="res://graphics/images/HUD/8-segment.png" id="18_y0sp2"]
@@ -171,7 +169,12 @@ offset_right = -10.0
 grow_horizontal = 0
 
 [node name="ButtonHole" parent="ButtonFreeze" instance=ExtResource("12_8lyng")]
+z_index = -1
 layout_mode = 0
+offset_left = -1.0
+offset_top = 4.0
+offset_right = 101.0
+offset_bottom = 36.0
 
 [node name="ButtonBuy" type="Button" parent="."]
 layout_mode = 0
@@ -199,15 +202,13 @@ offset_left = -15.0
 offset_right = -10.0
 grow_horizontal = 0
 
-[node name="ButtonHole" type="TextureRect" parent="ButtonBuy"]
+[node name="ButtonHole2" parent="ButtonBuy" instance=ExtResource("12_8lyng")]
 z_index = -1
 layout_mode = 0
 offset_left = -1.0
 offset_top = 4.0
 offset_right = 71.0
 offset_bottom = 36.0
-texture = ExtResource("15_y0sp2")
-script = ExtResource("16_t8nqo")
 
 [node name="Lbl_Scrap" type="Label" parent="."]
 z_index = 1

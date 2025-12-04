@@ -564,6 +564,9 @@ func get_max_health():
 	##TODO: Add bonuses into this calc.
 	return get_stat("HealthMax");
 
+func at_max_health():
+	return is_equal_approx(get_health(), get_max_health());
+
 var immunities : Dictionary = {
 	"general" : 1.0
 }
@@ -605,6 +608,8 @@ func take_damage(damage:float):
 			else:
 				#print("Health was not subtracted. Bot was invincible!")
 				return;
+		elif damage < 0:
+			health -= damage;
 		set_invincibility();
 		#print("Health after taking", damage, "damage:", health)
 		set_stat("Health", health);

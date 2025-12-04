@@ -1,4 +1,4 @@
-[gd_scene load_steps=90 format=4 uid="uid://cno0jw8hq6h1i"]
+[gd_scene load_steps=92 format=4 uid="uid://cno0jw8hq6h1i"]
 
 [ext_resource type="Script" uid="uid://b8hseesj7vrc" path="res://scripts/game_board.gd" id="1_mlcvp"]
 [ext_resource type="Material" uid="uid://c6b1ums81prw8" path="res://graphics/materials/models/arena/arena_floor.tres" id="2_4jixe"]
@@ -25,12 +25,15 @@
 [ext_resource type="Texture2D" uid="uid://cvnlt28sqm5g7" path="res://graphics/images/HUD/hudNew.png" id="14_m488k"]
 [ext_resource type="AudioStream" uid="uid://clkb8qmb50nhq" path="res://sounds/music/Battlebot(Base).ogg" id="15_7s7sx"]
 [ext_resource type="Script" uid="uid://lq2evtwp8bvg" path="res://scripts/GUI/enemy_progress_bar.gd" id="15_7w2xj"]
+[ext_resource type="Texture2D" uid="uid://c3teo8m0j1jex" path="res://graphics/images/HUD/icon_heartSmall.png" id="15_f85oj"]
 [ext_resource type="Texture2D" uid="uid://bw5pl1p6bmq61" path="res://graphics/images/HUD/blinkies/timer_blinky_on.png" id="15_s0uw0"]
 [ext_resource type="Shader" uid="uid://b3jc31ntkxnwh" path="res://graphics/shaders/wavyButton.gdshader" id="16_1s3sj"]
 [ext_resource type="AudioStream" uid="uid://dod8lqc5mj6gd" path="res://sounds/music/Battlebot(Bass).ogg" id="16_l8dsy"]
+[ext_resource type="PackedScene" uid="uid://ci0jm27ysf4ww" path="res://scenes/prefabs/objects/gui/piston_arm_small.tscn" id="17_25s40"]
 [ext_resource type="AudioStream" uid="uid://xudb8rpoft5g" path="res://sounds/music/Battlebot(Melody).ogg" id="17_gj52v"]
 [ext_resource type="Texture2D" uid="uid://bgide8muu6eek" path="res://graphics/images/HUD/nextRound/screen_on.png" id="17_pwbo8"]
 [ext_resource type="AudioStream" uid="uid://cx04f0djaxqys" path="res://sounds/music/Battlebot(Piano).ogg" id="18_7s7sx"]
+[ext_resource type="PackedScene" uid="uid://cir0nj1a2lfic" path="res://scenes/prefabs/objects/gui/button_hole.tscn" id="18_k27wm"]
 [ext_resource type="AudioStream" uid="uid://d4i6k0bsc36q3" path="res://sounds/music/Battlebot(Perc1).ogg" id="18_mlcvp"]
 [ext_resource type="Texture2D" uid="uid://o4glpuf2dmah" path="res://graphics/images/HUD/nextRound/screen_hover.png" id="18_q68mx"]
 [ext_resource type="Texture2D" uid="uid://croanmqw1pmqf" path="res://graphics/images/HUD/blinkies/timer_skull.png" id="18_u76c3"]
@@ -42,15 +45,14 @@
 [ext_resource type="Texture2D" uid="uid://o01v65x3ienk" path="res://graphics/images/HUD/screenGFX/insetScreen.png" id="19_vehjn"]
 [ext_resource type="AudioStream" uid="uid://criotxml8rknj" path="res://sounds/music/Battlebot(Swell).ogg" id="20_gj52v"]
 [ext_resource type="Theme" uid="uid://tcelcj32ux4o" path="res://graphics/images/HUD/digital_button.tres" id="20_k23rv"]
+[ext_resource type="Script" uid="uid://dnkl1d08snkyl" path="res://scripts/GUI/lbl_scrap_shop.gd" id="20_k27wm"]
 [ext_resource type="Script" uid="uid://dxmqurrcqgdl7" path="res://scripts/GUI/bgm.gd" id="20_l8dsy"]
 [ext_resource type="Texture2D" uid="uid://csqo5aaepfs34" path="res://graphics/images/HUD/nextRound/progressBar.png" id="20_ridgm"]
 [ext_resource type="TileSet" uid="uid://dicxuohkdpmlx" path="res://graphics/images/HUD/engine/engineTileMap.tres" id="20_u76c3"]
+[ext_resource type="PackedScene" uid="uid://bavgwu0bxj8ky" path="res://scenes/prefabs/objects/gui/piston_arm_thick.tscn" id="21_25s40"]
 [ext_resource type="Shader" uid="uid://egarbougi4ef" path="res://graphics/shaders/healthbar.gdshader" id="21_sb58i"]
-[ext_resource type="Script" uid="uid://56vk7o0gmt7p" path="res://scripts/GUI/shop_button.gd" id="24_gqxs8"]
 [ext_resource type="PackedScene" uid="uid://rwrbd0hg75ad" path="res://scenes/prefabs/utilities/health_bar.tscn" id="25_4upc1"]
 [ext_resource type="FontFile" uid="uid://6r8bhxg8mft1" path="res://graphics/font/Scrap8x14.ttf" id="25_k23rv"]
-[ext_resource type="Texture2D" uid="uid://ccklnmdcymtig" path="res://graphics/images/HUD/shop/heal_unselected.png" id="25_mcp8b"]
-[ext_resource type="Texture2D" uid="uid://g2oapmprsygp" path="res://graphics/images/HUD/shop/heal_selected.png" id="26_kbpb2"]
 [ext_resource type="PackedScene" uid="uid://bvv3y50mckawn" path="res://scenes/prefabs/objects/gui/ability_slot_manager.tscn" id="31_o0v2b"]
 [ext_resource type="Texture2D" uid="uid://ctnkq5igq82au" path="res://graphics/images/HUD/healthbar/energy_overlay.png" id="32_lk4jc"]
 [ext_resource type="Texture2D" uid="uid://bq452mx8iaye5" path="res://graphics/images/HUD/healthbar/NRG.png" id="33_ed2oa"]
@@ -250,9 +252,9 @@ camScreenBlack = NodePath("CamScreen/Black")
 HUD_stations = NodePath("ShopStationsStepParent/ShopStations")
 HUD_stationsParent = NodePath("../../HUDCanvas/HUD Viewport/SubViewport/HUD/ShopStationsParent")
 HUD_stationsStepParent = NodePath("ShopStationsStepParent")
-btn_heal = NodePath("HealButton")
-lbl_healAmount = NodePath("HealButton/TextHolder/HEAL")
-lbl_healPrice = NodePath("HealButton/TextHolder/Price")
+btn_heal = NodePath("ShopStationsStepParent/ShopStations/HealButton")
+lbl_healAmount = NodePath("ShopStationsStepParent/ShopStations/HealButton/TextHolder/HEAL")
+lbl_healPrice = NodePath("ShopStationsStepParent/ShopStations/HealButton/Lbl_Scrap")
 metadata/_edit_use_anchors_ = true
 metadata/_tab_index = 0
 
@@ -362,84 +364,6 @@ offset_right = 241.0
 offset_bottom = 243.0
 texture = SubResource("GradientTexture2D_f85oj")
 
-[node name="HealButton" type="TextureButton" parent="ShopCanvas_SHOP/SHOP"]
-layout_mode = 0
-offset_left = 91.0006
-offset_top = 933.0
-offset_right = 229.001
-offset_bottom = 969.0
-theme = ExtResource("9_mlcvp")
-texture_normal = ExtResource("25_mcp8b")
-texture_pressed = ExtResource("26_kbpb2")
-script = ExtResource("24_gqxs8")
-
-[node name="TextHolder" type="Control" parent="ShopCanvas_SHOP/SHOP/HealButton"]
-anchors_preset = 0
-offset_right = 138.0
-offset_bottom = 32.0
-mouse_filter = 2
-
-[node name="Price" type="Label" parent="ShopCanvas_SHOP/SHOP/HealButton/TextHolder"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = 29.0
-offset_top = -20.0
-offset_right = 66.0
-offset_bottom = 8.0
-theme_override_colors/font_color = Color(0.94902, 0.92549, 0.419608, 1)
-theme_override_colors/font_outline_color = Color(0.141176, 0.054902, 0.054902, 1)
-theme_override_constants/outline_size = 4
-theme_override_font_sizes/font_size = 20
-text = "000"
-horizontal_alignment = 2
-
-[node name="BUY" type="Label" parent="ShopCanvas_SHOP/SHOP/HealButton/TextHolder"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = 38.0
-offset_top = -30.0
-offset_right = 58.0
-offset_bottom = -16.0
-theme_override_colors/font_color = Color(0.333333, 0.258824, 0.145098, 1)
-theme_override_colors/font_outline_color = Color(0.172549, 0.141176, 0.0901961, 1)
-theme_override_constants/line_spacing = 0
-theme_override_constants/outline_size = -3
-theme_override_font_sizes/font_size = 10
-text = "BUY"
-horizontal_alignment = 2
-
-[node name="HEAL" type="Label" parent="ShopCanvas_SHOP/SHOP/HealButton/TextHolder"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -59.0
-offset_top = -30.0
-offset_right = 16.0
-offset_bottom = -1.45833
-theme_override_colors/font_color = Color(1, 0, 0, 1)
-theme_override_colors/font_shadow_color = Color(0.172549, 0.141176, 0.0901961, 1)
-theme_override_colors/font_outline_color = Color(0.588235, 0.0901961, 0.364706, 1)
-theme_override_constants/line_spacing = 2
-theme_override_constants/shadow_offset_x = 0
-theme_override_constants/shadow_offset_y = 1
-theme_override_constants/outline_size = 3
-theme_override_constants/shadow_outline_size = 4
-theme_override_font_sizes/font_size = 13
-text = "HEAL
-1 HP"
-horizontal_alignment = 1
-
 [node name="ShopStationsStepParent" type="Control" parent="ShopCanvas_SHOP/SHOP"]
 anchors_preset = 0
 offset_right = 40.0
@@ -454,27 +378,177 @@ offset_bottom = -7.99995
 
 [node name="Shop_Construction" parent="ShopCanvas_SHOP/SHOP/ShopStationsStepParent/ShopStations" instance=ExtResource("19_rvmjo")]
 layout_mode = 1
-offset_left = 1091.0
-offset_top = 83.0
-offset_right = 1577.0
-offset_bottom = 361.0
+offset_left = 1075.0
+offset_top = 115.0
+offset_right = 1561.0
+offset_bottom = 393.0
 myPool = 1
 
 [node name="Shop_Battle" parent="ShopCanvas_SHOP/SHOP/ShopStationsStepParent/ShopStations" instance=ExtResource("19_rvmjo")]
 layout_mode = 1
-offset_left = 1091.0
-offset_top = 365.0
-offset_right = 1577.0
-offset_bottom = 643.0
+offset_left = 1075.0
+offset_top = 397.0
+offset_right = 1561.0
+offset_bottom = 675.0
 myPool = 2
 
 [node name="Shop_Parts" parent="ShopCanvas_SHOP/SHOP/ShopStationsStepParent/ShopStations" instance=ExtResource("19_rvmjo")]
 layout_mode = 1
-offset_left = 1091.0
-offset_top = 646.0
-offset_right = 1577.0
-offset_bottom = 924.0
+offset_left = 1075.0
+offset_top = 678.0
+offset_right = 1561.0
+offset_bottom = 956.0
 myPool = 0
+
+[node name="HealButton" type="Button" parent="ShopCanvas_SHOP/SHOP/ShopStationsStepParent/ShopStations"]
+z_index = 1
+layout_mode = 0
+offset_left = 395.0
+offset_top = 979.0
+offset_right = 485.0
+offset_bottom = 1019.0
+theme = ExtResource("9_mlcvp")
+icon = ExtResource("15_f85oj")
+
+[node name="TextHolder" type="Control" parent="ShopCanvas_SHOP/SHOP/ShopStationsStepParent/ShopStations/HealButton"]
+anchors_preset = 0
+offset_right = 138.0
+offset_bottom = 32.0
+mouse_filter = 2
+
+[node name="BUY" type="Label" parent="ShopCanvas_SHOP/SHOP/ShopStationsStepParent/ShopStations/HealButton/TextHolder"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -34.0
+offset_top = -68.0
+offset_right = -14.0
+offset_bottom = -57.7917
+theme_override_colors/font_color = Color(0.333333, 0.258824, 0.145098, 1)
+theme_override_colors/font_outline_color = Color(0.172549, 0.141176, 0.0901961, 1)
+theme_override_constants/line_spacing = 0
+theme_override_constants/outline_size = -3
+theme_override_font_sizes/font_size = 10
+text = "BUY"
+horizontal_alignment = 2
+
+[node name="HEAL" type="Label" parent="ShopCanvas_SHOP/SHOP/ShopStationsStepParent/ShopStations/HealButton/TextHolder"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -38.0
+offset_top = -30.0
+offset_right = 16.0
+offset_bottom = -1.0
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_colors/font_shadow_color = Color(0.172549, 0.141176, 0.0901961, 1)
+theme_override_colors/font_outline_color = Color(0.588235, 0.0901961, 0.364706, 1)
+theme_override_constants/line_spacing = 2
+theme_override_constants/shadow_offset_x = 0
+theme_override_constants/shadow_offset_y = 1
+theme_override_constants/outline_size = 3
+theme_override_constants/shadow_outline_size = 4
+theme_override_font_sizes/font_size = 13
+text = "HEAL
+1 HP"
+horizontal_alignment = 1
+
+[node name="ButtonHole" parent="ShopCanvas_SHOP/SHOP/ShopStationsStepParent/ShopStations/HealButton" instance=ExtResource("18_k27wm")]
+layout_mode = 0
+anchors_preset = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = -1.0
+offset_top = 4.0
+offset_right = 91.0
+offset_bottom = 40.0
+
+[node name="PistonArm" parent="ShopCanvas_SHOP/SHOP/ShopStationsStepParent/ShopStations/HealButton" instance=ExtResource("17_25s40")]
+layout_mode = 0
+offset_left = 3.99963
+offset_top = 38.0
+offset_right = 8.99963
+offset_bottom = 40.0
+metadata/_edit_use_anchors_ = true
+
+[node name="PistonArm3" parent="ShopCanvas_SHOP/SHOP/ShopStationsStepParent/ShopStations/HealButton" instance=ExtResource("17_25s40")]
+layout_mode = 0
+offset_left = 80.9996
+offset_top = 38.0
+offset_right = 85.9996
+offset_bottom = 40.0
+
+[node name="Lbl_Scrap" type="Label" parent="ShopCanvas_SHOP/SHOP/ShopStationsStepParent/ShopStations/HealButton"]
+z_index = 1
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -38.0004
+offset_top = -61.9999
+offset_right = 16.9996
+offset_bottom = -44.9999
+theme_override_fonts/font = ExtResource("13_6c18d")
+theme_override_font_sizes/font_size = 15
+text = "1"
+horizontal_alignment = 2
+vertical_alignment = 1
+script = ExtResource("20_k27wm")
+
+[node name="AbilityIconBG" type="NinePatchRect" parent="ShopCanvas_SHOP/SHOP/ShopStationsStepParent/ShopStations/HealButton/Lbl_Scrap"]
+z_index = -1
+layout_mode = 0
+offset_left = -3.0
+offset_top = -3.0
+offset_right = 60.0
+offset_bottom = 20.0
+texture = ExtResource("19_vehjn")
+patch_margin_left = 1
+patch_margin_top = 3
+patch_margin_right = 1
+patch_margin_bottom = 1
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1
+
+[node name="BG_zeroes" type="Label" parent="ShopCanvas_SHOP/SHOP/ShopStationsStepParent/ShopStations/HealButton/Lbl_Scrap"]
+z_index = -1
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -26.5
+offset_top = -17.0
+offset_right = 28.5
+theme_override_colors/font_color = Color(0.47451, 0.47451, 0.47451, 1)
+theme_override_fonts/font = ExtResource("13_6c18d")
+theme_override_font_sizes/font_size = 15
+text = "00000"
+vertical_alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="ShopCanvas_SHOP/SHOP/ShopStationsStepParent/ShopStations/HealButton/Lbl_Scrap"]
+layout_mode = 0
+offset_left = 61.9996
+offset_top = -1.99994
+offset_right = 80.9996
+offset_bottom = 19.0001
+texture = ExtResource("58_u8j3h")
+
+[node name="PistonArm2" parent="ShopCanvas_SHOP/SHOP/ShopStationsStepParent/ShopStations/HealButton" instance=ExtResource("21_25s40")]
+layout_mode = 0
+offset_left = 36.0
+offset_top = 38.0
+offset_right = 54.0
+offset_bottom = 40.0
 
 [node name="HUDCanvas" type="CanvasLayer" parent="."]
 layer = 4
@@ -1891,6 +1965,7 @@ settingName = &"renderShadows"
 metadata/_edit_use_anchors_ = true
 
 [node name="Pause" type="Control" parent="HUDCanvas/HUD Viewport/SubViewport/HUD"]
+visible = false
 z_index = 3
 layout_mode = 1
 anchor_left = -0.333333
@@ -2041,8 +2116,7 @@ visible = false
 material_override = ExtResource("4_jhciq")
 mesh = ExtResource("5_4jixe")
 
-[connection signal="button_down" from="ShopCanvas_SHOP/SHOP/HealButton" to="ShopCanvas_SHOP/SHOP/HealButton" method="_on_button_down"]
-[connection signal="button_up" from="ShopCanvas_SHOP/SHOP/HealButton" to="ShopCanvas_SHOP/SHOP/HealButton" method="_on_button_up"]
+[connection signal="pressed" from="ShopCanvas_SHOP/SHOP/ShopStationsStepParent/ShopStations/HealButton" to="ShopCanvas_SHOP/SHOP" method="_on_heal_button_pressed"]
 [connection signal="tab_changed" from="HUDCanvas/HUD Viewport/SubViewport/HUD_shopTabs/Shops" to="HUDCanvas/HUD Viewport/SubViewport/HUD_shopTabs" method="_on_shops_tab_changed"]
 [connection signal="pressed" from="HUDCanvas/HUD Viewport/SubViewport/HUD/MainMenu/Btn_Play" to="." method="_on_btn_play_pressed"]
 [connection signal="pressed" from="HUDCanvas/HUD Viewport/SubViewport/HUD/MainMenu/Btn_Credits" to="." method="_on_btn_credits_pressed"]

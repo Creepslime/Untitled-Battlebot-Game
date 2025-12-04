@@ -32,6 +32,7 @@ func _ready():
 		if shop is ShopStation:
 			shop.manager = self;
 			shops.append(shop);
+	update_health_button();
 
 func _process(delta):
 	HUD_stations.visible = is_visible_in_tree();
@@ -99,6 +100,8 @@ func _process(delta):
 				if !is_visible_in_tree() or (black_a == 1 and camFeedHProgress <= 0 and camFeedVProgress <= 0) and all_shops_closed():
 					GameState.set_game_board_state(GameBoard.gameState.LEAVE_SHOP)
 					transitionCalled = true;
+	
+	update_health_button();
 
 
 func all_shops_closed():
@@ -190,14 +193,14 @@ var healPriceBase := 4.0;
 var healPricePressIncrement := 2.0;
 var healPriceIncrement := 0.0;
 var healPriceIncrementPermanent := 0.0;
-@export var btn_heal : Control;
-@export var lbl_healAmount : Control;
-@export var lbl_healPrice : Control;
+@export var btn_heal : Button;
+@export var lbl_healAmount : Label;
+@export var lbl_healPrice : ScrapLabel_Shop;
 
 
 func update_health_button():
 	lbl_healAmount.text = "HEAL\n"+TextFunc.format_stat(get_heal_amount()) + " HP"
-	lbl_healPrice.text = TextFunc.format_stat(get_heal_price(), 0);
+	lbl_healPrice.update_amt(get_heal_price());
 	if is_instance_valid(player) && ScrapManager.is_affordable(get_heal_price()) && ! player.at_max_health():
 		TextFunc.set_text_color(lbl_healPrice, "scrap");
 	else:
@@ -211,8 +214,7 @@ func get_heal_price():
 	return ceili((healPriceBase + healPriceIncrement) * ScrapManager.get_discount_for_type(ScrapManager.priceTypes.HEALING));
 
 func _on_heal_button_pressed():
-	var healed = _shop_heal();
-	if healed:
+	if _shop_heal():
 		SND.play_sound_nondirectional("Shop.Chaching", 1, randf_range(0.90,1.1));;
 	pass # Replace with function body.
 
