@@ -50,8 +50,9 @@ transparency = 1
 cull_mode = 2
 albedo_texture = ExtResource("17_gtuyr")
 
-[node name="Piece_Rocket" type="Node3D" node_paths=PackedStringArray("meshesHolder", "maleSocketMesh", "hitboxCollisionHolder", "hurtboxCollisionHolder", "placementCollisionHolder", "femaleSocketHolder") groups=["Piece"]]
+[node name="Piece_Rocket" type="Node3D" node_paths=PackedStringArray("firingOffsetNode", "meshesHolder", "maleSocketMesh", "hitboxCollisionHolder", "hurtboxCollisionHolder", "placementCollisionHolder", "femaleSocketHolder") groups=["Piece"]]
 script = ExtResource("2_tvl21")
+firingOffsetNode = NodePath("Meshes/MeshInstance3D/FiringOffset")
 pieceName = &"Rocket"
 weightBase = 8.0
 force_visibility = true
@@ -150,6 +151,11 @@ surface_material_override/0 = SubResource("StandardMaterial3D_t8ht0")
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Meshes"]
 transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, 0, 0.25, 0)
 mesh = ExtResource("5_xavqm")
+
+[node name="FiringOffset" type="RayCast3D" parent="Meshes/MeshInstance3D"]
+transform = Transform3D(0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.25, 0, 0, 0.21875)
+enabled = false
+target_position = Vector3(0, 0, 1)
 
 [node name="Socket_Left" parent="." node_paths=PackedStringArray("hostPiece") instance=ExtResource("2_hcxml")]
 transform = Transform3D(-4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0, 1, 0.25, 0.25, 0)

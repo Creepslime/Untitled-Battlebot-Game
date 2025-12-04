@@ -403,10 +403,10 @@ myPool = 0
 [node name="HealButton" type="Button" parent="ShopCanvas_SHOP/SHOP/ShopStationsStepParent/ShopStations"]
 z_index = 1
 layout_mode = 0
-offset_left = 395.0
-offset_top = 979.0
-offset_right = 485.0
-offset_bottom = 1019.0
+offset_left = 387.0
+offset_top = 982.0
+offset_right = 477.0
+offset_bottom = 1022.0
 theme = ExtResource("9_mlcvp")
 icon = ExtResource("15_f85oj")
 
@@ -461,9 +461,6 @@ horizontal_alignment = 1
 
 [node name="ButtonHole" parent="ShopCanvas_SHOP/SHOP/ShopStationsStepParent/ShopStations/HealButton" instance=ExtResource("18_k27wm")]
 layout_mode = 0
-anchors_preset = 0
-anchor_right = 0.0
-anchor_bottom = 0.0
 offset_left = -1.0
 offset_top = 4.0
 offset_right = 91.0

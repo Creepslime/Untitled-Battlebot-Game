@@ -60,7 +60,7 @@
 [ext_resource type="Texture2D" uid="uid://dyfx0k6ohqmpe" path="res://graphics/images/HUD/shop/buy_selected.png" id="41_o11jw"]
 [ext_resource type="Texture2D" uid="uid://ccklnmdcymtig" path="res://graphics/images/HUD/shop/heal_unselected.png" id="43_vok4d"]
 [ext_resource type="Texture2D" uid="uid://g2oapmprsygp" path="res://graphics/images/HUD/shop/heal_selected.png" id="44_4wvq4"]
-[ext_resource type="Script" uid="uid://56vk7o0gmt7p" path="res://scripts/GUI/shop_button.gd" id="45_4wvq4"]
+[ext_resource type="Script" uid="uid://56vk7o0gmt7p" path="res://scripts/GUI/manual_button.gd" id="45_4wvq4"]
 [ext_resource type="Texture2D" uid="uid://b7r4txn23e8xc" path="res://graphics/images/HUD/shop/shop_door.png" id="46_xopod"]
 [ext_resource type="FontFile" uid="uid://s3k2ji7jxshs" path="res://graphics/images/HUD/8-segment.png" id="47_08lav"]
 [ext_resource type="Texture2D" uid="uid://6qqfwg274ig8" path="res://graphics/images/HUD/shop/reroll_unselected.png" id="47_mh0ri"]

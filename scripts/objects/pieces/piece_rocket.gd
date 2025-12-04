@@ -5,6 +5,9 @@ class_name Piece_Rocket
 
 var maxBlastTimer := 0.6;
 var blastTimer := 0.0;
+@export var firingOffsetNode : RayCast3D;
+var firingOffset := Vector3.ZERO;
+var firingAngle := Vector3.BACK;
 
 func _ready():
 	super();
@@ -30,7 +33,7 @@ func phys_process_abilities(delta):
 		#var kb = get_kickback_damage_data(0.0, get_kickback_force(), ), get_damage_types());
 		
 		#initiate_kickback(get_facing_direction(Vector3(0,0,-1), true));
-		var kb = 2000 * (blastTimer / maxBlastTimer) * get_kickback_force() * (get_facing_direction(Vector3(0,0,1), false));
+		var kb = 2000 * (blastTimer / maxBlastTimer) * get_kickback_force() * (get_firing_direction());
 		kb.y = 0;
 		
 		move_robot_with_force(kb);
@@ -40,3 +43,15 @@ func phys_process_abilities(delta):
 		#print(kb.get_knockback())
 		#print(blastTimer);
 		#print("Facing", get_facing_direction(Vector3(0,0,1)))
+
+func get_firing_offset():
+	if is_instance_valid(firingOffsetNode):
+		return firingOffsetNode.global_position;
+	return firingOffset + global_position;
+
+func get_firing_direction() -> Vector3:
+	var firingOffsetPos = firingOffsetNode.global_position;
+	var firingOffsetTargetPos = firingOffsetNode.to_global(firingOffsetNode.target_position);
+	firingAngle = firingOffsetTargetPos - firingOffsetPos;
+	firingAngle = firingAngle.normalized();
+	return firingAngle;

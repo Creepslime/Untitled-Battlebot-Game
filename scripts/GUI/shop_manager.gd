@@ -199,12 +199,23 @@ var healPriceIncrementPermanent := 0.0;
 
 
 func update_health_button():
-	lbl_healAmount.text = "HEAL\n"+TextFunc.format_stat(get_heal_amount()) + " HP"
-	lbl_healPrice.update_amt(get_heal_price());
-	if is_instance_valid(player) && ScrapManager.is_affordable(get_heal_price()) && ! player.at_max_health():
-		TextFunc.set_text_color(lbl_healPrice, "scrap");
+	if is_instance_valid(player):
+		lbl_healAmount.text = "HEAL\n"+TextFunc.format_stat(get_heal_amount()) + " HP"
+		lbl_healPrice.update_amt(get_heal_price());
+		var healTooltip = "HEAL "+TextFunc.format_stat(get_heal_amount()) + " HP\nCOST: " + str(get_heal_price())
+		if is_instance_valid(player) && ScrapManager.is_affordable(get_heal_price()) && ! player.at_max_health():
+			TextFunc.set_text_color(lbl_healPrice, "scrap");
+		else:
+			if ! ScrapManager.is_affordable(get_heal_price()):
+				healTooltip += "\n(Not affordable!)"
+			if player.at_max_health():
+				healTooltip += "\n(Robot is at max health!)"
+			TextFunc.set_text_color(lbl_healPrice, "unaffordable");
+		
+		btn_heal.tooltip_text = healTooltip;
 	else:
-		TextFunc.set_text_color(lbl_healPrice, "unaffordable");
+		lbl_healAmount.text = "HEAL\n??? HP";
+		lbl_healPrice.update_amt(get_heal_price());
 
 func get_heal_amount():
 	if is_instance_valid(player):

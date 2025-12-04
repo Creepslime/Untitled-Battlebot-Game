@@ -76,7 +76,7 @@ func phys_process_combat(delta):
 	if Input.is_action_pressed("Fire3"):
 		if fire_active(3):
 			print("Ability 4? ",active_abilities[3].manager.abilityName)
-	if Input.is_action_just_pressed("Fire4"):
+	if Input.is_action_pressed("Fire4"):
 		if fire_active(4):
 			print("Ability 5? ",active_abilities[4].manager.abilityName)
 

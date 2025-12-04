@@ -1,4 +1,4 @@
-extends TextureButton
+extends Button
 class_name ManualButton
 ## A button that moves its text up and down when pressed.
 
