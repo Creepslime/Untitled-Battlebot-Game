@@ -96,7 +96,6 @@ size = Vector3(1, 0.5, 1)
 size = Vector3(0.5, 0.5, 1.5)
 
 [node name="Piece_Cannon" type="Node3D" node_paths=PackedStringArray("firingOffsetNode", "meshesHolder", "hitboxCollisionHolder", "hurtboxCollisionHolder", "placementCollisionHolder", "femaleSocketHolder") groups=["Piece"]]
-visible = false
 script = ExtResource("1_f406y")
 magazineRefreshRate = 0.45
 fireRate = 0.25
@@ -203,7 +202,7 @@ transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, 0, 0.25, 0)
 mesh = ExtResource("9_861xr")
 
 [node name="FiringOffset" type="RayCast3D" parent="Meshes/MeshInstance3D"]
-transform = Transform3D(0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.25, 0, 0, 0.25)
+transform = Transform3D(0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.25, 0, 0, 0.3125)
 enabled = false
 target_position = Vector3(0, 0, 1)
 

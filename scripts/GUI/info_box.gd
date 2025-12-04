@@ -24,6 +24,7 @@ var icon_warning := preload("res://graphics/images/HUD/infobox/typeIcons/info_wa
 var icon_error := preload("res://graphics/images/HUD/infobox/typeIcons/info_error.png");
 var icon_robot := preload("res://graphics/images/HUD/infobox/typeIcons/info_robot.png");
 var icon_pieceBody := preload("res://graphics/images/HUD/infobox/typeIcons/info_piece_body.png");
+var icon_pieceBody_unequipped := preload("res://graphics/images/HUD/infobox/typeIcons/info_piece_body_unequipped.png");
 var icon_piece := preload("res://graphics/images/HUD/infobox/typeIcons/info_piece.png");
 var icon_piece_unequipped := preload("res://graphics/images/HUD/infobox/typeIcons/info_piece_unequipped.png");
 var icon_part := preload("res://graphics/images/HUD/infobox/typeIcons/info_part.png");
@@ -125,7 +126,10 @@ func populate_info_piece(piece:Piece):
 		else:
 			iconBase.texture = icon_piece;
 	else:
-		iconBase.texture = icon_piece_unequipped;
+		if piece.isBody:
+			iconBase.texture = icon_pieceBody_unequipped;
+		else:
+			iconBase.texture = icon_piece_unequipped;
 	
 	populate_stats(piece);
 	populate_abilities(piece);

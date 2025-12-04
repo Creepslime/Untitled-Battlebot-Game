@@ -17,9 +17,9 @@ class_name PartModifier;
 @export var myModType : modifierType; ## @deprecated
 
 var owner : Node; ##The owner of this modifier; AKA the one that applied it.
-var target : Node: ## The target. Getter is [method try_get_target].
+var target : Node: ## The target. Don't get directly, use [method try_get_target].
 	get:
-		return try_get_target(); 
+		return target;
 var inventoryNode : Inventory; ## @deprecated
 var currentlyApplying := false; ## Whether this is currently being applied. Calculated by [method apply_modifier].
 
