@@ -38,46 +38,17 @@ height = 0.75
 [node name="Piece_Horn" type="Node3D" node_paths=PackedStringArray("meshesHolder", "hitboxCollisionHolder", "hurtboxCollisionHolder", "placementCollisionHolder", "femaleSocketHolder") groups=["Piece"]]
 script = ExtResource("1_jdn6p")
 pieceName = &"Horn"
-descriptionConstructor = null
 pieceDescription = "Seems like someone tore this off some hunting trophy and stuck a plug inside the base.\\nIt sure is pointy!"
-pieceMaterial = null
-defenseMultiplierGeneral = null
-defenseMultipliers = null
 weightBase = 1.75
 force_visibility = true
-temporaryPreview = null
-isBody = null
-removable = null
-poolWeight = null
-myPartRarity = null
 scrapCostBase = 17
-scrapSellModifierBase = null
-scrapSalvageModifierBase = null
-inShop = null
-activeAbilities = null
-passiveAbilities = null
-hurtboxAlwaysEnabled = null
-hitboxAlwaysEnabled = null
-energyDrawPassiveMultiplier = null
-energyDrawActiveMultiplier = null
-energyDrawActiveBaseOverride = null
-energyDrawPassiveBaseOverride = null
-passiveCooldownTimeMultiplier = null
-activeCooldownTimeMultiplier = null
 damageBase = 1.75
-knockbackBase = null
-kickbackBase = null
 damageTypes = Array[int]([1])
-disableHitboxesWhileOnCooldown = null
-contactCooldown = null
-contactDamageBasedOnComparedVelocities = null
-contactDamageComparedVelocitiesBias = null
 meshesHolder = NodePath("Meshes")
 hitboxCollisionHolder = NodePath("HitboxShapes [Leave empty]")
 hurtboxCollisionHolder = NodePath("HurtboxShapes [Leave empty]")
 placementCollisionHolder = NodePath("PlacementShapes [Leave empty]")
 femaleSocketHolder = NodePath("FemaleSockets")
-assignedToSocket = null
 engineSlots = {
 Vector2i(1, 3): null,
 Vector2i(2, 2): null,
@@ -86,7 +57,6 @@ Vector2i(3, 1): null,
 Vector2i(3, 2): null
 }
 filepathForThisEntity = "res://scenes/prefabs/objects/pieces/piece_horn.tscn"
-AudioSourceType = null
 
 [node name="FemaleSockets" type="Node3D" parent="."]
 editor_description = "Put all female sockets in this box. Make sure they align with the grid!"

@@ -72,7 +72,7 @@ valueAdd = 0.0
 valueFlatMult = 0.0
 valueTimesMult = 1.0
 modName = &"FanPiece"
-statTargetName = &"ActiveCooldown"
+statTargetName = &"ActiveCooldownMultiplier"
 modTags = Array[String](["Fan"])
 offset = Vector2i(0, 0)
 enabled = true
@@ -82,15 +82,10 @@ metadata/_custom_type_script = "uid://dd18vlcrmsx15"
 
 [node name="PartFan" groups=["Fan"] instance=ExtResource("1_4lfvv")]
 script = ExtResource("2_l244e")
-weightBase = null
-myPartRarity = null
-poolWeight = null
 partName = "Fan"
 partDescription = "Blasts some nice cool air around.
 
 [color=f2ec6b]Passive: Adjacent [b]Active[/b] parts have 5% reduced Energy cost for each space adjacent to this part that is empty or another Fan."
 partIcon = ExtResource("3_l244e")
-partIconOffset = null
 effectPriority = 1
 outgoingModifiers = Array[ExtResource("2_eefed")]([SubResource("Resource_l244e"), SubResource("Resource_4lfvv"), SubResource("Resource_eefed"), SubResource("Resource_reqvf"), SubResource("Resource_d8lu7")])
-filepathForThisEntity = null

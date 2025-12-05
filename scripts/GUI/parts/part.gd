@@ -452,7 +452,7 @@ func mods_distribute():
 		if not appliedModsAlready_recursion:
 			mods_apply_all();
 		var outMods = outgoingModifiers;
-		for mod in outMods:
+		for mod : PartModifier in outMods:
 			mod.distribute_modifier();
 			pass;
 		distributedModsAlready = true;

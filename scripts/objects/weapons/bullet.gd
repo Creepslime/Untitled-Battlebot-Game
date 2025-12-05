@@ -42,7 +42,14 @@ var originalAttacker : Node3D;
 ## A string to declare what [ParticleFX] this [Bullet] will spawn to follow it around as a trail.
 @export var tracerFXString := "BulletTracer_small";
 ## The [resource DamageData] assigned to this bullet.
-var damageData : DamageData;
+var damageData : DamageData:
+	get:
+		if ! is_instance_valid(damageData):
+			damageData = DamageData.new();
+			damageData.create(damage, knockbackMult, dir, [DamageData.damageTypes.PIERCING])
+			if get_attacker() is Robot:
+				damageData.attackerRobot = attacker;;
+		return damageData;
 ## The [Area3D] that sends signals that it's been hit.
 @export var hitbox : Area3D;
 ## The amount [member verticalVelocity] gets adjusted by each frame, * delta.
@@ -61,7 +68,7 @@ var bouncesLeft := bounces;
 var collisionDisableFrames := 0;
 
 func _ready():
-	die();
+	die(false);
 
 ## Whether this bullet is available to be scooped up and fired or not.
 func available(printWhy := false):
@@ -236,8 +243,8 @@ func bounceBullet():
 	#print("BOUNCE NORMAL: " ,normal)
 
 ## Called when this [Bullet] hits something. Kills it off and starts it leaking.
-func die():
-	if visible: 
+func die(noisy := true):
+	if visible and noisy: 
 		ParticleFX.play("SmokePuffSingle", GameState.get_game_board(), position, 0.5);
 	#position = Vector3.ZERO;
 	fired = false;
@@ -281,13 +288,16 @@ func shot_something(inbody):
 	if leaking: return;
 	if ! is_instance_valid(inbody): return;
 	if ! visible: return;
-	if get_current_position() == initPosition: return;
+	if Utils.is_equal_approx_vector3(get_current_position(), initPosition): return;
 	var validTarget = false;
 	var parent = inbody.get_parent();
-	if parent == attacker:
+	
+	if inbody in casterExceptions:
 		return;
-	if parent == launcher:
-		return;
+	#if parent == attacker:
+		#return;
+	#if parent == launcher:
+		#return;
 	if parent is Combatant:
 		#print(inbody.get_parent())
 		parent.take_damage(damage);
@@ -296,16 +306,20 @@ func shot_something(inbody):
 		validTarget = true;
 	elif inbody is RobotBody:
 		parent = inbody.get_robot()
-		if !is_instance_valid(damageData):
-			#print_rich("[color=purple]Bullet needs a new DamageData")
-			damageData = DamageData.new();
-			damageData.create(damage, knockbackMult, dir, [DamageData.damageTypes.PIERCING])
-			if get_attacker() is Robot:
-				damageData.attackerRobot = attacker;
 		#print(inbody.get_parent())
 		#print_rich("[color=purple]Bullet hit robot. Yippie!")
 		parent.take_damage_from_damageData(damageData);
 		validTarget = true;
+	elif inbody is HurtboxHolder:
+		var piece = inbody.get_piece();
+		if piece.hasHostRobot:
+			var bot = piece.hostRobot;
+			if bot == get_attacker():
+				return;
+			
+			piece.hurtbox_collision_from_projectile(self, damageData);
+			
+			validTarget = true;
 	elif inbody is StaticBody3D:
 		validTarget = true;
 		#parent.call_deferred("take_knockback",(dir + Vector3(0,0.01,0)) * knockbackMult);
@@ -346,15 +360,54 @@ func get_launcher():
 ## Sets the attacker to a new attacker. Works with both Combatants and Robots while we transition.
 func set_attacker(atkr):
 	attacker = atkr;
-	raycast.clear_exceptions();
+	var newExceptions : Array[CollisionObject3D] = []
 	
 	if attacker is Combatant:
-		raycast.add_exception(get_attacker().body);
+		newExceptions.append(get_attacker().body);
 	if attacker is Robot:
-		raycast.add_exception(get_attacker().body);
-		raycast.add_exception(get_launcher().hurtboxCollisionHolder);
+		newExceptions.append_array(attacker.get_all_piece_hurtbox_holders());
+		newExceptions.append(attacker.body);
+		newExceptions.append(get_launcher().hurtboxCollisionHolder);
 	
-	raycast.add_exception(hitbox);
+	newExceptions.append(hitbox);
+	
+	set_caster_exceptions_and_collision_flags(newExceptions);
+
+const layerFlags : Dictionary[int, bool] = {
+	1 : false, ## This is NOT a robot body.
+	10: true, ## This is a bullet.
+}
+const maskFlags : Dictionary[int, bool] = {
+	1 : false, ## DON'T collide with robot bodies.
+	4 : true, ## Collide with Piece hurtboxes,
+	7 : true, ## Collide with *placed* Piece hurtboxes.
+	10: true, ## Collide with other bullets.
+	11: true, ## Collide with the ground.
+}
+
+var collisionSet := false;
+var casterExceptions : Array[CollisionObject3D] = [];
+func set_caster_exceptions_and_collision_flags(exceptions : Array[CollisionObject3D]):
+	raycast.clear_exceptions();
+	shapecast.clear_exceptions();
+	
+	casterExceptions = exceptions;
+	
+	for exception in exceptions:
+		raycast.add_exception(exception);
+		shapecast.add_exception(exception);
+	
+	if ! collisionSet:
+		collisionSet = true;
+		hitbox.collision_layer = 0;
+		hitbox.collision_mask = 0;
+		raycast.collision_mask = 0;
+		shapecast.collision_mask = 0;
+		for flagNum in maskFlags:
+			var flagValue = maskFlags[flagNum]
+			hitbox.set_collision_mask_value(flagNum, flagValue);
+			raycast.set_collision_mask_value(flagNum, flagValue);
+			shapecast.set_collision_mask_value(flagNum, flagValue);
 
 func add_collision_disable_frames(amt:=1):
 	collisionDisableFrames += amt;

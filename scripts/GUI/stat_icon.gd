@@ -7,6 +7,7 @@ class_name InspectorStatIcon
 @export var textureIcon : TextureRect;
 @export var lbl_amt : Label;
 var stat : StatTracker
+var amt := 0.0;
 
 func load_data_from_statTracker(_stat: StatTracker):
 	if is_instance_valid(_stat):
@@ -27,8 +28,14 @@ func _process(delta):
 func update_stat_num():
 	if is_instance_valid(stat):
 		var statText = TextFunc.format_stat(stat.get_stat_for_display(), 2, false)
-		tooltip_text = stat.statFriendlyName.capitalize() + str("\n",statText);
 		lbl_amt.text = statText;
+		
+		var tooltipText = stat.statFriendlyName.capitalize() + str("\n",statText);
+		tooltipText += "\nModifier: %s"%stat.bonusAdd if stat.bonusAdd > 0 else ""
+		tooltipText += "\nFlat mult: %s"%stat.bonusMult_Flat if stat.bonusMult_Flat > 0 else ""
+		tooltipText += "\nTimes mult: %s"%stat.bonusMult_Mult if stat.bonusMult_Mult != 1.0 else ""
+		tooltipText += str("\n",stat.statModifiers);
+		tooltip_text = tooltipText;
 
 func mouse_entered():
 	updateTimer = -1;

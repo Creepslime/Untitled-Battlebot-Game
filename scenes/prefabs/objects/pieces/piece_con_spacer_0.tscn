@@ -80,50 +80,19 @@ script = ExtResource("1_vd8ek")
 pieceName = &"Hockey Puck"
 descriptionConstructor = Array[ExtResource("2_ltw0n")]([SubResource("Resource_ujwhk"), SubResource("Resource_agd5d"), SubResource("Resource_7qnf5")])
 pieceDescription = "[color=ffffffff]Serves no purpose other than to provide [color=ffffffff]structure [color=ffffffff]to your robot."
-pieceMaterial = null
-defenseMultiplierGeneral = null
-defenseMultipliers = null
 weightBase = 0.5
 force_visibility = true
-temporaryPreview = null
-isBody = null
-removable = null
-poolWeight = null
-myPartRarity = null
 scrapCostBase = 4
-scrapSellModifierBase = null
-scrapSalvageModifierBase = null
-inShop = null
-activeAbilities = null
-passiveAbilities = null
-hurtboxAlwaysEnabled = null
-hitboxAlwaysEnabled = null
-energyDrawPassiveMultiplier = null
-energyDrawActiveMultiplier = null
-energyDrawActiveBaseOverride = null
-energyDrawPassiveBaseOverride = null
-passiveCooldownTimeMultiplier = null
-activeCooldownTimeMultiplier = null
-damageBase = null
-knockbackBase = null
-kickbackBase = null
-damageTypes = null
-disableHitboxesWhileOnCooldown = null
-contactCooldown = null
-contactDamageBasedOnComparedVelocities = null
-contactDamageComparedVelocitiesBias = null
 meshesHolder = NodePath("Meshes")
 hitboxCollisionHolder = NodePath("HitboxShapes [Leave empty]")
 hurtboxCollisionHolder = NodePath("HurtboxShapes [Leave empty]")
 placementCollisionHolder = NodePath("PlacementShapes [Leave empty]")
 femaleSocketHolder = NodePath("FemaleSockets")
-assignedToSocket = null
 engineSlots = {
 Vector2i(2, 2): null,
 Vector2i(2, 3): null
 }
 filepathForThisEntity = "res://scenes/prefabs/objects/pieces/piece_bumper_T.tscn"
-AudioSourceType = null
 
 [node name="MaleSocket" type="Node3D" parent="."]
 editor_description = "This is purely here as a visual representation of where this thing plugs in. 

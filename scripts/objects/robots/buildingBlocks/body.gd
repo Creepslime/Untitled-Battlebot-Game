@@ -3,6 +3,17 @@ extends RigidBody3D
 
 class_name RobotBody
 
+## Collision layers.
+const layerFlags : Dictionary[int, bool] = {
+	1 : true, ## This IS a robot body.
+	11 : false, ## This is NOT a wall.
+}
+## Collision mask.
+const maskFlags : Dictionary[int, bool] = {
+	1 : true, ## Collide with other robot bodies.
+	11 : true, ## Collide with walls.
+}
+
 var targetPoint := Vector2(0.0, 1.0);
 var targetRotation := 0.0;
 var currentRotation := 0.0;
@@ -12,13 +23,23 @@ var robot : Robot;
 var maxSpeed := 0.0;
 
 func _ready():
+	call_deferred("fix_collision");
+
+## Resets collision mask stuff.
+func fix_collision():
+	collision_layer = 0;
+	collision_mask = 0;
+	for layerNum in layerFlags:
+		var layerVal = layerFlags[layerNum];
+		set_collision_layer_value(layerNum, layerVal);
+	for maskNum in maskFlags:
+		var maskVal = maskFlags[maskNum];
+		set_collision_mask_value(maskNum, maskVal);
+	
+	#print(collision_mask)
+	
 	targetRotation = global_rotation.y;
 	currentRotation = global_rotation.y;
-	
-	set_collision_layer_value(1, true);
-	set_collision_layer_value(11, false);
-	set_collision_mask_value(1, true);
-	set_collision_mask_value(11, true);
 
 func update_target_rotation(inRotPoint, rotationSpeed):
 	if targetPoint != inRotPoint:

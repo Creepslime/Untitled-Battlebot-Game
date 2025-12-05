@@ -55,13 +55,13 @@ func stat_registry():
 	## Stats regarding energy cost.
 	register_stat("PassiveEnergyDrawMultiplier", energyDrawPassiveMultiplier, StatHolderManager.statIconEnergy, StatHolderManager.statTags.Battery, StatHolderManager.displayModes.ABOVE_ZERO_NOT_999);
 	register_stat("PassiveEnergyRegeneration", 0.0, StatHolderManager.statIconEnergy, StatHolderManager.statTags.Battery, StatHolderManager.displayModes.ABOVE_ZERO_NOT_999);
-	register_stat("PassiveCooldown", passiveCooldownTimeMultiplier, StatHolderManager.statIconCooldown, StatHolderManager.statTags.Clock);
+	register_stat("PassiveCooldownMultiplier", passiveCooldownTimeMultiplier, StatHolderManager.statIconCooldown, StatHolderManager.statTags.Clock);
 	register_stat("ContactCooldown", contactCooldown, StatHolderManager.statIconCooldown, StatHolderManager.statTags.Clock);
 	
 	## Stats that only matter if the thing has abilities.
 	if activeAbilitiesDistributed.size() > 0:
 		register_stat("ActiveEnergyDrawMultiplier", energyDrawActiveMultiplier, StatHolderManager.statIconEnergy, StatHolderManager.statTags.Battery);
-		register_stat("ActiveCooldown", activeCooldownTimeMultiplier, StatHolderManager.statIconCooldown, StatHolderManager.statTags.Clock);
+		register_stat("ActiveCooldownMultiplier", activeCooldownTimeMultiplier, StatHolderManager.statIconCooldown, StatHolderManager.statTags.Clock);
 	
 	## Stats regarding Scrap Cost.
 	register_stat("ScrapCost", scrapCostBase, StatHolderManager.statIconScrap, StatHolderManager.statTags.Worth, StatHolderManager.displayModes.ALWAYS, StatHolderManager.roundingModes.Ceili);
@@ -494,9 +494,9 @@ func set_all_cooldowns():
 func set_cooldown_for_ability(action : AbilityManager):
 	if is_instance_valid(action):
 		if action.isPassive:
-			action.queue_cooldown(statHolderID, get_stat("PassiveCooldown"));
+			action.queue_cooldown(statHolderID, get_stat("PassiveCooldownMultiplier"));
 		else:
-			action.queue_cooldown(statHolderID, get_stat("ActiveCooldown"));
+			action.queue_cooldown(statHolderID, get_stat("ActiveCooldownMultiplier"));
 
 ##Never called in base, but to be used for stuff like Bumpers needing a cooldown before they can Bump again.
 func set_cooldown_passive(passiveAbility : AbilityManager, immediate := false):
@@ -1119,6 +1119,7 @@ func take_damage_from_damageData(damageData : DamageData):
 ## Extend this function with any modifications you want to do to the incoming DamageData when this Piece gets hit.[br]
 ## This is potentially useful for things like a Shield, for example, which might nullify most of the damage from incoming Piercing-tagged attacks.
 func modify_incoming_damage_data(damageData : DamageData) -> DamageData:
+	damageData = modify_damage_based_on_immunities(damageData)
 	return damageData;
 
 ## Fires when a Hitbox hits another robot. The prelude to [method contact_damage].
@@ -1964,13 +1965,16 @@ var selectedPart : Part;
 
 ## Returns a list of all the [Part]s inside the [member engineSlots]. Utilizes [method Utils.append_unique] so each [Part] is only added once to the resulting [Array].
 func engine_get_all_parts() -> Array[Part]:
+	regeneratePartList = false;
 	var gatheredParts : Array[Part] = [];
 	for slot in engineSlots.keys():
 		var slotContents = engineSlots[slot];
 		if slotContents != null:
-			if slotContents is Part:
+			if is_instance_valid(slotContents) and !slotContents.is_queued_for_deletion() and slotContents is Part:
 				if slotContents.get_engine() == self:
 					Utils.append_unique(gatheredParts, slotContents);
+			else:
+				engine_clear_slot_at(slot.x, slot.y);
 	listOfParts = gatheredParts;
 	return gatheredParts;
 
@@ -2084,10 +2088,9 @@ func engine_add_part(part: Part, invPosition : Vector2i, noisy := false):
 	pass
 
 func engine_add_part_post(part:Part, noisy:=false):
-	if has_robot_host():
-		hostRobot.remove_something_from_stash(part);
 	regeneratePartList = true; 
-	partMods_deploy();
+	if has_robot_host():
+		hostRobot.on_add_part(part);
 	pass;
 
 func engine_remove_part(part: Part, destroy:=false, beingSold := false, beingBought := false, stash := false):
@@ -2121,6 +2124,8 @@ func engine_remove_part(part: Part, destroy:=false, beingSold := false, beingBou
 ## A step two for removing a [Part]. Used for interactions with the shop, according to old comments.
 func engine_remove_part_post(part:Part, beingSold := false, beingBought := false):
 	regeneratePartList = true;
+	if has_robot_host():
+		hostRobot.on_remove_part(part);
 	pass;
 
 ## Removes and then moves a Part.
@@ -2217,10 +2222,15 @@ func partMods_clear_all():
 
 ## Deploys all modifiers. [b]VERY[/b] HEFTY.
 func partMods_deploy():
+	## Don't do this if there are no parts to speak of.
+	if listOfParts.is_empty():
+		return;
+	
 	##All bonuses cleared.
 	partMods_clear_all();
 	##Organizes all parts.
-	var parts = prioritized_parts();
+	var parts = prioritized_parts(listOfParts);
+	
 	for part in parts:
 		if part is Part:
 			part.mods_distribute();

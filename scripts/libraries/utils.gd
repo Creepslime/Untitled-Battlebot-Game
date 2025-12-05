@@ -196,3 +196,13 @@ func vec3_to_vec2(inVec : Vector3) -> Vector2:
 ## Returns the given [Vector2] as a [Vector3], with out.y = 0, in.x -> out.x, and in.y -> out.z.
 func vec2_to_vec3(inVec : Vector2) -> Vector3:
 	return Vector3(inVec.x, 0.0, inVec.y);
+
+## Returns whether X and Y of the two input [Vector2]s are roughly equal to the others'.
+func is_equal_approx_vector2(inVecA : Vector2, inVecB : Vector2) -> bool:
+	return is_equal_approx(inVecA.x, inVecB.x) and is_equal_approx(inVecA.y, inVecB.y);
+## Returns whether X, Y and Z of the two input [Vector3]s are roughly equal to the others'.
+func is_equal_approx_vector3(inVecA : Vector3, inVecB : Vector3) -> bool:
+	return is_equal_approx(inVecA.x, inVecB.x) and is_equal_approx(inVecA.y, inVecB.y) and is_equal_approx(inVecA.z, inVecB.z);
+## Returns whether W, X, Y and Z of the two input [Vector4]s are roughly equal to the others'.
+func is_equal_approx_vector4(inVecA : Vector4, inVecB : Vector4) -> bool:
+	return is_equal_approx(inVecA.w, inVecB.w) and is_equal_approx(inVecA.x, inVecB.x) and is_equal_approx(inVecA.y, inVecB.y) and is_equal_approx(inVecA.z, inVecB.z);

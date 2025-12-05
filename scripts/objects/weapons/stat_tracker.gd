@@ -15,6 +15,7 @@ var host:
 var textColor := Color("789be9"); ## The text color used when a [InspectorStatIcon] node displays this stat.
 @export var baseStat : float; ## The base number defined before calculation.
 var currentValue : float; ## The current value of this stat.
+var currentValueModified : float; ## The current value of this stat after applying modifiers.
 var bonusAdd : float = 0.0; ##@experimental: Adds this value to baseStat.
 var bonusMult_Flat : float = 0.0; ##@experimental:Multiplies the total value after baseStat + bonusAdd.
 var bonusMult_Mult : float = 1.0; ##@experimental:Multiplies bonusMult_Flat by this number before multiplying.
@@ -58,7 +59,7 @@ func should_be_displayed(statIDCheck := statID) -> bool:
 	return false;
 
 ## This [StatTracker]'s get function called by [method get_stat].
-var getFunc := func (): var stat : float = (currentValue + bonusAdd)  * (((1.0 + bonusMult_Flat) * bonusMult_Mult)); return stat;
+var getFunc := func (): var stat : float = currentValue; return stat;
 ## This [StatTracker]'s set function called by [method set_stat].
 var setFunc := func (newValue): return newValue;
 
@@ -76,7 +77,8 @@ func get_stat(roundingModeOverride : StatHolderManager.roundingModes = get_round
 	
 	var stat = getFunc.call();
 	currentValue = return_rounded_stat(stat, roundingModeOverride);
-	return stat;
+	currentValueModified = return_rounded_stat(calculate_modified_value(stat), roundingModeOverride);
+	return currentValueModified;
 
 func get_stat_for_display():
 	var stat = get_stat();
@@ -133,7 +135,7 @@ func get_stat_path():
 
 ## Adds [inMod] to [member statModifiers].
 func register_modifier(inMod : PartModifier):
-	statModifiers.append(inMod);
+	Utils.append_unique(statModifiers, inMod);
 	recalculateModifiersNextGet = true;
 	pass;
 
@@ -144,6 +146,8 @@ func reset_modifiers():
 var recalculateModifiersNextGet := false;
 
 func calculate_modified_value(stat : float) -> float:
+	if recalculateModifiersNextGet:
+		recalculate_modifiers();
 	return (stat + bonusAdd) * ((1 + bonusMult_Flat) * bonusMult_Mult)
 
 ## Loops over all [PartModifier] resources and recalculates [member modifiedValue].
@@ -156,7 +160,7 @@ func recalculate_modifiers():
 	for mod in statModifiers:
 		bonusAdd += mod.valueAdd;
 		bonusMult_Flat += mod.valueFlatMult
-		bonusMult_Mult += mod.valueTimesMult
+		bonusMult_Mult += mod.valueTimesMult - 1.0;
 
 ## Used to determine whether to erase this resource during [method StatHolder3D.clear_stats].
 func stat_id_invalid_or_matching(idToCheck):

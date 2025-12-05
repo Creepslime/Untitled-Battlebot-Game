@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="PartModifier" load_steps=2 format=3 uid="uid://bgereytt6x3k3"]
+
+[ext_resource type="Script" uid="uid://dd18vlcrmsx15" path="res://scripts/GUI/part_modifier.gd" id="1_p06mn"]
+
+[resource]
+script = ExtResource("1_p06mn")
+priority = 0.0
+valueAdd = 0.5
+valueFlatMult = 0.0
+valueTimesMult = 1.0
+modName = &"WatchBattery"
+statTargetName = &"EnergyMax"
+modTags = Array[String](["Battery"])
+offset = Vector2i(0, 0)
+enabled = true
+myTargetType = 2
+myModType = 0
+metadata/_custom_type_script = "uid://dd18vlcrmsx15"

@@ -110,8 +110,6 @@ func assign_references(forceTemp := false):
 		if is_instance_valid($Body):
 			body = $Body;
 	if is_instance_valid(body):
-		body.set_collision_mask_value(1, false);
-		body.set_collision_mask_value(11, true);
 		bodyBasis = body.global_basis;
 		body.robot = self;
 	if not is_instance_valid(gameBoard):
@@ -253,9 +251,9 @@ var selected := false;
 func is_selected() -> bool:
 	return selected;
 func select(foo:bool= ! is_selected()):
-	print("ROBOT SELECT: ", foo)
 	if selected != foo:
 		selected = foo;
+	print("ROBOT SELECT: ", foo);
 	queue_update_hud();
 func deselect():
 	select(false);
@@ -818,6 +816,7 @@ func regen_piece_tree_stats(needPlacementColliders := false):
 	regeneratedPieceTreeStatsThisFrame = true; ## Set the variable to true so this won't run again.
 	
 	reassign_body_collision(needPlacementColliders); ## allPieces also gets regenerated within this function, for both this robot as well as each piece in its socket tree.
+	regenAllParts = true; ## Regenerate the list of parts next time it is called.
 	propagate_modifiers(); ## Propagates all stat modifiers. Important to do this here before we get the weight.
 	get_weight(true); ## Regenerates the amount of weight load on the robot, as well as for any piece on it.
 	body.set_deferred("mass", max(75, min(150, get_weight() * 2))); ## Sets the mass to a value reflective of the weight load.
@@ -1189,17 +1188,24 @@ func has_body_piece(forceRecalculate := false) -> bool:
 		return hasBodyPiece;
 
 ## A list of all Parts attached to this Robot within the engines all of its Parts.
-var allParts : Array[Part]=[];
-
+var allParts : Array[Part]=[]:
+	get:
+		if regenAllParts or allParts.is_empty():
+			get_all_parts_regenerate();
+		return allParts;
+var regenAllParts := true;
 ##Returns a freshly gathered array of all Parts placed within the engines of every Piece attached to this Robot.[br]
 ## Saves it to [member allParts].
 func get_all_parts(equippedStatus : PieceStash.equippedStatus = PieceStash.equippedStatus.ALL) -> Array[Part]:
-	if allParts.is_empty():
-		return get_all_parts_regenerate();
+	var partsGathered : Array[Part] = allParts;
+	if allParts.is_empty() or regenAllParts:
+		partsGathered = get_all_parts_regenerate();
 	for part in allParts:
 		if !is_instance_valid(part) or part.is_queued_for_deletion():
-			return get_all_parts_regenerate();
-	var partsGathered = allParts;
+			partsGathered = get_all_parts_regenerate();
+	if partsGathered.is_empty():
+		return partsGathered;
+	
 	match equippedStatus:
 		PieceStash.equippedStatus.NONE:
 			pass;
@@ -1224,17 +1230,49 @@ func get_all_parts(equippedStatus : PieceStash.equippedStatus = PieceStash.equip
 
 ##Returns a freshly gathered array of all Parts attached to this Robot and whih have it set as their host.
 func get_all_parts_regenerate() -> Array[Part]:
+	regenAllParts = false;
 	var partsGathered : Array[Part] = [];
 	for piece in allPieces:
+		piece.regeneratePartList = true;
 		Utils.append_array_unique(partsGathered, piece.listOfParts);
 	Utils.append_array_unique(partsGathered, stashParts);
 	allParts = partsGathered;
 	return partsGathered;
 
+func on_add_part(part:Part):
+	remove_something_from_stash(part);
+	
+	part.hostRobot = self;
+	if part is PartActive and is_ready: ## Prevent the Piece from automatically adding abilities if we aren't fully initialized yet.
+		for ability in part.activeAbilitiesDistributed:
+			var AD = ability.get_ability_data(part.statHolderID)
+			print("Adding ability ", ability.abilityName)
+			assign_ability_to_next_active_slot(AD);
+	
+	queue_piece_tree_regen(false);
+
+func on_remove_part(part:Part):
+	
+	if part is PartActive:
+		remove_abilities_of_part(part);
+
+## Removes all abilities that were supplied by the given Piece.
+func remove_abilities_of_part(part:PartActive):
+	for abilityKey in active_abilities:
+		var ability = active_abilities[abilityKey];
+		if ability is AbilityData:
+			if ! is_instance_valid(part):
+				unassign_ability_slot(abilityKey, str("INVALID part being removed, deleting the whole lot"));
+			else:
+				if ability.statHolderID == part.statHolderID:
+					unassign_ability_slot(abilityKey, str("piece ", part.partName, " being removed"));
+
 ## When [code]true[/code], the next time [member allHurtboxes] is gotten, it returns [method get_all_gathered_hurtboxes_regenerate].
 var regenAllHurtboxes := true:
 	set(newVal):
 		regenAllHurtboxes = newVal;
+		if newVal:
+			regenAllPieceHurtboxHolders = newVal;
 ## A list of all hurtboxes attached to the body.
 var allHurtboxes = []:
 	get:
@@ -1255,9 +1293,33 @@ func get_all_gathered_hurtboxes_regenerate():
 	return boxes;
 ##Returns an array of all PieceCollisionBox nodes that are direct children of the body.
 func get_all_gathered_hurtboxes():
-	if allHurtboxes.is_empty() or regenAllHurtboxes:
+	if regenAllHurtboxes or allHurtboxes.is_empty():
 		get_all_gathered_hurtboxes_regenerate();
 	return allHurtboxes;
+
+## A list of all [HurtboxHolder] nodes on all [Pieces] within [member allPieces].
+var allPieceHurtboxHolders : Array[HurtboxHolder] = []:
+	get:
+		if regenAllPieceHurtboxHolders:
+			return get_all_piece_hurtbox_holders_regenerate();
+		return allPieceHurtboxHolders;
+## When [code]true[/code], the next time [member allPieceHurtboxHolders] is gotten, it returns [method get_all_piece_hurtbox_holders_regenerate].[br]
+## Gets set to true whenever [member regenAllHurtboxes] gets set to [code]true[/code].
+var regenAllPieceHurtboxHolders = true;
+## Gets [member allPieceHurtboxHolders], or calls [method get_all_piece_hurtbox_holders_regenerate].
+func get_all_piece_hurtbox_holders():
+	if regenAllPieceHurtboxHolders or allPieceHurtboxHolders.is_empty():
+		get_all_piece_hurtbox_holders_regenerate();
+	return allPieceHurtboxHolders;
+## Regenerates [member allPieceHurtboxHolders].
+func get_all_piece_hurtbox_holders_regenerate():
+	if ! regenAllPieceHurtboxHolders: return allPieceHurtboxHolders;
+	regenAllPieceHurtboxHolders = false;
+	var holders : Array[HurtboxHolder] = [];
+	for piece in allPieces:
+		holders.append(piece.hurtboxCollisionHolder);
+	allPieceHurtboxHolders = holders;
+	return holders;
 
 ##Adds an AbilityData to the given slot index in active_abilities.
 func assign_ability_to_slot(slotNum : int, abilityManager : AbilityData):
@@ -1479,7 +1541,7 @@ func select_piece(piece : Piece, forcedValue = null):
 		if result:
 			deselect();
 			
-			print("Selected Piece: ", selectedPiece)
+			#print("Selected Piece: ", selectedPiece)
 			deselect_all_pieces(piece);
 			
 			selectedPiece = piece;
@@ -1571,12 +1633,11 @@ func stash_selected_piece(fancy := false):
 		print("Attempting to stash ", selectedPiece)
 		if selectedPiece.removable:
 			selectedPiece.remove_and_add_to_robot_stash(self, fancy);
-	regenAllPieces = true;
+	queue_piece_tree_regen(false);
 
-##TODO: Parts and Engine bs.
 func stash_selected_part():
 	if is_instance_valid(selectedPart):
 		print("Attempting to stash ", selectedPart)
 		if selectedPiece.removable:
 			selectedPiece.remove_and_add_to_robot_stash(self);
-	get_all_parts_regenerate();
+	queue_piece_tree_regen(false);

@@ -112,6 +112,8 @@ func distribute_modifier():
 	if is_applicable():
 		if target is Part:
 			target.mods_recieve(self);
+		elif target is StatHolder3D:
+			target.register_modifier(self);
 
 ##Tries to apply itself to the target, if able.
 func apply_modifier():

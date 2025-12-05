@@ -10,6 +10,7 @@ friction = 200.0
 bounce = 0.3
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_kynhc"]
+radius = 0.875
 
 [node name="Robot" type="Node3D" node_paths=PackedStringArray("meshes", "bodySocket")]
 script = ExtResource("1_u0mtq")
@@ -35,6 +36,7 @@ selectorRayExceptions = [NodePath("../..")]
 dontUsePieceForRobotHost = true
 
 [node name="BaseCollision" type="CollisionShape3D" parent="Body"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.375, 0)
 shape = SubResource("SphereShape3D_kynhc")
 
 [node name="Treads" parent="." instance=ExtResource("5_kynhc")]
