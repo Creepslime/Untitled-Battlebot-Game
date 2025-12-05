@@ -1,10 +1,10 @@
-[gd_scene load_steps=23 format=3 uid="uid://ynu1nnwpk1qi"]
+[gd_scene load_steps=21 format=3 uid="uid://ynu1nnwpk1qi"]
 
 [ext_resource type="Script" uid="uid://lqnydwh6c74e" path="res://scripts/objects/pieces/piece_swivel_pointer.gd" id="1_gm1wa"]
 [ext_resource type="PackedScene" uid="uid://dosh155duu70e" path="res://scenes/prefabs/objects/pieces/buildingBlocks/socket.tscn" id="2_kcjt4"]
 [ext_resource type="Script" uid="uid://crpa3dbgxwyeg" path="res://scripts/objects/weapons/ability_manager.gd" id="2_xcdtu"]
-[ext_resource type="Script" uid="uid://cybmjhuctmfaw" path="res://scripts/libraries/richTextConstructor.gd" id="3_wnksc"]
-[ext_resource type="Texture2D" uid="uid://jod6d7tqu6cj" path="res://graphics/images/HUD/parts/Icons/Repair.png" id="4_mdowm"]
+[ext_resource type="Resource" uid="uid://bfv01rslcmwqh" path="res://scenes/prefabs/abilities/passive/ability_bodyCube_generator.tres" id="3_dbydh"]
+[ext_resource type="Resource" uid="uid://bws20ksxfdagg" path="res://scenes/prefabs/abilities/passive/swivel_pointer_target.tres" id="4_1i375"]
 [ext_resource type="Script" uid="uid://dikbphvd0xff7" path="res://scripts/objects/pieces/buildingBlocks/hitbox_shapes.gd" id="6_xcdtu"]
 [ext_resource type="Script" uid="uid://bkwxna02gqgqu" path="res://scripts/objects/pieces/buildingBlocks/hurtbox_shapes.gd" id="7_fvnuu"]
 [ext_resource type="Script" uid="uid://rbm6p8ggs13f" path="res://scripts/objects/pieces/buildingBlocks/placement_shapes.gd" id="8_dbydh"]
@@ -13,40 +13,6 @@
 [ext_resource type="ArrayMesh" uid="uid://bnajrltu8pmd4" path="res://graphics/models/obj/botparts/BotBody.obj" id="10_h4kss"]
 [ext_resource type="ArrayMesh" uid="uid://cgto2m6qw8n2d" path="res://graphics/models/obj/botparts/SwivelPointer.obj" id="11_gm1wa"]
 [ext_resource type="Texture2D" uid="uid://cobiyocwh7d3p" path="res://graphics/images/models/sockets/prong.png" id="11_wnksc"]
-
-[sub_resource type="Resource" id="Resource_08d67"]
-script = ExtResource("2_xcdtu")
-abilityName = "Generator"
-abilityDescriptionConstructor = Array[ExtResource("3_wnksc")]([])
-abilityDescription = "[color=ffffffff]Regenerates a meagre amount of [color=ffffffff]Energy [color=ffffffff]each second."
-energyCost = -1.65
-cooldownTimeBase = 0.0
-cooldownStatName = ""
-runType = 0
-functionNameWhenUsed = &""
-statsUsed = Array[String]([""])
-icon = ExtResource("4_mdowm")
-hookName = ""
-initialized = true
-disabled = false
-functionWhenUsed = Callable()
-
-[sub_resource type="Resource" id="Resource_061wq"]
-script = ExtResource("2_xcdtu")
-abilityName = "Target"
-abilityDescriptionConstructor = Array[ExtResource("3_wnksc")]([])
-abilityDescription = "[color=ffffffff]Rotates the top segment of this [color=ffffffff]Piece [color=ffffffff]towards your [color=ffffffff]crosshair[color=ffffffff].
-[color=ffffffff]Only works when upright."
-energyCost = 0.1
-cooldownTimeBase = 0.0
-cooldownStatName = ""
-runType = 0
-functionNameWhenUsed = &"target"
-statsUsed = Array[String](["RotationSpeed"])
-hookName = ""
-initialized = true
-disabled = false
-functionWhenUsed = Callable()
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_n78fx"]
 size = Vector3(1.5, 1.25, 1.5)
@@ -82,7 +48,8 @@ weightBase = 23.0
 force_visibility = true
 isBody = true
 scrapCostBase = 50
-passiveAbilities = Array[ExtResource("2_xcdtu")]([SubResource("Resource_08d67"), SubResource("Resource_061wq")])
+passiveAbilities = Array[ExtResource("2_xcdtu")]([ExtResource("3_dbydh"), ExtResource("4_1i375")])
+energyGenerationPassiveBaseOverride = -1.65
 meshesHolder = NodePath("Meshes")
 hitboxCollisionHolder = NodePath("HitboxShapes [Leave empty]")
 hurtboxCollisionHolder = NodePath("HurtboxShapes [Leave empty]")

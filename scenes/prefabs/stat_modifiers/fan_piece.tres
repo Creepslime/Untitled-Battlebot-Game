@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="PartModifier" load_steps=2 format=3 uid="uid://bqdihnpm1mrb8"]
+
+[ext_resource type="Script" uid="uid://dd18vlcrmsx15" path="res://scripts/GUI/part_modifier.gd" id="1_7bp17"]
+
+[resource]
+script = ExtResource("1_7bp17")
+priority = 0.0
+valueAdd = 0.0
+valueFlatMult = 0.0
+valueTimesMult = 1.0
+modName = &"FanPiece"
+statTargetName = &"ActiveCooldownMultiplier"
+modTags = Array[String](["Fan"])
+offset = Vector2i(0, 0)
+enabled = true
+myTargetType = 1
+myModType = 0
+metadata/_custom_type_script = "uid://dd18vlcrmsx15"

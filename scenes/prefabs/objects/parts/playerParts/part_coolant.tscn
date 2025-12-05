@@ -5,7 +5,6 @@
 
 [node name="PartPassive" instance=ExtResource("1_3rlh4")]
 bonusEnergyRegen = 0.2
-weightBase = null
 dimensions = Array[Vector2i]([Vector2i(0, 0), Vector2i(1, 0)])
 scrapCostBase = 13
 myPartRarity = 1
@@ -13,10 +12,6 @@ poolWeight = 2
 partName = "Engine Coolant"
 partDescription = "[color=f2ec6b]Passive: Increases [color=789be9]Energy Recharge[color=f2ec6b] by 0.2."
 partIcon = ExtResource("2_eofa5")
-partIconOffset = null
-effectPriority = null
-outgoingModifiers = null
-filepathForThisEntity = null
 
 [node name="Tilemaps" parent="TextureBase" index="0"]
 mouse_filter = 0

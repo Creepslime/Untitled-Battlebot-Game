@@ -33,6 +33,7 @@ metadata/_custom_type_script = "uid://cybmjhuctmfaw"
 [resource]
 script = ExtResource("2_3dwsm")
 abilityName = "Bullet Factory"
+abilityNameInternal = "Cannon Bullet Factory"
 abilityDescriptionConstructor = Array[ExtResource("1_53ldy")]([SubResource("Resource_d7xnu"), SubResource("Resource_3twrs"), SubResource("Resource_rjpgo")])
 abilityDescription = "No Description Found."
 energyCost = 0.12

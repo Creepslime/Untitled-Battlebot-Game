@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://cuqib5fp5hdjp" path="res://scripts/objects/pieces/piece_swivel_manual.gd" id="2_jbgvx"]
 [ext_resource type="Script" uid="uid://crpa3dbgxwyeg" path="res://scripts/objects/weapons/ability_manager.gd" id="2_kyd6e"]
-[ext_resource type="Resource" uid="uid://blff0t82qfd3q" path="res://scenes/prefabs/abilities/active/ability_swivel_manual_clockwise.tres" id="3_ndcln"]
+[ext_resource type="Resource" uid="uid://blff0t82qfd3q" path="res://scenes/prefabs/abilities/active/piece_swivel_manual_clockwise.tres" id="3_ndcln"]
 [ext_resource type="Resource" uid="uid://wdx6i11tkik6" path="res://scenes/prefabs/abilities/active/piece_swivel_manual_ccw.tres" id="4_hppq5"]
 [ext_resource type="Script" uid="uid://dikbphvd0xff7" path="res://scripts/objects/pieces/buildingBlocks/hitbox_shapes.gd" id="10_vudbv"]
 [ext_resource type="Script" uid="uid://bkwxna02gqgqu" path="res://scripts/objects/pieces/buildingBlocks/hurtbox_shapes.gd" id="11_l684p"]

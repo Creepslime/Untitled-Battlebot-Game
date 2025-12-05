@@ -1,17 +1,20 @@
-[gd_scene load_steps=3 format=4 uid="uid://syqcc5ife041"]
+[gd_scene load_steps=5 format=4 uid="uid://syqcc5ife041"]
 
 [ext_resource type="PackedScene" uid="uid://1hqkn5f2wd4v" path="res://scenes/prefabs/objects/parts/part_passive.tscn" id="1_1iemh"]
 [ext_resource type="Texture2D" uid="uid://c2s10d6olfdwc" path="res://graphics/images/HUD/parts/Icons/Energy.png" id="2_4kyv7"]
+[ext_resource type="Script" uid="uid://dd18vlcrmsx15" path="res://scripts/GUI/part_modifier.gd" id="3_aa534"]
+[ext_resource type="Resource" uid="uid://djwc0n2yx7y54" path="res://scenes/prefabs/stat_modifiers/battery_D.tres" id="4_h5mnd"]
 
 [node name="Battery_2x3" instance=ExtResource("1_1iemh")]
 bonusEnergy = 4.5
-scrapCostBase = 20
 dimensions = Array[Vector2i]([Vector2i(0, 0), Vector2i(1, 0), Vector2i(0, 1), Vector2i(1, 1), Vector2i(0, 2), Vector2i(1, 2)])
+scrapCostBase = 20
 myPartRarity = 1
 partName = "D Battery"
 partDescription = "[color=f2ec6b]Passive: increases max Energy by 4.5."
 partIcon = ExtResource("2_4kyv7")
 partIconOffset = Vector2(0.5, 1)
+outgoingModifiers = Array[ExtResource("3_aa534")]([ExtResource("4_h5mnd")])
 
 [node name="Tilemaps" parent="TextureBase" index="0"]
 mouse_filter = 0

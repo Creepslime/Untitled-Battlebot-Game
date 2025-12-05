@@ -7,6 +7,7 @@
 [resource]
 script = ExtResource("3_cfudg")
 abilityName = "Rotate CCW"
+abilityNameInternal = "Swivel Manual CCW"
 abilityDescriptionConstructor = Array[ExtResource("1_jfor6")]([])
 abilityDescription = "Rotates this swivel counter-clockwise."
 energyCost = 0.033

@@ -398,7 +398,6 @@ offset_left = 1075.0
 offset_top = 678.0
 offset_right = 1561.0
 offset_bottom = 956.0
-myPool = 0
 
 [node name="HealButton" type="Button" parent="ShopCanvas_SHOP/SHOP/ShopStationsStepParent/ShopStations"]
 z_index = 1

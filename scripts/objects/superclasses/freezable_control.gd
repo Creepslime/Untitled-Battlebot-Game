@@ -6,6 +6,7 @@ class_name FreezableControl
 
 var is_ready := false;
 func _ready():
+	set_physics_process(true);
 	set_deferred("is_ready", true);
 
 func _process(delta):

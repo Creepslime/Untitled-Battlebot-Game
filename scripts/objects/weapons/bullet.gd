@@ -378,7 +378,8 @@ const layerFlags : Dictionary[int, bool] = {
 	10: true, ## This is a bullet.
 }
 const maskFlags : Dictionary[int, bool] = {
-	1 : false, ## DON'T collide with robot bodies.
+	#1 : false, ## DON'T collide with robot bodies.
+	1 : true, ## DO collide with robot bodies.
 	4 : true, ## Collide with Piece hurtboxes,
 	7 : true, ## Collide with *placed* Piece hurtboxes.
 	10: true, ## Collide with other bullets.

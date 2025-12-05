@@ -135,6 +135,8 @@ func freeze(doFreeze := (not is_frozen()), force := false):
 func reinforce_piece_freeze():
 	for piece in allPieces:
 		piece.freeze(is_frozen(), true);
+	for part in allParts:
+		part.freeze(is_frozen(), true);
 
 func stat_registry():
 	super();
@@ -315,12 +317,12 @@ func is_asleep() -> bool:
 
 ##This function returns true only if the game is not paused, and the bot is spawned in, alive, awake, and not frozen.
 func is_conscious():
-	return (not paused) and spawned and (not is_asleep()) and (not is_frozen()) and is_alive() and is_ready;
+	return (not paused) and spawned and (not is_asleep()) and (not is_frozen()) and is_alive();
 
 ## Returns true if the bot is in a state where its pieces' cooldowns are able to be used.[br]
 ## Functionally identical to [method is_conscious], except in [Robot_Player], where [method is_conscious] is modified to also check for [member Robot_Player.hasPlayerControl].
 func is_running_cooldowns():
-	return (not paused) and spawned and (not is_asleep()) and (not is_frozen()) and is_alive() and is_ready;
+	return (not paused) and spawned and (not is_asleep()) and (not is_frozen()) and is_alive();
 
 ##This function returns true only if the game is not paused, the bot is not frozen, alive, and we're in a game state of play.
 func is_playing():
@@ -1234,7 +1236,8 @@ func get_all_parts_regenerate() -> Array[Part]:
 	var partsGathered : Array[Part] = [];
 	for piece in allPieces:
 		piece.regeneratePartList = true;
-		Utils.append_array_unique(partsGathered, piece.listOfParts);
+		var list = Utils.array_invalids_removed(piece.listOfParts);
+		Utils.append_array_unique(partsGathered, list);
 	Utils.append_array_unique(partsGathered, stashParts);
 	allParts = partsGathered;
 	return partsGathered;

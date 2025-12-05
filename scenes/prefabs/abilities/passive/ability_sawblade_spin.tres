@@ -7,6 +7,7 @@
 [resource]
 script = ExtResource("2_rqnjt")
 abilityName = "Spin"
+abilityNameInternal = "Sawblade Spin"
 abilityDescriptionConstructor = Array[ExtResource("1_oawqs")]([])
 abilityDescription = "The blade passively spins, dealing contact damage."
 energyCost = 0.15
@@ -16,6 +17,7 @@ runType = 2
 functionNameWhenUsed = &""
 statsUsed = Array[String]([])
 icon = ExtResource("1_5twe7")
+hookName = ""
 initialized = false
 disabled = false
 functionWhenUsed = Callable()

@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="PartModifier" load_steps=2 format=3 uid="uid://l7bfj8e8xdxs"]
+
+[ext_resource type="Script" uid="uid://dd18vlcrmsx15" path="res://scripts/GUI/part_modifier.gd" id="1_rj7i3"]
+
+[resource]
+script = ExtResource("1_rj7i3")
+priority = 0.0
+valueAdd = 0.0
+valueFlatMult = 0.0
+valueTimesMult = 0.9
+modName = &"FanLeft"
+statTargetName = &""
+modTags = Array[String](["Fan"])
+offset = Vector2i(-1, 0)
+enabled = true
+myTargetType = 0
+myModType = 0
+metadata/_custom_type_script = "uid://dd18vlcrmsx15"

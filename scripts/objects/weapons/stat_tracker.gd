@@ -47,6 +47,9 @@ func should_be_displayed(statIDCheck := statID) -> bool:
 			StatHolderManager.displayModes.NOT_ZERO:
 				return ! is_zero_approx(get_stat());
 				pass;
+			StatHolderManager.displayModes.NOT_ZERO_ABSOLUTE_VALUE:
+				return ! is_zero_approx(get_stat());
+				pass;
 			StatHolderManager.displayModes.ABOVE_ZERO:
 				return get_stat() > 0;
 				pass;
@@ -86,6 +89,8 @@ func get_stat_for_display():
 	match displayMode:
 		StatHolderManager.displayModes.ALWAYS_DIVIDE_BY_100:
 			return stat / 100;
+		StatHolderManager.displayModes.NOT_ZERO_ABSOLUTE_VALUE:
+			return abs(stat);
 		_:
 			return stat;
 
@@ -109,7 +114,8 @@ func return_rounded_stat(stat, roundingModeOverride : StatHolderManager.rounding
 		StatHolderManager.roundingModes.NoOverride: ##Both None and NoOverride should return just the base value without any rounding.
 			return stat;
 		StatHolderManager.roundingModes.ClampToZeroAndMax: ## No rounding. Return this clamped between 0 and the host's stat.
-			return clampf(stat, 0, host.get_stat(statMaxName));
+			if is_instance_valid(host):
+				return clampf(stat, 0, host.get_stat(statMaxName));
 	return stat;
 
 ## Sets the stat by calling [member setFunc].

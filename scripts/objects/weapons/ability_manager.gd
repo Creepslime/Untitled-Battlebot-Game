@@ -5,12 +5,15 @@ class_name AbilityManager
 ## Controls an Ability for all [Piece]s or [Part]s that plan on using it. Holds [AbilityData] for each node that is using the ability, and is distributed with the global script [AbilityDistributor].
 
 @export var abilityName : String = "Active Ability";
+@export var abilityNameInternal : String = "Active Ability";
 @export var abilityDescriptionConstructor : Array[RichTextConstructor] = [];
 @export_multiline var abilityDescription : String = "No Description Found.";
 @export var energyCost : float = 0.0;
 @export var cooldownTimeBase : float = 0.0;
 ##If you want to have the cooldown use a stat from within the host piece for its timer, put it here. Otherwise, leave it blank.
 @export var cooldownStatName : String; 
+##If you want to have the energy cost use a stat from within the host piece, put it here. Otherwise, leave it blank.
+@export var energyCostStatName : String; 
 @export var runType : runTypes = runTypes.Default; ## How this gets called. [br]Default makes the ability perform manually or on a loop, for Active and Passive abilities respectively.[br]Manual is the default for all Active abilities; You must fire it manually with the press of a button.[br]LoopingCooldown is the default for all Passive abilities; it runs automatically based on its [member cooldownTimeBase], attempting to restart when it hits 0.[br]OnContactDamage makes this passive go onto cooldown when the Piece it's on deals contact damage. Use this for passives that control how often a passive hitbox interaction is allowed to stay up.
 @export var functionNameWhenUsed : StringName;
 @export var statsUsed : Array[String] = []; ## Any stats from the host piece you want to be displayed in this ability's inspector box.
@@ -44,6 +47,17 @@ func assign_stat_holder(object):
 		newData.get_assigned_piece_or_part()
 		statHolderUserData[statolderID] = newData;
 		if object is Piece:
+			object.regen_namedActions();
+		#print("ABILITY REGISTRAR: Ability with name ",abilityName," and ID ",abilityID," being copied to piece ", object, "with ID ", statolderID,". Here's what it thinks it's assigned to: ", newData.assignedPieceOrPart, " ...Which is an assigned piece? ", newData.is_on_assigned_piece(), " Is it assigned to a socket? ", newData.assignedPieceOrPart.is_assigned());
+		pass;
+	elif object is StatHolderControl:
+		var newData = AbilityData.new();
+		newData.abilityID = abilityID;
+		var statolderID = object.statHolderID;
+		newData.statHolderID = statolderID;
+		newData.get_assigned_piece_or_part()
+		statHolderUserData[statolderID] = newData;
+		if object is Part:
 			object.regen_namedActions();
 		#print("ABILITY REGISTRAR: Ability with name ",abilityName," and ID ",abilityID," being copied to piece ", object, "with ID ", statolderID,". Here's what it thinks it's assigned to: ", newData.assignedPieceOrPart, " ...Which is an assigned piece? ", newData.is_on_assigned_piece(), " Is it assigned to a socket? ", newData.assignedPieceOrPart.is_assigned());
 		pass;
@@ -329,10 +343,28 @@ func is_on_piece(id : int) -> bool:
 		return data.is_on_piece();
 	return false;
 
+func is_on_part(id : int) -> bool:
+	var data = get_ability_data(id);
+	if is_instance_valid(data):
+		return data.is_on_part();
+	return false;
+
 func is_on_assigned_piece(id : int) -> bool:
 	var data = get_ability_data(id);
 	if is_instance_valid(data):
 		return data.is_on_assigned_piece();
+	return false;
+
+func is_on_assigned_part(id : int) -> bool:
+	var data = get_ability_data(id);
+	if is_instance_valid(data):
+		return data.is_on_assigned_part();
+	return false;
+
+func is_on_assigned_piece_or_part(id : int) -> bool:
+	var data = get_ability_data(id);
+	if is_instance_valid(data):
+		return data.is_on_assigned_piece() or data.is_on_assigned_part();
 	return false;
 
 ## @deprecated: Used to determine whether to erase this resource during [method Piece.clear_abilities].[br]

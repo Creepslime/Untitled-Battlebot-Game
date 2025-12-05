@@ -306,6 +306,15 @@ func populate_abilities(thing):
 					newBox.populate_with_ability(ability, thing);
 					abilityHolder.add_child(newBox);
 					effectiveSize += 1;
+	elif thing is Part:
+		var abilities = thing.get_all_abilities(true);
+		for ability in abilities:
+			if is_instance_valid(ability) and ability is AbilityManager:
+				var newBox = abilityInfoboxScene.instantiate();
+				if newBox is AbilityInfobox:
+					newBox.populate_with_ability(ability, thing);
+					abilityHolder.add_child(newBox);
+					effectiveSize += 1;
 	abilityScrollContainer.visible = effectiveSize > 0;
 	if abilityScrollContainer.visible:
 		for child in abilityHolder.get_children():

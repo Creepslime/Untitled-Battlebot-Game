@@ -52,6 +52,7 @@ metadata/_custom_type_script = "uid://cybmjhuctmfaw"
 [resource]
 script = ExtResource("3_7rl4w")
 abilityName = "Whirl"
+abilityNameInternal = "Sawblade Whirl"
 abilityDescriptionConstructor = Array[ExtResource("1_0ldao")]([SubResource("Resource_i7bft"), SubResource("Resource_k1jne"), SubResource("Resource_erqxd"), SubResource("Resource_8yny5"), SubResource("Resource_j66hk")])
 abilityDescription = "No Description Found."
 energyCost = 2.0
@@ -61,6 +62,7 @@ runType = 0
 functionNameWhenUsed = &"deflect"
 statsUsed = Array[String]([])
 icon = ExtResource("2_pbcqu")
+hookName = ""
 initialized = false
 disabled = false
 functionWhenUsed = Callable()

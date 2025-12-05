@@ -26,8 +26,12 @@ enum hookNames {
 	OnDeath,
 	OnGainScrap,
 	OnLand,
+	
 	OnChangeGameState,
 	OnRerollShop,
+	OnEndRound,
+	OnStartRound,
+	OnEnterShop,
 	
 	OnScreenTransition,
 	OnLoadSettings
@@ -45,8 +49,12 @@ var list = {
 	"OnDeath": {}, #
 	"OnGainScrap": {}, #
 	"OnLand": {}, #
+	
 	"OnChangeGameState": {}, #
 	"OnRerollShop": {}, #
+	"OnEndRound": {}, #
+	"OnStartRound": {}, #
+	"OnEnterShop": {}, #
 	
 	"OnScreenTransition": {}, #
 	"OnLoadSettings": {},
@@ -120,6 +128,16 @@ func OnLand(thisBot: Robot, airtime: float):
 
 func OnRerollShop():
 	for hookFunc in getValidHooks("OnRerollShop"):
+		hookFunc.call();
+
+func OnStartRound(newRoundNumber : int):
+	for hookFunc in getValidHooks("OnStartRound"):
+		hookFunc.call(newRoundNumber);
+func OnEndRound(oldRoundNumber : int):
+	for hookFunc in getValidHooks("OnEndRound"):
+		hookFunc.call(oldRoundNumber);
+func OnEnterShop():
+	for hookFunc in getValidHooks("OnEnterShop"):
 		hookFunc.call();
 
 func OnChangeGameState(oldState: GameBoard.gameState, newState: GameBoard.gameState):

@@ -19,7 +19,11 @@ var thisBot : Combatant; ## @deprecated
 @export var buttonsHolder : PartButtonHolder;
 @export_group("References (external)")
 @export var inventoryNode : Inventory; ##@deprecated
-@export var hostPiece : Piece;
+@export var hostPiece : Piece:
+	set(newValue):
+		if hostPiece != newValue:
+			hostPiece = newValue;
+			regenHostData = true;
 @export var hostShopStall : ShopStall;
 @export var hostRobot : Robot:
 	get:
@@ -35,6 +39,10 @@ var thisBot : Combatant; ## @deprecated
 				#hostRobot = _bot;
 		#hostRobot = null;
 		return hostRobot;
+	set(newValue):
+		if hostRobot != newValue:
+			hostRobot = newValue;
+			regenHostData = true;
 
 var selected := false;
 
@@ -83,6 +91,7 @@ func _ready():
 	get_age();
 	mods_prepare_innate();
 	stat_registry();
+	ability_validation();
 	
 	##Set part type
 	if myPartType == partTypes.UNASSIGNED:
@@ -97,7 +106,16 @@ func _ready():
 			myPartType = partTypes.PASSIVE;
 
 func stat_registry():
+	## Stats regarding energy cost.
+	register_stat("PassiveEnergyDrawMultiplier", energyDrawPassiveMultiplier, StatHolderManager.statIconEnergy, StatHolderManager.statTags.Battery, StatHolderManager.displayModes.ABOVE_ZERO_NOT_999);
+	register_stat("PassiveEnergyRegeneration", energyGenerationPassiveBaseOverride, StatHolderManager.statIconEnergy, StatHolderManager.statTags.Battery, StatHolderManager.displayModes.NOT_ZERO_ABSOLUTE_VALUE);
+	register_stat("PassiveCooldownMultiplier", passiveCooldownTimeMultiplier, StatHolderManager.statIconCooldown, StatHolderManager.statTags.Clock);
 	register_stat("ContactCooldown", contactCooldown, StatHolderManager.statIconCooldown, StatHolderManager.statTags.Clock);
+	
+	## Stats that only matter if the thing has abilities.
+	if activeAbilitiesDistributed.size() > 0:
+		register_stat("ActiveEnergyDrawMultiplier", energyDrawActiveMultiplier, StatHolderManager.statIconEnergy, StatHolderManager.statTags.Battery);
+		register_stat("ActiveCooldownMultiplier", activeCooldownTimeMultiplier, StatHolderManager.statIconCooldown, StatHolderManager.statTags.Clock);
 	
 	#Stats regardig Scrap Cost.
 	register_stat("ScrapCost", scrapCostBase, StatHolderManager.statIconScrap, StatHolderManager.statTags.Worth, StatHolderManager.displayModes.ALWAYS, StatHolderManager.roundingModes.Ceili);
@@ -226,6 +244,7 @@ func _get_part_bounds() -> Vector2i:
 
 
 func _process(delta):
+	super(delta);
 	if (inventoryNode is InventoryPlayer):
 		textureBase.show();
 		if inPlayerInventory:
@@ -261,6 +280,12 @@ func _process(delta):
 			get_parent().remove_child(self);
 		textureBase.hide();
 		buttonsHolder.disable();
+
+func _physics_process(delta):
+	super(delta);
+	if ! is_paused():
+		phys_process_timers(delta);
+		phys_process_abilities(delta)
 
 func phys_process_timers(delta):
 	if ! is_paused():
@@ -632,3 +657,474 @@ func get_age():
 ##Returns [Part.effectPriority].
 func get_effect_priority():
 	return effectPriority;
+
+################## HOST DATA
+
+var hasHostPiece := false:
+	get:
+		regen_host_data();
+		return hasHostPiece;
+var hasHostRobot := false:
+	get:
+		regen_host_data();
+		return hasHostRobot;
+var hostRobotIsPlayer := false:
+	get:
+		regen_host_data();
+		return hostRobotIsPlayer;
+var hostRobotIsEnemy := false:
+	get:
+		regen_host_data();
+		return hostRobotIsPlayer;
+var equippedByRobot := false:
+	get:
+		regen_host_data();
+		return equippedByRobot;
+var equippedByPlayer := false:
+	get:
+		regen_host_data();
+		return equippedByPlayer;
+var equippedByEnemy := false:
+	get:
+		regen_host_data();
+		return equippedByPlayer;
+
+## Regenerates a large number of "host" variables when [code]true[/code]. See [method regen_host_data].
+var regenHostData := true; 
+## Regenerates a large number of "host" variables.
+## Called whenever a "host" variable is called, but returns immediately if [member regenHostData] is [code]not true[/code], unless [param force] IS [code]true[/code].[br]
+## Regenerates:[br]- [member hasHostSocket][br]- [member hasHostPiece][br]- [member hostPiece][br]- [member hasHostRobot][br]- [member hostRobotIsPlayer][br]- [member hostRobotIsEnemy][br]- [member equippedByRobot][br]- [member equippedByPlayer][br]- [member equippedByEnemy][br]- (more to come, probably)
+func regen_host_data(force := false):
+	if ! regenHostData and ! force: return;
+	GameState.profiler_ping_create("Regenerating Host Data for Part");
+	regenHostData = false; ## Set this to false now so we don't get recursion funnies.
+	
+	## Host piece requires us to be assigned to a socket, otherwise things like previews break.
+	hasHostPiece = false;
+	if is_instance_valid(get_engine()):
+		hasHostPiece = true;
+	
+	## Host robot data is almost guaranteed if we have a host piece and socket, but we need to check anyway.
+	hasHostRobot = false;
+	hostRobotIsPlayer = false;
+	hostRobotIsEnemy = false
+	if is_instance_valid(hostRobot):
+		hasHostRobot = true;
+		
+		if hostRobot is Robot_Enemy:
+			hostRobotIsEnemy = true;
+		elif hostRobot is Robot_Player:
+			hostRobotIsPlayer = true;
+	
+	equippedByRobot = hasHostRobot and hasHostPiece;
+	equippedByPlayer = equippedByRobot and hostRobotIsPlayer;
+	equippedByEnemy = equippedByRobot and hostRobotIsEnemy;
+
+####################### ABILITY AND ENERGY MANAGEMENT
+
+@export_category("Ability")
+
+@export_subgroup("AbilityManagers")
+@export var activeAbilities : Array[AbilityManager] = [];
+var activeAbilitiesDistributed : Array[AbilityManager] = [];
+@export var passiveAbilities : Array[AbilityManager] = [];
+var passiveAbilitiesDistributed : Array[AbilityManager] = [];
+
+@export_subgroup("Ability Details")
+@export var energyDrawPassiveMultiplier := 1.0; ##power drawn each frame, multiplied by time delta. If this is negative, it is instead power being generated each frame.
+@export var energyDrawActiveMultiplier := 1.0; ##power drawn when you use any this piece's active abilities, given that it has any.
+@export var energyDrawActiveBaseOverride : float = 999;
+@export var energyDrawPassiveBaseOverride : float = 999;
+@export var energyGenerationPassiveBaseOverride : float = 0.0;
+var energyDrawCurrent := 0.0; ##Recalculated and updated each frame.
+
+var incomingPower := 0.0;
+var hasIncomingPower := true;
+var transmittingPower := true; ##While false, no power is transmitted from this piece.
+
+##The amount of time needed between uses of this Piece's Passive Ability, after it successfully fires.
+@export var passiveCooldownTimeMultiplier := 1.0;
+##The amount of time needed between uses of this Piece's Active Abilities.
+@export var activeCooldownTimeMultiplier := 1.0;
+
+func set_cooldown_active(action:AbilityManager, immediate := false):
+	if immediate:
+		action.set_cooldown(statHolderID, get_cooldown_active(action));
+	else:
+		action.queue_cooldown(statHolderID, get_cooldown_active(action));
+
+func on_cooldown_active(action : AbilityManager) -> bool:
+	return action.on_cooldown(statHolderID);
+func on_cooldown_active_any() -> bool:
+	for ability in activeAbilitiesDistributed:
+		if ability.on_cooldown(statHolderID):
+			return true;
+	return false;
+func get_cooldown_active(action : AbilityManager) -> float:
+	if is_instance_valid(action):
+		return action.get_cooldown(statHolderID);
+	return false;
+func set_all_cooldowns():
+	for action in get_all_abilities():
+		set_cooldown_for_ability(action);
+func set_cooldown_for_ability(action : AbilityManager):
+	if is_instance_valid(action):
+		if action.isPassive:
+			action.queue_cooldown(statHolderID, get_stat("PassiveCooldownMultiplier"));
+		else:
+			action.queue_cooldown(statHolderID, get_stat("ActiveCooldownMultiplier"));
+
+##Never called in base, but to be used for stuff like Bumpers needing a cooldown before they can Bump again.
+func set_cooldown_passive(passiveAbility : AbilityManager, immediate := false):
+	if is_instance_valid(passiveAbility):
+		if immediate:
+			passiveAbility.set_cooldown(statHolderID, get_cooldown_passive(passiveAbility));
+		else:
+			passiveAbility.queue_cooldown(statHolderID, get_cooldown_passive(passiveAbility));
+func on_cooldown_passive(action : AbilityManager) -> bool:
+	return get_cooldown_passive(action) > 0;
+func on_cooldown_passive_any() -> bool:
+	for ability in passiveAbilitiesDistributed:
+		if ability.on_cooldown(statHolderID):
+			return true;
+	return false;
+func get_cooldown_passive(passiveAbility : AbilityManager) -> float:
+	if is_instance_valid(passiveAbility):
+		return passiveAbility.get_cooldown(statHolderID);
+	return false;
+func on_cooldown_action(action : AbilityManager) -> bool:
+	return action.on_cooldown(statHolderID);
+func on_cooldown_named_action(actionName : String) -> bool:
+	var action = get_named_action(actionName);
+	if action != null:
+		return on_cooldown_action(action);
+	return true;
+
+func on_cooldown():
+	return on_cooldown_active_any() or on_cooldown_passive_any();
+
+func on_contact_cooldown():
+	for ability in get_all_abilities():
+		if is_instance_valid(ability) and ability is AbilityManager:
+			if ability.runType == AbilityManager.runTypes.OnContactDamage:
+				if ability.on_cooldown(statHolderID):
+					return true;
+	return false;
+func is_running_cooldowns():
+	if equippedByRobot:
+		return hostRobot.is_running_cooldowns();
+	return false;
+	
+##Physics process step for abilities.
+func phys_process_abilities(delta):
+	##Run cooldown behaviors.
+	#GameState.profiler_time_usec_start()
+	cooldown_behavior();
+	#GameState.profiler_time_usec_end("phys_process_abilities cooldown_behavior check (ID %s)" % [statHolderID])
+	##Use the passive ability of this guy.
+	use_looping_passives();
+
+##Fires every physics frame when the Piece's passive or active abilities are on cooldown, via [method on_cooldown].
+func cooldown_behavior(cooldown : bool = on_cooldown()):
+	if on_contact_cooldown():
+		pass;
+	else:
+		pass;
+	pass;
+
+func try_sap_energy(amt:float):
+	if ! equippedByRobot: return;
+	var bot = hostRobot;
+	var result = hostPiece.try_sap_energy(amt);
+	energyDrawCurrent += amt;
+	queue_refresh_incoming_energy();
+	#if result:
+		##TextFunc.flyaway(true, global_position + Vector3(0,2,0), "lightgreen");
+		##print_rich("[color=green]ABILITY RUN: ENERGY SAP WORKED")
+	#else:
+		##TextFunc.flyaway(false, global_position + Vector3(0,2,0), "lightred");
+		##print("[color=red]ABILITY RUN: ENERGY SAP BORKED")
+	return result;
+
+func is_transmitting():
+	return hasIncomingPower and transmittingPower;
+
+## If this [Piece] is plugged into a [Socket], returns that [Socket]'s power.[br]
+func get_incoming_energy():
+	if refreshIncomingEnergy:
+		return calc_incoming_energy();
+	return incomingPower;
+
+## If this [Piece] is plugged into a [Socket], returns that [Socket]'s power.[br]
+var refreshIncomingEnergy := true;
+func queue_refresh_incoming_energy():
+	hostPiece.refreshIncomingEnergy = true;
+	refreshIncomingEnergy = true;
+
+func calc_incoming_energy():
+	if ! refreshIncomingEnergy: return incomingPower;
+	refreshIncomingEnergy = false;
+	if equippedByRobot != null:
+		#print(get_host_socket().get_energy_transmitted())
+		var powerTransmitted = hostPiece.get_outgoing_energy();
+		#print_if_true(get_host_socket(), self is Piece_Sawblade)
+		if powerTransmitted <= 0.0: 
+			hasIncomingPower = false;
+		else: 
+			hasIncomingPower = true;
+		incomingPower = powerTransmitted;
+		return incomingPower;
+	else:
+		if is_instance_valid(hostRobot):
+			#print("No host socket, yes power: ", hostRobot.get_available_energy())
+			hasIncomingPower = true;
+			incomingPower = hostRobot.get_available_energy();
+			return incomingPower;
+	incomingPower = 0.0;
+	hasIncomingPower = false;
+	return incomingPower;
+
+func get_current_energy_draw():
+	return energyDrawCurrent;
+
+func get_active_energy_cost(ability : AbilityManager):
+	##TODO: Bonuses
+	var override = null;
+	if ! is_equal_approx(energyDrawActiveBaseOverride, 999):
+		override = energyDrawActiveBaseOverride;
+	if ability.energyCostStatName != null and ability.energyCostStatName != "":
+		if has_stat(ability.energyCostStatName):
+			override = get_stat(ability.energyCostStatName);
+	return ( ability.get_energy_cost_base(override) * get_stat("ActiveEnergyDrawMultiplier") );
+
+func get_passive_energy_cost(passiveAbility : AbilityManager):
+	var stat = get_stat("PassiveEnergyDrawMultiplier");
+	var override = null;
+	if ! is_equal_approx(energyDrawPassiveBaseOverride, 999):
+		override = energyDrawPassiveBaseOverride;
+	if passiveAbility.energyCostStatName != null and passiveAbility.energyCostStatName != "":
+		if has_stat(passiveAbility.energyCostStatName):
+			override = get_stat(passiveAbility.energyCostStatName);
+	stat *= passiveAbility.get_energy_cost_base(override);
+	##TODO: Bonuses
+	return ( stat * get_physics_process_delta_time() );
+
+func get_energy_cost(action):
+	if action.isPassive:
+		return get_passive_energy_cost(action);
+	else:
+		return get_active_energy_cost(action);
+
+## Returns true if there would be enough energy in the system to support the input energy amount.
+func test_energy_available(energyAmount) -> bool:
+	return (get_current_energy_draw() + energyAmount) <= get_incoming_energy()
+
+## Standard checks shared by [method can_use_active] and [method can_use_passive] that must be passed.
+func standard_ability_checks(action : AbilityManager):
+	## Fix host data, if a fix is queued.
+	regen_host_data();
+	## Check if we are equipped.
+	if ! equippedByRobot:
+		#print("not equipped to a robot")
+		return false;
+	## Check if the Piece is paused.
+	if is_paused():
+		#print("paused")
+		return false;
+	## Check that the ability is owned by this piece.
+	if get_local_ability(action) == null:
+		#print("local ability is null")
+		return false;
+	## Check if it's disabled.
+	if action.is_disabled(statHolderID):
+		#print("ability is disabled")
+		return false;
+	## Check the bot, and also check aliveness.
+	if !hostRobot.is_conscious():
+		#print("host robot is unconscious")
+		return false;
+	## Check that it's not on cooldown.
+	if on_cooldown_action(action):
+		#print("action is on cooldown")
+		return false;
+	## Passed. Moving on...
+	return true;
+
+## Checks if you can use a given ACTIVE ability.
+func can_use_active(action : AbilityManager): 
+	## Check that the thing is valid. If not, get the first ability in the relevant list.
+	if ! is_instance_valid(action):
+		if activeAbilitiesDistributed.size() > 0:
+			action = activeAbilitiesDistributed.front();
+		else:
+			return false
+	## Check all the checks passives and actives share.
+	if not standard_ability_checks(action):
+		#print("Failed something standard")
+		return false;
+	## Check that there's enough energy to run this active.
+	if not test_energy_available(get_active_energy_cost(action)):
+		return false;
+	## You passed!
+	return true;
+
+## Checks if you can use a given PASSIVE ability.
+func can_use_passive(passiveAbility : AbilityManager):
+	GameState.profiler_ping_create("Can Use Passive");
+	## Check that the thing is valid. If not, get the first ability in the relevant list.
+	if ! is_instance_valid(passiveAbility):
+		if passiveAbilitiesDistributed.size() > 0:
+			passiveAbility = passiveAbilitiesDistributed.front();
+		else:
+			return false
+	## Check all the checks passives and actives share.
+	if not standard_ability_checks(passiveAbility):
+		return false;
+	## Check that there's enough energy to run this passive.
+	if (get_passive_energy_cost(passiveAbility) > 0.0):
+		if ! test_energy_available(get_passive_energy_cost(passiveAbility)):
+			return false;
+	## You passed!
+	return true;
+func can_use_passive_any() -> bool:
+	if passiveAbilitiesDistributed.is_empty(): return true;
+	for passiveAbility in passiveAbilitiesDistributed:
+		if can_use_passive(passiveAbility) : return true;
+	return false;
+
+var namedActions : Dictionary[String,AbilityManager] = {};
+func regen_namedActions():
+	namedActions.clear();
+	for action in activeAbilitiesDistributed:
+		if is_instance_valid(action) and action is AbilityManager:
+			namedActions["A_"+action.abilityName] = action;
+	for action in passiveAbilitiesDistributed:
+		if is_instance_valid(action) and action is AbilityManager:
+			namedActions["P_"+action.abilityName] = action;
+func get_named_action(actionName : String) -> AbilityManager:
+	if namedActions.is_empty(): regen_namedActions();
+	var activeTest = "A_"+actionName;
+	if namedActions.keys().has(activeTest): return namedActions[activeTest];
+	var passiveTest = "P_"+actionName;
+	if namedActions.keys().has(passiveTest): return namedActions[passiveTest];
+	return null;
+func get_named_passive(actionName : String) -> AbilityManager:
+	if namedActions.is_empty(): regen_namedActions();
+	var passiveTest = "P_"+actionName;
+	if namedActions.keys().has(passiveTest): return namedActions[passiveTest];
+	return null;
+func get_named_active(actionName : String) -> AbilityManager:
+	if namedActions.is_empty(): regen_namedActions();
+	var activeTest = "A_"+actionName;
+	if namedActions.keys().has(activeTest): return namedActions[activeTest];
+	return null;
+func can_use_named_ability(actionName : String) -> bool:
+	var act = get_named_action(actionName);
+	if act != null:
+		return can_use_ability(act);
+	return false;
+
+func can_use_ability(action):
+	if action.isPassive:
+		return can_use_passive(action);
+	else:
+		return can_use_active(action);
+
+func use_looping_passives():
+	var passiveNamesUsed = [];
+	for passiveAbility in passiveAbilitiesDistributed:
+		#print(passiveAbility)
+		if ! passiveNamesUsed.has(passiveAbility.abilityName):
+			if passiveAbility.runType == AbilityManager.runTypes.Default or passiveAbility.runType == AbilityManager.runTypes.LoopingCooldown:
+				passiveNamesUsed.append(passiveAbility.abilityName);
+				use_passive(passiveAbility);
+func use_contact_passives():
+	var passiveNamesUsed = [];
+	for passiveAbility in passiveAbilitiesDistributed:
+		if ! passiveNamesUsed.has(passiveAbility.abilityName):
+			if passiveAbility.runType == AbilityManager.runTypes.OnContactDamage:
+				passiveNamesUsed.append(passiveAbility.abilityName);
+				use_passive(passiveAbility);
+func use_passive(passiveAbility:AbilityManager):
+	if can_use_passive(passiveAbility):
+		use_ability(passiveAbility);
+		return true;
+	return false;
+
+## Where any and all [method register_active_ability()] or related calls should go. Runs at _ready().
+## IDEALLY, this should be done thru the export instead of thru code, but it can be done here.
+func ability_registry():
+	pass;
+
+## This runs directly before [method ability_registry] and cleans up all the abilities set up in the editor, as well as the passive ability.[br]
+## Checks to see if they were initialized with [method register_active_ability]. If not, then it fills its references out, as it assumes it was made with the editor.
+func ability_validation():
+	## Duplicate the resources so the ability doesn't get joint custody with another piece of the same type.
+	## Construct the description FIRST, because the constructor array is not going to get copied over.
+	AbilityDistributor.distribute_all_abilities_to_part(self);
+	print_rich("[color=pink]INIT ACTIVES:", activeAbilitiesDistributed);
+	
+	regen_namedActions(); ## Regenerates the actions list
+	pass;
+
+func clear_abilities():
+	pass;
+
+## returns an array of all abilities, active and passive.
+func get_all_abilities(passiveFirst := false) -> Array[AbilityManager]:
+	var abilitiesToCheck : Array[AbilityManager] = [];
+	if passiveFirst:
+		Utils.append_array_unique(abilitiesToCheck, passiveAbilitiesDistributed);
+		Utils.append_array_unique(abilitiesToCheck, activeAbilitiesDistributed);
+	else:
+		Utils.append_array_unique(abilitiesToCheck, activeAbilitiesDistributed);
+		Utils.append_array_unique(abilitiesToCheck, passiveAbilitiesDistributed);
+	return abilitiesToCheck;
+
+## This should be run in ability_registry() only.
+## abilityName = name of ability.
+## abilityDescription = name of ability.
+## functionWhenUsed = the function that gets called when this ability is called for.
+## statsUsed = an Array of strings. This should hold any and all stats you want to have displayed on this ability's card.
+## slotOverride is if you want to have this ability use a specific numbered slot.
+func register_active_ability(abilityName : String = "Active Ability", abilityDescription : String = "No Description Found.", functionWhenUsed : Callable = func(): pass, statsUsed : Array[String] = []):
+	var newAbility = AbilityManager.new();
+	newAbility.register(self, abilityName, abilityDescription, functionWhenUsed, statsUsed);
+	activeAbilitiesDistributed.append(newAbility);
+	newAbility.initialized = true;
+	pass;
+
+## Checks if the ability given is inside of this Piece.
+func get_local_ability(action : AbilityManager) -> AbilityManager:
+	if get_all_abilities().has(action):
+		return action;
+	return null;
+
+##Calls the ability in the given slot if it's able to do so.
+func use_ability(action : AbilityManager) -> bool:
+	if can_use_ability(action):
+		#print("ABILITY ",action.abilityName," CAN BE USED...");
+		try_sap_energy(get_energy_cost(action));
+		set_cooldown_for_ability(action);
+		var activeAbility = get_local_ability(action);
+		if activeAbility == null: 
+			return false;
+		var functionNameWhenUsed = activeAbility.functionNameWhenUsed;
+		if functionNameWhenUsed != null and functionNameWhenUsed != "":
+			if has_method(functionNameWhenUsed):
+				#print("ABILITY ",activeAbility.abilityName," CALLED BY STRING NAME: ", get(functionNameWhenUsed))
+				get(functionNameWhenUsed).call()
+			else:
+				#print_rich("[b][color=red]ABILITY REFERENCES INVALID FUNCTION NAME: ", functionNameWhenUsed)
+				#TextFunc.flyaway(action.abilityName, global_position, "lightred");
+				return false;
+		else:
+			#print("ABILITY ",activeAbility.abilityName," CALLED ITS FUNCTION.")
+			var _call = activeAbility.functionWhenUsed;
+			if _call != null and _call is Callable and is_instance_valid(_call):
+				_call.call();
+		pass;
+		#TextFunc.flyaway(action.abilityName, global_position, "lightgreen");
+		return true;
+	#TextFunc.flyaway(action.abilityName, global_position, "lightblue");
+	return false;

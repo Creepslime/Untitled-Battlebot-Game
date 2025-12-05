@@ -50,7 +50,9 @@ func is_conscious():
 ######################## INPUT MANAGEMENT
 
 func _physics_process(delta):
-	super(delta)
+	super(delta);
+	if Input.is_action_just_pressed("dbg_DealPlayerDamage"):
+		take_damage(0.5);
 func _process(delta):
 	super(delta)
 	update_bars(); ##Bars should be updated at the very end.

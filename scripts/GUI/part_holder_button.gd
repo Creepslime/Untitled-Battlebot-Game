@@ -61,11 +61,15 @@ func update_gfx():
 		var free = true;
 		var piece = parent.referenceCurrent if parent.referenceCurrent != null else null;
 		if is_instance_valid(piece):
-			var hostRobot = piece.get_host_robot();
-			if is_instance_valid(hostRobot): 
-				if is_instance_valid(hostRobot.partMovementPipette):
-					space = piece.engine_is_there_space_for_part(hostRobot.partMovementPipette, Vector2i(coordX,coordY));
-					free = piece.engine_is_slot_free(coordX, coordY, hostRobot.partMovementPipette);
+			if piece.assignedToSocket:
+				var hostRobot = piece.get_host_robot();
+				if is_instance_valid(hostRobot): 
+					if is_instance_valid(hostRobot.partMovementPipette):
+						space = piece.engine_is_there_space_for_part(hostRobot.partMovementPipette, Vector2i(coordX,coordY));
+						free = piece.engine_is_slot_free(coordX, coordY, hostRobot.partMovementPipette);
+			else:
+				space = false;
+				free = false;
 		
 		##Always visible if there's space. If there's no space, it 
 		if space:

@@ -54,7 +54,7 @@ func _process(delta):
 func stat_registry():
 	## Stats regarding energy cost.
 	register_stat("PassiveEnergyDrawMultiplier", energyDrawPassiveMultiplier, StatHolderManager.statIconEnergy, StatHolderManager.statTags.Battery, StatHolderManager.displayModes.ABOVE_ZERO_NOT_999);
-	register_stat("PassiveEnergyRegeneration", 0.0, StatHolderManager.statIconEnergy, StatHolderManager.statTags.Battery, StatHolderManager.displayModes.ABOVE_ZERO_NOT_999);
+	register_stat("PassiveEnergyRegeneration", energyGenerationPassiveBaseOverride, StatHolderManager.statIconEnergy, StatHolderManager.statTags.Battery, StatHolderManager.displayModes.NOT_ZERO_ABSOLUTE_VALUE);
 	register_stat("PassiveCooldownMultiplier", passiveCooldownTimeMultiplier, StatHolderManager.statIconCooldown, StatHolderManager.statTags.Clock);
 	register_stat("ContactCooldown", contactCooldown, StatHolderManager.statIconCooldown, StatHolderManager.statTags.Clock);
 	
@@ -460,6 +460,7 @@ var passiveAbilitiesDistributed : Array[AbilityManager] = [];
 @export var energyDrawActiveMultiplier := 1.0; ##power drawn when you use any this piece's active abilities, given that it has any.
 @export var energyDrawActiveBaseOverride : float = 999;
 @export var energyDrawPassiveBaseOverride : float = 999;
+@export var energyGenerationPassiveBaseOverride : float = 0.0;
 var energyDrawCurrent := 0.0; ##Recalculated and updated each frame.
 
 var incomingPower := 0.0;
@@ -624,6 +625,9 @@ func get_active_energy_cost(ability : AbilityManager):
 	var override = null;
 	if ! is_equal_approx(energyDrawActiveBaseOverride, 999):
 		override = energyDrawActiveBaseOverride;
+	if ability.energyCostStatName != null and ability.energyCostStatName != "":
+		if has_stat(ability.energyCostStatName):
+			override = get_stat(ability.energyCostStatName);
 	return ( ability.get_energy_cost_base(override) * get_stat("ActiveEnergyDrawMultiplier") );
 
 func get_passive_energy_cost(passiveAbility : AbilityManager):
@@ -631,6 +635,9 @@ func get_passive_energy_cost(passiveAbility : AbilityManager):
 	var override = null;
 	if ! is_equal_approx(energyDrawPassiveBaseOverride, 999):
 		override = energyDrawPassiveBaseOverride;
+	if passiveAbility.energyCostStatName != null and passiveAbility.energyCostStatName != "":
+		if has_stat(passiveAbility.energyCostStatName):
+			override = get_stat(passiveAbility.energyCostStatName);
 	stat *= passiveAbility.get_energy_cost_base(override);
 	##TODO: Bonuses
 	return ( stat * get_physics_process_delta_time() );
@@ -789,6 +796,8 @@ func ability_validation():
 	## Construct the description FIRST, because the constructor array is not going to get copied over.
 	AbilityDistributor.distribute_all_abilities_to_piece(self);
 	print_rich("[color=pink]INIT ACTIVES:", activeAbilitiesDistributed);
+	
+	regen_namedActions(); ## Regenerates the actions list
 	pass;
 
 func clear_abilities():
@@ -2246,10 +2255,10 @@ func partMods_deploy():
 	for part in listOfParts:
 		if part is Part:
 			print_rich("[color=green]", part.partName, " ", part.incomingModifiers)
-			if part is PartActive:
-				print_rich(part.mod_energyCost);
-				print_rich(part.energyCost);
-				print_rich(part.get_energy_cost());
+			#if part is PartActive:
+				#print_rich(part.mod_energyCost);
+				#print_rich(part.energyCost);
+				#print_rich(part.get_energy_cost());
 	pass
 
 ## Organizes a given list of parts (default [member listOfPieces]) by the order in which they should be prioritized.[br]

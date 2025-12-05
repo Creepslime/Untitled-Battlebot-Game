@@ -1,10 +1,10 @@
-[gd_scene load_steps=25 format=3 uid="uid://dl1v6eiy0gi1q"]
+[gd_scene load_steps=23 format=3 uid="uid://dl1v6eiy0gi1q"]
 
 [ext_resource type="Script" uid="uid://021qwhyd0air" path="res://scripts/objects/pieces/piece_sawblade.gd" id="1_5k0fg"]
 [ext_resource type="Script" uid="uid://crpa3dbgxwyeg" path="res://scripts/objects/weapons/ability_manager.gd" id="2_k1jne"]
-[ext_resource type="Script" uid="uid://cybmjhuctmfaw" path="res://scripts/libraries/richTextConstructor.gd" id="3_4m8sh"]
+[ext_resource type="Resource" uid="uid://cmw2cjlyx2jfh" path="res://scenes/prefabs/abilities/active/ability_sawblade_whirl.tres" id="3_j66hk"]
 [ext_resource type="ArrayMesh" uid="uid://q6bj0b082swx" path="res://graphics/models/obj/botparts/blade2.obj" id="3_omexb"]
-[ext_resource type="Texture2D" uid="uid://d0ha035m170v" path="res://graphics/images/HUD/parts/Icons/Sawblade.png" id="4_6gd0t"]
+[ext_resource type="Resource" uid="uid://glery0fcuhq" path="res://scenes/prefabs/abilities/passive/ability_sawblade_spin.tres" id="4_kb5ak"]
 [ext_resource type="PackedScene" uid="uid://dosh155duu70e" path="res://scenes/prefabs/objects/pieces/buildingBlocks/socket.tscn" id="5_gfg0o"]
 [ext_resource type="Script" uid="uid://bkwxna02gqgqu" path="res://scripts/objects/pieces/buildingBlocks/hurtbox_shapes.gd" id="5_kb5ak"]
 [ext_resource type="Texture2D" uid="uid://c3ddwskowvvoi" path="res://graphics/images/models/sockets/socketM.png" id="6_r0nuw"]
@@ -15,40 +15,6 @@
 [ext_resource type="Material" path="res://graphics/images/models/arena_wall/newsawblade.tres" id="11_j66hk"]
 [ext_resource type="PackedScene" uid="uid://dckvl43g2kjvx" path="res://scenes/prefabs/objects/pieces/buildingBlocks/piece_collision_box.tscn" id="12_k1jne"]
 [ext_resource type="ArrayMesh" uid="uid://bd8g8qktqly2e" path="res://graphics/models/obj/botparts/StaticSwivel.obj" id="13_erqxd"]
-
-[sub_resource type="Resource" id="Resource_dds4i"]
-script = ExtResource("2_k1jne")
-abilityName = "Whirl"
-abilityDescriptionConstructor = Array[ExtResource("3_4m8sh")]([])
-abilityDescription = "[color=ffffffff]Spin the blade with extreme speed, causing it to [color=ffffffff]deflect bullets [color=ffffffff]and deal extra [color=ffffffff]melee damage [color=ffffffff]for a bit."
-energyCost = 2.0
-cooldownTimeBase = 3.0
-cooldownStatName = ""
-runType = 0
-functionNameWhenUsed = &"deflect"
-statsUsed = Array[String]([])
-icon = ExtResource("4_6gd0t")
-hookName = ""
-initialized = true
-disabled = false
-functionWhenUsed = Callable()
-
-[sub_resource type="Resource" id="Resource_qx1s7"]
-script = ExtResource("2_k1jne")
-abilityName = "Spin"
-abilityDescriptionConstructor = Array[ExtResource("3_4m8sh")]([])
-abilityDescription = "The blade passively spins, dealing contact damage."
-energyCost = 0.15
-cooldownTimeBase = 0.0
-cooldownStatName = "ContactCooldown"
-runType = 2
-functionNameWhenUsed = &""
-statsUsed = Array[String]([])
-icon = ExtResource("4_6gd0t")
-hookName = ""
-initialized = true
-disabled = false
-functionWhenUsed = Callable()
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_g4w8c"]
 size = Vector2(0.25, 0.25)
@@ -84,8 +50,8 @@ pieceName = &"Sawblade"
 weightBase = 8.0
 force_visibility = true
 scrapCostBase = 25
-activeAbilities = Array[ExtResource("2_k1jne")]([SubResource("Resource_dds4i")])
-passiveAbilities = Array[ExtResource("2_k1jne")]([SubResource("Resource_qx1s7")])
+activeAbilities = Array[ExtResource("2_k1jne")]([ExtResource("3_j66hk")])
+passiveAbilities = Array[ExtResource("2_k1jne")]([ExtResource("4_kb5ak")])
 damageBase = 1.0
 knockbackBase = 300.0
 kickbackBase = 500.0

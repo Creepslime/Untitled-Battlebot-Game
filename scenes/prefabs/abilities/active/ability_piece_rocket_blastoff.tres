@@ -16,6 +16,7 @@ metadata/_custom_type_script = "uid://cybmjhuctmfaw"
 [resource]
 script = ExtResource("2_h4am3")
 abilityName = "Blastoff"
+abilityNameInternal = "Rocket Blastoff"
 abilityDescriptionConstructor = Array[ExtResource("1_urt7v")]([SubResource("Resource_dhbo1")])
 abilityDescription = "No Description Found."
 energyCost = 2.5
@@ -25,6 +26,7 @@ runType = 0
 functionNameWhenUsed = &"blastoff"
 statsUsed = Array[String](["Kickback"])
 icon = ExtResource("2_uwnlf")
+hookName = ""
 initialized = false
 disabled = false
 functionWhenUsed = Callable()

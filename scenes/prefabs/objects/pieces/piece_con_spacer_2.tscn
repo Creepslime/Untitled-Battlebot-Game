@@ -79,7 +79,6 @@ height = 0.75
 radius = 0.25
 
 [node name="Piece_Spacer 2" type="Node3D" node_paths=PackedStringArray("meshesHolder", "hitboxCollisionHolder", "hurtboxCollisionHolder", "placementCollisionHolder", "femaleSocketHolder") groups=["Piece"]]
-visible = false
 script = ExtResource("1_p12ab")
 pieceName = &"Spacer 2"
 descriptionConstructor = Array[ExtResource("2_sjtfl")]([SubResource("Resource_ujwhk"), SubResource("Resource_agd5d"), SubResource("Resource_7qnf5")])

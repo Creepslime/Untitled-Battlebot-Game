@@ -9,6 +9,8 @@ var allAbilities :
 	get:
 		return get_all_ability_managers();
 
+#### PIECES
+
 func distribute_active_ability_to_piece(piece:Piece, abilityName:StringName):
 	if activeAbilities.has(abilityName):
 		var ability = activeAbilities[abilityName];
@@ -36,13 +38,13 @@ func distribute_all_abilities_to_piece(piece:Piece):
 	var activeNames = [];
 	for ability in piece.activeAbilities:
 		if ability is AbilityManager:
-			activeNames.append(ability.abilityName);
+			activeNames.append(ability.abilityNameInternal);
 			#piece.activeAbilities.erase(ability);
 	
 	var passiveNames = [];
 	for ability in piece.passiveAbilities:
 		if ability is AbilityManager:
-			passiveNames.append(ability.abilityName);
+			passiveNames.append(ability.abilityNameInternal);
 			#piece.passiveAbilities.erase(ability);
 	
 	piece.clear_abilities();
@@ -54,13 +56,71 @@ func distribute_all_abilities_to_piece(piece:Piece):
 	#print("StatHolder Piece with id ", piece.statHolderID, )
 	pass;
 
-func has_passive_with_same_name(abilityName : String, piece:Piece):
+func piece_has_passive_with_same_name(abilityName : String, piece:Piece):
 	for passive in piece.passiveAbilities:
 		if passive.abilityName == abilityName:
 			return true;
 	return false;
-func has_active_with_same_name(abilityName : String, piece:Piece):
+func piece_has_active_with_same_name(abilityName : String, piece:Piece):
 	for active in piece.passiveAbilities:
+		if active.abilityName == abilityName:
+			return true;
+	return false;
+
+##### PARTS
+
+func distribute_active_ability_to_part(part:Part, abilityName:StringName):
+	if activeAbilities.has(abilityName):
+		var ability = activeAbilities[abilityName];
+		ability.assign_stat_holder(part);
+		part.activeAbilitiesDistributed.append(ability);
+
+func distribute_all_actives_to_part(part:Part, abilityNames : Array):
+	for abilityName in abilityNames:
+		distribute_active_ability_to_part(part, abilityName);
+
+func distribute_passive_ability_to_part(part:Part, abilityName:StringName):
+	if passiveAbilities.has(abilityName):
+		var ability = passiveAbilities[abilityName];
+		ability.assign_stat_holder(part);
+		part.passiveAbilitiesDistributed.append(ability);
+
+func distribute_all_passives_to_part(part:Part, abilityNames : Array):
+	for abilityName in abilityNames:
+		distribute_passive_ability_to_part(part, abilityName);
+
+func distribute_all_abilities_to_part(part:Part):
+	## Duplicate the resources so the ability doesn't get joint custody with another part of the same type.
+	## Construct the description FIRST, because the constructor array is not going to get copied over.
+	
+	var activeNames = [];
+	for ability in part.activeAbilities:
+		if ability is AbilityManager:
+			activeNames.append(ability.abilityNameInternal);
+			#part.activeAbilities.erase(ability);
+	
+	var passiveNames = [];
+	for ability in part.passiveAbilities:
+		if ability is AbilityManager:
+			passiveNames.append(ability.abilityNameInternal);
+			#part.passiveAbilities.erase(ability);
+	
+	part.clear_abilities();
+	
+	distribute_all_actives_to_part(part, activeNames);
+	distribute_all_passives_to_part(part, passiveNames);
+	
+	#part.ability
+	#print("StatHolder Part with id ", part.statHolderID, )
+	pass;
+
+func part_has_passive_with_same_name(abilityName : String, part:Part):
+	for passive in part.passiveAbilities:
+		if passive.abilityName == abilityName:
+			return true;
+	return false;
+func part_has_active_with_same_name(abilityName : String, part:Part):
+	for active in part.passiveAbilities:
 		if active.abilityName == abilityName:
 			return true;
 	return false;
@@ -92,7 +152,7 @@ func get_passives():
 				if FileAccess.file_exists(fullName):
 					var loadedFile = load(fullName);
 					if loadedFile is AbilityManager:
-						var abilityName = loadedFile.abilityName;
+						var abilityName = loadedFile.abilityNameInternal;
 						loadedFile.construct_description();
 						loadedFile.isPassive = true;
 						passiveAbilities[abilityName] = loadedFile;
@@ -122,7 +182,7 @@ func get_actives():
 				if FileAccess.file_exists(fullName):
 					var loadedFile = load(fullName);
 					if loadedFile is AbilityManager:
-						var abilityName = loadedFile.abilityName;
+						var abilityName = loadedFile.abilityNameInternal;
 						loadedFile.construct_description();
 						activeAbilities[abilityName] = loadedFile;
 			file_name = dir.get_next()

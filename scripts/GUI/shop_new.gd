@@ -401,10 +401,13 @@ func set_item_pool_waves(inWave:int):
 		poolTypes.TEST:
 			match inWave:
 				0:
+					add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/part_RoundBell.tscn");
 					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_con_spacer_0.tscn");
-					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_cannon_peashooter.tscn");
-					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_con_pipe_right_long.tscn");
-					add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_dvd_launcher.tscn");
+					#add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_cannon_peashooter.tscn");
+					#add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_con_pipe_right_long.tscn");
+					#add_part_to_spawn_list("res://scenes/prefabs/objects/pieces/piece_dvd_launcher.tscn");
+					add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/part_generator.tscn");
+					add_part_to_spawn_list("res://scenes/prefabs/objects/parts/playerParts/scrapthirsty.tscn");
 					changed = true;
 	if changed: 
 		calculate_part_pool();

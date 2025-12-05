@@ -79,6 +79,17 @@ func array_duplicates_removed(inputArray : Array):
 	inputArray = ret;
 	return inputArray;
 
+## Returns the [param hostArray] but removes any invalid entries (queued to be freed or invalid instance).
+func array_invalids_removed(inputArray : Array):
+	var ret := inputArray.duplicate();
+	ret.clear();
+	for item in inputArray:
+		if is_instance_valid(item):
+			if !item.is_queued_for_deletion():
+				ret.append(item);
+	inputArray = ret;
+	return inputArray;
+
 ##Takes an angle in Degrees and then returns a Radian equivalent between -360 and 360 degrees.
 func fix_angle_deg_to_rad(inAngle : float) -> float:
 	while inAngle > 360.0:

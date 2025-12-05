@@ -5,6 +5,13 @@ class_name PartRepair
 @export var scrapCost = 15;
 @export var healing = 2.0;
 
+func stat_registry():
+	super();
+	register_stat("HealingAmount", healing, StatHolderManager.statIconHealing, StatHolderManager.statTags.Function, StatHolderManager.displayModes.ALWAYS);
+
+func get_healing_amount():
+	return get_stat("HealingAmount");
+
 func _process(delta):
 	super(delta);
 	healing = inventoryNode.get_heal_amount();

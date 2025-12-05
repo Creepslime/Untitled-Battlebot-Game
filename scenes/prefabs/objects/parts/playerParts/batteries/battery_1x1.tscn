@@ -3,7 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://1hqkn5f2wd4v" path="res://scenes/prefabs/objects/parts/part_passive.tscn" id="1_3okjq"]
 [ext_resource type="Texture2D" uid="uid://c2s10d6olfdwc" path="res://graphics/images/HUD/parts/Icons/Energy.png" id="2_okjd5"]
 [ext_resource type="Script" uid="uid://dd18vlcrmsx15" path="res://scripts/GUI/part_modifier.gd" id="3_j6bqw"]
-[ext_resource type="Resource" uid="uid://bgereytt6x3k3" path="res://scenes/prefabs/stat_modifiers/watch_battery.tres" id="4_1dnu3"]
+[ext_resource type="Resource" uid="uid://bgereytt6x3k3" path="res://scenes/prefabs/stat_modifiers/battery_watch.tres" id="4_1dnu3"]
 
 [node name="Battery_1x1" instance=ExtResource("1_3okjq")]
 bonusEnergy = 0.5

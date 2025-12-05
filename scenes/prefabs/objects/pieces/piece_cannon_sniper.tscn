@@ -1,10 +1,11 @@
-[gd_scene load_steps=25 format=3 uid="uid://vbt5gi85ihvm"]
+[gd_scene load_steps=24 format=3 uid="uid://vbt5gi85ihvm"]
 
 [ext_resource type="Script" uid="uid://blmbkcjl8udq2" path="res://scripts/objects/pieces/piece_projectile.gd" id="1_t7twg"]
 [ext_resource type="ArrayMesh" uid="uid://cow7flmco3152" path="res://graphics/models/obj/botparts/SniperCannon.obj" id="2_3xkur"]
 [ext_resource type="Script" uid="uid://cybmjhuctmfaw" path="res://scripts/libraries/richTextConstructor.gd" id="2_rfcio"]
 [ext_resource type="Script" uid="uid://crpa3dbgxwyeg" path="res://scripts/objects/weapons/ability_manager.gd" id="3_abq4e"]
-[ext_resource type="Texture2D" uid="uid://bg8rjtbi4nuw" path="res://graphics/images/HUD/parts/Icons/Cannon.png" id="4_b31gf"]
+[ext_resource type="Resource" uid="uid://4easq571wef0" path="res://scenes/prefabs/abilities/active/ability_cannon_fire.tres" id="4_8a68o"]
+[ext_resource type="Resource" uid="uid://beks5dpxmrcok" path="res://scenes/prefabs/abilities/passive/ability_piece_cannon_refreshBullets.tres" id="5_ymne0"]
 [ext_resource type="PackedScene" uid="uid://dosh155duu70e" path="res://scenes/prefabs/objects/pieces/buildingBlocks/socket.tscn" id="11_r5a53"]
 [ext_resource type="Script" uid="uid://dikbphvd0xff7" path="res://scripts/objects/pieces/buildingBlocks/hitbox_shapes.gd" id="13_jmsd7"]
 [ext_resource type="Script" uid="uid://bkwxna02gqgqu" path="res://scripts/objects/pieces/buildingBlocks/hurtbox_shapes.gd" id="14_xwd6y"]
@@ -49,39 +50,6 @@ endingSpace = false
 startingSpace = true
 metadata/_custom_type_script = "uid://cybmjhuctmfaw"
 
-[sub_resource type="Resource" id="Resource_b31gf"]
-script = ExtResource("3_abq4e")
-abilityName = "Fire"
-abilityDescriptionConstructor = Array[ExtResource("2_rfcio")]([])
-abilityDescription = "[color=ffffffff]Shoots a damaging [color=ffffffff]projectile[color=ffffffff]."
-energyCost = 1.0
-cooldownTimeBase = 0.6
-cooldownStatName = "ProjectileFireRate"
-runType = 0
-functionNameWhenUsed = &"fireBullet"
-statsUsed = Array[String](["ProjectileFireRate", "ProjectileSpeed", "Inaccuracy", "ProjectileGravity", "ProjectileLifetime"])
-icon = ExtResource("4_b31gf")
-hookName = ""
-initialized = true
-disabled = false
-functionWhenUsed = Callable()
-
-[sub_resource type="Resource" id="Resource_ns1lj"]
-script = ExtResource("3_abq4e")
-abilityName = "Bullet Factory"
-abilityDescriptionConstructor = Array[ExtResource("2_rfcio")]([])
-abilityDescription = "[color=ffffffff]Refills your [color=ffffffff]magazine [color=ffffffff]over time."
-energyCost = 0.12
-cooldownTimeBase = 0.0
-cooldownStatName = "MagazineRefreshRate"
-runType = 1
-functionNameWhenUsed = &"add_one_bullet"
-statsUsed = Array[String](["MagazineRefreshRate", "MagazineSize"])
-hookName = ""
-initialized = true
-disabled = false
-functionWhenUsed = Callable()
-
 [sub_resource type="PlaneMesh" id="PlaneMesh_ubwoj"]
 size = Vector2(0.25, 0.25)
 
@@ -121,8 +89,8 @@ pieceDescription = "[color=ffffffff]Shoots [color=ffffffff]projectiles [color=ff
 weightBase = 15.0
 force_visibility = true
 scrapCostBase = 35
-activeAbilities = Array[ExtResource("3_abq4e")]([SubResource("Resource_b31gf")])
-passiveAbilities = Array[ExtResource("3_abq4e")]([SubResource("Resource_ns1lj")])
+activeAbilities = Array[ExtResource("3_abq4e")]([ExtResource("4_8a68o")])
+passiveAbilities = Array[ExtResource("3_abq4e")]([ExtResource("5_ymne0")])
 damageBase = 1.0
 knockbackBase = 250.0
 kickbackBase = 250.0

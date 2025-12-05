@@ -4,81 +4,11 @@
 [ext_resource type="Script" uid="uid://dd18vlcrmsx15" path="res://scripts/GUI/part_modifier.gd" id="2_eefed"]
 [ext_resource type="Script" uid="uid://cix6hul23tkax" path="res://scripts/GUI/parts/playerParts/part_fan.gd" id="2_l244e"]
 [ext_resource type="Texture2D" uid="uid://d0ha035m170v" path="res://graphics/images/HUD/parts/Icons/Sawblade.png" id="3_l244e"]
-
-[sub_resource type="Resource" id="Resource_l244e"]
-script = ExtResource("2_eefed")
-priority = 0.0
-valueAdd = 0.0
-valueFlatMult = 0.0
-valueTimesMult = 0.9
-modName = &"FanRight"
-statTargetName = &""
-modTags = Array[String](["Fan"])
-offset = Vector2i(1, 0)
-enabled = true
-myTargetType = 0
-myModType = 0
-metadata/_custom_type_script = "uid://dd18vlcrmsx15"
-
-[sub_resource type="Resource" id="Resource_4lfvv"]
-script = ExtResource("2_eefed")
-priority = 0.0
-valueAdd = 0.0
-valueFlatMult = 0.0
-valueTimesMult = 0.9
-modName = &"FanLeft"
-statTargetName = &""
-modTags = Array[String](["Fan"])
-offset = Vector2i(-1, 0)
-enabled = true
-myTargetType = 0
-myModType = 0
-metadata/_custom_type_script = "uid://dd18vlcrmsx15"
-
-[sub_resource type="Resource" id="Resource_eefed"]
-script = ExtResource("2_eefed")
-priority = 0.0
-valueAdd = 0.0
-valueFlatMult = 0.0
-valueTimesMult = 0.9
-modName = &"FanUp"
-statTargetName = &""
-modTags = Array[String](["Fan"])
-offset = Vector2i(0, -1)
-enabled = true
-myTargetType = 0
-myModType = 0
-metadata/_custom_type_script = "uid://dd18vlcrmsx15"
-
-[sub_resource type="Resource" id="Resource_reqvf"]
-script = ExtResource("2_eefed")
-priority = 0.0
-valueAdd = 0.0
-valueFlatMult = 0.0
-valueTimesMult = 0.9
-modName = &"FanDown"
-statTargetName = &""
-modTags = Array[String](["Fan"])
-offset = Vector2i(0, 1)
-enabled = true
-myTargetType = 0
-myModType = 0
-metadata/_custom_type_script = "uid://dd18vlcrmsx15"
-
-[sub_resource type="Resource" id="Resource_d8lu7"]
-script = ExtResource("2_eefed")
-priority = 0.0
-valueAdd = 0.0
-valueFlatMult = 0.0
-valueTimesMult = 1.0
-modName = &"FanPiece"
-statTargetName = &"ActiveCooldownMultiplier"
-modTags = Array[String](["Fan"])
-offset = Vector2i(0, 0)
-enabled = true
-myTargetType = 1
-myModType = 0
-metadata/_custom_type_script = "uid://dd18vlcrmsx15"
+[ext_resource type="Resource" uid="uid://l7bfj8e8xdxs" path="res://scenes/prefabs/stat_modifiers/fan_part_left.tres" id="5_fsj8y"]
+[ext_resource type="Resource" uid="uid://0lvkpg7igeu8" path="res://scenes/prefabs/stat_modifiers/fan_part_right.tres" id="6_kkdc1"]
+[ext_resource type="Resource" uid="uid://bcp8r6y76rjr5" path="res://scenes/prefabs/stat_modifiers/fan_part_up.tres" id="7_4cp71"]
+[ext_resource type="Resource" uid="uid://bics1ypwcsjrh" path="res://scenes/prefabs/stat_modifiers/fan_part_down.tres" id="8_ag13d"]
+[ext_resource type="Resource" uid="uid://bqdihnpm1mrb8" path="res://scenes/prefabs/stat_modifiers/fan_piece.tres" id="9_oll43"]
 
 [node name="PartFan" groups=["Fan"] instance=ExtResource("1_4lfvv")]
 script = ExtResource("2_l244e")
@@ -88,4 +18,4 @@ partDescription = "Blasts some nice cool air around.
 [color=f2ec6b]Passive: Adjacent [b]Active[/b] parts have 5% reduced Energy cost for each space adjacent to this part that is empty or another Fan."
 partIcon = ExtResource("3_l244e")
 effectPriority = 1
-outgoingModifiers = Array[ExtResource("2_eefed")]([SubResource("Resource_l244e"), SubResource("Resource_4lfvv"), SubResource("Resource_eefed"), SubResource("Resource_reqvf"), SubResource("Resource_d8lu7")])
+outgoingModifiers = Array[ExtResource("2_eefed")]([ExtResource("5_fsj8y"), ExtResource("6_kkdc1"), ExtResource("7_4cp71"), ExtResource("8_ag13d"), ExtResource("9_oll43")])

@@ -58,6 +58,7 @@ func get_stat_holder_by_id(id):
 @onready var statIconPiece = preload("res://graphics/images/HUD/statIcons/pieceIconStriped.png");
 @onready var statIconPart = preload("res://graphics/images/HUD/statIcons/partIconStriped.png");
 @onready var statIconPiecePart = preload("res://graphics/images/HUD/statIcons/piecePartIconStriped.png");
+@onready var statIconHealing = preload("res://graphics/images/HUD/statIcons/healingIconStriped.png");
 
 @onready var statIconColorDict = {
 	"Default" : {"icon" = statIconDefault, "color" = "grey"},
@@ -73,6 +74,7 @@ func get_stat_holder_by_id(id):
 	"Piece" : {"icon" = statIconPiece, "color" = "orange"},
 	"Part" : {"icon" = statIconPart, "color" = "lightgreen"},
 	"PiecePart" : {"icon" = statIconPiecePart, "color" = "scrap"},
+	"Healing" : {"icon" = statIconHealing, "color" = "lightgreen"},
 }
 
 enum roundingModes {
@@ -97,15 +99,16 @@ enum displayModes {
 	NOT_999, ## Displayed if the stat is not the specific value of 999.
 	ABOVE_ZERO_NOT_999, ## Displayed if the stat is not the specific value of 999.
 	ALWAYS_DIVIDE_BY_100, ## Displayed always, but divides the displayed amount by 100. 
+	NOT_ZERO_ABSOLUTE_VALUE, ## Displayed if the stat does not currently equal 0.0. Runs it through [code]abs()[/code] when displayed.
 }
 enum statTags {
+	Function, ## Sort of a catch-all for specific functions the thing does.
 	Hull, ## Health and defense.
 	Battery, ## Energy draw and stuff.
 	Weaponry, ## Things regarding attack damage.
 	Clock, ## Things regarding... cooldowns.
 	Projectiles, ## Things regarding specifically projectiles.
 	Worth, ## Stuff regarding Scrap.
-	Function, ## Sort of a catch-all for specific functions the thing does.
 	Miscellaneous, ## Anything else.
 	INVALID, ## Don't use this one.
 }

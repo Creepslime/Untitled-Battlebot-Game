@@ -1,7 +1,7 @@
-[gd_scene load_steps=19 format=3 uid="uid://nvuhiokuvm2y"]
+[gd_scene load_steps=18 format=3 uid="uid://nvuhiokuvm2y"]
 
 [ext_resource type="Script" uid="uid://lqnydwh6c74e" path="res://scripts/objects/pieces/piece_swivel_pointer.gd" id="1_bn4l8"]
-[ext_resource type="Script" uid="uid://cybmjhuctmfaw" path="res://scripts/libraries/richTextConstructor.gd" id="3_6fl3f"]
+[ext_resource type="Resource" uid="uid://bws20ksxfdagg" path="res://scenes/prefabs/abilities/passive/swivel_pointer_target.tres" id="3_3gd3v"]
 [ext_resource type="Script" uid="uid://crpa3dbgxwyeg" path="res://scripts/objects/weapons/ability_manager.gd" id="3_pqjj1"]
 [ext_resource type="Script" uid="uid://bkwxna02gqgqu" path="res://scripts/objects/pieces/buildingBlocks/hurtbox_shapes.gd" id="5_8xo3d"]
 [ext_resource type="Script" uid="uid://dikbphvd0xff7" path="res://scripts/objects/pieces/buildingBlocks/hitbox_shapes.gd" id="5_pqjj1"]
@@ -12,23 +12,6 @@
 [ext_resource type="ArrayMesh" uid="uid://cfvtjsean8sey" path="res://graphics/models/obj/botparts/SwivelBottom.obj" id="10_h2y4f"]
 [ext_resource type="ArrayMesh" uid="uid://cgto2m6qw8n2d" path="res://graphics/models/obj/botparts/SwivelPointer.obj" id="10_noc8o"]
 [ext_resource type="PackedScene" uid="uid://dosh155duu70e" path="res://scenes/prefabs/objects/pieces/buildingBlocks/socket.tscn" id="12_cinit"]
-
-[sub_resource type="Resource" id="Resource_3j6ju"]
-script = ExtResource("3_pqjj1")
-abilityName = "Target"
-abilityDescriptionConstructor = Array[ExtResource("3_6fl3f")]([])
-abilityDescription = "[color=ffffffff]Rotates the top segment of this [color=ffffffff]Piece [color=ffffffff]towards your [color=ffffffff]crosshair[color=ffffffff].
-[color=ffffffff]Only works when upright."
-energyCost = 0.1
-cooldownTimeBase = 0.0
-cooldownStatName = ""
-runType = 0
-functionNameWhenUsed = &"target"
-statsUsed = Array[String](["RotationSpeed"])
-hookName = ""
-initialized = true
-disabled = false
-functionWhenUsed = Callable()
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_l000f"]
 size = Vector3(0.5, 0.5, 0.5)
@@ -58,7 +41,7 @@ pieceName = &"Pointer Swivel"
 weightBase = 1.5
 force_visibility = true
 scrapCostBase = 20
-passiveAbilities = Array[ExtResource("3_pqjj1")]([SubResource("Resource_3j6ju")])
+passiveAbilities = Array[ExtResource("3_pqjj1")]([ExtResource("3_3gd3v")])
 meshesHolder = NodePath("Meshes")
 hitboxCollisionHolder = NodePath("HitboxShapes [Leave empty]")
 hurtboxCollisionHolder = NodePath("HurtboxShapes [Leave empty]")

@@ -60,6 +60,7 @@ metadata/_custom_type_script = "uid://cybmjhuctmfaw"
 [resource]
 script = ExtResource("2_b30ru")
 abilityName = "Target"
+abilityNameInternal = "Pointer Swivel Target"
 abilityDescriptionConstructor = Array[ExtResource("1_uygn2")]([SubResource("Resource_3gd3v"), SubResource("Resource_noc8o"), SubResource("Resource_pqjj1"), SubResource("Resource_uygn2"), SubResource("Resource_b30ru"), SubResource("Resource_0rndb")])
 abilityDescription = "No Description Found."
 energyCost = 0.1
@@ -68,6 +69,7 @@ cooldownStatName = ""
 runType = 0
 functionNameWhenUsed = &"target"
 statsUsed = Array[String](["RotationSpeed"])
+hookName = ""
 initialized = false
 disabled = false
 functionWhenUsed = Callable()

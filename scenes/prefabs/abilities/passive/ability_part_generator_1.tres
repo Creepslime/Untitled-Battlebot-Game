@@ -1,0 +1,52 @@
+[gd_resource type="Resource" script_class="AbilityManager" load_steps=7 format=3 uid="uid://bkvnh7cfvtve4"]
+
+[ext_resource type="Script" uid="uid://cybmjhuctmfaw" path="res://scripts/libraries/richTextConstructor.gd" id="1_n58rl"]
+[ext_resource type="Texture2D" uid="uid://jod6d7tqu6cj" path="res://graphics/images/HUD/parts/Icons/Repair.png" id="2_p0ryi"]
+[ext_resource type="Script" uid="uid://crpa3dbgxwyeg" path="res://scripts/objects/weapons/ability_manager.gd" id="3_4ym87"]
+
+[sub_resource type="Resource" id="Resource_ek7pi"]
+script = ExtResource("1_n58rl")
+string = "Regenerates a meagre amount of "
+color = 1
+newline = false
+endingSpace = false
+startingSpace = true
+metadata/_custom_type_script = "uid://cybmjhuctmfaw"
+
+[sub_resource type="Resource" id="Resource_7q44l"]
+script = ExtResource("1_n58rl")
+string = "Energy"
+color = 5
+newline = false
+endingSpace = false
+startingSpace = true
+metadata/_custom_type_script = "uid://cybmjhuctmfaw"
+
+[sub_resource type="Resource" id="Resource_86dur"]
+script = ExtResource("1_n58rl")
+string = "each second."
+color = 1
+newline = false
+endingSpace = false
+startingSpace = true
+metadata/_custom_type_script = "uid://cybmjhuctmfaw"
+
+[resource]
+script = ExtResource("3_4ym87")
+abilityName = "Generator"
+abilityNameInternal = "Part Generator 1"
+abilityDescriptionConstructor = Array[ExtResource("1_n58rl")]([SubResource("Resource_ek7pi"), SubResource("Resource_7q44l"), SubResource("Resource_86dur")])
+abilityDescription = "No Description Found."
+energyCost = -0.5
+cooldownTimeBase = 0.0
+cooldownStatName = ""
+energyCostStatName = "PassiveEnergyRegeneration"
+runType = 1
+functionNameWhenUsed = &""
+statsUsed = Array[String]([])
+icon = ExtResource("2_p0ryi")
+hookName = ""
+initialized = false
+disabled = false
+functionWhenUsed = Callable()
+metadata/_custom_type_script = "uid://crpa3dbgxwyeg"

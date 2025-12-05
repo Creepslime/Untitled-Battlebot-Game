@@ -79,7 +79,13 @@ func is_on_piece() -> bool:
 	return is_instance_valid(assignedPieceOrPart) and assignedPieceOrPart is Piece;
 
 func is_on_assigned_piece() -> bool:
-	return is_on_piece() and is_instance_valid(assignedPieceOrPart) and assignedPieceOrPart.assignedToSocket;
+	return is_on_piece() and assignedPieceOrPart.assignedToSocket;
+
+func is_on_part() -> bool:
+	return is_instance_valid(assignedPieceOrPart) and assignedPieceOrPart is Part;
+
+func is_on_assigned_part() -> bool:
+	return is_on_part() and assignedPieceOrPart.equippedByRobot;
 
 func remove_stat_holder_id():
 	manager.remove_stat_holder_id(statHolderID);

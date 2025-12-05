@@ -239,6 +239,9 @@ func exit_state(oldState:gameState):
 			pass
 		gameState.PLAY:
 			pass
+		gameState.LOAD_SHOP:
+			Hooks.OnEnterShop();
+			pass;
 		gameState.SHOP:
 			pass
 		gameState.SHOP_TEST:
@@ -335,9 +338,12 @@ func enter_state(_newState:gameState, _oldState:gameState):
 		gameState.LOAD_ROUND:
 			call_screen_transition_out();
 		gameState.PLAY:
+			Hooks.OnStartRound(roundNum);
 			player.start_round();
 			pass
 		gameState.GOTO_SHOP:
+			Hooks.OnEndRound(roundNum);
+			
 			MUSIC.change_state(MusicHandler.musState.PREGAME);
 			
 			player.end_round();

@@ -34,6 +34,7 @@ metadata/_custom_type_script = "uid://cybmjhuctmfaw"
 [resource]
 script = ExtResource("3_wxo83")
 abilityName = "Fire"
+abilityNameInternal = "Cannon Fire"
 abilityDescriptionConstructor = Array[ExtResource("1_3lsp2")]([SubResource("Resource_d7xnu"), SubResource("Resource_3twrs"), SubResource("Resource_rjpgo")])
 abilityDescription = ""
 energyCost = 1.0

@@ -46,11 +46,13 @@ load_path = "res://.godot/imported/Repair.png-0b7427a26568a2e2403cc6433717f8a2.c
 [sub_resource type="Resource" id="Resource_pdsjj"]
 script = ExtResource("2_481hu")
 abilityName = "Generator"
+abilityNameInternal = "Active Ability"
 abilityDescriptionConstructor = Array[ExtResource("3_bfu4x")]([SubResource("Resource_ek7pi"), SubResource("Resource_7q44l"), SubResource("Resource_86dur")])
 abilityDescription = "[color=e0dedeff]Regenerates a meagre amount of [color=789be9ff]Energy [color=e0dedeff]each second."
 energyCost = -1.65
 cooldownTimeBase = 0.0
 cooldownStatName = ""
+energyCostStatName = ""
 runType = 0
 functionNameWhenUsed = &""
 statsUsed = Array[String]([""])
@@ -118,12 +120,14 @@ metadata/_custom_type_script = "uid://cybmjhuctmfaw"
 [sub_resource type="Resource" id="Resource_xcqev"]
 script = ExtResource("2_481hu")
 abilityName = "Target"
+abilityNameInternal = "Active Ability"
 abilityDescriptionConstructor = Array[ExtResource("3_bfu4x")]([SubResource("Resource_3gd3v"), SubResource("Resource_noc8o"), SubResource("Resource_pqjj1"), SubResource("Resource_uygn2"), SubResource("Resource_b30ru"), SubResource("Resource_0rndb")])
 abilityDescription = "[color=e0dedeff]Rotates the top segment of this [color=ffffffff]Piece [color=e0dedeff]towards your [color=ffffffff]crosshair[color=e0dedeff].
 [color=f2ec6bff]Only works when upright."
 energyCost = 0.1
 cooldownTimeBase = 0.0
 cooldownStatName = ""
+energyCostStatName = ""
 runType = 0
 functionNameWhenUsed = &"target"
 statsUsed = Array[String](["RotationSpeed"])

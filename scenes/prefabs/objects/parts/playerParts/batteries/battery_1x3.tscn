@@ -1,13 +1,16 @@
-[gd_scene load_steps=3 format=3 uid="uid://d83b1drfo1si"]
+[gd_scene load_steps=5 format=3 uid="uid://d83b1drfo1si"]
 
 [ext_resource type="PackedScene" uid="uid://1hqkn5f2wd4v" path="res://scenes/prefabs/objects/parts/part_passive.tscn" id="1_vhqwo"]
 [ext_resource type="Texture2D" uid="uid://c2s10d6olfdwc" path="res://graphics/images/HUD/parts/Icons/Energy.png" id="2_4h0d8"]
+[ext_resource type="Script" uid="uid://dd18vlcrmsx15" path="res://scripts/GUI/part_modifier.gd" id="3_nr5gq"]
+[ext_resource type="Resource" uid="uid://pn0g3hb6ir1m" path="res://scenes/prefabs/stat_modifiers/battery_AA.tres" id="4_4pugo"]
 
 [node name="Battery1x3" instance=ExtResource("1_vhqwo")]
 bonusEnergy = 2.0
-scrapCostBase = 18
 dimensions = Array[Vector2i]([Vector2i(0, 0), Vector2i(0, 1), Vector2i(0, 2)])
+scrapCostBase = 18
 partName = "AA Battery"
 partDescription = "[color=f2ec6b]Passive: Increases max Energy by 2."
 partIcon = ExtResource("2_4h0d8")
 partIconOffset = Vector2(0, 1)
+outgoingModifiers = Array[ExtResource("3_nr5gq")]([ExtResource("4_4pugo")])

@@ -51,6 +51,7 @@ metadata/_custom_type_script = "uid://cybmjhuctmfaw"
 [resource]
 script = ExtResource("2_sd1et")
 abilityName = "Bump"
+abilityNameInternal = "Bumper Bump"
 abilityDescriptionConstructor = Array[ExtResource("1_pgf2u")]([SubResource("Resource_qe5pu"), SubResource("Resource_pky5t"), SubResource("Resource_g4t8k"), SubResource("Resource_kskf6"), SubResource("Resource_2hj47")])
 abilityDescription = "Bum"
 energyCost = 0.0
@@ -59,6 +60,7 @@ cooldownStatName = "ContactCooldown"
 runType = 2
 functionNameWhenUsed = &""
 statsUsed = Array[String]([])
+hookName = ""
 initialized = false
 disabled = false
 functionWhenUsed = Callable()
